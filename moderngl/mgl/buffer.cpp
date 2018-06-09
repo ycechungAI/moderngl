@@ -24,14 +24,14 @@ int MGLBuffer_core_write(MGLBuffer * self, const Py_ssize_t & offset, Py_buffer 
 
 PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * args) { TRACE_VARAGS
 	PyObject * data;
-	Py_ssize_t reserve;
+	PyObject * reserve;
 	int readable;
 	int writable;
 	int local;
 
 	int args_ok = PyArg_ParseTuple(
 		args,
-		"Onppp",
+		"OOppp",
 		&data,
 		&reserve,
 		&readable,
@@ -43,8 +43,10 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * args) { TRACE_VA
 		return 0;
 	}
 
-	if ((data == Py_None) ^ (reserve != 0)) {
-		if (reserve) {
+	Py_ssize_t reserve_size = unpack_size(reserve);
+
+	if ((data == Py_None) ^ (reserve_size != 0)) {
+		if (reserve_size) {
 			PyErr_Format(module_error, "data and reserve are mutually exclusive");
 			return 0;
 		}
@@ -79,9 +81,9 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * args) { TRACE_VA
 		flags = writable ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	}
 
-	if (reserve) {
-		buffer->size = reserve;
-		initializer(GL_ARRAY_BUFFER, reserve, 0, flags);
+	if (reserve_size) {
+		buffer->size = reserve_size;
+		initializer(GL_ARRAY_BUFFER, reserve_size, 0, flags);
 	} else {
 		Py_buffer view = {};
 		if (prepare_buffer(data, &view) < 0) {

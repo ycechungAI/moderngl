@@ -28,7 +28,18 @@ enum MGLEnableFlag {
 
 extern PyObject * module_error;
 
+extern PyObject * compiler_error;
+extern PyObject * linker_error;
+extern PyObject * split_format;
+
 extern PyObject * tobytes_str;
+extern PyObject * size_str;
+extern PyObject * mode_str;
+extern PyObject * detect_framebuffer_str;
+
+extern PyObject * triangles_long;
+extern PyObject * points_long;
+extern PyObject * zero_long;
 
 #ifdef MGL_DEBUG
 extern PyObject * moderngl_debugger;
@@ -38,6 +49,7 @@ extern PyObject * numpy;
 extern PyObject * pillow;
 
 extern PyObject * numpy_frombuffer;
+extern PyObject * pillow_image;
 
 extern PyTypeObject * Context_class;
 extern int Context_class_mglo;
@@ -47,10 +59,78 @@ extern int Context_class_screen;
 extern int Context_class_fbo;
 extern int Context_class_extra;
 
+extern PyTypeObject * Attribute_class;
+extern int Attribute_class_type;
+extern int Attribute_class_location;
+extern int Attribute_class_cols;
+extern int Attribute_class_rows;
+extern int Attribute_class_size;
+extern int Attribute_class_shape;
+
+extern PyTypeObject * Uniform_class;
+extern int Uniform_class_type;
+extern int Uniform_class_location;
+extern int Uniform_class_cols;
+extern int Uniform_class_rows;
+extern int Uniform_class_size;
+extern int Uniform_class_shape;
+
 extern PyTypeObject * Buffer_class;
 extern int Buffer_class_mglo;
 extern int Buffer_class_size;
 extern int Buffer_class_extra;
+
+extern PyTypeObject * Framebuffer_class;
+extern int Framebuffer_class_mglo;
+extern int Framebuffer_class_viewport;
+extern int Framebuffer_class_size;
+extern int Framebuffer_class_extra;
+
+extern PyTypeObject * Program_class;
+extern int Program_class_mglo;
+extern int Program_class_uniforms;
+extern int Program_class_attributes;
+extern int Program_class_extra;
+
+extern PyTypeObject * Renderbuffer_class;
+extern int Renderbuffer_class_mglo;
+extern int Renderbuffer_class_size;
+extern int Renderbuffer_class_extra;
+
+extern PyTypeObject * Texture_class;
+extern int Texture_class_mglo;
+extern int Texture_class_level;
+extern int Texture_class_size;
+extern int Texture_class_extra;
+
+extern PyTypeObject * TextureArray_class;
+extern int TextureArray_class_mglo;
+extern int TextureArray_class_level;
+extern int TextureArray_class_index;
+extern int TextureArray_class_size;
+extern int TextureArray_class_length;
+extern int TextureArray_class_extra;
+
+extern PyTypeObject * TextureCube_class;
+extern int TextureCube_class_mglo;
+extern int TextureCube_class_size;
+extern int TextureCube_class_extra;
+
+extern PyTypeObject * VertexArray_class;
+extern int VertexArray_class_mglo;
+extern int VertexArray_class_ibo;
+extern int VertexArray_class_program;
+extern int VertexArray_class_mode;
+extern int VertexArray_class_vertices;
+extern int VertexArray_class_extra;
+
+extern PyTypeObject * Query_class;
+extern int Query_class_mglo;
+extern int Query_class_extra;
+
+extern PyTypeObject * Scope_class;
+extern int Scope_class_mglo;
+extern int Scope_class_extra;
 
 extern PyTypeObject * MGLContext_type;
 
