@@ -35,6 +35,8 @@ extern int Context_class_screen;
 extern int Context_class_fbo;
 extern int Context_class_extra;
 
+extern PyTypeObject * MGLContext_type;
+
 #ifdef MGL_DEBUG
 template <typename T>
 static PyObject * _wrapper(T * obj) {
