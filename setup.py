@@ -1,6 +1,7 @@
 from setuptools import Extension, setup
 
 sources = [
+    'moderngl/mgl/context.cpp',
     'moderngl/mgl/mgl.cpp',
     'moderngl/mgl/tools.cpp',
 ]

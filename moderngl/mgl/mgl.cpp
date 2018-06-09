@@ -1,4 +1,6 @@
 #include "mgl.hpp"
+
+#include "context.hpp"
 #include "tools.hpp"
 
 PyObject * module_error;
@@ -19,22 +21,6 @@ int Context_class_fbo;
 int Context_class_extra;
 
 PyTypeObject * MGLContext_type;
-
-PyObject * meth_create_context(PyObject * self, PyObject * args) { TRACE_VARAGS
-	int standalone;
-
-	int args_ok = PyArg_ParseTuple(
-		args,
-		"p",
-		&standalone
-	);
-
-	if (!args_ok) {
-		return 0;
-	}
-
-	Py_RETURN_NONE;
-}
 
 PyMethodDef mgl_methods[] = {
 	{"create_context", (PyCFunction)meth_create_context, METH_VARARGS, 0},
@@ -72,6 +58,8 @@ void initialize_module() {
 	}
 
 	module_error = PyObject_GetAttrString(moderngl, "Error");
+
+	MGLContext_type = MGLContext_define();
 
 	int Context_slots = 0;
 	Context_class = detect_class(moderngl, "Context", Context_slots);
