@@ -18,6 +18,14 @@
 #define TRACE_SETTER
 #endif
 
+enum MGLEnableFlag {
+	MGL_NOTHING = 0,
+	MGL_BLEND = 1,
+	MGL_DEPTH_TEST = 2,
+	MGL_CULL_FACE = 4,
+	MGL_RASTERIZER_DISCARD = 8,
+};
+
 extern PyObject * module_error;
 
 extern PyObject * tobytes_str;
