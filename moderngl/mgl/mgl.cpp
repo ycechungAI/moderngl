@@ -5,12 +5,16 @@
 
 PyObject * module_error;
 
+PyObject * tobytes_str;
+
 #ifdef MGL_DEBUG
 PyObject * moderngl_debugger;
 #endif
 PyObject * moderngl;
 PyObject * numpy;
 PyObject * pillow;
+
+PyObject * numpy_frombuffer;
 
 PyTypeObject * Context_class;
 int Context_class_mglo;
@@ -19,6 +23,11 @@ int Context_class_limits;
 int Context_class_screen;
 int Context_class_fbo;
 int Context_class_extra;
+
+PyTypeObject * Buffer_class;
+int Buffer_class_mglo;
+int Buffer_class_size;
+int Buffer_class_extra;
 
 PyTypeObject * MGLContext_type;
 
@@ -57,7 +66,13 @@ void initialize_module() {
 		PyErr_Clear();
 	}
 
+	if (numpy) {
+		numpy_frombuffer = PyObject_GetAttrString(numpy, "frombuffer");
+	}
+
 	module_error = PyObject_GetAttrString(moderngl, "Error");
+
+	tobytes_str = PyUnicode_FromString("tobytes");
 
 	MGLContext_type = MGLContext_define();
 
@@ -74,6 +89,15 @@ void initialize_module() {
 	protect_slot(Context_class, "screen");
 	protect_slot(Context_class, "fbo");
 	remove_init(Context_class);
+
+	int Buffer_slots = 0;
+	Buffer_class = detect_class(moderngl, "Buffer", Buffer_slots);
+	Buffer_class_mglo = slot_offset(Buffer_class, "_Buffer__mglo", Buffer_slots);
+	Buffer_class_size = slot_offset(Buffer_class, "size", Buffer_slots);
+	Buffer_class_extra = slot_offset(Buffer_class, "extra", Buffer_slots);
+	assert_slots_len(Buffer_class, Buffer_slots);
+	protect_slot(Buffer_class, "size");
+	remove_init(Buffer_class);
 
 	initialized = true;
 }

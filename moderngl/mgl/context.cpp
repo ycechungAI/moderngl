@@ -1,5 +1,6 @@
 #include "context.hpp"
 
+#include "buffer.hpp"
 #include "tools.hpp"
 
 PyObject * meth_create_context(PyObject * self, PyObject * args) { TRACE_VARAGS
@@ -34,6 +35,14 @@ PyObject * meth_create_context(PyObject * self, PyObject * args) { TRACE_VARAGS
 
 	const GLMethods & gl = context->gl;
 
+	int major = 0;
+	int minor = 0;
+	gl.GetIntegerv(GL_MAJOR_VERSION, &major);
+	gl.GetIntegerv(GL_MINOR_VERSION, &minor);
+	int version_code = major * 100 + minor * 10;
+
+	context->MGLBuffer_type = MGLBuffer_define(version_code);
+
 	PyObject * framebuffers = PyDict_New();
 
 	context->wrapper = new_object(PyObject, Context_class);
@@ -46,6 +55,7 @@ PyObject * meth_create_context(PyObject * self, PyObject * args) { TRACE_VARAGS
 
 PyTypeObject * MGLContext_define() {
 	PyMethodDef MGLContext_methods[] = {
+		{"buffer", (PyCFunction)MGLContext_meth_buffer, METH_VARARGS, 0},
 		{0},
 	};
 

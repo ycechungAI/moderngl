@@ -7,6 +7,8 @@ void assert_slots_len(PyTypeObject * type, int slots_len);
 void protect_slot(PyTypeObject * type, const char * name);
 void remove_init(PyTypeObject * type);
 
+int prepare_buffer(PyObject * data, Py_buffer * view);
+
 template <typename T>
 T * dup(const T & t) {
 	T * res = (T *)malloc(sizeof(t));

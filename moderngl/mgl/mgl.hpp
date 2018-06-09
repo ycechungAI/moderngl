@@ -20,12 +20,16 @@
 
 extern PyObject * module_error;
 
+extern PyObject * tobytes_str;
+
 #ifdef MGL_DEBUG
 extern PyObject * moderngl_debugger;
 #endif
 extern PyObject * moderngl;
 extern PyObject * numpy;
 extern PyObject * pillow;
+
+extern PyObject * numpy_frombuffer;
 
 extern PyTypeObject * Context_class;
 extern int Context_class_mglo;
@@ -34,6 +38,11 @@ extern int Context_class_limits;
 extern int Context_class_screen;
 extern int Context_class_fbo;
 extern int Context_class_extra;
+
+extern PyTypeObject * Buffer_class;
+extern int Buffer_class_mglo;
+extern int Buffer_class_size;
+extern int Buffer_class_extra;
 
 extern PyTypeObject * MGLContext_type;
 
