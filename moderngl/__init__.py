@@ -99,8 +99,8 @@ class Framebuffer:
     def read(self, viewport=None, components=3, attachment=0, alignment=1, dtype='f1', np=False):
         return self.__mglo.read(viewport, components, attachment, alignment, dtype, np)
 
-    def read_into(self):
-        pass
+    def read_into(self, buffer, viewport=None, components=3, attachment=0, alignment=1):
+        return self.__mglo.read_into(buffer, viewport, components, attachment, alignment)
 
     def use(self):
         self.__mglo.use()
@@ -167,7 +167,7 @@ class Texture:
 
     @property
     def swizzle(self):
-        pass
+        raise NotImplementedError()
 
     @swizzle.setter
     def swizzle(self, value):
@@ -175,7 +175,7 @@ class Texture:
 
     @property
     def filter(self):
-        pass
+        raise NotImplementedError()
 
     @filter.setter
     def filter(self, value):
@@ -186,6 +186,9 @@ class Texture:
 
     def write(self, data, viewport=None, alignment=1) -> None:
         self.__mglo.write(data, viewport, alignment, self.__level)
+
+    def read(self, alignment=1) -> None:
+        return self.__mglo.read(self.__level, alignment)
 
     def use(self, location=0) -> None:
         self.__mglo.use(location)
@@ -311,8 +314,7 @@ class Context:
 
     @property
     def line_width(self) -> float:
-        pass
-        # return self.__line_width
+        raise NotImplementedError()
 
     @line_width.setter
     def line_width(self, value):
@@ -320,8 +322,7 @@ class Context:
 
     @property
     def point_size(self) -> float:
-        pass
-        # return self.__point_size
+        raise NotImplementedError()
 
     @point_size.setter
     def point_size(self, value):
@@ -362,7 +363,7 @@ class Context:
     def depth_renderbuffer(self, size, samples=0) -> Renderbuffer:
         return self.__mglo.renderbuffer(size, -1, samples, 'f4')
 
-    def texture(self, size, components=-1, data=None, levels=-1, samples=0, aligment=1, dtype='f1') -> Texture:
+    def texture(self, size, components=3, data=None, levels=-1, samples=0, aligment=1, dtype='f1') -> Texture:
         return self.__mglo.texture(size, components, data, levels, samples, aligment, dtype)
 
     def texture_array(self) -> TextureArray:

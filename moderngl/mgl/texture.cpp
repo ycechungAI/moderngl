@@ -259,6 +259,88 @@ PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * args) { TRACE_VAR
 	Py_RETURN_NONE;
 }
 
+PyObject * MGLTexture_meth_read(MGLTexture * self, PyObject * args) {
+	int level;
+	int alignment;
+
+	int args_ok = PyArg_ParseTuple(
+		args,
+		"II",
+		&level,
+		&alignment
+	);
+
+	if (!args_ok) {
+		return 0;
+	}
+
+	if (alignment != 1 && alignment != 2 && alignment != 4 && alignment != 8) {
+		PyErr_Format(module_error, "the alignment must be 1, 2, 4 or 8");
+		return 0;
+	}
+
+	if (level > self->levels) {
+		PyErr_Format(module_error, "invalid level");
+		return 0;
+	}
+
+	if (self->samples) {
+		PyErr_Format(module_error, "multisample textures cannot be read directly");
+		return 0;
+	}
+
+	int width = self->width / (1 << level);
+	int height = self->height / (1 << level);
+
+	width = width > 1 ? width : 1;
+	height = height > 1 ? height : 1;
+
+	int expected_size = width * self->components * self->data_type->size;
+	expected_size = (expected_size + alignment - 1) / alignment * alignment;
+	expected_size = expected_size * height;
+
+	PyObject * result = PyBytes_FromStringAndSize(0, expected_size);
+	char * data = PyBytes_AS_STRING(result);
+
+	const int base_formats[] = {0, GL_RED, GL_RG, GL_RGB, GL_RGBA};
+
+	int texture_target = self->samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+	int pixel_type = self->data_type->gl_type;
+	int base_format = base_formats[self->components];
+
+	const GLMethods & gl = self->context->gl;
+
+	gl.ActiveTexture(GL_TEXTURE0 + self->context->default_texture_unit);
+	gl.BindTexture(texture_target, self->texture_obj);
+
+	gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
+	gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+
+	// To determine the required size of pixels, use glGetTexLevelParameter to determine
+	// the dimensions of the internal texture image, then scale the required number of pixels
+	// by the storage required for each pixel, based on format and type. Be sure to take the
+	// pixel storage parameters into account, especially GL_PACK_ALIGNMENT.
+
+	// int pack = 0;
+	// gl.GetIntegerv(GL_PACK_ALIGNMENT, &pack);
+	// printf("GL_PACK_ALIGNMENT: %d\n", pack);
+
+	// glGetTexLevelParameter with argument GL_TEXTURE_WIDTH
+	// glGetTexLevelParameter with argument GL_TEXTURE_HEIGHT
+	// glGetTexLevelParameter with argument GL_TEXTURE_INTERNAL_FORMAT
+
+	// int level_width = 0;
+	// int level_height = 0;
+	// gl.GetTexLevelParameteriv(texture_target, 0, GL_TEXTURE_WIDTH, &level_width);
+	// gl.GetTexLevelParameteriv(texture_target, 0, GL_TEXTURE_HEIGHT, &level_height);
+	// printf("level_width: %d\n", level_width);
+	// printf("level_height: %d\n", level_height);
+
+	gl.GetTexImage(texture_target, level, base_format, pixel_type, data);
+
+	return result;
+}
+
 PyObject * MGLTexture_meth_use(MGLTexture * self, PyObject * args) { TRACE_VARAGS
 	int location;
 
@@ -388,6 +470,7 @@ PyTypeObject * MGLTexture_define(int version_code) {
 	PyMethodDef MGLTexture_methods[] = {
 		{"level", (PyCFunction)MGLTexture_meth_level, METH_VARARGS, 0},
 		{"write", (PyCFunction)MGLTexture_meth_write, METH_VARARGS, 0},
+		{"read", (PyCFunction)MGLTexture_meth_read, METH_VARARGS, 0},
 		{"use", (PyCFunction)MGLTexture_meth_use, METH_VARARGS, 0},
 		{"build_mipmaps", (PyCFunction)MGLTexture_meth_build_mipmaps, METH_VARARGS, 0},
 		{0},
