@@ -29,28 +29,31 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * args) { TRACE_V
 		return 0;
 	}
 
-	PyObject * size;
+	PyObject * size = size_or_img;
 
-	// if ((PyObject *)size_or_img->ob_type == pillow_image) {
-	// 	size = PyObject_GetAttr(size_or_img, size_str);
-	// 	PyObject * mode = PyObject_GetAttr(size_or_img, mode_str);
-	// 	if (!mode) {
-	// 		return 0;
-	// 	}
-	// 	const char * img_mode = PyUnicode_AsUTF8(mode);
-	// 	if (!strcmp(img_mode, "RGBA")) {
-	// 		components = 4;
-	// 	} else if (!strcmp(img_mode, "RGB")) {
-	// 		components = 3;
-	// 	} else if (!strcmp(img_mode, "L")) {
-	// 		components = 1;
-	// 	} else {
-	// 	}
-	// 	data = size_or_img;
-	// 	alignment = 1;
-	// }
+	if ((PyObject *)size_or_img->ob_type == pillow_image) {
+		size = PyObject_GetAttr(size_or_img, size_str);
+		if (!size) {
+			return 0;
+		}
+		PyObject * mode = PyObject_GetAttr(size_or_img, mode_str);
+		if (!mode) {
+			return 0;
+		}
+		const char * img_mode = PyUnicode_AsUTF8(mode);
+		if (!strcmp(img_mode, "RGBA")) {
+			components = 4;
+		} else if (!strcmp(img_mode, "RGB")) {
+			components = 3;
+		} else if (!strcmp(img_mode, "L")) {
+			components = 1;
+		} else {
+		}
+		data = size_or_img;
+		alignment = 1;
+	}
 
-	size = PySequence_Fast(size_or_img, "size is not iterable");
+	size = PySequence_Fast(size, "size is not iterable");
 	if (!size) {
 		return 0;
 	}
@@ -89,13 +92,17 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * args) { TRACE_V
 		return 0;
 	}
 
-	if (levels < 0) {
+	int max_levels = -1;
+	{
 		int size = width > height ? width : height;
-		levels = 0;
 		while (size) {
-			levels += 1;
+			max_levels += 1;
 			size >>= 1;
 		}
+	}
+
+	if (levels < 0 || levels > max_levels) {
+		levels = max_levels;
 	}
 
 	int expected_size = width * components * data_type->size;
@@ -119,6 +126,8 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * args) { TRACE_V
 	gl.GenTextures(1, (GLuint *)&texture->texture_obj);
 	gl.ActiveTexture(GL_TEXTURE0 + self->default_texture_unit);
 	gl.BindTexture(texture_target, texture->texture_obj);
+	gl.TexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	gl.TexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	if (!texture->texture_obj) {
 		PyErr_Format(module_error, "cannot create texture");
@@ -131,25 +140,27 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * args) { TRACE_V
 		if (prepare_buffer(data, &view) < 0) {
 			return 0;
 		}
-
-		// if (samples) {
-		// 	gl.TexImage2DMultisample(texture_target, samples, internal_format, width, height, true);
-		// }
-
-		if (PyBuffer_IsContiguous(&view, 'C')) {
-			gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
-			gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-			if (gl.TexStorage2D) {
-				gl.TexStorage2D(texture_target, levels, internal_format, width, height);
-				gl.TexSubImage2D(texture_target, 0, 0, 0, width, height, base_format, pixel_type, view.buf);
-			} else {
-				gl.TexImage2D(texture_target, 0, internal_format, width, height, 0, base_format, pixel_type, view.buf);
-			}
-			gl.TexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			gl.TexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		} else {
-			// gl.TexImage2D(texture_target, samples, internal_format, width, height, true);
+		void * buf = view.buf;
+		bool contiguos = PyBuffer_IsContiguous(&view, 'C');
+		gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
+		gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+		if (!contiguos) {
+			buf = malloc(expected_size);
+			PyBuffer_ToContiguous(buf, &view, view.len, 'C');
 		}
+		if (gl.TexStorage2D) {
+			gl.TexStorage2D(texture_target, levels, internal_format, width, height);
+			gl.TexSubImage2D(texture_target, 0, 0, 0, width, height, base_format, pixel_type, buf);
+		} else {
+			gl.TexImage2D(texture_target, 0, internal_format, width, height, 0, base_format, pixel_type, buf);
+		}
+		if (!contiguos) {
+			free(buf);
+		}
+	} else if (samples) {
+		gl.TexImage2DMultisample(texture_target, samples, internal_format, width, height, true);
+	} else {
+		gl.TexImage2D(texture_target, 0, internal_format, width, height, 0, base_format, pixel_type, 0);
 	}
 
 	SLOT(texture->wrapper, PyObject, Texture_class_level) = PyLong_FromLong(0);
@@ -170,6 +181,11 @@ PyObject * MGLTexture_meth_level(MGLTexture * self, PyObject * args) { TRACE_VAR
 		return 0;
 	}
 
+	if (level > self->levels) {
+		PyErr_Format(module_error, "invalid level");
+		return 0;
+	}
+
 	int width = self->width >> level;
 	int height = self->height >> level;
 
@@ -177,11 +193,11 @@ PyObject * MGLTexture_meth_level(MGLTexture * self, PyObject * args) { TRACE_VAR
 	PyTuple_SET_ITEM(size, 0, PyLong_FromLong(width > 1 ? width : 1));
 	PyTuple_SET_ITEM(size, 1, PyLong_FromLong(height > 1 ? height : 1));
 
-	// SLOT(wrapper, MGLTexture, context->Texture_class_mglo) = NEW_REF(self);
-	// SLOT(wrapper, PyObject, context->Texture_class_level) = PyLong_FromLong(level);
-	// SLOT(wrapper, PyObject, context->Texture_class_size) = size;
-	// SLOT(wrapper, PyObject, context->Texture_class_extra) = NEW_REF(Py_None);
-	return NEW_REF(Py_None);
+	PyObject * wrapper = new_object(PyObject, Texture_class);
+	SLOT(wrapper, MGLTexture, Texture_class_mglo) = NEW_REF(self);
+	SLOT(wrapper, PyObject, Texture_class_level) = PyLong_FromLong(level);
+	SLOT(wrapper, PyObject, Texture_class_size) = size;
+	return wrapper;
 }
 
 PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * args) { TRACE_VARAGS
@@ -243,17 +259,31 @@ PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * args) { TRACE_VAR
 
 	const GLMethods & gl = self->context->gl;
 
+	gl.ActiveTexture(GL_TEXTURE0 + self->context->default_texture_unit);
+	gl.BindTexture(texture_target, self->texture_obj);
+	gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
+	gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+
 	if (data->ob_type == Buffer_class) {
 		MGLBuffer * buffer = SLOT(data, MGLBuffer, Buffer_class_mglo);
 		gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer->buffer_obj);
-		gl.ActiveTexture(GL_TEXTURE0 + self->context->default_texture_unit);
-		gl.BindTexture(texture_target, self->texture_obj);
-		gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
-		gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
 		gl.TexSubImage2D(texture_target, level, x, y, width, height, format, pixel_type, 0);
 		gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 	} else {
-		// TODO:
+		Py_buffer view = {};
+		if (prepare_buffer(data, &view) < 0) {
+			return 0;
+		}
+		void * buf = view.buf;
+		bool contiguos = PyBuffer_IsContiguous(&view, 'C');
+		if (!contiguos) {
+			buf = malloc(expected_size);
+			PyBuffer_ToContiguous(buf, &view, view.len, 'C');
+		}
+		gl.TexSubImage2D(texture_target, level, x, y, width, height, format, pixel_type, buf);
+		if (!contiguos) {
+			free(buf);
+		}
 	}
 
 	Py_RETURN_NONE;
@@ -402,9 +432,10 @@ int MGLTexture_set_swizzle(MGLTexture * self, PyObject * value) { TRACE_SETTER
 
 	const char * swizzle = PyUnicode_AsUTF8(value);
 	int size = PyUnicode_GetSize(value);
+	bool error = false;
 
 	if (size > 4) {
-		return 0;
+		return -1;
 	}
 
 	for (int i = 0; i < size; ++i) {
@@ -419,7 +450,12 @@ int MGLTexture_set_swizzle(MGLTexture * self, PyObject * value) { TRACE_SETTER
 			case 'a': tex_swizzle[i] = GL_ALPHA; break;
 			case '0': tex_swizzle[i] = GL_ZERO; break;
 			case '1': tex_swizzle[i] = GL_ONE; break;
+			default: error = true; break;
 		}
+	}
+
+	if (error) {
+		return -1;
 	}
 
 	gl.TexParameteriv(texture_target, GL_TEXTURE_SWIZZLE_RGBA, tex_swizzle);
@@ -432,8 +468,8 @@ int MGLTexture_set_filter(MGLTexture * self, PyObject * value) { TRACE_SETTER
 	gl.ActiveTexture(GL_TEXTURE0 + self->context->default_texture_unit);
 	gl.BindTexture(GL_TEXTURE_2D, self->texture_obj);
 
-	int min_filter;
-	int mag_filter;
+	int min_filter = 0;
+	int mag_filter = 0;
 
 	if (PyLong_Check(value)) {
 		int filter = PyLong_AsLong(value);
@@ -448,17 +484,19 @@ int MGLTexture_set_filter(MGLTexture * self, PyObject * value) { TRACE_SETTER
 	} else {
 		value = PySequence_Fast(value, "filter is not iterable");
 		if (!value) {
-			return 0;
+			return -1;
 		}
 
 		int size = PySequence_Fast_GET_SIZE(value);
 		if (size != 2) {
-			return 0;
+			return -1;
 		}
 
 		min_filter = PyLong_AsLong(PySequence_Fast_GET_ITEM(value, 0));
 		mag_filter = PyLong_AsLong(PySequence_Fast_GET_ITEM(value, 1));
 	}
+
+	// TODO: check
 
 	gl.TexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, min_filter);
 	gl.TexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, mag_filter);
