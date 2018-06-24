@@ -336,6 +336,14 @@ class Context:
     def framebuffer(self, *attachments) -> Framebuffer:
         return self.__mglo.framebuffer(attachments)
 
+    def simple_framebuffer(self, size, components=4, samples=0, depth=True) -> Framebuffer:
+        attachments = [
+            self.renderbuffer(size, components=components, samples=samples)
+        ]
+        if depth:
+            attachments.append(self.depth_renderbuffer(size, samples=samples))
+        return self.__mglo.framebuffer(attachments)
+
     def program(self, vertex_shader, fragment_shader=None, geometry_shader=None,
         tess_control_shader=None, tess_evaluation_shader=None, varyings=()) -> Program:
         return self.__mglo.program(
