@@ -50,7 +50,8 @@ class Buffer:
         return self.__mglo.read(size, offset, dtype)
 
     def read_into(self, buffer, size=-1, offset=0, write_offset=0) -> None:
-        memoryview(buffer)[write_offset:] = self.__mglo.map(size, offset, True, False, None)
+        write_end = write_offset + (self.size if size < 0 else size)
+        memoryview(buffer)[write_offset : write_end] = self.__mglo.map(size, offset, True, False, None)
         self.__mglo.unmap()
 
     def map(self, size=-1, offset=0, readable=False, writable=False, dtype=None) -> None:
