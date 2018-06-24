@@ -48,16 +48,29 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * args) { TRA
 		if (attachment->ob_type == Texture_class) {
 			MGLTexture * texture = SLOT(attachment, MGLTexture, Texture_class_mglo);
 			int level = PyLong_AsLong(SLOT(attachment, PyObject, Texture_class_level));
+			int layer = PyLong_AsLong(SLOT(attachment, PyObject, Texture_class_layer));
 			attachment_width = texture->width >> level;
 			attachment_height = texture->height >> level;
+			attachment_width = attachment_width > 1 ? attachment_width : 1;
+			attachment_height = attachment_height > 1 ? attachment_height : 1;
+			// TODO: depth
 			attachment_samples = texture->samples;
-			int target = texture->samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+			bool is3d = texture->texture_target == GL_TEXTURE_3D;
 			if (texture->components > 0) {
 				int idx = i - depth_attachments;
-				gl.FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + idx, target, texture->texture_obj, 0);
+				if (is3d) {
+					if (layer < 0) {
+						gl.FramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + idx, texture->texture_obj, level);
+					} else {
+						gl.FramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + idx, texture->texture_target, texture->texture_obj, level, layer);
+					}
+				} else {
+					gl.FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + idx, texture->texture_target, texture->texture_obj, level);
+				}
 				attachment_type[idx] = texture->data_type->shape;
 			} else {
-				gl.FramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, texture->texture_obj, 0);
+				gl.FramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture->texture_target, texture->texture_obj, level);
+				// TODO:
 				depth_attachments += 1;
 			}
 		} else if (attachment->ob_type == Renderbuffer_class) {
