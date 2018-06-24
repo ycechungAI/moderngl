@@ -56,6 +56,17 @@ PyObject * meth_create_context(PyObject * self, PyObject * args) { TRACE_VARAGS
 	context->version_code = version_code;
 	context->enable_flags = 0;
 
+	int max_draw_buffers = 0;
+	gl.GetIntegerv(GL_MAX_DRAW_BUFFERS, &max_draw_buffers);
+	max_draw_buffers = max_draw_buffers < 1024 ? max_draw_buffers : 1024;
+
+	GLenum * drawbuffers = (GLenum *)malloc(sizeof(GLenum) * max_draw_buffers);
+	for (int i = 0; i < max_draw_buffers; ++i) {
+		drawbuffers[i] = GL_COLOR_ATTACHMENT0 + i;
+	}
+	gl.DrawBuffers(max_draw_buffers, drawbuffers);
+	free(drawbuffers);
+
 	gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	gl.Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	gl.Enable(GL_PRIMITIVE_RESTART);
