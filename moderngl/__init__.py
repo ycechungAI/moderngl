@@ -43,17 +43,17 @@ class Buffer:
         self.size = None  # type: int
         self.extra = None  # type: Any
 
-    def write(self, data, *, offset=0) -> None:
+    def write(self, data, offset=0) -> None:
         self.__mglo.write(data, offset)
 
-    def read(self, size=-1, *, offset=0, dtype=None) -> bytes:
+    def read(self, size=-1, offset=0, dtype=None) -> bytes:
         return self.__mglo.read(size, offset, dtype)
 
-    def read_into(self, buffer, size=-1, *, offset=0, write_offset=0) -> None:
+    def read_into(self, buffer, size=-1, offset=0, write_offset=0) -> None:
         memoryview(buffer)[:] = self.__mglo.map(size, offset, True, False, None)
         self.__mglo.unmap()
 
-    def map(self, size=-1, *, offset=0, readable=False, writable=False, dtype=None) -> None:
+    def map(self, size=-1, offset=0, readable=False, writable=False, dtype=None) -> None:
         return self.__mglo.map(size, offset, readable, writable, dtype)
 
     def unmap(self) -> None:
@@ -62,10 +62,10 @@ class Buffer:
     def clear(self) -> None:
         self.__mglo.clear()
 
-    def bind_to_uniform_block(self, binding=0, *, offset=0, size=-1) -> None:
+    def bind_to_uniform_block(self, binding=0, offset=0, size=-1) -> None:
         self.__mglo.bind_to_uniform_block(binding, offset, size)
 
-    def bind_to_storage_buffer(self, binding=0, *, offset=0, size=-1) -> None:
+    def bind_to_storage_buffer(self, binding=0, offset=0, size=-1) -> None:
         self.__mglo.bind_to_storage_buffer(binding, offset, size)
 
     def orphan(self):  # TODO: deprecate
@@ -92,10 +92,10 @@ class Framebuffer:
     def clear_depth(self, value=1.0):
         self.__mglo.clear(value, -1)
 
-    def clear(self, color, *, attachment=0):
+    def clear(self, color, attachment=0):
         self.__mglo.clear(color, attachment)
 
-    def read(self, viewport=None, components=3, *, attachment=0, alignment=1, dtype='f1', np=False):
+    def read(self, viewport=None, components=3, attachment=0, alignment=1, dtype='f1', np=False):
         return self.__mglo.read(viewport, components, attachment, alignment, dtype, np)
 
     def read_into(self):
@@ -183,7 +183,7 @@ class Texture:
     def level(self, level) -> 'Texture':
         return self.__mglo.level(level)
 
-    def write(self, data, viewport=None, *, alignment=1) -> None:
+    def write(self, data, viewport=None, alignment=1) -> None:
         self.__mglo.write(data, viewport, alignment, self.__level)
 
     def use(self, location=0) -> None:
@@ -234,10 +234,10 @@ class VertexArray:
         self.vertices = None  # type: int
         self.extra = None  # type: Any
 
-    def render(self, mode=None, vertices=-1, *, first=0, instances=1):
+    def render(self, mode=None, vertices=-1, first=0, instances=1):
         self.__mglo.render(mode, vertices, first, instances)
 
-    def transform(self, buffer, mode=None, vertices=-1, *, first=0, instances=1, flush=True):
+    def transform(self, buffer, mode=None, vertices=-1, first=0, instances=1, flush=True):
         self.__mglo.transform(buffer, mode, vertices, first, instances, flush)
 
     @property
@@ -326,11 +326,11 @@ class Context:
     def point_size(self, value):
         self.__mglo.point_size = value
 
-    def clear(self, red=0.0, green=0.0, blue=0.0, alpha=0.0, depth=1.0, *, viewport=None) -> None:
+    def clear(self, red=0.0, green=0.0, blue=0.0, alpha=0.0, depth=1.0, viewport=None) -> None:
         self.fbo.clear((red, green, blue, alpha))
         self.fbo.clear_depth(depth)
 
-    def buffer(self, data=None, *, reserve=0, readable=True, writable=True, local=False) -> Buffer:
+    def buffer(self, data=None, reserve=0, readable=True, writable=True, local=False) -> Buffer:
         return self.__mglo.buffer(data, reserve, readable, writable, local)
 
     def framebuffer(self, *attachments) -> Framebuffer:
@@ -355,13 +355,13 @@ class Context:
             varyings,
         )
 
-    def renderbuffer(self, size, components=4, *, samples=0, dtype='f4') -> Renderbuffer:
+    def renderbuffer(self, size, components=4, samples=0, dtype='f4') -> Renderbuffer:
         return self.__mglo.renderbuffer(size, components, samples, dtype)
 
-    def depth_renderbuffer(self, size, *, samples=0) -> Renderbuffer:
+    def depth_renderbuffer(self, size, samples=0) -> Renderbuffer:
         return self.__mglo.renderbuffer(size, -1, samples, 'f4')
 
-    def texture(self, size, components=-1, data=None, *, levels=-1, samples=0, aligment=1, dtype='f1') -> Texture:
+    def texture(self, size, components=-1, data=None, levels=-1, samples=0, aligment=1, dtype='f1') -> Texture:
         return self.__mglo.texture(size, components, data, levels, samples, aligment, dtype)
 
     def texture_array(self) -> TextureArray:
@@ -380,7 +380,7 @@ class Context:
     def detect_framebuffer(self, fbo=None) -> Framebuffer:
         return self.__mglo.detect_framebuffer(fbo)
 
-    def copy_buffer(self, dst, src, size=-1, *, read_offset=0, write_offset=0) -> None:
+    def copy_buffer(self, dst, src, size=-1, read_offset=0, write_offset=0) -> None:
         self.__mglo.copy_buffer(dst, src, size, read_offset, write_offset)
 
     def enable(self, flags) -> None:
@@ -393,7 +393,7 @@ class Context:
         self.__mglo.enter()
 
 
-def create_context(*, standalone=False, debug=False) -> Context:
+def create_context(standalone=False, debug=False) -> Context:
     mgl = importlib.import_module('moderngl.mgl_dbg' if debug else 'moderngl.mgl')
     return mgl.create_context(standalone)
 
