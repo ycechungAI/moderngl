@@ -35,6 +35,7 @@ PyObject * MGLContext_meth_renderbuffer(MGLContext * self, PyObject * args) { TR
 	renderbuffer->height = height;
 	renderbuffer->components = components;
 	renderbuffer->samples = samples;
+	renderbuffer->data_type = data_type;
 
 	SLOT(renderbuffer->wrapper, PyObject, Renderbuffer_class_size) = int_tuple(width, height);
 	return NEW_REF(renderbuffer->wrapper);

@@ -278,28 +278,6 @@ void write_uni(const GLMethods & gl, int program_obj, int location, int type, in
 	}
 }
 
-void read_float(float *& ptr, PyObject * value) {
-	*ptr++ = (float)PyFloat_AsDouble(value);
-}
-
-void read_int(int *& ptr, PyObject * value) {
-	*ptr++ = PyLong_AsLong(value);
-}
-
-void read_unsigned(unsigned *& ptr, PyObject * value) {
-	*ptr++ = PyLong_AsUnsignedLong(value);
-}
-
-void read_double(double *& ptr, PyObject * value) {
-	*ptr++ = PyFloat_AsDouble(value);
-}
-
-void read_bool(int *& ptr, PyObject * value) {
-	*ptr++ = PyObject_IsTrue(value);
-}
-
-typedef void (* read_uni)(void *& ptr, PyObject * value);
-
 PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * args) { TRACE_VARAGS
 	PyObject * uniform;
 	PyObject * value;
@@ -345,13 +323,13 @@ PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * args) { TRACE_V
 			}
 			PyBuffer_Release(&view);
 		} else {
-			read_uni func;
+			read_value func;
 			switch (shape) {
-				case 'f': func = (read_uni)read_float; break;
-				case 'i': func = (read_uni)read_int; break;
-				case 'u': func = (read_uni)read_unsigned; break;
-				case 'd': func = (read_uni)read_double; break;
-				case 'p': func = (read_uni)read_bool; break;
+				case 'f': func = (read_value)read_float; break;
+				case 'i': func = (read_value)read_int; break;
+				case 'u': func = (read_value)read_unsigned; break;
+				case 'd': func = (read_value)read_double; break;
+				case 'p': func = (read_value)read_bool; break;
 			}
 			if (size == 1 && rows == 1 && cols == 1) {
 				char cache[8];

@@ -88,18 +88,21 @@ struct MGLFramebuffer {
 	PyObject_HEAD
 	MGLContext * context;
 	PyObject * wrapper;
+	char * attachment_type;
 	int framebuffer_obj;
 	int width;
 	int height;
 	int components;
 	int samples;
 	int viewport[4];
+	int attachments;
 };
 
 struct MGLRenderbuffer {
 	PyObject_HEAD
 	MGLContext * context;
 	PyObject * wrapper;
+	MGLDataType * data_type;
 	int renderbuffer_obj;
 	int width;
 	int height;

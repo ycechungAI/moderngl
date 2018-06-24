@@ -95,8 +95,8 @@ class Framebuffer:
     def clear(self, color, *, attachment=0):
         self.__mglo.clear(color, attachment)
 
-    def read(self):
-        pass
+    def read(self, viewport=None, components=3, *, attachment=0, alignment=1, dtype='f1', np=False):
+        return self.__mglo.read(viewport, components, attachment, alignment, dtype, np)
 
     def read_into(self):
         pass
@@ -333,7 +333,7 @@ class Context:
     def buffer(self, data=None, *, reserve=0, readable=True, writable=True, local=False) -> Buffer:
         return self.__mglo.buffer(data, reserve, readable, writable, local)
 
-    def framebuffer(self, attachments) -> Framebuffer:
+    def framebuffer(self, *attachments) -> Framebuffer:
         return self.__mglo.framebuffer(attachments)
 
     def program(self, vertex_shader, fragment_shader=None, geometry_shader=None,
@@ -349,6 +349,9 @@ class Context:
 
     def renderbuffer(self, size, components=4, *, samples=0, dtype='f4') -> Renderbuffer:
         return self.__mglo.renderbuffer(size, components, samples, dtype)
+
+    def depth_renderbuffer(self, size, *, samples=0) -> Renderbuffer:
+        return self.__mglo.renderbuffer(size, -1, samples, 'f4')
 
     def texture(self, size, components=-1, data=None, *, levels=-1, samples=0, aligment=1, dtype='f1') -> Texture:
         return self.__mglo.texture(size, components, data, levels, samples, aligment, dtype)
