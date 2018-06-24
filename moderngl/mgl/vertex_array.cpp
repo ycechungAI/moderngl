@@ -166,18 +166,10 @@ PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * args) { TR
 
 			for (int r = 0; r < locations; ++r) {
 				switch (shape) {
-					case 'f':
-						gl.VertexAttribPointer(location, vsize, type, shape == 'f' && bytes == 1, stride, ptr);
-						break;
-					case 'i':
-						gl.VertexAttribIPointer(location, vsize, type, stride, ptr);
-						break;
-					case 'u':
-						gl.VertexAttribIPointer(location, vsize, type, stride, ptr);
-						break;
-					case 'd':
-						gl.VertexAttribLPointer(location, vsize, type, stride, ptr);
-						break;
+					case 'f': gl.VertexAttribPointer(location, vsize, type, shape == 'f' && bytes == 1, stride, ptr); break;
+					case 'i': gl.VertexAttribIPointer(location, vsize, type, stride, ptr); break;
+					case 'u': gl.VertexAttribIPointer(location, vsize, type, stride, ptr); break;
+					case 'd': gl.VertexAttribLPointer(location, vsize, type, stride, ptr); break;
 				}
 
 				gl.VertexAttribDivisor(location, divisor);
