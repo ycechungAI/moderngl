@@ -187,8 +187,8 @@ class Texture:
     def write(self, data, viewport=None, alignment=1) -> None:
         self.__mglo.write(data, viewport, alignment, self.__level)
 
-    def read(self, alignment=1) -> None:
-        return self.__mglo.read(self.__level, alignment)
+    def read(self, alignment=1, np=False) -> None:
+        return self.__mglo.read(self.__level, alignment, np)
 
     def use(self, location=0) -> None:
         self.__mglo.use(location)

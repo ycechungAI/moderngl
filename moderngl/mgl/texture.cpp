@@ -292,12 +292,14 @@ PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * args) { TRACE_VAR
 PyObject * MGLTexture_meth_read(MGLTexture * self, PyObject * args) {
 	int level;
 	int alignment;
+	int np;
 
 	int args_ok = PyArg_ParseTuple(
 		args,
-		"II",
+		"IIp",
 		&level,
-		&alignment
+		&alignment,
+		&np
 	);
 
 	if (!args_ok) {
@@ -328,9 +330,6 @@ PyObject * MGLTexture_meth_read(MGLTexture * self, PyObject * args) {
 	int expected_size = width * self->components * self->data_type->size;
 	expected_size = (expected_size + alignment - 1) / alignment * alignment;
 	expected_size = expected_size * height;
-
-	PyObject * result = PyBytes_FromStringAndSize(0, expected_size);
-	char * data = PyBytes_AS_STRING(result);
 
 	const int base_formats[] = {0, GL_RED, GL_RG, GL_RGB, GL_RGBA};
 
@@ -366,9 +365,17 @@ PyObject * MGLTexture_meth_read(MGLTexture * self, PyObject * args) {
 	// printf("level_width: %d\n", level_width);
 	// printf("level_height: %d\n", level_height);
 
-	gl.GetTexImage(texture_target, level, base_format, pixel_type, data);
+	if (np) {
+		PyObject * array = PyByteArray_FromStringAndSize(0, expected_size);
+		gl.GetTexImage(texture_target, level, base_format, pixel_type, PyByteArray_AS_STRING(array));
+		PyObject * res = PyObject_CallFunctionObjArgs(numpy_frombuffer, array, self->data_type->numpy_dtype, 0);
+		Py_DECREF(array);
+		return res;
+	}
 
-	return result;
+	PyObject * res = PyBytes_FromStringAndSize(0, expected_size);
+	gl.GetTexImage(texture_target, level, base_format, pixel_type, PyBytes_AS_STRING(res));
+	return res;
 }
 
 PyObject * MGLTexture_meth_use(MGLTexture * self, PyObject * args) { TRACE_VARAGS
