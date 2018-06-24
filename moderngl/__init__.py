@@ -258,7 +258,14 @@ class VertexArray:
 
 
 class Limits:
-    __slots__ = ['max_samples', 'max_integer_samples', ]
+    __slots__ = ['max_samples', 'max_integer_samples']
+
+    def __str__(self):
+        res = ''
+        for slot in Limits.__slots__:
+            if hasattr(self, slot):
+                res += '%s = %r' % (slot, getattr(self, slot))
+        return res
 
 
 class Query:

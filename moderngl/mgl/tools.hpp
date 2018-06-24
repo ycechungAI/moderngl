@@ -12,6 +12,7 @@ int slot_offset(PyTypeObject * type, const char * name, int & counter);
 PyTypeObject * detect_class(PyObject * module, const char * name, int & slots_len);
 void assert_slots_len(PyTypeObject * type, int slots_len);
 void protect_slot(PyTypeObject * type, const char * name);
+void protect_all_slots(PyTypeObject * type);
 void remove_init(PyTypeObject * type);
 
 int prepare_buffer(PyObject * data, Py_buffer * view);

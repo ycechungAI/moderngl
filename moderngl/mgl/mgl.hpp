@@ -133,6 +133,10 @@ extern PyTypeObject * Scope_class;
 extern int Scope_class_mglo;
 extern int Scope_class_extra;
 
+extern PyTypeObject * Limits_class;
+extern int Limits_class_max_samples;
+extern int Limits_class_max_integer_samples;
+
 extern PyTypeObject * MGLContext_type;
 
 #ifdef MGL_DEBUG

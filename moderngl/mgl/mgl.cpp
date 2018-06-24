@@ -110,6 +110,10 @@ PyTypeObject * Scope_class;
 int Scope_class_mglo;
 int Scope_class_extra;
 
+PyTypeObject * Limits_class;
+int Limits_class_max_samples;
+int Limits_class_max_integer_samples;
+
 PyTypeObject * MGLContext_type;
 
 PyMethodDef mgl_methods[] = {
@@ -314,6 +318,14 @@ void initialize_module() {
 	assert_slots_len(VertexArray_class, VertexArray_slots);
 	protect_slot(VertexArray_class, "program");
 	remove_init(VertexArray_class);
+
+	int Limits_slots = 0;
+	Limits_class = detect_class(moderngl, "Limits", Limits_slots);
+	Limits_class_max_samples = slot_offset(Limits_class, "max_samples", Limits_slots);
+	Limits_class_max_integer_samples = slot_offset(Limits_class, "max_integer_samples", Limits_slots);
+	assert_slots_len(Limits_class, Limits_slots);
+	protect_all_slots(Limits_class);
+	remove_init(Limits_class);
 
 	initialized = true;
 }

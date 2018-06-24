@@ -12,6 +12,7 @@ sources = [
     'moderngl/mgl/texture.cpp',
     'moderngl/mgl/vertex_array.cpp',
     'moderngl/mgl/context.cpp',
+    'moderngl/mgl/limits.cpp',
     'moderngl/mgl/mgl.cpp',
     'moderngl/mgl/gl_context.cpp',
     'moderngl/mgl/gl_methods.cpp',

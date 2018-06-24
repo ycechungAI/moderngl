@@ -56,6 +56,15 @@ void protect_slot(PyTypeObject * type, const char * name) {
 	}
 }
 
+void protect_all_slots(PyTypeObject * type) {
+	if (!type || PyErr_Occurred()) {
+		return;
+	}
+	for (int i = 0; type->tp_members[i].name; ++i) {
+		type->tp_members[i].flags |= READONLY;
+	}
+}
+
 void remove_init(PyTypeObject * type) {
 	if (!type || PyErr_Occurred()) {
 		return;
