@@ -182,6 +182,7 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * args) { TRACE_V
 	}
 
 	SLOT(texture->wrapper, PyObject, Texture_class_level) = PyLong_FromLong(0);
+	SLOT(texture->wrapper, PyObject, Texture_class_layer) = PyLong_FromLong(-1);
 	SLOT(texture->wrapper, PyObject, Texture_class_size) = dims == 3 ? int_tuple(width, height, depth) : int_tuple(width, height);
 	return NEW_REF(texture->wrapper);
 }
@@ -214,7 +215,34 @@ PyObject * MGLTexture_meth_level(MGLTexture * self, PyObject * args) { TRACE_VAR
 	PyObject * wrapper = new_object(PyObject, Texture_class);
 	SLOT(wrapper, MGLTexture, Texture_class_mglo) = NEW_REF(self);
 	SLOT(wrapper, PyObject, Texture_class_level) = PyLong_FromLong(level);
+	SLOT(wrapper, PyObject, Texture_class_layer) = NEW_REF(SLOT(self->wrapper, PyObject, Texture_class_layer));
 	SLOT(wrapper, PyObject, Texture_class_size) = size;
+	return wrapper;
+}
+
+PyObject * MGLTexture_meth_layer(MGLTexture * self, PyObject * args) { TRACE_VARAGS
+	int layer;
+
+	int args_ok = PyArg_ParseTuple(
+		args,
+		"I",
+		&layer
+	);
+
+	if (!args_ok) {
+		return 0;
+	}
+
+	if (self->texture_target != GL_TEXTURE_3D || layer > self->depth) {
+		PyErr_Format(module_error, "invalid layer");
+		return 0;
+	}
+
+	PyObject * wrapper = new_object(PyObject, Texture_class);
+	SLOT(wrapper, MGLTexture, Texture_class_mglo) = NEW_REF(self);
+	SLOT(wrapper, PyObject, Texture_class_level) = NEW_REF(SLOT(self->wrapper, PyObject, Texture_class_level));
+	SLOT(wrapper, PyObject, Texture_class_layer) = PyLong_FromLong(layer);
+	SLOT(wrapper, PyObject, Texture_class_size) = int_tuple(self->width, self->height);
 	return wrapper;
 }
 
@@ -328,13 +356,15 @@ PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * args) { TRACE_VAR
 
 PyObject * MGLTexture_meth_read(MGLTexture * self, PyObject * args) {
 	int level;
+	int layer;
 	int alignment;
 	int np;
 
 	int args_ok = PyArg_ParseTuple(
 		args,
-		"IIp",
+		"IIIp",
 		&level,
+		&layer,
 		&alignment,
 		&np
 	);
@@ -350,6 +380,11 @@ PyObject * MGLTexture_meth_read(MGLTexture * self, PyObject * args) {
 
 	if (level > self->levels) {
 		PyErr_Format(module_error, "invalid level");
+		return 0;
+	}
+
+	if (layer != -1) {
+		PyErr_Format(module_error, "cannot read layer");
 		return 0;
 	}
 
@@ -382,26 +417,6 @@ PyObject * MGLTexture_meth_read(MGLTexture * self, PyObject * args) {
 
 	gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
 	gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-
-	// To determine the required size of pixels, use glGetTexLevelParameter to determine
-	// the dimensions of the internal texture image, then scale the required number of pixels
-	// by the storage required for each pixel, based on format and type. Be sure to take the
-	// pixel storage parameters into account, especially GL_PACK_ALIGNMENT.
-
-	// int pack = 0;
-	// gl.GetIntegerv(GL_PACK_ALIGNMENT, &pack);
-	// printf("GL_PACK_ALIGNMENT: %d\n", pack);
-
-	// glGetTexLevelParameter with argument GL_TEXTURE_WIDTH
-	// glGetTexLevelParameter with argument GL_TEXTURE_HEIGHT
-	// glGetTexLevelParameter with argument GL_TEXTURE_INTERNAL_FORMAT
-
-	// int level_width = 0;
-	// int level_height = 0;
-	// gl.GetTexLevelParameteriv(self->texture_target, 0, GL_TEXTURE_WIDTH, &level_width);
-	// gl.GetTexLevelParameteriv(self->texture_target, 0, GL_TEXTURE_HEIGHT, &level_height);
-	// printf("level_width: %d\n", level_width);
-	// printf("level_height: %d\n", level_height);
 
 	if (np) {
 		PyObject * array = PyByteArray_FromStringAndSize(0, expected_size);
@@ -549,6 +564,7 @@ int MGLTexture_set_filter(MGLTexture * self, PyObject * value) { TRACE_SETTER
 PyTypeObject * MGLTexture_define(int version_code) {
 	PyMethodDef MGLTexture_methods[] = {
 		{"level", (PyCFunction)MGLTexture_meth_level, METH_VARARGS, 0},
+		{"layer", (PyCFunction)MGLTexture_meth_layer, METH_VARARGS, 0},
 		{"write", (PyCFunction)MGLTexture_meth_write, METH_VARARGS, 0},
 		{"read", (PyCFunction)MGLTexture_meth_read, METH_VARARGS, 0},
 		{"use", (PyCFunction)MGLTexture_meth_use, METH_VARARGS, 0},

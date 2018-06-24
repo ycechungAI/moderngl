@@ -77,6 +77,7 @@ int Renderbuffer_class_extra;
 PyTypeObject * Texture_class;
 int Texture_class_mglo;
 int Texture_class_level;
+int Texture_class_layer;
 int Texture_class_size;
 int Texture_class_extra;
 
@@ -295,6 +296,7 @@ void initialize_module() {
 	Texture_class = detect_class(moderngl, "Texture", Texture_slots);
 	Texture_class_mglo = slot_offset(Texture_class, "_Texture__mglo", Texture_slots);
 	Texture_class_level = slot_offset(Texture_class, "_Texture__level", Texture_slots);
+	Texture_class_layer = slot_offset(Texture_class, "_Texture__layer", Texture_slots);
 	Texture_class_size = slot_offset(Texture_class, "size", Texture_slots);
 	Texture_class_extra = slot_offset(Texture_class, "extra", Texture_slots);
 	assert_slots_len(Texture_class, Texture_slots);

@@ -100,6 +100,7 @@ extern int Renderbuffer_class_extra;
 extern PyTypeObject * Texture_class;
 extern int Texture_class_mglo;
 extern int Texture_class_level;
+extern int Texture_class_layer;
 extern int Texture_class_size;
 extern int Texture_class_extra;
 
