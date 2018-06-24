@@ -121,6 +121,7 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * args) { TRACE_V
 	texture->levels = levels;
 	texture->samples = samples;
 	texture->data_type = data_type;
+	texture->texture_target = texture_target;
 
 	const GLMethods & gl = self->gl;
 	gl.GenTextures(1, (GLuint *)&texture->texture_obj);
@@ -253,21 +254,20 @@ PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * args) { TRACE_VAR
 	expected_size = (expected_size + alignment - 1) / alignment * alignment;
 	expected_size = expected_size * height;
 
-	int texture_target = self->samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 	int pixel_type = self->data_type->gl_type;
 	int format = self->data_type->base_format[self->components];
 
 	const GLMethods & gl = self->context->gl;
 
 	gl.ActiveTexture(GL_TEXTURE0 + self->context->default_texture_unit);
-	gl.BindTexture(texture_target, self->texture_obj);
+	gl.BindTexture(self->texture_target, self->texture_obj);
 	gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
 	gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
 
 	if (data->ob_type == Buffer_class) {
 		MGLBuffer * buffer = SLOT(data, MGLBuffer, Buffer_class_mglo);
 		gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer->buffer_obj);
-		gl.TexSubImage2D(texture_target, level, x, y, width, height, format, pixel_type, 0);
+		gl.TexSubImage2D(self->texture_target, level, x, y, width, height, format, pixel_type, 0);
 		gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 	} else {
 		Py_buffer view = {};
@@ -280,7 +280,7 @@ PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * args) { TRACE_VAR
 			buf = malloc(expected_size);
 			PyBuffer_ToContiguous(buf, &view, view.len, 'C');
 		}
-		gl.TexSubImage2D(texture_target, level, x, y, width, height, format, pixel_type, buf);
+		gl.TexSubImage2D(self->texture_target, level, x, y, width, height, format, pixel_type, buf);
 		if (!contiguos) {
 			free(buf);
 		}
@@ -333,14 +333,13 @@ PyObject * MGLTexture_meth_read(MGLTexture * self, PyObject * args) {
 
 	const int base_formats[] = {0, GL_RED, GL_RG, GL_RGB, GL_RGBA};
 
-	int texture_target = self->samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 	int pixel_type = self->data_type->gl_type;
 	int base_format = base_formats[self->components];
 
 	const GLMethods & gl = self->context->gl;
 
 	gl.ActiveTexture(GL_TEXTURE0 + self->context->default_texture_unit);
-	gl.BindTexture(texture_target, self->texture_obj);
+	gl.BindTexture(self->texture_target, self->texture_obj);
 
 	gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
 	gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
@@ -360,21 +359,21 @@ PyObject * MGLTexture_meth_read(MGLTexture * self, PyObject * args) {
 
 	// int level_width = 0;
 	// int level_height = 0;
-	// gl.GetTexLevelParameteriv(texture_target, 0, GL_TEXTURE_WIDTH, &level_width);
-	// gl.GetTexLevelParameteriv(texture_target, 0, GL_TEXTURE_HEIGHT, &level_height);
+	// gl.GetTexLevelParameteriv(self->texture_target, 0, GL_TEXTURE_WIDTH, &level_width);
+	// gl.GetTexLevelParameteriv(self->texture_target, 0, GL_TEXTURE_HEIGHT, &level_height);
 	// printf("level_width: %d\n", level_width);
 	// printf("level_height: %d\n", level_height);
 
 	if (np) {
 		PyObject * array = PyByteArray_FromStringAndSize(0, expected_size);
-		gl.GetTexImage(texture_target, level, base_format, pixel_type, PyByteArray_AS_STRING(array));
+		gl.GetTexImage(self->texture_target, level, base_format, pixel_type, PyByteArray_AS_STRING(array));
 		PyObject * res = PyObject_CallFunctionObjArgs(numpy_frombuffer, array, self->data_type->numpy_dtype, 0);
 		Py_DECREF(array);
 		return res;
 	}
 
 	PyObject * res = PyBytes_FromStringAndSize(0, expected_size);
-	gl.GetTexImage(texture_target, level, base_format, pixel_type, PyBytes_AS_STRING(res));
+	gl.GetTexImage(self->texture_target, level, base_format, pixel_type, PyBytes_AS_STRING(res));
 	return res;
 }
 
@@ -392,9 +391,8 @@ PyObject * MGLTexture_meth_use(MGLTexture * self, PyObject * args) { TRACE_VARAG
 	}
 
 	const GLMethods & gl = self->context->gl;
-	int texture_target = self->samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 	gl.ActiveTexture(GL_TEXTURE0 + location);
-	gl.BindTexture(texture_target, self->texture_obj);
+	gl.BindTexture(self->texture_target, self->texture_obj);
 	Py_RETURN_NONE;
 }
 
@@ -434,7 +432,6 @@ PyObject * MGLTexture_meth_build_mipmaps(MGLTexture * self, PyObject * args) { T
 
 int MGLTexture_set_swizzle(MGLTexture * self, PyObject * value) { TRACE_SETTER
 	const GLMethods & gl = self->context->gl;
-	int texture_target = self->samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 	int tex_swizzle[4] = {GL_RED, GL_GREEN, GL_BLUE, GL_ALPHA};
 
 	const char * swizzle = PyUnicode_AsUTF8(value);
@@ -465,13 +462,12 @@ int MGLTexture_set_swizzle(MGLTexture * self, PyObject * value) { TRACE_SETTER
 		return -1;
 	}
 
-	gl.TexParameteriv(texture_target, GL_TEXTURE_SWIZZLE_RGBA, tex_swizzle);
+	gl.TexParameteriv(self->texture_target, GL_TEXTURE_SWIZZLE_RGBA, tex_swizzle);
 	return 0;
 }
 
 int MGLTexture_set_filter(MGLTexture * self, PyObject * value) { TRACE_SETTER
 	const GLMethods & gl = self->context->gl;
-	int texture_target = self->samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 	gl.ActiveTexture(GL_TEXTURE0 + self->context->default_texture_unit);
 	gl.BindTexture(GL_TEXTURE_2D, self->texture_obj);
 
@@ -505,8 +501,8 @@ int MGLTexture_set_filter(MGLTexture * self, PyObject * value) { TRACE_SETTER
 
 	// TODO: check
 
-	gl.TexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, min_filter);
-	gl.TexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, mag_filter);
+	gl.TexParameteri(self->texture_target, GL_TEXTURE_MIN_FILTER, min_filter);
+	gl.TexParameteri(self->texture_target, GL_TEXTURE_MAG_FILTER, mag_filter);
 
 	return 0;
 }

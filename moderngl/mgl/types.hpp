@@ -63,6 +63,7 @@ struct MGLTexture {
 	PyObject * wrapper;
 	MGLDataType * data_type;
 	int texture_obj;
+	int texture_target;
 	int width;
 	int height;
 	int components;
