@@ -58,12 +58,14 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * args) { TRACE_V
 		return 0;
 	}
 
-	if (PySequence_Fast_GET_SIZE(size) != 2) {
+	int dims = PySequence_Fast_GET_SIZE(size);
+	if (dims != 2 && (dims != 3 || samples)) {
 		return 0;
 	}
 
 	int width = PyLong_AsLong(PySequence_Fast_GET_ITEM(size, 0));
 	int height = PyLong_AsLong(PySequence_Fast_GET_ITEM(size, 1));
+	int depth = dims == 3 ? PyLong_AsLong(PySequence_Fast_GET_ITEM(size, 2)) : 1;
 
 	if (components < 1 || components > 4) {
 		PyErr_Format(module_error, "the components must be 1, 2, 3 or 4");
@@ -95,6 +97,7 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * args) { TRACE_V
 	int max_levels = -1;
 	{
 		int size = width > height ? width : height;
+		size = size > depth ? size : depth;
 		while (size) {
 			max_levels += 1;
 			size >>= 1;
@@ -107,9 +110,9 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * args) { TRACE_V
 
 	int expected_size = width * components * data_type->size;
 	expected_size = (expected_size + alignment - 1) / alignment * alignment;
-	expected_size = expected_size * height;
+	expected_size = expected_size * height * depth;
 
-	int texture_target = samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+	int texture_target = dims == 3 ? GL_TEXTURE_3D : (samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D);
 	int pixel_type = data_type->gl_type;
 	int base_format = data_type->base_format[components];
 	int internal_format = data_type->internal_format[components];
@@ -117,6 +120,7 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * args) { TRACE_V
 	MGLTexture * texture = MGLContext_new_object(self, Texture);
 	texture->width = width;
 	texture->height = height;
+	texture->depth = depth;
 	texture->components = components;
 	texture->levels = levels;
 	texture->samples = samples;
@@ -149,11 +153,20 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * args) { TRACE_V
 			buf = malloc(expected_size);
 			PyBuffer_ToContiguous(buf, &view, view.len, 'C');
 		}
-		if (gl.TexStorage2D) {
-			gl.TexStorage2D(texture_target, levels, internal_format, width, height);
-			gl.TexSubImage2D(texture_target, 0, 0, 0, width, height, base_format, pixel_type, buf);
+		if (dims == 3) {
+			if (gl.TexStorage3D) {
+				gl.TexStorage3D(texture_target, levels, internal_format, width, height, depth);
+				gl.TexSubImage3D(texture_target, 0, 0, 0, 0, width, height, depth, base_format, pixel_type, buf);
+			} else {
+				gl.TexImage3D(texture_target, 0, internal_format, width, height, depth, 0, base_format, pixel_type, buf);
+			}
 		} else {
-			gl.TexImage2D(texture_target, 0, internal_format, width, height, 0, base_format, pixel_type, buf);
+			if (gl.TexStorage2D) {
+				gl.TexStorage2D(texture_target, levels, internal_format, width, height);
+				gl.TexSubImage2D(texture_target, 0, 0, 0, width, height, base_format, pixel_type, buf);
+			} else {
+				gl.TexImage2D(texture_target, 0, internal_format, width, height, 0, base_format, pixel_type, buf);
+			}
 		}
 		if (!contiguos) {
 			free(buf);
@@ -161,11 +174,15 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * args) { TRACE_V
 	} else if (samples) {
 		gl.TexImage2DMultisample(texture_target, samples, internal_format, width, height, true);
 	} else {
-		gl.TexImage2D(texture_target, 0, internal_format, width, height, 0, base_format, pixel_type, 0);
+		if (dims == 3) {
+			gl.TexImage3D(texture_target, 0, internal_format, width, height, depth, 0, base_format, pixel_type, 0);
+		} else {
+			gl.TexImage2D(texture_target, 0, internal_format, width, height, 0, base_format, pixel_type, 0);
+		}
 	}
 
 	SLOT(texture->wrapper, PyObject, Texture_class_level) = PyLong_FromLong(0);
-	SLOT(texture->wrapper, PyObject, Texture_class_size) = int_tuple(width, height);
+	SLOT(texture->wrapper, PyObject, Texture_class_size) = dims == 3 ? int_tuple(width, height, depth) : int_tuple(width, height);
 	return NEW_REF(texture->wrapper);
 }
 
@@ -237,22 +254,34 @@ PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * args) { TRACE_VAR
 
 	int max_width = self->width / (1 << level);
 	int max_height = self->height / (1 << level);
+	int max_depth = self->depth / (1 << level);
 
 	max_width = max_width > 1 ? max_width : 1;
 	max_height = max_height > 1 ? max_height : 1;
+	max_depth = max_depth > 1 ? max_depth : 1;
 
 	int x = 0;
 	int y = 0;
+	int z = 0;
 	int width = max_width;
 	int height = max_height;
+	int depth = max_depth;
 
-	if (!unpack_viewport(viewport, x, y, width, height)) {
-		return 0;
+	bool is3d = self->texture_target == GL_TEXTURE_3D;
+
+	if (is3d) {
+		if (!unpack_viewport(viewport, x, y, z, width, height, depth)) {
+			return 0;
+		}
+	} else {
+		if (!unpack_viewport(viewport, x, y, width, height)) {
+			return 0;
+		}
 	}
 
 	int expected_size = width * self->components * self->data_type->size;
 	expected_size = (expected_size + alignment - 1) / alignment * alignment;
-	expected_size = expected_size * height;
+	expected_size = expected_size * height * depth;
 
 	int pixel_type = self->data_type->gl_type;
 	int format = self->data_type->base_format[self->components];
@@ -267,7 +296,11 @@ PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * args) { TRACE_VAR
 	if (data->ob_type == Buffer_class) {
 		MGLBuffer * buffer = SLOT(data, MGLBuffer, Buffer_class_mglo);
 		gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer->buffer_obj);
-		gl.TexSubImage2D(self->texture_target, level, x, y, width, height, format, pixel_type, 0);
+		if (is3d) {
+			gl.TexSubImage3D(self->texture_target, level, x, y, z, width, height, depth, format, pixel_type, 0);
+		} else {
+			gl.TexSubImage2D(self->texture_target, level, x, y, width, height, format, pixel_type, 0);
+		}
 		gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 	} else {
 		Py_buffer view = {};
@@ -280,7 +313,11 @@ PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * args) { TRACE_VAR
 			buf = malloc(expected_size);
 			PyBuffer_ToContiguous(buf, &view, view.len, 'C');
 		}
-		gl.TexSubImage2D(self->texture_target, level, x, y, width, height, format, pixel_type, buf);
+		if (is3d) {
+			gl.TexSubImage3D(self->texture_target, level, x, y, z, width, height, depth, format, pixel_type, buf);
+		} else {
+			gl.TexSubImage2D(self->texture_target, level, x, y, width, height, format, pixel_type, buf);
+		}
 		if (!contiguos) {
 			free(buf);
 		}
@@ -323,13 +360,15 @@ PyObject * MGLTexture_meth_read(MGLTexture * self, PyObject * args) {
 
 	int width = self->width / (1 << level);
 	int height = self->height / (1 << level);
+	int depth = self->depth / (1 << level);
 
 	width = width > 1 ? width : 1;
 	height = height > 1 ? height : 1;
+	depth = depth > 1 ? depth : 1;
 
 	int expected_size = width * self->components * self->data_type->size;
 	expected_size = (expected_size + alignment - 1) / alignment * alignment;
-	expected_size = expected_size * height;
+	expected_size = expected_size * height * depth;
 
 	const int base_formats[] = {0, GL_RED, GL_RG, GL_RGB, GL_RGBA};
 

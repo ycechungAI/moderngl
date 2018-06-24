@@ -131,6 +131,43 @@ bool unpack_viewport(PyObject * viewport, int & x, int & y, int & width, int & h
 	return true;
 }
 
+bool unpack_viewport(PyObject * viewport, int & x, int & y, int & z, int & width, int & height, int & depth) {
+	if (viewport == Py_None) {
+		return true;
+	}
+
+	viewport = PySequence_Fast(viewport, "viewport is not iterable");
+	if (!viewport) {
+		return false;
+	}
+
+	int size = (int)PySequence_Fast_GET_SIZE(viewport);
+
+	if (size == 6) {
+		x = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 0));
+		y = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 1));
+		z = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 2));
+		width = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 3));
+		height = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 4));
+		depth = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 5));
+	} else if (size == 3) {
+		width = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 0));
+		height = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 1));
+		depth = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 2));
+	} else {
+		PyErr_Format(module_error, "viewport size must be 3 or 6");
+		Py_DECREF(viewport);
+		return false;
+	}
+
+	Py_DECREF(viewport);
+	if (PyErr_Occurred()) {
+		return false;
+	}
+
+	return true;
+}
+
 Py_ssize_t unpack_size(PyObject * size) {
 	if (PyLong_Check(size)) {
 		return PyLong_AsSsize_t(size);

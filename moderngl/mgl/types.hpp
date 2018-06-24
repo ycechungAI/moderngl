@@ -66,6 +66,7 @@ struct MGLTexture {
 	int texture_target;
 	int width;
 	int height;
+	int depth;
 	int components;
 	int levels;
 	int samples;

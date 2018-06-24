@@ -18,6 +18,7 @@ int prepare_buffer(PyObject * data, Py_buffer * view);
 
 void clean_glsl_name(char * name, int & name_len);
 bool unpack_viewport(PyObject * viewport, int & x, int & y, int & width, int & height);
+bool unpack_viewport(PyObject * viewport, int & x, int & y, int & z, int & width, int & height, int & depth);
 Py_ssize_t unpack_size(PyObject * value);
 void enable_only(const GLMethods & gl, int flags);
 
