@@ -138,6 +138,11 @@ PyObject * MGLBuffer_meth_write(MGLBuffer * self, PyObject * args) { TRACE_VARAG
 		return 0;
 	}
 
+	if (RANGE_ERROR(offset, view.len, self->size)) {
+		PyErr_Format(module_error, "out of range offset = %d or size = %d", offset, view.len);
+		return 0;
+	}
+
 	bool contiguos = PyBuffer_IsContiguous(&view, 'C');
 	if (MGLBuffer_core_write(self, offset, &view, contiguos) < 0) {
 		PyBuffer_Release(&view);
