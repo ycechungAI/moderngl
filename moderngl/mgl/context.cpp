@@ -118,6 +118,12 @@ PyObject * MGLContext_meth_detect_framebuffer(MGLContext * self, PyObject * args
 
 	// TODO: detect attachments
 
+	if (!framebuffer_obj) {
+		framebuffer->attachments = 1;  // TODO: fix
+		framebuffer->attachment_type = new char[1];
+		framebuffer->attachment_type[0] = 'f';
+	}
+
 	PyDict_SetItem(framebuffers, key, NEW_REF(framebuffer->wrapper));
 	return NEW_REF(framebuffer->wrapper);
 }

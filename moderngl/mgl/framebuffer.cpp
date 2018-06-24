@@ -38,8 +38,7 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * args) { TRA
 	int attachments_len = (int)PySequence_Fast_GET_SIZE(attachments);
 	PyObject ** attachments_array = PySequence_Fast_ITEMS(attachments);
 
-	framebuffer->attachment_type = new char[attachments_len];
-	framebuffer->attachments = attachments_len;
+	char * attachment_type = new char[attachments_len];
 
 	for (int i = 0; i < attachments_len; ++i) {
 		PyObject * attachment = attachments_array[i];
@@ -56,7 +55,7 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * args) { TRA
 			if (texture->components > 0) {
 				int idx = i - depth_attachments;
 				gl.FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + idx, target, texture->texture_obj, 0);
-				framebuffer->attachment_type[idx] = texture->data_type->shape;
+				attachment_type[idx] = texture->data_type->shape;
 			} else {
 				gl.FramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target, texture->texture_obj, 0);
 				depth_attachments += 1;
@@ -69,7 +68,7 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * args) { TRA
 			if (renderbuffer->components > 0) {
 				int idx = i - depth_attachments;
 				gl.FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + idx, GL_RENDERBUFFER, renderbuffer->renderbuffer_obj);
-				framebuffer->attachment_type[idx] = renderbuffer->data_type->shape;
+				attachment_type[idx] = renderbuffer->data_type->shape;
 			} else {
 				gl.FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuffer->renderbuffer_obj);
 				depth_attachments += 1;
@@ -94,6 +93,9 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * args) { TRA
 		PyErr_Format(module_error, "more then one depth attachment");
 		return 0;
 	}
+
+	framebuffer->attachment_type = attachment_type;
+	framebuffer->attachments = attachments_len - depth_attachments;
 
 	int status = gl.CheckFramebufferStatus(GL_FRAMEBUFFER);
 	PyObject * bound_framebuffer = SLOT(self->wrapper, PyObject, Context_class_fbo);
