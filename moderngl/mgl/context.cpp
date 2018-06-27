@@ -91,7 +91,7 @@ PyObject * meth_create_context(PyObject * self, PyObject * args) { TRACE_VARAGS
 	SLOT(context->wrapper, PyObject, Context_class_framebuffers) = framebuffers;
 	SLOT(context->wrapper, PyObject, Context_class_screen) = PyObject_CallMethodObjArgs(context->wrapper, detect_framebuffer_str, zero_long, 0);
 	SLOT(context->wrapper, PyObject, Context_class_fbo) = PyObject_CallMethodObjArgs(context->wrapper, detect_framebuffer_str, Py_None, 0);
-	SLOT(context->wrapper, PyObject, Context_class_limits) = get_limits(gl);
+	SLOT(context->wrapper, PyObject, Context_class_limits) = get_limits(gl, version_code);
 	return NEW_REF(context->wrapper);
 }
 
