@@ -8,11 +8,20 @@ extern int Context_class_mglo;
 
 void MGLContext_init_wrapper();
 
+/* Every objects derived from a Context must have the following HEAD */
+
 struct MGLObject {
 	PyObject_HEAD
 	PyObject * wrapper;
 	MGLContext * context;
 };
+
+/* Every internal object has its own wrapper class defined in the python layer.
+ * An internal object holds a ref to the instance of its wrapper class.
+ * The wrapper class holds a ref to the internal object.
+ * Such a pair can be created using MGLContext_new_object.
+ * The circular reference must be resolved when releasing objects.
+ */
 
 inline MGLObject * _MGLContext_new_object(MGLContext * self, PyTypeObject * type, PyTypeObject * cls, int slot) {
 	MGLObject * res = new_object(MGLObject, type);

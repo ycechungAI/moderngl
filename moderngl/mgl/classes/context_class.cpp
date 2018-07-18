@@ -5,9 +5,13 @@
 #include "../context.hpp"
 #include "../buffer.hpp"
 
+/* Slot offsets of the Context class */
+
 PyTypeObject * MGLContext_class;
 PyTypeObject * Context_class;
 int Context_class_mglo;
+
+/* Detect Context wrapper class */
 
 void MGLContext_init_wrapper() {
 	int Context_slots = 0;

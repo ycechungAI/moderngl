@@ -15,11 +15,19 @@
 #define DEF4(type, meth) { "" # meth, (PyCFunction)type ## _meth_ ## meth ## _slow, METH_VARARGS, 0}
 #endif
 
+/* Backward compatibility */
+
 #define BC2(meth) PyObject * meth ## _slow(PyObject * self, PyObject * args) { return meth(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size); }
 #define BC4(type, meth) PyObject * type ## _meth_ ## meth ## _slow(PyObject * self, PyObject * args) { return type ## _meth_ ## meth(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size); }
 
+/* Shortcuts */
+
 #define SLOT(obj, type, offset) (*(type **)((char *)obj + offset))
 #define NEW_REF(obj) (Py_INCREF(obj), obj)
+
+/* Classes defined in python must be instantiated using the following method.
+ * ...
+ */
 
 inline PyObject * _new_object(PyTypeObject * type) {
     PyObject * res = 0;

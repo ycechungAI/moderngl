@@ -3,6 +3,9 @@
 #include "internal/modules.hpp"
 #include "classes/all.hpp"
 
+/* moderngl.core.initialize()
+ * Initializes internal objects that cannot be initialized import time.
+ */
 PyObject * meth_initialize(PyObject * self) {
     static bool initialized = false;
     if (initialized) {
@@ -27,13 +30,19 @@ PyObject * meth_initialize(PyObject * self) {
     Py_RETURN_NONE;
 }
 
+/* Backward compatible methods */
+
 BC2(meth_create_context);
+
+/* Module methods */
 
 PyMethodDef mgl_methods[] = {
     DEF2(create_context),
     DEF1(initialize),
     {0},
 };
+
+/* Module definition */
 
 PyModuleDef mgl_def = {PyModuleDef_HEAD_INIT, mgl_name, 0, -1, mgl_methods, 0, 0, 0, 0};
 

@@ -1,8 +1,17 @@
 #include "buffer.hpp"
 
+/* MGLContext.buffer(...)
+ * Returns a Buffer object.
+ */
 PyObject * MGLContext_meth_buffer(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
     Py_RETURN_NONE;
 }
+
+/* Backward compatible methods */
+
+// BC4(MGLBuffer, write);
+
+/* Definition of MGLBuffer internal type */
 
 void MGLBuffer_define(MGLContext * ctx) {
 	PyType_Slot MGLBuffer_slots[] = {

@@ -4,8 +4,12 @@
 
 #include "../buffer.hpp"
 
+/* Slot offsets of the Buffer class */
+
 PyTypeObject * Buffer_class;
 int Buffer_class_mglo;
+
+/* Detect Buffer wrapper class */
 
 void MGLBuffer_init_wrapper() {
 	int Buffer_slots = 0;

@@ -2,6 +2,9 @@
 
 #include "classes/all.hpp"
 
+/* MGLContext.create_context(...)
+ * Returns a Context object.
+ */
 PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
     Py_INCREF(MGLContext_class);
     MGLContext * context = PyObject_New(MGLContext, MGLContext_class);
@@ -13,7 +16,11 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
     return NEW_REF(context->wrapper);
 }
 
+/* Backward compatible methods */
+
 BC4(MGLContext, buffer);
+
+/* Definition of MGLContext internal type */
 
 void MGLContext_define() {
 	PyMethodDef MGLContext_methods[] = {
