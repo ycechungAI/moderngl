@@ -11,7 +11,7 @@ int Context_class_mglo;
 
 void MGLContext_define() {
 	PyMethodDef MGLContext_methods[] = {
-		METHOD(MGLContext, buffer, true),
+		METHOD_V(MGLContext, buffer),
 		{0},
 	};
 
