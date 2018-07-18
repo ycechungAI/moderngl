@@ -11,9 +11,9 @@ sources = [
 ]
 
 libraries = [
-    'opengl32',
-    'gdi32',
-    'user32',
+    # 'opengl32',
+    # 'gdi32',
+    # 'user32',
 ]
 
 mgl = Extension(
