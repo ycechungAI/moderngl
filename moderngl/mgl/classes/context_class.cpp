@@ -9,6 +9,8 @@ PyTypeObject * MGLContext_class;
 PyTypeObject * Context_class;
 int Context_class_mglo;
 
+BACKWARD_COMPATIBLE(MGLContext_meth_buffer);
+
 void MGLContext_define() {
 	PyMethodDef MGLContext_methods[] = {
 		METHOD_V(MGLContext, buffer),
