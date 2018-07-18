@@ -5,5 +5,4 @@
 extern PyTypeObject * Buffer_class;
 extern int Buffer_class_mglo;
 
-void MGLBuffer_define(MGLContext * ctx);
 void MGLBuffer_init_wrapper();

@@ -6,7 +6,6 @@ extern PyTypeObject * MGLContext_class;
 extern PyTypeObject * Context_class;
 extern int Context_class_mglo;
 
-void MGLContext_define();
 void MGLContext_init_wrapper();
 
 struct MGLObject {

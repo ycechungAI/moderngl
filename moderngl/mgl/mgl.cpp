@@ -27,11 +27,11 @@ PyObject * meth_initialize(PyObject * self) {
     Py_RETURN_NONE;
 }
 
-BACKWARD_COMPATIBLE(meth_create_context);
+BC2(meth_create_context);
 
 PyMethodDef mgl_methods[] = {
-    MODULE_METHOD_V(create_context),
-    MODULE_METHOD_N(initialize),
+    DEF2(create_context),
+    DEF1(initialize),
     {0},
 };
 
