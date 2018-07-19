@@ -1,6 +1,9 @@
 #pragma once
 #include "python.hpp"
 
+/* Duplicate an object in memory.
+ * Providing arrays for PyType_FromSpec.
+ */
 template <typename T>
 T * dup(const T & t) {
     T * res = (T *)malloc(sizeof(t));

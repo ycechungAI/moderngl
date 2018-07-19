@@ -1,5 +1,7 @@
 #include "tools.hpp"
 
+/* Detects a class defined in python.
+ */
 PyTypeObject * detect_class(PyObject * module, const char * name, int & slots_len) {
     if (!module || PyErr_Occurred()) {
         return 0;
@@ -19,6 +21,8 @@ PyTypeObject * detect_class(PyObject * module, const char * name, int & slots_le
     return (PyTypeObject *)cls;
 }
 
+/* Returns the offset of a given slot.
+ */
 int slot_offset(PyTypeObject * type, const char * name, int & counter) {
     if (!type || PyErr_Occurred()) {
         return 0;
@@ -34,6 +38,8 @@ int slot_offset(PyTypeObject * type, const char * name, int & counter) {
     return 0;
 }
 
+/* Ensures that all the slots are processed.
+ */
 void assert_slots_len(PyTypeObject * type, int slots_len) {
     if (!slots_len || PyErr_Occurred()) {
         return;
