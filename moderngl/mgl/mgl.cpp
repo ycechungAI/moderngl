@@ -1,5 +1,4 @@
 #include "mgl.hpp"
-
 #include "internal/modules.hpp"
 #include "classes/all.hpp"
 
@@ -18,10 +17,18 @@ PyObject * meth_initialize(PyObject * self) {
         return 0;
     }
 
+    /* Define MGLContext only.
+     * The rest of the internal types will be defined by MGLContext.
+     */
+
     MGLContext_define();
+
+    /* Detect wrapper classes for internal types */
 
     MGLContext_init_wrapper();
     MGLBuffer_init_wrapper();
+
+    /* Errors are not recoverable at this point */
 
     if (PyErr_Occurred()) {
         return 0;
