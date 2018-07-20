@@ -3,7 +3,8 @@
 /* MGLContext.buffer(...)
  * Returns a Buffer object.
  */
-PyObject * MGLContext_meth_buffer(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
+PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
+	ENSURE_CONTEXT(self, 0);
     Py_RETURN_NONE;
 }
 

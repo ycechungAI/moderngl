@@ -28,7 +28,7 @@
  */
 
 #define BC2(meth) PyObject * meth ## _slow(PyObject * self, PyObject * args) { return meth(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size); }
-#define BC4(type, meth) PyObject * type ## _meth_ ## meth ## _slow(PyObject * self, PyObject * args) { return type ## _meth_ ## meth(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size); }
+#define BC4(type, meth) PyObject * type ## _meth_ ## meth ## _slow(PyObject * self, PyObject * args) { return type ## _meth_ ## meth((type *)self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size); }
 
 /* Wrapper classes for internal objects are defined in python. They must have __slots__ defined.
  * A slot can be accessed in O(1) once detect_class(...) and slot_offset(...) is called.
