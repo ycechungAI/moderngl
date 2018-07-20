@@ -12,6 +12,7 @@ struct GLContext {
 	bool load(bool standalone);
 	void enter();
 	void exit();
+	bool active();
 	void destroy();
 };
 

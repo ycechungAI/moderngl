@@ -332,3 +332,7 @@ void GLContext::enter() {
 void GLContext::exit() {
 	wglMakeCurrent((HDC)this->old_display, (HGLRC)this->old_context);
 }
+
+bool GLContext::active() {
+	return this->context == wglGetCurrentContext();
+}

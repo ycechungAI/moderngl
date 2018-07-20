@@ -165,3 +165,7 @@ void GLContext::enter() {
 void GLContext::exit() {
 	glXMakeCurrent((Display *)this->old_display, (Window)this->old_window, (GLXContext)this->old_context);
 }
+
+bool GLContext::active() {
+	return this->context == glXGetCurrentContext();
+}
