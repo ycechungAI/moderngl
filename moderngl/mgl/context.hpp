@@ -1,7 +1,7 @@
 #pragma once
 #include "mgl.hpp"
-#include "internal/gl_context.hpp"
-#include "internal/gl_methods.hpp"
+#include "internal/opengl/gl_context.hpp"
+#include "internal/opengl/gl_methods.hpp"
 #include "internal/tools.hpp"
 
 struct MGLContext {

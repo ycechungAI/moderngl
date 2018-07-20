@@ -13,6 +13,15 @@ for known in PLATFORMS:
 if target not in PLATFORMS:
     target = 'linux'
 
+glctx = target if target != 'cygwin' else 'linux'
+
+libraries = {
+    'windows': ['gdi32', 'opengl32', 'user32'],
+    'linux': ['GL', 'dl', 'X11'],
+    'cygwin': ['GL', 'X11'],
+    'darwin': [],
+}
+
 sources = [
     'moderngl/mgl/mgl.cpp',
     'moderngl/mgl/buffer.cpp',
@@ -21,16 +30,9 @@ sources = [
     'moderngl/mgl/classes/context_class.cpp',
     'moderngl/mgl/internal/modules.cpp',
     'moderngl/mgl/internal/tools.cpp',
-    'moderngl/mgl/internal/gl_context.cpp',
-    'moderngl/mgl/internal/gl_methods.cpp',
+    'moderngl/mgl/internal/opengl/gl_methods.cpp',
+    'moderngl/mgl/internal/opengl/gl_context_%s.cpp' % glctx,
 ]
-
-libraries = {
-    'windows': ['gdi32', 'opengl32', 'user32'],
-    'linux': ['GL', 'dl', 'X11'],
-    'cygwin': ['GL', 'X11'],
-    'darwin': [],
-}
 
 mgl = Extension(
     name='moderngl.mgl',
