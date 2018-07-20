@@ -6,6 +6,7 @@ python:
   - "3.6"
 
 install:
+  - export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start
   - python setup.py develop
 
 script:
