@@ -14,6 +14,7 @@ typedef GLXContext (* GLXCREATECONTEXTATTRIBSARBPROC)(Display * display, GLXFBCo
 int SilentXErrorHandler(Display * d, XErrorEvent * e) {
     return 0;
 }
+
 bool GLContext::load(bool standalone) {
 	this->standalone = standalone;
 
@@ -152,29 +153,6 @@ bool GLContext::load(bool standalone) {
 	this->context = (void *)ctx;
 
 	return true;
-}
-
-void DestroyGLContext(const GLContext & context) {
-	if (!context.standalone) {
-		return;
-	}
-
-	if (context.display) {
-		glXMakeCurrent((Display *)context.display, 0, 0);
-
-		if (context.context) {
-			glXDestroyContext((Display *)context.display, (GLXContext)context.context);
-			// context.context = 0;
-		}
-
-		if (context.window) {
-			XDestroyWindow((Display *)context.display, (Window)context.window);
-			// context.window = 0;
-		}
-
-		XCloseDisplay((Display *)context.display);
-		// context.display = 0;
-	}
 }
 
 void GLContext::enter() {
