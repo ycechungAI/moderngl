@@ -1,10 +1,14 @@
 #pragma once
 #include "mgl.hpp"
+#include "internal/gl_context.hpp"
+#include "internal/gl_methods.hpp"
 #include "internal/tools.hpp"
 
 struct MGLContext {
     PyObject_HEAD
     PyObject * wrapper;
+	GLContext gl_context;
+	GLMethods gl;
 
     PyTypeObject * MGLBuffer_class;
 };

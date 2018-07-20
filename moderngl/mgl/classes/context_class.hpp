@@ -5,6 +5,8 @@
 extern PyTypeObject * MGLContext_class;
 extern PyTypeObject * Context_class;
 extern int Context_class_mglo;
+extern int Context_class_version_code;
+extern int Context_class_extra;
 
 void MGLContext_init_wrapper();
 
