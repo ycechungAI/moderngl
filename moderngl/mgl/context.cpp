@@ -32,6 +32,13 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
 	gl.GetIntegerv(GL_MINOR_VERSION, &minor);
 	int version_code = major * 100 + minor * 10;
 
+	if (version_code == 0) {
+		const char * ver = (const char *)gl.GetString(GL_VERSION);
+		if (ver && '0' <= ver[0] && ver[0] <= '9' && ver[1] == '.' && '0' <= ver[2] && ver[2] <= '9') {
+			version_code = (ver[0] - '0') * 100 + (ver[2] - '0') * 10;
+		}
+	}
+
     MGLBuffer_define(context);
 
     context->wrapper = new_object(PyObject, Context_class);
