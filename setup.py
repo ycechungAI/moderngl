@@ -30,6 +30,7 @@ sources = [
     'moderngl/mgl/classes/context_class.cpp',
     'moderngl/mgl/internal/modules.cpp',
     'moderngl/mgl/internal/tools.cpp',
+    'moderngl/mgl/internal/classes.cpp',
     'moderngl/mgl/internal/opengl/gl_methods.cpp',
     'moderngl/mgl/internal/opengl/gl_context_%s.cpp' % glctx,
 ]

@@ -1,5 +1,5 @@
 #include "context.hpp"
-
+#include "internal/classes.hpp"
 #include "classes/all.hpp"
 
 /* MGLContext.create_context(...)
@@ -53,10 +53,9 @@ void MGLContext_define() {
 	};
 
 	PyType_Slot MGLContext_slots[] = {
-		{Py_tp_methods, dup(MGLContext_methods)},
+		{Py_tp_methods, MGLContext_methods},
 		{0},
 	};
 
-	PyType_Spec MGLContext_spec = {mgl_name ".Context", sizeof(MGLContext), 0, Py_TPFLAGS_DEFAULT, MGLContext_slots};
-	MGLContext_class = (PyTypeObject *)PyType_FromSpec(&MGLContext_spec);
+	MGLContext_class = define_python_class(mgl_name ".Context", sizeof(MGLContext), MGLContext_slots);
 }

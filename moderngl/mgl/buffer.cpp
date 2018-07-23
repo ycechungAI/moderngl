@@ -1,4 +1,5 @@
 #include "buffer.hpp"
+#include "internal/classes.hpp"
 
 /* MGLContext.buffer(...)
  * Returns a Buffer object.
@@ -19,6 +20,5 @@ void MGLBuffer_define(MGLContext * ctx) {
 		{0},
 	};
 
-	PyType_Spec MGLBuffer_spec = {mgl_name ".Buffer", sizeof(MGLBuffer), 0, Py_TPFLAGS_DEFAULT, MGLBuffer_slots};
-	ctx->MGLBuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLBuffer_spec);
+	ctx->MGLBuffer_class = define_python_class(mgl_name ".Buffer", sizeof(MGLBuffer), MGLBuffer_slots);
 }
