@@ -1,4 +1,5 @@
 #include "context.hpp"
+#include "limits.hpp"
 #include "internal/classes.hpp"
 #include "classes/all.hpp"
 
@@ -44,6 +45,7 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
     context->wrapper = new_object(PyObject, Context_class);
     SLOT(context->wrapper, MGLContext, Context_class_mglo) = context;
     SLOT(context->wrapper, PyObject, Context_class_version_code) = PyLong_FromLong(version_code);
+    SLOT(context->wrapper, PyObject, Context_class_limits) = get_limits(gl, version_code);
     return NEW_REF(context->wrapper);
 }
 

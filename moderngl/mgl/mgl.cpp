@@ -27,6 +27,7 @@ PyObject * meth_initialize(PyObject * self) {
 
     MGLContext_init_wrapper();
     MGLBuffer_init_wrapper();
+    MGLLimits_init_wrapper();
 
     /* Errors are not recoverable at this point */
 

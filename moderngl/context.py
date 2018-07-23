@@ -2,14 +2,16 @@ import importlib
 from typing import Any
 
 from . import mgl
+from .limits import Limits
 
 
 class Context:
-    __slots__ = ['__mglo', 'version_code', 'extra']
+    __slots__ = ['__mglo', 'version_code', 'limits', 'extra']
 
     def __init__(self):
         self.__mglo = None  # type: Any
         self.version_code = None  # type: int
+        self.limits = None  # type: Limits
         self.extra = None  # type: Any
 
 
