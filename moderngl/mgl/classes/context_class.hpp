@@ -1,6 +1,7 @@
 #pragma once
 #include "../mgl.hpp"
-#include "../context.hpp"
+
+struct MGLContext;
 
 extern PyTypeObject * MGLContext_class;
 extern PyTypeObject * Context_class;

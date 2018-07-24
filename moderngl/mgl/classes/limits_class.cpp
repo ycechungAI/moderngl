@@ -1,8 +1,5 @@
 #include "buffer_class.hpp"
-#include "../internal/tools.hpp"
-#include "../internal/modules.hpp"
-
-#include "../limits.hpp"
+#include "tools.hpp"
 
 /* Slot offsets of the Limits class */
 
@@ -141,7 +138,6 @@ int Limits_class_max_texture_max_anisotropy;
 void MGLLimits_init_wrapper() {
     int Limits_slots = 0;
     Limits_class = detect_class(moderngl, "Limits", Limits_slots);
-
     Limits_class_point_size_range = slot_offset(Limits_class, "point_size_range", Limits_slots);
     Limits_class_point_size_granularity = slot_offset(Limits_class, "point_size_granularity", Limits_slots);
     Limits_class_max_texture_size = slot_offset(Limits_class, "max_texture_size", Limits_slots);

@@ -3,6 +3,7 @@ from typing import Any
 
 from . import mgl
 from .limits import Limits
+from .program import Program
 
 
 class Context:
@@ -13,6 +14,9 @@ class Context:
         self.version_code = None  # type: int
         self.limits = None  # type: Limits
         self.extra = None  # type: Any
+
+    def program(self, vertex_shader, fragment_shader=None, geometry_shader=None, tess_control_shader=None, tess_evaluation_shader=None, varyings=()) -> Program:
+        return self.__mglo.program(vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader, varyings)
 
 
 def create_context(standalone=False, debug=False):

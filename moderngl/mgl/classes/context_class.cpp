@@ -1,9 +1,5 @@
 #include "context_class.hpp"
-#include "../internal/tools.hpp"
-#include "../internal/modules.hpp"
-
-#include "../context.hpp"
-#include "../buffer.hpp"
+#include "tools.hpp"
 
 /* Slot offsets of the Context class */
 

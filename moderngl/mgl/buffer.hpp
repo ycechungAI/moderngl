@@ -1,7 +1,6 @@
 #pragma once
 #include "mgl.hpp"
 #include "context.hpp"
-#include "internal/tools.hpp"
 
 struct MGLBuffer {
     PyObject_HEAD

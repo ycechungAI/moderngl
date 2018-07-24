@@ -1,5 +1,5 @@
 #include "buffer.hpp"
-#include "internal/classes.hpp"
+#include "classes/tools.hpp"
 
 /* MGLContext.buffer(...)
  * Returns a Buffer object.

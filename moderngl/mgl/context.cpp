@@ -1,6 +1,7 @@
 #include "context.hpp"
 #include "limits.hpp"
-#include "internal/classes.hpp"
+#include "buffer.hpp"
+#include "program.hpp"
 #include "classes/all.hpp"
 
 /* MGLContext.create_context(...)
@@ -41,6 +42,7 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
     }
 
     MGLBuffer_define(context);
+    MGLProgram_define(context);
 
     context->wrapper = new_object(PyObject, Context_class);
     SLOT(context->wrapper, MGLContext, Context_class_mglo) = context;
@@ -52,12 +54,14 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
 /* Backward compatible methods */
 
 BC4(MGLContext, buffer);
+BC4(MGLContext, program);
 
 /* Definition of MGLContext internal type */
 
 void MGLContext_define() {
     PyMethodDef MGLContext_methods[] = {
         DEF4(MGLContext, buffer),
+        DEF4(MGLContext, program),
         {0},
     };
 

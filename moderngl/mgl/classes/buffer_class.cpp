@@ -1,8 +1,5 @@
 #include "buffer_class.hpp"
-#include "../internal/tools.hpp"
-#include "../internal/modules.hpp"
-
-#include "../buffer.hpp"
+#include "tools.hpp"
 
 /* Slot offsets of the Buffer class */
 
