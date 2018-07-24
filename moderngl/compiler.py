@@ -14,6 +14,6 @@ def compiler_error(name, source, info):
     raise Error(message)
 
 
-def linker_error(vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader, info, *args):
-    print(vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader, info, args)
+# def linker_error(vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader, info, *args):
+def linker_error(info):
     raise Error(info)
