@@ -7,8 +7,8 @@
 struct MGLContext {
     PyObject_HEAD
     PyObject * wrapper;
-	GLContext gl_context;
-	GLMethods gl;
+    GLContext gl_context;
+    GLMethods gl;
 
     PyTypeObject * MGLBuffer_class;
 };

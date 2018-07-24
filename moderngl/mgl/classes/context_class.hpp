@@ -14,9 +14,9 @@ void MGLContext_init_wrapper();
 /* Every objects derived from a Context must have the following HEAD */
 
 struct MGLObject {
-	PyObject_HEAD
-	PyObject * wrapper;
-	MGLContext * context;
+    PyObject_HEAD
+    PyObject * wrapper;
+    MGLContext * context;
 };
 
 /* Every internal object has its own wrapper class defined in the python layer.
@@ -27,12 +27,12 @@ struct MGLObject {
  */
 
 inline MGLObject * _MGLContext_new_object(MGLContext * self, PyTypeObject * type, PyTypeObject * cls, int slot) {
-	MGLObject * res = new_object(MGLObject, type);
-	res->wrapper = new_object(PyObject, cls);
-	SLOT(res->wrapper, MGLObject, slot) = res;
-	res->context = self;
-	Py_INCREF(self);
-	return res;
+    MGLObject * res = new_object(MGLObject, type);
+    res->wrapper = new_object(PyObject, cls);
+    SLOT(res->wrapper, MGLObject, slot) = res;
+    res->context = self;
+    Py_INCREF(self);
+    return res;
 }
 
 #define MGLContext_new_object(self, name) (MGL ## name *)_MGLContext_new_object(self, self->MGL ## name ## _type, name ## _class, name ## _class_mglo)
