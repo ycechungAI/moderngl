@@ -25,3 +25,7 @@ def create_context(standalone=False, debug=False):
 
 def extensions(context):
     return mgl.extensions(context)
+
+
+def hwinfo(context):
+    return mgl.hwinfo(context)

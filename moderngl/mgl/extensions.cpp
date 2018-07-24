@@ -39,3 +39,36 @@ PyObject * meth_extensions(PyObject * self, PyObject * const * args, Py_ssize_t 
         return lst;
     }
 }
+
+PyObject * meth_hwinfo(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
+    if (nargs != 1) {
+        // TODO: error
+        return 0;
+    }
+
+    if (args[0]->ob_type != Context_class) {
+        // TODO: error
+        return 0;
+    }
+
+    MGLContext * ctx = SLOT(args[0], MGLContext, Context_class_mglo);
+    int version_code = PyLong_AsLong(SLOT(args[0], PyObject, Context_class_version_code));
+    const GLMethods & gl = ctx->gl;
+
+    const char * version = (const char *)gl.GetString(GL_VERSION);
+    const char * vendor = (const char *)gl.GetString(GL_VENDOR);
+    const char * renderer = (const char *)gl.GetString(GL_RENDERER);
+    const char * glsl = (const char *)gl.GetString(GL_SHADING_LANGUAGE_VERSION);
+
+    PyObject * version_str = PyUnicode_FromString(version ? version : "");
+    PyObject * vendor_str = PyUnicode_FromString(vendor ? vendor : "");
+    PyObject * renderer_str = PyUnicode_FromString(renderer ? renderer : "");
+    PyObject * glsl_str = PyUnicode_FromString(glsl ? glsl : "");
+
+    PyObject * res = PyDict_New();
+    PyDict_SetItemString(res, "version", version_str);
+    PyDict_SetItemString(res, "vendor", vendor_str);
+    PyDict_SetItemString(res, "renderer", renderer_str);
+    PyDict_SetItemString(res, "glsl", glsl_str);
+    return res;
+}
