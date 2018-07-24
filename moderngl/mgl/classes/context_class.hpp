@@ -35,4 +35,4 @@ inline MGLObject * _MGLContext_new_object(MGLContext * self, PyTypeObject * type
     return res;
 }
 
-#define MGLContext_new_object(self, name) (MGL ## name *)_MGLContext_new_object(self, self->MGL ## name ## _type, name ## _class, name ## _class_mglo)
+#define MGLContext_new_object(self, name) (MGL ## name *)_MGLContext_new_object(self, self->MGL ## name ## _class, name ## _class, name ## _class_mglo)
