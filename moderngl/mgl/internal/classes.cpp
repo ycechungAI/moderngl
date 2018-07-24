@@ -11,11 +11,11 @@ PyTypeObject * define_python_class(const char * name, int size, PyType_Slot * sl
 
     PyType_Slot * new_slots = new PyType_Slot[num_slots + 1];
     for (int i = 0; i < num_slots; ++i) {
-        new_slots[i].slot = slots[num_slots].slot;
+        new_slots[i].slot = slots[i].slot;
 
         switch (new_slots[i].slot) {
             case Py_tp_methods: {
-                PyMethodDef * methods = (PyMethodDef *)slots[num_slots].pfunc;
+                PyMethodDef * methods = (PyMethodDef *)slots[i].pfunc;
                 if (!methods) {
                     new_slots[i].pfunc = 0;
                     break;
@@ -40,7 +40,7 @@ PyTypeObject * define_python_class(const char * name, int size, PyType_Slot * sl
             }
 
             case Py_tp_getset: {
-                PyGetSetDef * getset = (PyGetSetDef *)slots[num_slots].pfunc;
+                PyGetSetDef * getset = (PyGetSetDef *)slots[i].pfunc;
                 if (!getset) {
                     new_slots[i].pfunc = 0;
                     break;
@@ -67,7 +67,7 @@ PyTypeObject * define_python_class(const char * name, int size, PyType_Slot * sl
             }
 
             case Py_tp_members: {
-                PyMemberDef * members = (PyMemberDef *)slots[num_slots].pfunc;
+                PyMemberDef * members = (PyMemberDef *)slots[i].pfunc;
                 if (!members) {
                     new_slots[i].pfunc = 0;
                     break;
@@ -94,7 +94,7 @@ PyTypeObject * define_python_class(const char * name, int size, PyType_Slot * sl
             }
 
             default:
-                new_slots[i].pfunc = slots[num_slots].pfunc;
+                new_slots[i].pfunc = slots[i].pfunc;
                 break;
         }
     }
