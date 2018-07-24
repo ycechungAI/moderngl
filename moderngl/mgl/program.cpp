@@ -71,10 +71,10 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
 			gl.GetShaderInfoLog(shader_obj, log_len, &log_len, log_text);
 			PyObject * name = PyUnicode_FromString(SHADER_NAME[i]);
 			PyObject * info = PyUnicode_FromStringAndSize(log_text, log_len);
-			PyObject_CallFunctionObjArgs(moderngl_compiler_error, name, args[i], info, 0);
-			Py_DECREF(name);
-			Py_DECREF(info);
-			Py_DECREF(program);
+			// PyObject_CallFunctionObjArgs(moderngl_compiler_error, name, args[i], info, 0);
+			// Py_DECREF(name);
+			// Py_DECREF(info);
+			// Py_DECREF(program);
 			free(log_text);
 			return 0;
 		}
@@ -124,9 +124,9 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
 		char * log_text = (char *)malloc(log_len);
 		gl.GetProgramInfoLog(program_obj, log_len, &log_len, log_text);
 		PyObject * info = PyUnicode_FromStringAndSize(log_text, log_len);
-		PyObject_CallFunctionObjArgs(moderngl_linker_error, args[0], args[1], args[2], args[3], args[4], info, 0);
-		Py_DECREF(info);
-		Py_DECREF(program);
+		// PyObject_CallFunctionObjArgs(moderngl_linker_error, args[0], args[1], args[2], args[3], args[4], info, 0);
+		// Py_DECREF(info);
+		// Py_DECREF(program);
 		free(log_text);
 		return 0;
 	}
