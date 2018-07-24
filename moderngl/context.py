@@ -21,3 +21,7 @@ def create_context(standalone=False, debug=False):
         return moderngl_debug.create_context(standalone)
     else:
         return mgl.create_context(standalone)
+
+
+def extensions(context):
+    return mgl.extensions(context)

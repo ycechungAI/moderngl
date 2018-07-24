@@ -1,4 +1,5 @@
 #include "mgl.hpp"
+#include "extensions.hpp"
 #include "internal/modules.hpp"
 #include "classes/all.hpp"
 
@@ -41,11 +42,13 @@ PyObject * meth_initialize(PyObject * self) {
 /* Backward compatible methods */
 
 BC2(meth_create_context);
+BC2(meth_extensions);
 
 /* Module methods */
 
 PyMethodDef mgl_methods[] = {
     DEF2(create_context),
+    DEF2(extensions),
     DEF1(initialize),
     {0},
 };

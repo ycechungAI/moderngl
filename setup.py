@@ -27,6 +27,7 @@ sources = [
     'moderngl/mgl/buffer.cpp',
     'moderngl/mgl/context.cpp',
     'moderngl/mgl/limits.cpp',
+    'moderngl/mgl/extensions.cpp',
     'moderngl/mgl/classes/buffer_class.cpp',
     'moderngl/mgl/classes/context_class.cpp',
     'moderngl/mgl/classes/limits_class.cpp',
