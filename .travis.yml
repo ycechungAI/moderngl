@@ -6,10 +6,6 @@ python:
   - 3.6
 
 install:
-  - python --version
-  - python -c "import sys; print(sys.version)"
-  - gcc --version
-  - g++ --version
   - export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start
   - python -m pip install pytest numpy
   - python setup.py develop
