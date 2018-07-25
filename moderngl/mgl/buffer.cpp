@@ -65,6 +65,7 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
 		return 0;
 	}
 
+    printf("buffer->buffer_obj = %d\n", buffer->buffer_obj);
 	gl.BindBuffer(GL_ARRAY_BUFFER, buffer->buffer_obj);
     printf("gl.BindBuffer(GL_ARRAY_BUFFER, buffer->buffer_obj) %x\n", gl.GetError());
 
@@ -73,11 +74,13 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
 
 	if (gl.BufferStorage) {
 		initializer = gl.BufferStorage;
+        printf("initializer = gl.BufferStorage\n");
 		buffer->flags |= MGL_BUFFER_IMMUTABLE;
 		flags = (readable ? GL_MAP_READ_BIT : 0) | (writable ? GL_MAP_WRITE_BIT : 0);
 		flags |= (writable ? (GL_DYNAMIC_STORAGE_BIT) : 0) | (local ? GL_CLIENT_STORAGE_BIT : 0);
 	} else {
 		initializer = gl.BufferData;
+        printf("initializer = gl.BufferData\n");
 		flags = writable ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	}
 
