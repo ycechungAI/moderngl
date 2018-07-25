@@ -2,7 +2,8 @@
 #include "limits.hpp"
 #include "buffer.hpp"
 #include "program.hpp"
-#include "classes/all.hpp"
+#include "vertex_array.hpp"
+#include "classes/classes.hpp"
 
 /* MGLContext.create_context(...)
  * Returns a Context object.
@@ -43,6 +44,7 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
 
     MGLBuffer_define(context);
     MGLProgram_define(context);
+    MGLVertexArray_define(context);
 
     context->wrapper = new_object(PyObject, Context_class);
     SLOT(context->wrapper, MGLContext, Context_class_mglo) = context;
@@ -55,6 +57,7 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
 
 BC4(MGLContext, buffer);
 BC4(MGLContext, program);
+BC4(MGLContext, vertex_array);
 
 /* Definition of MGLContext internal type */
 
@@ -62,6 +65,7 @@ void MGLContext_define() {
     PyMethodDef MGLContext_methods[] = {
         DEF4(MGLContext, buffer),
         DEF4(MGLContext, program),
+        DEF4(MGLContext, vertex_array),
         {0},
     };
 

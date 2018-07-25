@@ -52,7 +52,6 @@ PyObject * meth_hwinfo(PyObject * self, PyObject * const * args, Py_ssize_t narg
     }
 
     MGLContext * ctx = SLOT(args[0], MGLContext, Context_class_mglo);
-    int version_code = PyLong_AsLong(SLOT(args[0], PyObject, Context_class_version_code));
     const GLMethods & gl = ctx->gl;
 
     const char * version = (const char *)gl.GetString(GL_VERSION);

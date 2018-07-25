@@ -1,7 +1,7 @@
 #include "mgl.hpp"
 #include "extensions.hpp"
 #include "internal/modules.hpp"
-#include "classes/all.hpp"
+#include "classes/classes.hpp"
 
 /* moderngl.core.initialize()
  * Initializes internal objects that cannot be initialized import time.
@@ -26,10 +26,7 @@ PyObject * meth_initialize(PyObject * self) {
 
     /* Detect wrapper classes for internal types */
 
-    MGLContext_init_wrapper();
-    MGLBuffer_init_wrapper();
-    MGLLimits_init_wrapper();
-    MGLProgram_init_wrapper();
+    init_wrappers();
 
     /* Errors are not recoverable at this point */
 

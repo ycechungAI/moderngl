@@ -58,3 +58,4 @@ inline PyObject * _new_object(PyTypeObject * type) {
 }
 
 #define new_object(type, typeobj) (type *)_new_object(typeobj)
+#define call_function(function, ...) PyObject_CallFunctionObjArgs(function, __VA_ARGS__, (void *)0)

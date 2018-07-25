@@ -16,5 +16,6 @@ def test_hello(ctx):
                 // gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
             }
         ''',
+        varyings=['v_vert'],
     ))
     # np.testing.assert_almost_equal([1.0, 1.0 + 1e-8], [1.0, 1.0])
