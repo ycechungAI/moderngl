@@ -101,7 +101,6 @@ PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * ar
 			}
 
 			int location = PyLong_AsLong(SLOT(attrib, PyObject, Attribute_class_location));
-			int cols = PyLong_AsLong(SLOT(attrib, PyObject, Attribute_class_cols));
 			int rows = PyLong_AsLong(SLOT(attrib, PyObject, Attribute_class_rows));
 			int size = PyLong_AsLong(SLOT(attrib, PyObject, Attribute_class_size));
 
@@ -334,7 +333,7 @@ void MGLVertexArray_define(MGLContext * ctx) {
 	};
 
 	PyGetSetDef MGLVertexArray_getset[] = {
-		{"ibo", 0, (setter)MGLVertexArray_set_ibo, 0, 0},
+		{(char *)"ibo", 0, (setter)MGLVertexArray_set_ibo, 0, 0},
 		{0},
 	};
 

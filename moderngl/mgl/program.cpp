@@ -314,6 +314,8 @@ PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * const * args, P
 				case 'u': func = (read_value)read_unsigned; break;
 				case 'd': func = (read_value)read_double; break;
 				case 'p': func = (read_value)read_bool; break;
+                default:
+                    return 0;
 			}
 			if (size == 1 && rows == 1 && cols == 1) {
 				char cache[8];
