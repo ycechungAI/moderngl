@@ -177,10 +177,12 @@ PyObject * MGLBuffer_meth_read(MGLBuffer * self, PyObject * const * args, Py_ssi
 	const GLMethods & gl = self->context->gl;
 
 	gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj);
+    printf("%x\n", gl.GetError());
 	void * map = gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_READ_BIT);
+    printf("%x\n", gl.GetError());
 
 	if (!map) {
-		PyErr_Format(moderngl_error, "cannot map the buffer (%x)", gl.GetError());
+		PyErr_Format(moderngl_error, "cannot map the buffer");
 		return 0;
 	}
 
