@@ -1,6 +1,6 @@
-import moderngl
+import moderngl as mgl
 import pytest
 
 @pytest.fixture(scope='module')
 def ctx():
-    return moderngl.create_context(standalone=True, debug=True)
+    return mgl.create_context(standalone=True, debug=True)
