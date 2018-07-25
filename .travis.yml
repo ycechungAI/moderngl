@@ -9,7 +9,7 @@ install:
   - export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start
   - python -m pip install pytest numpy
   - python setup.py develop
-  - python test.py
+  - python tests/print_info.py
 
 script:
   - python -m pytest
