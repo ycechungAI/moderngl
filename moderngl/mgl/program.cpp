@@ -126,7 +126,7 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
 		// PyObject * info = PyUnicode_FromStringAndSize(log_text, log_len);
 		// PyObject_CallFunctionObjArgs(moderngl_linker_error, info, 0);
 		// PyObject_CallFunctionObjArgs(moderngl_linker_error, args[0], args[1], args[2], args[3], args[4], info, 0);
-        printf("%p %p %p %p %p %p %p %p\n", moderngl_linker_error, args[0], args[1], args[2], args[3], args[4], args[5], 0);
+        printf("%p %p %p %p %p %p %p %p\n", moderngl_linker_error, args[0], args[1], args[2], args[3], args[4], args[5], nullptr);
         printf("%s\n", moderngl_linker_error->ob_type->tp_name);
         printf("%s\n", args[0]->ob_type->tp_name);
         printf("%s\n", args[1]->ob_type->tp_name);
@@ -134,7 +134,7 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
         printf("%s\n", args[3]->ob_type->tp_name);
         printf("%s\n", args[4]->ob_type->tp_name);
         printf("%s\n", args[5]->ob_type->tp_name);
-		PyObject_CallFunctionObjArgs(moderngl_linker_error, args[0], args[1], args[2], args[3], args[4], args[5], 0);
+		PyObject_CallFunctionObjArgs(moderngl_linker_error, args[0], args[1], args[2], args[3], args[4], args[5], nullptr);
         // PyObject * args = PyTuple_Pack(6, args[0], args[1], args[2], args[3], args[4], info);
 		// PyObject_Call(moderngl_linker_error, args, 0);
 		// Py_DECREF(info);
