@@ -13,7 +13,7 @@ def test_hello(ctx):
 
             void main() {
                 v_vert = in_vert;
-                gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
+                // gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
             }
         ''',
     ))

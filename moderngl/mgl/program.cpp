@@ -122,7 +122,7 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
 		gl.GetProgramiv(program_obj, GL_INFO_LOG_LENGTH, &log_len);
 
 		char * log_text = (char *)malloc(log_len + 1);
-		gl.GetProgramInfoLog(program_obj, log_len, &log_len, log_text);
+		gl.GetProgramInfoLog(program_obj, log_len, 0, log_text);
 		PyObject * info = PyUnicode_FromStringAndSize(log_text, log_len);
 		// PyObject_CallFunctionObjArgs(moderngl_linker_error, info, 0);
 		PyObject_CallFunctionObjArgs(moderngl_linker_error, args[0], args[1], args[2], args[3], args[4], info, 0);
