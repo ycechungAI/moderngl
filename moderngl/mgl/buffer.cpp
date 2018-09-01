@@ -63,17 +63,17 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
 
 	unsigned flags;
 
-	if (gl.has.BufferStorage) {
+	if (gl.BufferStorage) {
 		buffer->flags |= MGL_BUFFER_IMMUTABLE;
 		flags = (readable ? GL_MAP_READ_BIT : 0) | (writable ? GL_MAP_WRITE_BIT : 0);
-		// flags |= (writable ? (GL_DYNAMIC_STORAGE_BIT) : 0) | (local ? GL_CLIENT_STORAGE_BIT : 0);
+		flags |= (writable ? (GL_DYNAMIC_STORAGE_BIT) : 0) | (local ? GL_CLIENT_STORAGE_BIT : 0);
 	} else {
 		flags = writable ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	}
 
 	if (reserve_size) {
 		buffer->size = reserve_size;
-		if (gl.has.BufferStorage) {
+		if (gl.BufferStorage) {
 			gl.BufferStorage(GL_ARRAY_BUFFER, reserve_size, 0, flags);
 		} else {
 			gl.BufferData(GL_ARRAY_BUFFER, reserve_size, 0, flags);
@@ -86,13 +86,13 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
 		}
 		buffer->size = view.len;
 		if (PyBuffer_IsContiguous(&view, 'C')) {
-			if (gl.has.BufferStorage) {
+			if (gl.BufferStorage) {
 				gl.BufferStorage(GL_ARRAY_BUFFER, view.len, view.buf, flags);
 			} else {
 				gl.BufferData(GL_ARRAY_BUFFER, view.len, view.buf, flags);
 			}
 		} else {
-			if (gl.has.BufferStorage) {
+			if (gl.BufferStorage) {
 				gl.BufferStorage(GL_ARRAY_BUFFER, view.len, 0, flags);
 			} else {
 				gl.BufferData(GL_ARRAY_BUFFER, view.len, 0, flags);
@@ -301,11 +301,11 @@ PyObject * MGLBuffer_meth_clear(MGLBuffer * self) {
 	const GLMethods & gl = self->context->gl;
 	gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj);
 
-	if (gl.has.ClearBufferData) {
+	if (gl.ClearBufferData) {
 		char zero = 0;
 		gl.ClearBufferData(GL_ARRAY_BUFFER, GL_R8I, GL_RED, GL_UNSIGNED_BYTE, &zero);
 	} else {
-		void * map = gl.MapBuffer(GL_ARRAY_BUFFER, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+		void * map = gl.MapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY); // TODO: MapBufferRange: GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 		if (!map) {
 			PyErr_Format(moderngl_error, "cannot map the buffer");
 			return 0;

@@ -32,7 +32,7 @@ void gl_get(const GLMethods & gl, int param, int * value) {
 
 template <>
 void gl_get(const GLMethods & gl, int param, long long * value) {
-    if (gl.has.GetInteger64v) {
+    if (gl.GetInteger64v) {
         gl.GetInteger64v(param, value);
     }
 }

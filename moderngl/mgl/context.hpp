@@ -1,12 +1,7 @@
 #pragma once
 #include "mgl.hpp"
 #include "internal/opengl/gl_context.hpp"
-
-#ifdef MGL_DEBUG
-#include "internal/opengl/gl_methods_with_traces.hpp"
-#else
 #include "internal/opengl/gl_methods.hpp"
-#endif
 
 struct MGLContext {
     PyObject_HEAD

@@ -41,3 +41,7 @@ def extensions(context):
 
 def hwinfo(context):
     return mgl.hwinfo(context)
+
+
+def glprocs(context):
+    return mgl.glprocs(context)

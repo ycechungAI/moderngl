@@ -42,16 +42,14 @@ sources = [
     'moderngl/mgl/internal/modules.cpp',
     'moderngl/mgl/internal/tools.cpp',
     'moderngl/mgl/internal/glsl.cpp',
+    'moderngl/mgl/internal/opengl/gl_methods.cpp',
     'moderngl/mgl/internal/opengl/gl_context_%s.cpp' % glctx,
 ]
 
 release_sources = sources + [
-    'moderngl/mgl/internal/opengl/gl_methods.cpp',
 ]
 
 debug_sources = sources + [
-    'moderngl/mgl/internal/opengl/gl_methods_with_traces.cpp',
-    'moderngl/mgl/internal/opengl/gl_tracer.cpp',
 ]
 
 mgl = Extension(

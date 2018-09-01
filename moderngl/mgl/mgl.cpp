@@ -42,6 +42,7 @@ PyObject * meth_initialize(PyObject * self) {
 BC2(meth_create_context);
 BC2(meth_extensions);
 BC2(meth_hwinfo);
+BC2(meth_glprocs);
 
 /* Module methods */
 
@@ -49,6 +50,7 @@ PyMethodDef mgl_methods[] = {
     DEF2(create_context),
     DEF2(extensions),
     DEF2(hwinfo),
+    DEF2(glprocs),
     DEF1(initialize),
     {0},
 };

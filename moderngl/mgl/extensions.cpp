@@ -71,3 +71,18 @@ PyObject * meth_hwinfo(PyObject * self, PyObject * const * args, Py_ssize_t narg
     PyDict_SetItemString(res, "glsl", glsl_str);
     return res;
 }
+
+PyObject * meth_glprocs(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
+    if (nargs != 1) {
+        // TODO: error
+        return 0;
+    }
+
+    if (args[0]->ob_type != Context_class) {
+        // TODO: error
+        return 0;
+    }
+
+    MGLContext * ctx = SLOT(args[0], MGLContext, Context_class_mglo);
+    return PyMemoryView_FromMemory((char *)&ctx->gl, sizeof(ctx->gl), PyBUF_WRITE);
+}
