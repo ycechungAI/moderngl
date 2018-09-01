@@ -1,1 +1,1 @@
-void trace_gl_method(const char * name, int error);
+void trace_gl_method(int error, const char * format, ...);

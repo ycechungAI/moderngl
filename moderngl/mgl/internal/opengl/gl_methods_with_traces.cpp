@@ -78,7 +78,7 @@ void * LoadMethod(const char * method) {
 
 #endif
 
-#define TRACE(name) trace_gl_method(name, _GetError());
+#define TRACE(name, ...) trace_gl_method(_GetError(), name, __VA_ARGS__);
 
 void GLMethods::CullFace(GLenum mode) const {
     _CullFace(mode);
@@ -547,7 +547,7 @@ void GLMethods::GetQueryObjectuiv(GLuint id, GLenum pname, GLuint * params) cons
 
 void GLMethods::BindBuffer(GLenum target, GLuint buffer) const {
     _BindBuffer(target, buffer);
-    TRACE("glBindBuffer");
+    TRACE("glBindBuffer(%x, %d)", target, buffer);
 }
 
 void GLMethods::DeleteBuffers(GLsizei n, const GLuint * buffers) const {
@@ -2789,7 +2789,7 @@ void GLMethods::GetObjectPtrLabel(const void * ptr, GLsizei bufSize, GLsizei * l
 
 void GLMethods::BufferStorage(GLenum target, GLsizeiptr size, const void * data, GLbitfield flags) const {
     _BufferStorage(target, size, data, flags);
-    TRACE("glBufferStorage");
+    TRACE("glBufferStorage(%x, %d, %p, %x)", target, size, data, flags);
 }
 
 void GLMethods::ClearTexImage(GLuint texture, GLint level, GLenum format, GLenum type, const void * data) const {

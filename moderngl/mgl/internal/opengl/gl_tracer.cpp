@@ -4,7 +4,14 @@
 
 PyObject * tracer = 0;
 
-void trace_gl_method(const char * name, int error) {
+void trace_gl_method(int error, const char * format, ...) {
+    char function[256];
+
+    va_list vl;
+    va_start(vl, format);
+    vsnprintf(function, 256 - 1, format, vl);
+    va_end(vl);
+
     if (!tracer) {
         PyObject * moderngl_tracing = PyImport_ImportModule("moderngl.tracing");
         tracer = PyObject_GetAttrString(moderngl_tracing, "Tracer");
@@ -15,10 +22,10 @@ void trace_gl_method(const char * name, int error) {
         return;
     }
 
-    PyObject * py_name = PyUnicode_FromString(name);
+    PyObject * py_function = PyUnicode_FromString(function);
     PyObject * py_error = PyLong_FromLong(error);
-    PyObject_CallFunctionObjArgs(callback, py_name, py_error, (void *)0);
-    Py_DECREF(py_name);
+    PyObject_CallFunctionObjArgs(callback, py_function, py_error, (void *)0);
+    Py_DECREF(py_function);
     Py_DECREF(py_error);
     Py_DECREF(callback);
 }
