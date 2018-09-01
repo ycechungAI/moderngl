@@ -82,3329 +82,3329 @@ void * LoadMethod(const char * method) {
 
 void GLMethods::CullFace(GLenum mode) const {
     _CullFace(mode);
-    TRACE("CullFace");
+    TRACE("glCullFace");
 }
 
 void GLMethods::FrontFace(GLenum mode) const {
     _FrontFace(mode);
-    TRACE("FrontFace");
+    TRACE("glFrontFace");
 }
 
 void GLMethods::Hint(GLenum target, GLenum mode) const {
     _Hint(target, mode);
-    TRACE("Hint");
+    TRACE("glHint");
 }
 
 void GLMethods::LineWidth(GLfloat width) const {
     _LineWidth(width);
-    TRACE("LineWidth");
+    TRACE("glLineWidth");
 }
 
 void GLMethods::PointSize(GLfloat size) const {
     _PointSize(size);
-    TRACE("PointSize");
+    TRACE("glPointSize");
 }
 
 void GLMethods::PolygonMode(GLenum face, GLenum mode) const {
     _PolygonMode(face, mode);
-    TRACE("PolygonMode");
+    TRACE("glPolygonMode");
 }
 
 void GLMethods::Scissor(GLint x, GLint y, GLsizei width, GLsizei height) const {
     _Scissor(x, y, width, height);
-    TRACE("Scissor");
+    TRACE("glScissor");
 }
 
 void GLMethods::TexParameterf(GLenum target, GLenum pname, GLfloat param) const {
     _TexParameterf(target, pname, param);
-    TRACE("TexParameterf");
+    TRACE("glTexParameterf");
 }
 
 void GLMethods::TexParameterfv(GLenum target, GLenum pname, const GLfloat * params) const {
     _TexParameterfv(target, pname, params);
-    TRACE("TexParameterfv");
+    TRACE("glTexParameterfv");
 }
 
 void GLMethods::TexParameteri(GLenum target, GLenum pname, GLint param) const {
     _TexParameteri(target, pname, param);
-    TRACE("TexParameteri");
+    TRACE("glTexParameteri");
 }
 
 void GLMethods::TexParameteriv(GLenum target, GLenum pname, const GLint * params) const {
     _TexParameteriv(target, pname, params);
-    TRACE("TexParameteriv");
+    TRACE("glTexParameteriv");
 }
 
 void GLMethods::TexImage1D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const void * pixels) const {
     _TexImage1D(target, level, internalformat, width, border, format, type, pixels);
-    TRACE("TexImage1D");
+    TRACE("glTexImage1D");
 }
 
 void GLMethods::TexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void * pixels) const {
     _TexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
-    TRACE("TexImage2D");
+    TRACE("glTexImage2D");
 }
 
 void GLMethods::DrawBuffer(GLenum buf) const {
     _DrawBuffer(buf);
-    TRACE("DrawBuffer");
+    TRACE("glDrawBuffer");
 }
 
 void GLMethods::Clear(GLbitfield mask) const {
     _Clear(mask);
-    TRACE("Clear");
+    TRACE("glClear");
 }
 
 void GLMethods::ClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha) const {
     _ClearColor(red, green, blue, alpha);
-    TRACE("ClearColor");
+    TRACE("glClearColor");
 }
 
 void GLMethods::ClearStencil(GLint s) const {
     _ClearStencil(s);
-    TRACE("ClearStencil");
+    TRACE("glClearStencil");
 }
 
 void GLMethods::ClearDepth(GLdouble depth) const {
     _ClearDepth(depth);
-    TRACE("ClearDepth");
+    TRACE("glClearDepth");
 }
 
 void GLMethods::StencilMask(GLuint mask) const {
     _StencilMask(mask);
-    TRACE("StencilMask");
+    TRACE("glStencilMask");
 }
 
 void GLMethods::ColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha) const {
     _ColorMask(red, green, blue, alpha);
-    TRACE("ColorMask");
+    TRACE("glColorMask");
 }
 
 void GLMethods::DepthMask(GLboolean flag) const {
     _DepthMask(flag);
-    TRACE("DepthMask");
+    TRACE("glDepthMask");
 }
 
 void GLMethods::Disable(GLenum cap) const {
     _Disable(cap);
-    TRACE("Disable");
+    TRACE("glDisable");
 }
 
 void GLMethods::Enable(GLenum cap) const {
     _Enable(cap);
-    TRACE("Enable");
+    TRACE("glEnable");
 }
 
 void GLMethods::Finish() const {
     _Finish();
-    TRACE("Finish");
+    TRACE("glFinish");
 }
 
 void GLMethods::Flush() const {
     _Flush();
-    TRACE("Flush");
+    TRACE("glFlush");
 }
 
 void GLMethods::BlendFunc(GLenum sfactor, GLenum dfactor) const {
     _BlendFunc(sfactor, dfactor);
-    TRACE("BlendFunc");
+    TRACE("glBlendFunc");
 }
 
 void GLMethods::LogicOp(GLenum opcode) const {
     _LogicOp(opcode);
-    TRACE("LogicOp");
+    TRACE("glLogicOp");
 }
 
 void GLMethods::StencilFunc(GLenum func, GLint ref, GLuint mask) const {
     _StencilFunc(func, ref, mask);
-    TRACE("StencilFunc");
+    TRACE("glStencilFunc");
 }
 
 void GLMethods::StencilOp(GLenum fail, GLenum zfail, GLenum zpass) const {
     _StencilOp(fail, zfail, zpass);
-    TRACE("StencilOp");
+    TRACE("glStencilOp");
 }
 
 void GLMethods::DepthFunc(GLenum func) const {
     _DepthFunc(func);
-    TRACE("DepthFunc");
+    TRACE("glDepthFunc");
 }
 
 void GLMethods::PixelStoref(GLenum pname, GLfloat param) const {
     _PixelStoref(pname, param);
-    TRACE("PixelStoref");
+    TRACE("glPixelStoref");
 }
 
 void GLMethods::PixelStorei(GLenum pname, GLint param) const {
     _PixelStorei(pname, param);
-    TRACE("PixelStorei");
+    TRACE("glPixelStorei");
 }
 
 void GLMethods::ReadBuffer(GLenum src) const {
     _ReadBuffer(src);
-    TRACE("ReadBuffer");
+    TRACE("glReadBuffer");
 }
 
 void GLMethods::ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void * pixels) const {
     _ReadPixels(x, y, width, height, format, type, pixels);
-    TRACE("ReadPixels");
+    TRACE("glReadPixels");
 }
 
 void GLMethods::GetBooleanv(GLenum pname, GLboolean * data) const {
     _GetBooleanv(pname, data);
-    TRACE("GetBooleanv");
+    TRACE("glGetBooleanv");
 }
 
 void GLMethods::GetDoublev(GLenum pname, GLdouble * data) const {
     _GetDoublev(pname, data);
-    TRACE("GetDoublev");
+    TRACE("glGetDoublev");
 }
 
 GLenum GLMethods::GetError() const {
     GLenum __result = _GetError();
-    TRACE("GetError");
+    TRACE("glGetError");
     return __result;
 }
 
 void GLMethods::GetFloatv(GLenum pname, GLfloat * data) const {
     _GetFloatv(pname, data);
-    TRACE("GetFloatv");
+    TRACE("glGetFloatv");
 }
 
 void GLMethods::GetIntegerv(GLenum pname, GLint * data) const {
     _GetIntegerv(pname, data);
-    TRACE("GetIntegerv");
+    TRACE("glGetIntegerv");
 }
 
 const GLubyte * GLMethods::GetString(GLenum name) const {
     const GLubyte * __result = _GetString(name);
-    TRACE("GetString");
+    TRACE("glGetString");
     return __result;
 }
 
 void GLMethods::GetTexImage(GLenum target, GLint level, GLenum format, GLenum type, void * pixels) const {
     _GetTexImage(target, level, format, type, pixels);
-    TRACE("GetTexImage");
+    TRACE("glGetTexImage");
 }
 
 void GLMethods::GetTexParameterfv(GLenum target, GLenum pname, GLfloat * params) const {
     _GetTexParameterfv(target, pname, params);
-    TRACE("GetTexParameterfv");
+    TRACE("glGetTexParameterfv");
 }
 
 void GLMethods::GetTexParameteriv(GLenum target, GLenum pname, GLint * params) const {
     _GetTexParameteriv(target, pname, params);
-    TRACE("GetTexParameteriv");
+    TRACE("glGetTexParameteriv");
 }
 
 void GLMethods::GetTexLevelParameterfv(GLenum target, GLint level, GLenum pname, GLfloat * params) const {
     _GetTexLevelParameterfv(target, level, pname, params);
-    TRACE("GetTexLevelParameterfv");
+    TRACE("glGetTexLevelParameterfv");
 }
 
 void GLMethods::GetTexLevelParameteriv(GLenum target, GLint level, GLenum pname, GLint * params) const {
     _GetTexLevelParameteriv(target, level, pname, params);
-    TRACE("GetTexLevelParameteriv");
+    TRACE("glGetTexLevelParameteriv");
 }
 
 GLboolean GLMethods::IsEnabled(GLenum cap) const {
     GLboolean __result = _IsEnabled(cap);
-    TRACE("IsEnabled");
+    TRACE("glIsEnabled");
     return __result;
 }
 
 void GLMethods::DepthRange(GLdouble n, GLdouble f) const {
     _DepthRange(n, f);
-    TRACE("DepthRange");
+    TRACE("glDepthRange");
 }
 
 void GLMethods::Viewport(GLint x, GLint y, GLsizei width, GLsizei height) const {
     _Viewport(x, y, width, height);
-    TRACE("Viewport");
+    TRACE("glViewport");
 }
 
 void GLMethods::DrawArrays(GLenum mode, GLint first, GLsizei count) const {
     _DrawArrays(mode, first, count);
-    TRACE("DrawArrays");
+    TRACE("glDrawArrays");
 }
 
 void GLMethods::DrawElements(GLenum mode, GLsizei count, GLenum type, const void * indices) const {
     _DrawElements(mode, count, type, indices);
-    TRACE("DrawElements");
+    TRACE("glDrawElements");
 }
 
 void GLMethods::GetPointerv(GLenum pname, void ** params) const {
     _GetPointerv(pname, params);
-    TRACE("GetPointerv");
+    TRACE("glGetPointerv");
 }
 
 void GLMethods::PolygonOffset(GLfloat factor, GLfloat units) const {
     _PolygonOffset(factor, units);
-    TRACE("PolygonOffset");
+    TRACE("glPolygonOffset");
 }
 
 void GLMethods::CopyTexImage1D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border) const {
     _CopyTexImage1D(target, level, internalformat, x, y, width, border);
-    TRACE("CopyTexImage1D");
+    TRACE("glCopyTexImage1D");
 }
 
 void GLMethods::CopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border) const {
     _CopyTexImage2D(target, level, internalformat, x, y, width, height, border);
-    TRACE("CopyTexImage2D");
+    TRACE("glCopyTexImage2D");
 }
 
 void GLMethods::CopyTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width) const {
     _CopyTexSubImage1D(target, level, xoffset, x, y, width);
-    TRACE("CopyTexSubImage1D");
+    TRACE("glCopyTexSubImage1D");
 }
 
 void GLMethods::CopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height) const {
     _CopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-    TRACE("CopyTexSubImage2D");
+    TRACE("glCopyTexSubImage2D");
 }
 
 void GLMethods::TexSubImage1D(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void * pixels) const {
     _TexSubImage1D(target, level, xoffset, width, format, type, pixels);
-    TRACE("TexSubImage1D");
+    TRACE("glTexSubImage1D");
 }
 
 void GLMethods::TexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void * pixels) const {
     _TexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
-    TRACE("TexSubImage2D");
+    TRACE("glTexSubImage2D");
 }
 
 void GLMethods::BindTexture(GLenum target, GLuint texture) const {
     _BindTexture(target, texture);
-    TRACE("BindTexture");
+    TRACE("glBindTexture");
 }
 
 void GLMethods::DeleteTextures(GLsizei n, const GLuint * textures) const {
     _DeleteTextures(n, textures);
-    TRACE("DeleteTextures");
+    TRACE("glDeleteTextures");
 }
 
 void GLMethods::GenTextures(GLsizei n, GLuint * textures) const {
     _GenTextures(n, textures);
-    TRACE("GenTextures");
+    TRACE("glGenTextures");
 }
 
 GLboolean GLMethods::IsTexture(GLuint texture) const {
     GLboolean __result = _IsTexture(texture);
-    TRACE("IsTexture");
+    TRACE("glIsTexture");
     return __result;
 }
 
 void GLMethods::DrawRangeElements(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void * indices) const {
     _DrawRangeElements(mode, start, end, count, type, indices);
-    TRACE("DrawRangeElements");
+    TRACE("glDrawRangeElements");
 }
 
 void GLMethods::TexImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void * pixels) const {
     _TexImage3D(target, level, internalformat, width, height, depth, border, format, type, pixels);
-    TRACE("TexImage3D");
+    TRACE("glTexImage3D");
 }
 
 void GLMethods::TexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void * pixels) const {
     _TexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
-    TRACE("TexSubImage3D");
+    TRACE("glTexSubImage3D");
 }
 
 void GLMethods::CopyTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height) const {
     _CopyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
-    TRACE("CopyTexSubImage3D");
+    TRACE("glCopyTexSubImage3D");
 }
 
 void GLMethods::ActiveTexture(GLenum texture) const {
     _ActiveTexture(texture);
-    TRACE("ActiveTexture");
+    TRACE("glActiveTexture");
 }
 
 void GLMethods::SampleCoverage(GLfloat value, GLboolean invert) const {
     _SampleCoverage(value, invert);
-    TRACE("SampleCoverage");
+    TRACE("glSampleCoverage");
 }
 
 void GLMethods::CompressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const void * data) const {
     _CompressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, data);
-    TRACE("CompressedTexImage3D");
+    TRACE("glCompressedTexImage3D");
 }
 
 void GLMethods::CompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void * data) const {
     _CompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
-    TRACE("CompressedTexImage2D");
+    TRACE("glCompressedTexImage2D");
 }
 
 void GLMethods::CompressedTexImage1D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const void * data) const {
     _CompressedTexImage1D(target, level, internalformat, width, border, imageSize, data);
-    TRACE("CompressedTexImage1D");
+    TRACE("glCompressedTexImage1D");
 }
 
 void GLMethods::CompressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void * data) const {
     _CompressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
-    TRACE("CompressedTexSubImage3D");
+    TRACE("glCompressedTexSubImage3D");
 }
 
 void GLMethods::CompressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void * data) const {
     _CompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data);
-    TRACE("CompressedTexSubImage2D");
+    TRACE("glCompressedTexSubImage2D");
 }
 
 void GLMethods::CompressedTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void * data) const {
     _CompressedTexSubImage1D(target, level, xoffset, width, format, imageSize, data);
-    TRACE("CompressedTexSubImage1D");
+    TRACE("glCompressedTexSubImage1D");
 }
 
 void GLMethods::GetCompressedTexImage(GLenum target, GLint level, void * img) const {
     _GetCompressedTexImage(target, level, img);
-    TRACE("GetCompressedTexImage");
+    TRACE("glGetCompressedTexImage");
 }
 
 void GLMethods::BlendFuncSeparate(GLenum sfactorRGB, GLenum dfactorRGB, GLenum sfactorAlpha, GLenum dfactorAlpha) const {
     _BlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
-    TRACE("BlendFuncSeparate");
+    TRACE("glBlendFuncSeparate");
 }
 
 void GLMethods::MultiDrawArrays(GLenum mode, const GLint * first, const GLsizei * count, GLsizei drawcount) const {
     _MultiDrawArrays(mode, first, count, drawcount);
-    TRACE("MultiDrawArrays");
+    TRACE("glMultiDrawArrays");
 }
 
 void GLMethods::MultiDrawElements(GLenum mode, const GLsizei * count, GLenum type, const void * const * indices, GLsizei drawcount) const {
     _MultiDrawElements(mode, count, type, indices, drawcount);
-    TRACE("MultiDrawElements");
+    TRACE("glMultiDrawElements");
 }
 
 void GLMethods::PointParameterf(GLenum pname, GLfloat param) const {
     _PointParameterf(pname, param);
-    TRACE("PointParameterf");
+    TRACE("glPointParameterf");
 }
 
 void GLMethods::PointParameterfv(GLenum pname, const GLfloat * params) const {
     _PointParameterfv(pname, params);
-    TRACE("PointParameterfv");
+    TRACE("glPointParameterfv");
 }
 
 void GLMethods::PointParameteri(GLenum pname, GLint param) const {
     _PointParameteri(pname, param);
-    TRACE("PointParameteri");
+    TRACE("glPointParameteri");
 }
 
 void GLMethods::PointParameteriv(GLenum pname, const GLint * params) const {
     _PointParameteriv(pname, params);
-    TRACE("PointParameteriv");
+    TRACE("glPointParameteriv");
 }
 
 void GLMethods::BlendColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha) const {
     _BlendColor(red, green, blue, alpha);
-    TRACE("BlendColor");
+    TRACE("glBlendColor");
 }
 
 void GLMethods::BlendEquation(GLenum mode) const {
     _BlendEquation(mode);
-    TRACE("BlendEquation");
+    TRACE("glBlendEquation");
 }
 
 void GLMethods::GenQueries(GLsizei n, GLuint * ids) const {
     _GenQueries(n, ids);
-    TRACE("GenQueries");
+    TRACE("glGenQueries");
 }
 
 void GLMethods::DeleteQueries(GLsizei n, const GLuint * ids) const {
     _DeleteQueries(n, ids);
-    TRACE("DeleteQueries");
+    TRACE("glDeleteQueries");
 }
 
 GLboolean GLMethods::IsQuery(GLuint id) const {
     GLboolean __result = _IsQuery(id);
-    TRACE("IsQuery");
+    TRACE("glIsQuery");
     return __result;
 }
 
 void GLMethods::BeginQuery(GLenum target, GLuint id) const {
     _BeginQuery(target, id);
-    TRACE("BeginQuery");
+    TRACE("glBeginQuery");
 }
 
 void GLMethods::EndQuery(GLenum target) const {
     _EndQuery(target);
-    TRACE("EndQuery");
+    TRACE("glEndQuery");
 }
 
 void GLMethods::GetQueryiv(GLenum target, GLenum pname, GLint * params) const {
     _GetQueryiv(target, pname, params);
-    TRACE("GetQueryiv");
+    TRACE("glGetQueryiv");
 }
 
 void GLMethods::GetQueryObjectiv(GLuint id, GLenum pname, GLint * params) const {
     _GetQueryObjectiv(id, pname, params);
-    TRACE("GetQueryObjectiv");
+    TRACE("glGetQueryObjectiv");
 }
 
 void GLMethods::GetQueryObjectuiv(GLuint id, GLenum pname, GLuint * params) const {
     _GetQueryObjectuiv(id, pname, params);
-    TRACE("GetQueryObjectuiv");
+    TRACE("glGetQueryObjectuiv");
 }
 
 void GLMethods::BindBuffer(GLenum target, GLuint buffer) const {
     _BindBuffer(target, buffer);
-    TRACE("BindBuffer");
+    TRACE("glBindBuffer");
 }
 
 void GLMethods::DeleteBuffers(GLsizei n, const GLuint * buffers) const {
     _DeleteBuffers(n, buffers);
-    TRACE("DeleteBuffers");
+    TRACE("glDeleteBuffers");
 }
 
 void GLMethods::GenBuffers(GLsizei n, GLuint * buffers) const {
     _GenBuffers(n, buffers);
-    TRACE("GenBuffers");
+    TRACE("glGenBuffers");
 }
 
 GLboolean GLMethods::IsBuffer(GLuint buffer) const {
     GLboolean __result = _IsBuffer(buffer);
-    TRACE("IsBuffer");
+    TRACE("glIsBuffer");
     return __result;
 }
 
 void GLMethods::BufferData(GLenum target, GLsizeiptr size, const void * data, GLenum usage) const {
     _BufferData(target, size, data, usage);
-    TRACE("BufferData");
+    TRACE("glBufferData");
 }
 
 void GLMethods::BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void * data) const {
     _BufferSubData(target, offset, size, data);
-    TRACE("BufferSubData");
+    TRACE("glBufferSubData");
 }
 
 void GLMethods::GetBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, void * data) const {
     _GetBufferSubData(target, offset, size, data);
-    TRACE("GetBufferSubData");
+    TRACE("glGetBufferSubData");
 }
 
 void * GLMethods::MapBuffer(GLenum target, GLenum access) const {
     void * __result = _MapBuffer(target, access);
-    TRACE("MapBuffer");
+    TRACE("glMapBuffer");
     return __result;
 }
 
 GLboolean GLMethods::UnmapBuffer(GLenum target) const {
     GLboolean __result = _UnmapBuffer(target);
-    TRACE("UnmapBuffer");
+    TRACE("glUnmapBuffer");
     return __result;
 }
 
 void GLMethods::GetBufferParameteriv(GLenum target, GLenum pname, GLint * params) const {
     _GetBufferParameteriv(target, pname, params);
-    TRACE("GetBufferParameteriv");
+    TRACE("glGetBufferParameteriv");
 }
 
 void GLMethods::GetBufferPointerv(GLenum target, GLenum pname, void ** params) const {
     _GetBufferPointerv(target, pname, params);
-    TRACE("GetBufferPointerv");
+    TRACE("glGetBufferPointerv");
 }
 
 void GLMethods::BlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha) const {
     _BlendEquationSeparate(modeRGB, modeAlpha);
-    TRACE("BlendEquationSeparate");
+    TRACE("glBlendEquationSeparate");
 }
 
 void GLMethods::DrawBuffers(GLsizei n, const GLenum * bufs) const {
     _DrawBuffers(n, bufs);
-    TRACE("DrawBuffers");
+    TRACE("glDrawBuffers");
 }
 
 void GLMethods::StencilOpSeparate(GLenum face, GLenum sfail, GLenum dpfail, GLenum dppass) const {
     _StencilOpSeparate(face, sfail, dpfail, dppass);
-    TRACE("StencilOpSeparate");
+    TRACE("glStencilOpSeparate");
 }
 
 void GLMethods::StencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask) const {
     _StencilFuncSeparate(face, func, ref, mask);
-    TRACE("StencilFuncSeparate");
+    TRACE("glStencilFuncSeparate");
 }
 
 void GLMethods::StencilMaskSeparate(GLenum face, GLuint mask) const {
     _StencilMaskSeparate(face, mask);
-    TRACE("StencilMaskSeparate");
+    TRACE("glStencilMaskSeparate");
 }
 
 void GLMethods::AttachShader(GLuint program, GLuint shader) const {
     _AttachShader(program, shader);
-    TRACE("AttachShader");
+    TRACE("glAttachShader");
 }
 
 void GLMethods::BindAttribLocation(GLuint program, GLuint index, const GLchar * name) const {
     _BindAttribLocation(program, index, name);
-    TRACE("BindAttribLocation");
+    TRACE("glBindAttribLocation");
 }
 
 void GLMethods::CompileShader(GLuint shader) const {
     _CompileShader(shader);
-    TRACE("CompileShader");
+    TRACE("glCompileShader");
 }
 
 GLuint GLMethods::CreateProgram() const {
     GLuint __result = _CreateProgram();
-    TRACE("CreateProgram");
+    TRACE("glCreateProgram");
     return __result;
 }
 
 GLuint GLMethods::CreateShader(GLenum type) const {
     GLuint __result = _CreateShader(type);
-    TRACE("CreateShader");
+    TRACE("glCreateShader");
     return __result;
 }
 
 void GLMethods::DeleteProgram(GLuint program) const {
     _DeleteProgram(program);
-    TRACE("DeleteProgram");
+    TRACE("glDeleteProgram");
 }
 
 void GLMethods::DeleteShader(GLuint shader) const {
     _DeleteShader(shader);
-    TRACE("DeleteShader");
+    TRACE("glDeleteShader");
 }
 
 void GLMethods::DetachShader(GLuint program, GLuint shader) const {
     _DetachShader(program, shader);
-    TRACE("DetachShader");
+    TRACE("glDetachShader");
 }
 
 void GLMethods::DisableVertexAttribArray(GLuint index) const {
     _DisableVertexAttribArray(index);
-    TRACE("DisableVertexAttribArray");
+    TRACE("glDisableVertexAttribArray");
 }
 
 void GLMethods::EnableVertexAttribArray(GLuint index) const {
     _EnableVertexAttribArray(index);
-    TRACE("EnableVertexAttribArray");
+    TRACE("glEnableVertexAttribArray");
 }
 
 void GLMethods::GetActiveAttrib(GLuint program, GLuint index, GLsizei bufSize, GLsizei * length, GLint * size, GLenum * type, GLchar * name) const {
     _GetActiveAttrib(program, index, bufSize, length, size, type, name);
-    TRACE("GetActiveAttrib");
+    TRACE("glGetActiveAttrib");
 }
 
 void GLMethods::GetActiveUniform(GLuint program, GLuint index, GLsizei bufSize, GLsizei * length, GLint * size, GLenum * type, GLchar * name) const {
     _GetActiveUniform(program, index, bufSize, length, size, type, name);
-    TRACE("GetActiveUniform");
+    TRACE("glGetActiveUniform");
 }
 
 void GLMethods::GetAttachedShaders(GLuint program, GLsizei maxCount, GLsizei * count, GLuint * shaders) const {
     _GetAttachedShaders(program, maxCount, count, shaders);
-    TRACE("GetAttachedShaders");
+    TRACE("glGetAttachedShaders");
 }
 
 GLint GLMethods::GetAttribLocation(GLuint program, const GLchar * name) const {
     GLint __result = _GetAttribLocation(program, name);
-    TRACE("GetAttribLocation");
+    TRACE("glGetAttribLocation");
     return __result;
 }
 
 void GLMethods::GetProgramiv(GLuint program, GLenum pname, GLint * params) const {
     _GetProgramiv(program, pname, params);
-    TRACE("GetProgramiv");
+    TRACE("glGetProgramiv");
 }
 
 void GLMethods::GetProgramInfoLog(GLuint program, GLsizei bufSize, GLsizei * length, GLchar * infoLog) const {
     _GetProgramInfoLog(program, bufSize, length, infoLog);
-    TRACE("GetProgramInfoLog");
+    TRACE("glGetProgramInfoLog");
 }
 
 void GLMethods::GetShaderiv(GLuint shader, GLenum pname, GLint * params) const {
     _GetShaderiv(shader, pname, params);
-    TRACE("GetShaderiv");
+    TRACE("glGetShaderiv");
 }
 
 void GLMethods::GetShaderInfoLog(GLuint shader, GLsizei bufSize, GLsizei * length, GLchar * infoLog) const {
     _GetShaderInfoLog(shader, bufSize, length, infoLog);
-    TRACE("GetShaderInfoLog");
+    TRACE("glGetShaderInfoLog");
 }
 
 void GLMethods::GetShaderSource(GLuint shader, GLsizei bufSize, GLsizei * length, GLchar * source) const {
     _GetShaderSource(shader, bufSize, length, source);
-    TRACE("GetShaderSource");
+    TRACE("glGetShaderSource");
 }
 
 GLint GLMethods::GetUniformLocation(GLuint program, const GLchar * name) const {
     GLint __result = _GetUniformLocation(program, name);
-    TRACE("GetUniformLocation");
+    TRACE("glGetUniformLocation");
     return __result;
 }
 
 void GLMethods::GetUniformfv(GLuint program, GLint location, GLfloat * params) const {
     _GetUniformfv(program, location, params);
-    TRACE("GetUniformfv");
+    TRACE("glGetUniformfv");
 }
 
 void GLMethods::GetUniformiv(GLuint program, GLint location, GLint * params) const {
     _GetUniformiv(program, location, params);
-    TRACE("GetUniformiv");
+    TRACE("glGetUniformiv");
 }
 
 void GLMethods::GetVertexAttribdv(GLuint index, GLenum pname, GLdouble * params) const {
     _GetVertexAttribdv(index, pname, params);
-    TRACE("GetVertexAttribdv");
+    TRACE("glGetVertexAttribdv");
 }
 
 void GLMethods::GetVertexAttribfv(GLuint index, GLenum pname, GLfloat * params) const {
     _GetVertexAttribfv(index, pname, params);
-    TRACE("GetVertexAttribfv");
+    TRACE("glGetVertexAttribfv");
 }
 
 void GLMethods::GetVertexAttribiv(GLuint index, GLenum pname, GLint * params) const {
     _GetVertexAttribiv(index, pname, params);
-    TRACE("GetVertexAttribiv");
+    TRACE("glGetVertexAttribiv");
 }
 
 void GLMethods::GetVertexAttribPointerv(GLuint index, GLenum pname, void ** pointer) const {
     _GetVertexAttribPointerv(index, pname, pointer);
-    TRACE("GetVertexAttribPointerv");
+    TRACE("glGetVertexAttribPointerv");
 }
 
 GLboolean GLMethods::IsProgram(GLuint program) const {
     GLboolean __result = _IsProgram(program);
-    TRACE("IsProgram");
+    TRACE("glIsProgram");
     return __result;
 }
 
 GLboolean GLMethods::IsShader(GLuint shader) const {
     GLboolean __result = _IsShader(shader);
-    TRACE("IsShader");
+    TRACE("glIsShader");
     return __result;
 }
 
 void GLMethods::LinkProgram(GLuint program) const {
     _LinkProgram(program);
-    TRACE("LinkProgram");
+    TRACE("glLinkProgram");
 }
 
 void GLMethods::ShaderSource(GLuint shader, GLsizei count, const GLchar * const * string, const GLint * length) const {
     _ShaderSource(shader, count, string, length);
-    TRACE("ShaderSource");
+    TRACE("glShaderSource");
 }
 
 void GLMethods::UseProgram(GLuint program) const {
     _UseProgram(program);
-    TRACE("UseProgram");
+    TRACE("glUseProgram");
 }
 
 void GLMethods::Uniform1f(GLint location, GLfloat v0) const {
     _Uniform1f(location, v0);
-    TRACE("Uniform1f");
+    TRACE("glUniform1f");
 }
 
 void GLMethods::Uniform2f(GLint location, GLfloat v0, GLfloat v1) const {
     _Uniform2f(location, v0, v1);
-    TRACE("Uniform2f");
+    TRACE("glUniform2f");
 }
 
 void GLMethods::Uniform3f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2) const {
     _Uniform3f(location, v0, v1, v2);
-    TRACE("Uniform3f");
+    TRACE("glUniform3f");
 }
 
 void GLMethods::Uniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3) const {
     _Uniform4f(location, v0, v1, v2, v3);
-    TRACE("Uniform4f");
+    TRACE("glUniform4f");
 }
 
 void GLMethods::Uniform1i(GLint location, GLint v0) const {
     _Uniform1i(location, v0);
-    TRACE("Uniform1i");
+    TRACE("glUniform1i");
 }
 
 void GLMethods::Uniform2i(GLint location, GLint v0, GLint v1) const {
     _Uniform2i(location, v0, v1);
-    TRACE("Uniform2i");
+    TRACE("glUniform2i");
 }
 
 void GLMethods::Uniform3i(GLint location, GLint v0, GLint v1, GLint v2) const {
     _Uniform3i(location, v0, v1, v2);
-    TRACE("Uniform3i");
+    TRACE("glUniform3i");
 }
 
 void GLMethods::Uniform4i(GLint location, GLint v0, GLint v1, GLint v2, GLint v3) const {
     _Uniform4i(location, v0, v1, v2, v3);
-    TRACE("Uniform4i");
+    TRACE("glUniform4i");
 }
 
 void GLMethods::Uniform1fv(GLint location, GLsizei count, const GLfloat * value) const {
     _Uniform1fv(location, count, value);
-    TRACE("Uniform1fv");
+    TRACE("glUniform1fv");
 }
 
 void GLMethods::Uniform2fv(GLint location, GLsizei count, const GLfloat * value) const {
     _Uniform2fv(location, count, value);
-    TRACE("Uniform2fv");
+    TRACE("glUniform2fv");
 }
 
 void GLMethods::Uniform3fv(GLint location, GLsizei count, const GLfloat * value) const {
     _Uniform3fv(location, count, value);
-    TRACE("Uniform3fv");
+    TRACE("glUniform3fv");
 }
 
 void GLMethods::Uniform4fv(GLint location, GLsizei count, const GLfloat * value) const {
     _Uniform4fv(location, count, value);
-    TRACE("Uniform4fv");
+    TRACE("glUniform4fv");
 }
 
 void GLMethods::Uniform1iv(GLint location, GLsizei count, const GLint * value) const {
     _Uniform1iv(location, count, value);
-    TRACE("Uniform1iv");
+    TRACE("glUniform1iv");
 }
 
 void GLMethods::Uniform2iv(GLint location, GLsizei count, const GLint * value) const {
     _Uniform2iv(location, count, value);
-    TRACE("Uniform2iv");
+    TRACE("glUniform2iv");
 }
 
 void GLMethods::Uniform3iv(GLint location, GLsizei count, const GLint * value) const {
     _Uniform3iv(location, count, value);
-    TRACE("Uniform3iv");
+    TRACE("glUniform3iv");
 }
 
 void GLMethods::Uniform4iv(GLint location, GLsizei count, const GLint * value) const {
     _Uniform4iv(location, count, value);
-    TRACE("Uniform4iv");
+    TRACE("glUniform4iv");
 }
 
 void GLMethods::UniformMatrix2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _UniformMatrix2fv(location, count, transpose, value);
-    TRACE("UniformMatrix2fv");
+    TRACE("glUniformMatrix2fv");
 }
 
 void GLMethods::UniformMatrix3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _UniformMatrix3fv(location, count, transpose, value);
-    TRACE("UniformMatrix3fv");
+    TRACE("glUniformMatrix3fv");
 }
 
 void GLMethods::UniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _UniformMatrix4fv(location, count, transpose, value);
-    TRACE("UniformMatrix4fv");
+    TRACE("glUniformMatrix4fv");
 }
 
 void GLMethods::ValidateProgram(GLuint program) const {
     _ValidateProgram(program);
-    TRACE("ValidateProgram");
+    TRACE("glValidateProgram");
 }
 
 void GLMethods::VertexAttrib1d(GLuint index, GLdouble x) const {
     _VertexAttrib1d(index, x);
-    TRACE("VertexAttrib1d");
+    TRACE("glVertexAttrib1d");
 }
 
 void GLMethods::VertexAttrib1dv(GLuint index, const GLdouble * v) const {
     _VertexAttrib1dv(index, v);
-    TRACE("VertexAttrib1dv");
+    TRACE("glVertexAttrib1dv");
 }
 
 void GLMethods::VertexAttrib1f(GLuint index, GLfloat x) const {
     _VertexAttrib1f(index, x);
-    TRACE("VertexAttrib1f");
+    TRACE("glVertexAttrib1f");
 }
 
 void GLMethods::VertexAttrib1fv(GLuint index, const GLfloat * v) const {
     _VertexAttrib1fv(index, v);
-    TRACE("VertexAttrib1fv");
+    TRACE("glVertexAttrib1fv");
 }
 
 void GLMethods::VertexAttrib1s(GLuint index, GLshort x) const {
     _VertexAttrib1s(index, x);
-    TRACE("VertexAttrib1s");
+    TRACE("glVertexAttrib1s");
 }
 
 void GLMethods::VertexAttrib1sv(GLuint index, const GLshort * v) const {
     _VertexAttrib1sv(index, v);
-    TRACE("VertexAttrib1sv");
+    TRACE("glVertexAttrib1sv");
 }
 
 void GLMethods::VertexAttrib2d(GLuint index, GLdouble x, GLdouble y) const {
     _VertexAttrib2d(index, x, y);
-    TRACE("VertexAttrib2d");
+    TRACE("glVertexAttrib2d");
 }
 
 void GLMethods::VertexAttrib2dv(GLuint index, const GLdouble * v) const {
     _VertexAttrib2dv(index, v);
-    TRACE("VertexAttrib2dv");
+    TRACE("glVertexAttrib2dv");
 }
 
 void GLMethods::VertexAttrib2f(GLuint index, GLfloat x, GLfloat y) const {
     _VertexAttrib2f(index, x, y);
-    TRACE("VertexAttrib2f");
+    TRACE("glVertexAttrib2f");
 }
 
 void GLMethods::VertexAttrib2fv(GLuint index, const GLfloat * v) const {
     _VertexAttrib2fv(index, v);
-    TRACE("VertexAttrib2fv");
+    TRACE("glVertexAttrib2fv");
 }
 
 void GLMethods::VertexAttrib2s(GLuint index, GLshort x, GLshort y) const {
     _VertexAttrib2s(index, x, y);
-    TRACE("VertexAttrib2s");
+    TRACE("glVertexAttrib2s");
 }
 
 void GLMethods::VertexAttrib2sv(GLuint index, const GLshort * v) const {
     _VertexAttrib2sv(index, v);
-    TRACE("VertexAttrib2sv");
+    TRACE("glVertexAttrib2sv");
 }
 
 void GLMethods::VertexAttrib3d(GLuint index, GLdouble x, GLdouble y, GLdouble z) const {
     _VertexAttrib3d(index, x, y, z);
-    TRACE("VertexAttrib3d");
+    TRACE("glVertexAttrib3d");
 }
 
 void GLMethods::VertexAttrib3dv(GLuint index, const GLdouble * v) const {
     _VertexAttrib3dv(index, v);
-    TRACE("VertexAttrib3dv");
+    TRACE("glVertexAttrib3dv");
 }
 
 void GLMethods::VertexAttrib3f(GLuint index, GLfloat x, GLfloat y, GLfloat z) const {
     _VertexAttrib3f(index, x, y, z);
-    TRACE("VertexAttrib3f");
+    TRACE("glVertexAttrib3f");
 }
 
 void GLMethods::VertexAttrib3fv(GLuint index, const GLfloat * v) const {
     _VertexAttrib3fv(index, v);
-    TRACE("VertexAttrib3fv");
+    TRACE("glVertexAttrib3fv");
 }
 
 void GLMethods::VertexAttrib3s(GLuint index, GLshort x, GLshort y, GLshort z) const {
     _VertexAttrib3s(index, x, y, z);
-    TRACE("VertexAttrib3s");
+    TRACE("glVertexAttrib3s");
 }
 
 void GLMethods::VertexAttrib3sv(GLuint index, const GLshort * v) const {
     _VertexAttrib3sv(index, v);
-    TRACE("VertexAttrib3sv");
+    TRACE("glVertexAttrib3sv");
 }
 
 void GLMethods::VertexAttrib4Nbv(GLuint index, const GLbyte * v) const {
     _VertexAttrib4Nbv(index, v);
-    TRACE("VertexAttrib4Nbv");
+    TRACE("glVertexAttrib4Nbv");
 }
 
 void GLMethods::VertexAttrib4Niv(GLuint index, const GLint * v) const {
     _VertexAttrib4Niv(index, v);
-    TRACE("VertexAttrib4Niv");
+    TRACE("glVertexAttrib4Niv");
 }
 
 void GLMethods::VertexAttrib4Nsv(GLuint index, const GLshort * v) const {
     _VertexAttrib4Nsv(index, v);
-    TRACE("VertexAttrib4Nsv");
+    TRACE("glVertexAttrib4Nsv");
 }
 
 void GLMethods::VertexAttrib4Nub(GLuint index, GLubyte x, GLubyte y, GLubyte z, GLubyte w) const {
     _VertexAttrib4Nub(index, x, y, z, w);
-    TRACE("VertexAttrib4Nub");
+    TRACE("glVertexAttrib4Nub");
 }
 
 void GLMethods::VertexAttrib4Nubv(GLuint index, const GLubyte * v) const {
     _VertexAttrib4Nubv(index, v);
-    TRACE("VertexAttrib4Nubv");
+    TRACE("glVertexAttrib4Nubv");
 }
 
 void GLMethods::VertexAttrib4Nuiv(GLuint index, const GLuint * v) const {
     _VertexAttrib4Nuiv(index, v);
-    TRACE("VertexAttrib4Nuiv");
+    TRACE("glVertexAttrib4Nuiv");
 }
 
 void GLMethods::VertexAttrib4Nusv(GLuint index, const GLushort * v) const {
     _VertexAttrib4Nusv(index, v);
-    TRACE("VertexAttrib4Nusv");
+    TRACE("glVertexAttrib4Nusv");
 }
 
 void GLMethods::VertexAttrib4bv(GLuint index, const GLbyte * v) const {
     _VertexAttrib4bv(index, v);
-    TRACE("VertexAttrib4bv");
+    TRACE("glVertexAttrib4bv");
 }
 
 void GLMethods::VertexAttrib4d(GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w) const {
     _VertexAttrib4d(index, x, y, z, w);
-    TRACE("VertexAttrib4d");
+    TRACE("glVertexAttrib4d");
 }
 
 void GLMethods::VertexAttrib4dv(GLuint index, const GLdouble * v) const {
     _VertexAttrib4dv(index, v);
-    TRACE("VertexAttrib4dv");
+    TRACE("glVertexAttrib4dv");
 }
 
 void GLMethods::VertexAttrib4f(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w) const {
     _VertexAttrib4f(index, x, y, z, w);
-    TRACE("VertexAttrib4f");
+    TRACE("glVertexAttrib4f");
 }
 
 void GLMethods::VertexAttrib4fv(GLuint index, const GLfloat * v) const {
     _VertexAttrib4fv(index, v);
-    TRACE("VertexAttrib4fv");
+    TRACE("glVertexAttrib4fv");
 }
 
 void GLMethods::VertexAttrib4iv(GLuint index, const GLint * v) const {
     _VertexAttrib4iv(index, v);
-    TRACE("VertexAttrib4iv");
+    TRACE("glVertexAttrib4iv");
 }
 
 void GLMethods::VertexAttrib4s(GLuint index, GLshort x, GLshort y, GLshort z, GLshort w) const {
     _VertexAttrib4s(index, x, y, z, w);
-    TRACE("VertexAttrib4s");
+    TRACE("glVertexAttrib4s");
 }
 
 void GLMethods::VertexAttrib4sv(GLuint index, const GLshort * v) const {
     _VertexAttrib4sv(index, v);
-    TRACE("VertexAttrib4sv");
+    TRACE("glVertexAttrib4sv");
 }
 
 void GLMethods::VertexAttrib4ubv(GLuint index, const GLubyte * v) const {
     _VertexAttrib4ubv(index, v);
-    TRACE("VertexAttrib4ubv");
+    TRACE("glVertexAttrib4ubv");
 }
 
 void GLMethods::VertexAttrib4uiv(GLuint index, const GLuint * v) const {
     _VertexAttrib4uiv(index, v);
-    TRACE("VertexAttrib4uiv");
+    TRACE("glVertexAttrib4uiv");
 }
 
 void GLMethods::VertexAttrib4usv(GLuint index, const GLushort * v) const {
     _VertexAttrib4usv(index, v);
-    TRACE("VertexAttrib4usv");
+    TRACE("glVertexAttrib4usv");
 }
 
 void GLMethods::VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer) const {
     _VertexAttribPointer(index, size, type, normalized, stride, pointer);
-    TRACE("VertexAttribPointer");
+    TRACE("glVertexAttribPointer");
 }
 
 void GLMethods::UniformMatrix2x3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _UniformMatrix2x3fv(location, count, transpose, value);
-    TRACE("UniformMatrix2x3fv");
+    TRACE("glUniformMatrix2x3fv");
 }
 
 void GLMethods::UniformMatrix3x2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _UniformMatrix3x2fv(location, count, transpose, value);
-    TRACE("UniformMatrix3x2fv");
+    TRACE("glUniformMatrix3x2fv");
 }
 
 void GLMethods::UniformMatrix2x4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _UniformMatrix2x4fv(location, count, transpose, value);
-    TRACE("UniformMatrix2x4fv");
+    TRACE("glUniformMatrix2x4fv");
 }
 
 void GLMethods::UniformMatrix4x2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _UniformMatrix4x2fv(location, count, transpose, value);
-    TRACE("UniformMatrix4x2fv");
+    TRACE("glUniformMatrix4x2fv");
 }
 
 void GLMethods::UniformMatrix3x4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _UniformMatrix3x4fv(location, count, transpose, value);
-    TRACE("UniformMatrix3x4fv");
+    TRACE("glUniformMatrix3x4fv");
 }
 
 void GLMethods::UniformMatrix4x3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _UniformMatrix4x3fv(location, count, transpose, value);
-    TRACE("UniformMatrix4x3fv");
+    TRACE("glUniformMatrix4x3fv");
 }
 
 void GLMethods::ColorMaski(GLuint index, GLboolean r, GLboolean g, GLboolean b, GLboolean a) const {
     _ColorMaski(index, r, g, b, a);
-    TRACE("ColorMaski");
+    TRACE("glColorMaski");
 }
 
 void GLMethods::GetBooleani_v(GLenum target, GLuint index, GLboolean * data) const {
     _GetBooleani_v(target, index, data);
-    TRACE("GetBooleani_v");
+    TRACE("glGetBooleani_v");
 }
 
 void GLMethods::GetIntegeri_v(GLenum target, GLuint index, GLint * data) const {
     _GetIntegeri_v(target, index, data);
-    TRACE("GetIntegeri_v");
+    TRACE("glGetIntegeri_v");
 }
 
 void GLMethods::Enablei(GLenum target, GLuint index) const {
     _Enablei(target, index);
-    TRACE("Enablei");
+    TRACE("glEnablei");
 }
 
 void GLMethods::Disablei(GLenum target, GLuint index) const {
     _Disablei(target, index);
-    TRACE("Disablei");
+    TRACE("glDisablei");
 }
 
 GLboolean GLMethods::IsEnabledi(GLenum target, GLuint index) const {
     GLboolean __result = _IsEnabledi(target, index);
-    TRACE("IsEnabledi");
+    TRACE("glIsEnabledi");
     return __result;
 }
 
 void GLMethods::BeginTransformFeedback(GLenum primitiveMode) const {
     _BeginTransformFeedback(primitiveMode);
-    TRACE("BeginTransformFeedback");
+    TRACE("glBeginTransformFeedback");
 }
 
 void GLMethods::EndTransformFeedback() const {
     _EndTransformFeedback();
-    TRACE("EndTransformFeedback");
+    TRACE("glEndTransformFeedback");
 }
 
 void GLMethods::BindBufferRange(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size) const {
     _BindBufferRange(target, index, buffer, offset, size);
-    TRACE("BindBufferRange");
+    TRACE("glBindBufferRange");
 }
 
 void GLMethods::BindBufferBase(GLenum target, GLuint index, GLuint buffer) const {
     _BindBufferBase(target, index, buffer);
-    TRACE("BindBufferBase");
+    TRACE("glBindBufferBase");
 }
 
 void GLMethods::TransformFeedbackVaryings(GLuint program, GLsizei count, const GLchar * const * varyings, GLenum bufferMode) const {
     _TransformFeedbackVaryings(program, count, varyings, bufferMode);
-    TRACE("TransformFeedbackVaryings");
+    TRACE("glTransformFeedbackVaryings");
 }
 
 void GLMethods::GetTransformFeedbackVarying(GLuint program, GLuint index, GLsizei bufSize, GLsizei * length, GLsizei * size, GLenum * type, GLchar * name) const {
     _GetTransformFeedbackVarying(program, index, bufSize, length, size, type, name);
-    TRACE("GetTransformFeedbackVarying");
+    TRACE("glGetTransformFeedbackVarying");
 }
 
 void GLMethods::ClampColor(GLenum target, GLenum clamp) const {
     _ClampColor(target, clamp);
-    TRACE("ClampColor");
+    TRACE("glClampColor");
 }
 
 void GLMethods::BeginConditionalRender(GLuint id, GLenum mode) const {
     _BeginConditionalRender(id, mode);
-    TRACE("BeginConditionalRender");
+    TRACE("glBeginConditionalRender");
 }
 
 void GLMethods::EndConditionalRender() const {
     _EndConditionalRender();
-    TRACE("EndConditionalRender");
+    TRACE("glEndConditionalRender");
 }
 
 void GLMethods::VertexAttribIPointer(GLuint index, GLint size, GLenum type, GLsizei stride, const void * pointer) const {
     _VertexAttribIPointer(index, size, type, stride, pointer);
-    TRACE("VertexAttribIPointer");
+    TRACE("glVertexAttribIPointer");
 }
 
 void GLMethods::GetVertexAttribIiv(GLuint index, GLenum pname, GLint * params) const {
     _GetVertexAttribIiv(index, pname, params);
-    TRACE("GetVertexAttribIiv");
+    TRACE("glGetVertexAttribIiv");
 }
 
 void GLMethods::GetVertexAttribIuiv(GLuint index, GLenum pname, GLuint * params) const {
     _GetVertexAttribIuiv(index, pname, params);
-    TRACE("GetVertexAttribIuiv");
+    TRACE("glGetVertexAttribIuiv");
 }
 
 void GLMethods::VertexAttribI1i(GLuint index, GLint x) const {
     _VertexAttribI1i(index, x);
-    TRACE("VertexAttribI1i");
+    TRACE("glVertexAttribI1i");
 }
 
 void GLMethods::VertexAttribI2i(GLuint index, GLint x, GLint y) const {
     _VertexAttribI2i(index, x, y);
-    TRACE("VertexAttribI2i");
+    TRACE("glVertexAttribI2i");
 }
 
 void GLMethods::VertexAttribI3i(GLuint index, GLint x, GLint y, GLint z) const {
     _VertexAttribI3i(index, x, y, z);
-    TRACE("VertexAttribI3i");
+    TRACE("glVertexAttribI3i");
 }
 
 void GLMethods::VertexAttribI4i(GLuint index, GLint x, GLint y, GLint z, GLint w) const {
     _VertexAttribI4i(index, x, y, z, w);
-    TRACE("VertexAttribI4i");
+    TRACE("glVertexAttribI4i");
 }
 
 void GLMethods::VertexAttribI1ui(GLuint index, GLuint x) const {
     _VertexAttribI1ui(index, x);
-    TRACE("VertexAttribI1ui");
+    TRACE("glVertexAttribI1ui");
 }
 
 void GLMethods::VertexAttribI2ui(GLuint index, GLuint x, GLuint y) const {
     _VertexAttribI2ui(index, x, y);
-    TRACE("VertexAttribI2ui");
+    TRACE("glVertexAttribI2ui");
 }
 
 void GLMethods::VertexAttribI3ui(GLuint index, GLuint x, GLuint y, GLuint z) const {
     _VertexAttribI3ui(index, x, y, z);
-    TRACE("VertexAttribI3ui");
+    TRACE("glVertexAttribI3ui");
 }
 
 void GLMethods::VertexAttribI4ui(GLuint index, GLuint x, GLuint y, GLuint z, GLuint w) const {
     _VertexAttribI4ui(index, x, y, z, w);
-    TRACE("VertexAttribI4ui");
+    TRACE("glVertexAttribI4ui");
 }
 
 void GLMethods::VertexAttribI1iv(GLuint index, const GLint * v) const {
     _VertexAttribI1iv(index, v);
-    TRACE("VertexAttribI1iv");
+    TRACE("glVertexAttribI1iv");
 }
 
 void GLMethods::VertexAttribI2iv(GLuint index, const GLint * v) const {
     _VertexAttribI2iv(index, v);
-    TRACE("VertexAttribI2iv");
+    TRACE("glVertexAttribI2iv");
 }
 
 void GLMethods::VertexAttribI3iv(GLuint index, const GLint * v) const {
     _VertexAttribI3iv(index, v);
-    TRACE("VertexAttribI3iv");
+    TRACE("glVertexAttribI3iv");
 }
 
 void GLMethods::VertexAttribI4iv(GLuint index, const GLint * v) const {
     _VertexAttribI4iv(index, v);
-    TRACE("VertexAttribI4iv");
+    TRACE("glVertexAttribI4iv");
 }
 
 void GLMethods::VertexAttribI1uiv(GLuint index, const GLuint * v) const {
     _VertexAttribI1uiv(index, v);
-    TRACE("VertexAttribI1uiv");
+    TRACE("glVertexAttribI1uiv");
 }
 
 void GLMethods::VertexAttribI2uiv(GLuint index, const GLuint * v) const {
     _VertexAttribI2uiv(index, v);
-    TRACE("VertexAttribI2uiv");
+    TRACE("glVertexAttribI2uiv");
 }
 
 void GLMethods::VertexAttribI3uiv(GLuint index, const GLuint * v) const {
     _VertexAttribI3uiv(index, v);
-    TRACE("VertexAttribI3uiv");
+    TRACE("glVertexAttribI3uiv");
 }
 
 void GLMethods::VertexAttribI4uiv(GLuint index, const GLuint * v) const {
     _VertexAttribI4uiv(index, v);
-    TRACE("VertexAttribI4uiv");
+    TRACE("glVertexAttribI4uiv");
 }
 
 void GLMethods::VertexAttribI4bv(GLuint index, const GLbyte * v) const {
     _VertexAttribI4bv(index, v);
-    TRACE("VertexAttribI4bv");
+    TRACE("glVertexAttribI4bv");
 }
 
 void GLMethods::VertexAttribI4sv(GLuint index, const GLshort * v) const {
     _VertexAttribI4sv(index, v);
-    TRACE("VertexAttribI4sv");
+    TRACE("glVertexAttribI4sv");
 }
 
 void GLMethods::VertexAttribI4ubv(GLuint index, const GLubyte * v) const {
     _VertexAttribI4ubv(index, v);
-    TRACE("VertexAttribI4ubv");
+    TRACE("glVertexAttribI4ubv");
 }
 
 void GLMethods::VertexAttribI4usv(GLuint index, const GLushort * v) const {
     _VertexAttribI4usv(index, v);
-    TRACE("VertexAttribI4usv");
+    TRACE("glVertexAttribI4usv");
 }
 
 void GLMethods::GetUniformuiv(GLuint program, GLint location, GLuint * params) const {
     _GetUniformuiv(program, location, params);
-    TRACE("GetUniformuiv");
+    TRACE("glGetUniformuiv");
 }
 
 void GLMethods::BindFragDataLocation(GLuint program, GLuint color, const GLchar * name) const {
     _BindFragDataLocation(program, color, name);
-    TRACE("BindFragDataLocation");
+    TRACE("glBindFragDataLocation");
 }
 
 GLint GLMethods::GetFragDataLocation(GLuint program, const GLchar * name) const {
     GLint __result = _GetFragDataLocation(program, name);
-    TRACE("GetFragDataLocation");
+    TRACE("glGetFragDataLocation");
     return __result;
 }
 
 void GLMethods::Uniform1ui(GLint location, GLuint v0) const {
     _Uniform1ui(location, v0);
-    TRACE("Uniform1ui");
+    TRACE("glUniform1ui");
 }
 
 void GLMethods::Uniform2ui(GLint location, GLuint v0, GLuint v1) const {
     _Uniform2ui(location, v0, v1);
-    TRACE("Uniform2ui");
+    TRACE("glUniform2ui");
 }
 
 void GLMethods::Uniform3ui(GLint location, GLuint v0, GLuint v1, GLuint v2) const {
     _Uniform3ui(location, v0, v1, v2);
-    TRACE("Uniform3ui");
+    TRACE("glUniform3ui");
 }
 
 void GLMethods::Uniform4ui(GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3) const {
     _Uniform4ui(location, v0, v1, v2, v3);
-    TRACE("Uniform4ui");
+    TRACE("glUniform4ui");
 }
 
 void GLMethods::Uniform1uiv(GLint location, GLsizei count, const GLuint * value) const {
     _Uniform1uiv(location, count, value);
-    TRACE("Uniform1uiv");
+    TRACE("glUniform1uiv");
 }
 
 void GLMethods::Uniform2uiv(GLint location, GLsizei count, const GLuint * value) const {
     _Uniform2uiv(location, count, value);
-    TRACE("Uniform2uiv");
+    TRACE("glUniform2uiv");
 }
 
 void GLMethods::Uniform3uiv(GLint location, GLsizei count, const GLuint * value) const {
     _Uniform3uiv(location, count, value);
-    TRACE("Uniform3uiv");
+    TRACE("glUniform3uiv");
 }
 
 void GLMethods::Uniform4uiv(GLint location, GLsizei count, const GLuint * value) const {
     _Uniform4uiv(location, count, value);
-    TRACE("Uniform4uiv");
+    TRACE("glUniform4uiv");
 }
 
 void GLMethods::TexParameterIiv(GLenum target, GLenum pname, const GLint * params) const {
     _TexParameterIiv(target, pname, params);
-    TRACE("TexParameterIiv");
+    TRACE("glTexParameterIiv");
 }
 
 void GLMethods::TexParameterIuiv(GLenum target, GLenum pname, const GLuint * params) const {
     _TexParameterIuiv(target, pname, params);
-    TRACE("TexParameterIuiv");
+    TRACE("glTexParameterIuiv");
 }
 
 void GLMethods::GetTexParameterIiv(GLenum target, GLenum pname, GLint * params) const {
     _GetTexParameterIiv(target, pname, params);
-    TRACE("GetTexParameterIiv");
+    TRACE("glGetTexParameterIiv");
 }
 
 void GLMethods::GetTexParameterIuiv(GLenum target, GLenum pname, GLuint * params) const {
     _GetTexParameterIuiv(target, pname, params);
-    TRACE("GetTexParameterIuiv");
+    TRACE("glGetTexParameterIuiv");
 }
 
 void GLMethods::ClearBufferiv(GLenum buffer, GLint drawbuffer, const GLint * value) const {
     _ClearBufferiv(buffer, drawbuffer, value);
-    TRACE("ClearBufferiv");
+    TRACE("glClearBufferiv");
 }
 
 void GLMethods::ClearBufferuiv(GLenum buffer, GLint drawbuffer, const GLuint * value) const {
     _ClearBufferuiv(buffer, drawbuffer, value);
-    TRACE("ClearBufferuiv");
+    TRACE("glClearBufferuiv");
 }
 
 void GLMethods::ClearBufferfv(GLenum buffer, GLint drawbuffer, const GLfloat * value) const {
     _ClearBufferfv(buffer, drawbuffer, value);
-    TRACE("ClearBufferfv");
+    TRACE("glClearBufferfv");
 }
 
 void GLMethods::ClearBufferfi(GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil) const {
     _ClearBufferfi(buffer, drawbuffer, depth, stencil);
-    TRACE("ClearBufferfi");
+    TRACE("glClearBufferfi");
 }
 
 const GLubyte * GLMethods::GetStringi(GLenum name, GLuint index) const {
     const GLubyte * __result = _GetStringi(name, index);
-    TRACE("GetStringi");
+    TRACE("glGetStringi");
     return __result;
 }
 
 GLboolean GLMethods::IsRenderbuffer(GLuint renderbuffer) const {
     GLboolean __result = _IsRenderbuffer(renderbuffer);
-    TRACE("IsRenderbuffer");
+    TRACE("glIsRenderbuffer");
     return __result;
 }
 
 void GLMethods::BindRenderbuffer(GLenum target, GLuint renderbuffer) const {
     _BindRenderbuffer(target, renderbuffer);
-    TRACE("BindRenderbuffer");
+    TRACE("glBindRenderbuffer");
 }
 
 void GLMethods::DeleteRenderbuffers(GLsizei n, const GLuint * renderbuffers) const {
     _DeleteRenderbuffers(n, renderbuffers);
-    TRACE("DeleteRenderbuffers");
+    TRACE("glDeleteRenderbuffers");
 }
 
 void GLMethods::GenRenderbuffers(GLsizei n, GLuint * renderbuffers) const {
     _GenRenderbuffers(n, renderbuffers);
-    TRACE("GenRenderbuffers");
+    TRACE("glGenRenderbuffers");
 }
 
 void GLMethods::RenderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height) const {
     _RenderbufferStorage(target, internalformat, width, height);
-    TRACE("RenderbufferStorage");
+    TRACE("glRenderbufferStorage");
 }
 
 void GLMethods::GetRenderbufferParameteriv(GLenum target, GLenum pname, GLint * params) const {
     _GetRenderbufferParameteriv(target, pname, params);
-    TRACE("GetRenderbufferParameteriv");
+    TRACE("glGetRenderbufferParameteriv");
 }
 
 GLboolean GLMethods::IsFramebuffer(GLuint framebuffer) const {
     GLboolean __result = _IsFramebuffer(framebuffer);
-    TRACE("IsFramebuffer");
+    TRACE("glIsFramebuffer");
     return __result;
 }
 
 void GLMethods::BindFramebuffer(GLenum target, GLuint framebuffer) const {
     _BindFramebuffer(target, framebuffer);
-    TRACE("BindFramebuffer");
+    TRACE("glBindFramebuffer");
 }
 
 void GLMethods::DeleteFramebuffers(GLsizei n, const GLuint * framebuffers) const {
     _DeleteFramebuffers(n, framebuffers);
-    TRACE("DeleteFramebuffers");
+    TRACE("glDeleteFramebuffers");
 }
 
 void GLMethods::GenFramebuffers(GLsizei n, GLuint * framebuffers) const {
     _GenFramebuffers(n, framebuffers);
-    TRACE("GenFramebuffers");
+    TRACE("glGenFramebuffers");
 }
 
 GLenum GLMethods::CheckFramebufferStatus(GLenum target) const {
     GLenum __result = _CheckFramebufferStatus(target);
-    TRACE("CheckFramebufferStatus");
+    TRACE("glCheckFramebufferStatus");
     return __result;
 }
 
 void GLMethods::FramebufferTexture1D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level) const {
     _FramebufferTexture1D(target, attachment, textarget, texture, level);
-    TRACE("FramebufferTexture1D");
+    TRACE("glFramebufferTexture1D");
 }
 
 void GLMethods::FramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level) const {
     _FramebufferTexture2D(target, attachment, textarget, texture, level);
-    TRACE("FramebufferTexture2D");
+    TRACE("glFramebufferTexture2D");
 }
 
 void GLMethods::FramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset) const {
     _FramebufferTexture3D(target, attachment, textarget, texture, level, zoffset);
-    TRACE("FramebufferTexture3D");
+    TRACE("glFramebufferTexture3D");
 }
 
 void GLMethods::FramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer) const {
     _FramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
-    TRACE("FramebufferRenderbuffer");
+    TRACE("glFramebufferRenderbuffer");
 }
 
 void GLMethods::GetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GLenum pname, GLint * params) const {
     _GetFramebufferAttachmentParameteriv(target, attachment, pname, params);
-    TRACE("GetFramebufferAttachmentParameteriv");
+    TRACE("glGetFramebufferAttachmentParameteriv");
 }
 
 void GLMethods::GenerateMipmap(GLenum target) const {
     _GenerateMipmap(target);
-    TRACE("GenerateMipmap");
+    TRACE("glGenerateMipmap");
 }
 
 void GLMethods::BlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter) const {
     _BlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
-    TRACE("BlitFramebuffer");
+    TRACE("glBlitFramebuffer");
 }
 
 void GLMethods::RenderbufferStorageMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height) const {
     _RenderbufferStorageMultisample(target, samples, internalformat, width, height);
-    TRACE("RenderbufferStorageMultisample");
+    TRACE("glRenderbufferStorageMultisample");
 }
 
 void GLMethods::FramebufferTextureLayer(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer) const {
     _FramebufferTextureLayer(target, attachment, texture, level, layer);
-    TRACE("FramebufferTextureLayer");
+    TRACE("glFramebufferTextureLayer");
 }
 
 void * GLMethods::MapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access) const {
     void * __result = _MapBufferRange(target, offset, length, access);
-    TRACE("MapBufferRange");
+    TRACE("glMapBufferRange");
     return __result;
 }
 
 void GLMethods::FlushMappedBufferRange(GLenum target, GLintptr offset, GLsizeiptr length) const {
     _FlushMappedBufferRange(target, offset, length);
-    TRACE("FlushMappedBufferRange");
+    TRACE("glFlushMappedBufferRange");
 }
 
 void GLMethods::BindVertexArray(GLuint array) const {
     _BindVertexArray(array);
-    TRACE("BindVertexArray");
+    TRACE("glBindVertexArray");
 }
 
 void GLMethods::DeleteVertexArrays(GLsizei n, const GLuint * arrays) const {
     _DeleteVertexArrays(n, arrays);
-    TRACE("DeleteVertexArrays");
+    TRACE("glDeleteVertexArrays");
 }
 
 void GLMethods::GenVertexArrays(GLsizei n, GLuint * arrays) const {
     _GenVertexArrays(n, arrays);
-    TRACE("GenVertexArrays");
+    TRACE("glGenVertexArrays");
 }
 
 GLboolean GLMethods::IsVertexArray(GLuint array) const {
     GLboolean __result = _IsVertexArray(array);
-    TRACE("IsVertexArray");
+    TRACE("glIsVertexArray");
     return __result;
 }
 
 void GLMethods::DrawArraysInstanced(GLenum mode, GLint first, GLsizei count, GLsizei instancecount) const {
     _DrawArraysInstanced(mode, first, count, instancecount);
-    TRACE("DrawArraysInstanced");
+    TRACE("glDrawArraysInstanced");
 }
 
 void GLMethods::DrawElementsInstanced(GLenum mode, GLsizei count, GLenum type, const void * indices, GLsizei instancecount) const {
     _DrawElementsInstanced(mode, count, type, indices, instancecount);
-    TRACE("DrawElementsInstanced");
+    TRACE("glDrawElementsInstanced");
 }
 
 void GLMethods::TexBuffer(GLenum target, GLenum internalformat, GLuint buffer) const {
     _TexBuffer(target, internalformat, buffer);
-    TRACE("TexBuffer");
+    TRACE("glTexBuffer");
 }
 
 void GLMethods::PrimitiveRestartIndex(GLuint index) const {
     _PrimitiveRestartIndex(index);
-    TRACE("PrimitiveRestartIndex");
+    TRACE("glPrimitiveRestartIndex");
 }
 
 void GLMethods::CopyBufferSubData(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size) const {
     _CopyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
-    TRACE("CopyBufferSubData");
+    TRACE("glCopyBufferSubData");
 }
 
 void GLMethods::GetUniformIndices(GLuint program, GLsizei uniformCount, const GLchar * const * uniformNames, GLuint * uniformIndices) const {
     _GetUniformIndices(program, uniformCount, uniformNames, uniformIndices);
-    TRACE("GetUniformIndices");
+    TRACE("glGetUniformIndices");
 }
 
 void GLMethods::GetActiveUniformsiv(GLuint program, GLsizei uniformCount, const GLuint * uniformIndices, GLenum pname, GLint * params) const {
     _GetActiveUniformsiv(program, uniformCount, uniformIndices, pname, params);
-    TRACE("GetActiveUniformsiv");
+    TRACE("glGetActiveUniformsiv");
 }
 
 void GLMethods::GetActiveUniformName(GLuint program, GLuint uniformIndex, GLsizei bufSize, GLsizei * length, GLchar * uniformName) const {
     _GetActiveUniformName(program, uniformIndex, bufSize, length, uniformName);
-    TRACE("GetActiveUniformName");
+    TRACE("glGetActiveUniformName");
 }
 
 GLuint GLMethods::GetUniformBlockIndex(GLuint program, const GLchar * uniformBlockName) const {
     GLuint __result = _GetUniformBlockIndex(program, uniformBlockName);
-    TRACE("GetUniformBlockIndex");
+    TRACE("glGetUniformBlockIndex");
     return __result;
 }
 
 void GLMethods::GetActiveUniformBlockiv(GLuint program, GLuint uniformBlockIndex, GLenum pname, GLint * params) const {
     _GetActiveUniformBlockiv(program, uniformBlockIndex, pname, params);
-    TRACE("GetActiveUniformBlockiv");
+    TRACE("glGetActiveUniformBlockiv");
 }
 
 void GLMethods::GetActiveUniformBlockName(GLuint program, GLuint uniformBlockIndex, GLsizei bufSize, GLsizei * length, GLchar * uniformBlockName) const {
     _GetActiveUniformBlockName(program, uniformBlockIndex, bufSize, length, uniformBlockName);
-    TRACE("GetActiveUniformBlockName");
+    TRACE("glGetActiveUniformBlockName");
 }
 
 void GLMethods::UniformBlockBinding(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding) const {
     _UniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
-    TRACE("UniformBlockBinding");
+    TRACE("glUniformBlockBinding");
 }
 
 void GLMethods::DrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type, const void * indices, GLint basevertex) const {
     _DrawElementsBaseVertex(mode, count, type, indices, basevertex);
-    TRACE("DrawElementsBaseVertex");
+    TRACE("glDrawElementsBaseVertex");
 }
 
 void GLMethods::DrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void * indices, GLint basevertex) const {
     _DrawRangeElementsBaseVertex(mode, start, end, count, type, indices, basevertex);
-    TRACE("DrawRangeElementsBaseVertex");
+    TRACE("glDrawRangeElementsBaseVertex");
 }
 
 void GLMethods::DrawElementsInstancedBaseVertex(GLenum mode, GLsizei count, GLenum type, const void * indices, GLsizei instancecount, GLint basevertex) const {
     _DrawElementsInstancedBaseVertex(mode, count, type, indices, instancecount, basevertex);
-    TRACE("DrawElementsInstancedBaseVertex");
+    TRACE("glDrawElementsInstancedBaseVertex");
 }
 
 void GLMethods::MultiDrawElementsBaseVertex(GLenum mode, const GLsizei * count, GLenum type, const void * const * indices, GLsizei drawcount, const GLint * basevertex) const {
     _MultiDrawElementsBaseVertex(mode, count, type, indices, drawcount, basevertex);
-    TRACE("MultiDrawElementsBaseVertex");
+    TRACE("glMultiDrawElementsBaseVertex");
 }
 
 void GLMethods::ProvokingVertex(GLenum mode) const {
     _ProvokingVertex(mode);
-    TRACE("ProvokingVertex");
+    TRACE("glProvokingVertex");
 }
 
 GLsync GLMethods::FenceSync(GLenum condition, GLbitfield flags) const {
     GLsync __result = _FenceSync(condition, flags);
-    TRACE("FenceSync");
+    TRACE("glFenceSync");
     return __result;
 }
 
 GLboolean GLMethods::IsSync(GLsync sync) const {
     GLboolean __result = _IsSync(sync);
-    TRACE("IsSync");
+    TRACE("glIsSync");
     return __result;
 }
 
 void GLMethods::DeleteSync(GLsync sync) const {
     _DeleteSync(sync);
-    TRACE("DeleteSync");
+    TRACE("glDeleteSync");
 }
 
 GLenum GLMethods::ClientWaitSync(GLsync sync, GLbitfield flags, GLuint64 timeout) const {
     GLenum __result = _ClientWaitSync(sync, flags, timeout);
-    TRACE("ClientWaitSync");
+    TRACE("glClientWaitSync");
     return __result;
 }
 
 void GLMethods::WaitSync(GLsync sync, GLbitfield flags, GLuint64 timeout) const {
     _WaitSync(sync, flags, timeout);
-    TRACE("WaitSync");
+    TRACE("glWaitSync");
 }
 
 void GLMethods::GetInteger64v(GLenum pname, GLint64 * data) const {
     _GetInteger64v(pname, data);
-    TRACE("GetInteger64v");
+    TRACE("glGetInteger64v");
 }
 
 void GLMethods::GetSynciv(GLsync sync, GLenum pname, GLsizei bufSize, GLsizei * length, GLint * values) const {
     _GetSynciv(sync, pname, bufSize, length, values);
-    TRACE("GetSynciv");
+    TRACE("glGetSynciv");
 }
 
 void GLMethods::GetInteger64i_v(GLenum target, GLuint index, GLint64 * data) const {
     _GetInteger64i_v(target, index, data);
-    TRACE("GetInteger64i_v");
+    TRACE("glGetInteger64i_v");
 }
 
 void GLMethods::GetBufferParameteri64v(GLenum target, GLenum pname, GLint64 * params) const {
     _GetBufferParameteri64v(target, pname, params);
-    TRACE("GetBufferParameteri64v");
+    TRACE("glGetBufferParameteri64v");
 }
 
 void GLMethods::FramebufferTexture(GLenum target, GLenum attachment, GLuint texture, GLint level) const {
     _FramebufferTexture(target, attachment, texture, level);
-    TRACE("FramebufferTexture");
+    TRACE("glFramebufferTexture");
 }
 
 void GLMethods::TexImage2DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations) const {
     _TexImage2DMultisample(target, samples, internalformat, width, height, fixedsamplelocations);
-    TRACE("TexImage2DMultisample");
+    TRACE("glTexImage2DMultisample");
 }
 
 void GLMethods::TexImage3DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean fixedsamplelocations) const {
     _TexImage3DMultisample(target, samples, internalformat, width, height, depth, fixedsamplelocations);
-    TRACE("TexImage3DMultisample");
+    TRACE("glTexImage3DMultisample");
 }
 
 void GLMethods::GetMultisamplefv(GLenum pname, GLuint index, GLfloat * val) const {
     _GetMultisamplefv(pname, index, val);
-    TRACE("GetMultisamplefv");
+    TRACE("glGetMultisamplefv");
 }
 
 void GLMethods::SampleMaski(GLuint maskNumber, GLbitfield mask) const {
     _SampleMaski(maskNumber, mask);
-    TRACE("SampleMaski");
+    TRACE("glSampleMaski");
 }
 
 void GLMethods::BindFragDataLocationIndexed(GLuint program, GLuint colorNumber, GLuint index, const GLchar * name) const {
     _BindFragDataLocationIndexed(program, colorNumber, index, name);
-    TRACE("BindFragDataLocationIndexed");
+    TRACE("glBindFragDataLocationIndexed");
 }
 
 GLint GLMethods::GetFragDataIndex(GLuint program, const GLchar * name) const {
     GLint __result = _GetFragDataIndex(program, name);
-    TRACE("GetFragDataIndex");
+    TRACE("glGetFragDataIndex");
     return __result;
 }
 
 void GLMethods::GenSamplers(GLsizei count, GLuint * samplers) const {
     _GenSamplers(count, samplers);
-    TRACE("GenSamplers");
+    TRACE("glGenSamplers");
 }
 
 void GLMethods::DeleteSamplers(GLsizei count, const GLuint * samplers) const {
     _DeleteSamplers(count, samplers);
-    TRACE("DeleteSamplers");
+    TRACE("glDeleteSamplers");
 }
 
 GLboolean GLMethods::IsSampler(GLuint sampler) const {
     GLboolean __result = _IsSampler(sampler);
-    TRACE("IsSampler");
+    TRACE("glIsSampler");
     return __result;
 }
 
 void GLMethods::BindSampler(GLuint unit, GLuint sampler) const {
     _BindSampler(unit, sampler);
-    TRACE("BindSampler");
+    TRACE("glBindSampler");
 }
 
 void GLMethods::SamplerParameteri(GLuint sampler, GLenum pname, GLint param) const {
     _SamplerParameteri(sampler, pname, param);
-    TRACE("SamplerParameteri");
+    TRACE("glSamplerParameteri");
 }
 
 void GLMethods::SamplerParameteriv(GLuint sampler, GLenum pname, const GLint * param) const {
     _SamplerParameteriv(sampler, pname, param);
-    TRACE("SamplerParameteriv");
+    TRACE("glSamplerParameteriv");
 }
 
 void GLMethods::SamplerParameterf(GLuint sampler, GLenum pname, GLfloat param) const {
     _SamplerParameterf(sampler, pname, param);
-    TRACE("SamplerParameterf");
+    TRACE("glSamplerParameterf");
 }
 
 void GLMethods::SamplerParameterfv(GLuint sampler, GLenum pname, const GLfloat * param) const {
     _SamplerParameterfv(sampler, pname, param);
-    TRACE("SamplerParameterfv");
+    TRACE("glSamplerParameterfv");
 }
 
 void GLMethods::SamplerParameterIiv(GLuint sampler, GLenum pname, const GLint * param) const {
     _SamplerParameterIiv(sampler, pname, param);
-    TRACE("SamplerParameterIiv");
+    TRACE("glSamplerParameterIiv");
 }
 
 void GLMethods::SamplerParameterIuiv(GLuint sampler, GLenum pname, const GLuint * param) const {
     _SamplerParameterIuiv(sampler, pname, param);
-    TRACE("SamplerParameterIuiv");
+    TRACE("glSamplerParameterIuiv");
 }
 
 void GLMethods::GetSamplerParameteriv(GLuint sampler, GLenum pname, GLint * params) const {
     _GetSamplerParameteriv(sampler, pname, params);
-    TRACE("GetSamplerParameteriv");
+    TRACE("glGetSamplerParameteriv");
 }
 
 void GLMethods::GetSamplerParameterIiv(GLuint sampler, GLenum pname, GLint * params) const {
     _GetSamplerParameterIiv(sampler, pname, params);
-    TRACE("GetSamplerParameterIiv");
+    TRACE("glGetSamplerParameterIiv");
 }
 
 void GLMethods::GetSamplerParameterfv(GLuint sampler, GLenum pname, GLfloat * params) const {
     _GetSamplerParameterfv(sampler, pname, params);
-    TRACE("GetSamplerParameterfv");
+    TRACE("glGetSamplerParameterfv");
 }
 
 void GLMethods::GetSamplerParameterIuiv(GLuint sampler, GLenum pname, GLuint * params) const {
     _GetSamplerParameterIuiv(sampler, pname, params);
-    TRACE("GetSamplerParameterIuiv");
+    TRACE("glGetSamplerParameterIuiv");
 }
 
 void GLMethods::QueryCounter(GLuint id, GLenum target) const {
     _QueryCounter(id, target);
-    TRACE("QueryCounter");
+    TRACE("glQueryCounter");
 }
 
 void GLMethods::GetQueryObjecti64v(GLuint id, GLenum pname, GLint64 * params) const {
     _GetQueryObjecti64v(id, pname, params);
-    TRACE("GetQueryObjecti64v");
+    TRACE("glGetQueryObjecti64v");
 }
 
 void GLMethods::GetQueryObjectui64v(GLuint id, GLenum pname, GLuint64 * params) const {
     _GetQueryObjectui64v(id, pname, params);
-    TRACE("GetQueryObjectui64v");
+    TRACE("glGetQueryObjectui64v");
 }
 
 void GLMethods::VertexAttribDivisor(GLuint index, GLuint divisor) const {
     _VertexAttribDivisor(index, divisor);
-    TRACE("VertexAttribDivisor");
+    TRACE("glVertexAttribDivisor");
 }
 
 void GLMethods::VertexAttribP1ui(GLuint index, GLenum type, GLboolean normalized, GLuint value) const {
     _VertexAttribP1ui(index, type, normalized, value);
-    TRACE("VertexAttribP1ui");
+    TRACE("glVertexAttribP1ui");
 }
 
 void GLMethods::VertexAttribP1uiv(GLuint index, GLenum type, GLboolean normalized, const GLuint * value) const {
     _VertexAttribP1uiv(index, type, normalized, value);
-    TRACE("VertexAttribP1uiv");
+    TRACE("glVertexAttribP1uiv");
 }
 
 void GLMethods::VertexAttribP2ui(GLuint index, GLenum type, GLboolean normalized, GLuint value) const {
     _VertexAttribP2ui(index, type, normalized, value);
-    TRACE("VertexAttribP2ui");
+    TRACE("glVertexAttribP2ui");
 }
 
 void GLMethods::VertexAttribP2uiv(GLuint index, GLenum type, GLboolean normalized, const GLuint * value) const {
     _VertexAttribP2uiv(index, type, normalized, value);
-    TRACE("VertexAttribP2uiv");
+    TRACE("glVertexAttribP2uiv");
 }
 
 void GLMethods::VertexAttribP3ui(GLuint index, GLenum type, GLboolean normalized, GLuint value) const {
     _VertexAttribP3ui(index, type, normalized, value);
-    TRACE("VertexAttribP3ui");
+    TRACE("glVertexAttribP3ui");
 }
 
 void GLMethods::VertexAttribP3uiv(GLuint index, GLenum type, GLboolean normalized, const GLuint * value) const {
     _VertexAttribP3uiv(index, type, normalized, value);
-    TRACE("VertexAttribP3uiv");
+    TRACE("glVertexAttribP3uiv");
 }
 
 void GLMethods::VertexAttribP4ui(GLuint index, GLenum type, GLboolean normalized, GLuint value) const {
     _VertexAttribP4ui(index, type, normalized, value);
-    TRACE("VertexAttribP4ui");
+    TRACE("glVertexAttribP4ui");
 }
 
 void GLMethods::VertexAttribP4uiv(GLuint index, GLenum type, GLboolean normalized, const GLuint * value) const {
     _VertexAttribP4uiv(index, type, normalized, value);
-    TRACE("VertexAttribP4uiv");
+    TRACE("glVertexAttribP4uiv");
 }
 
 void GLMethods::MinSampleShading(GLfloat value) const {
     _MinSampleShading(value);
-    TRACE("MinSampleShading");
+    TRACE("glMinSampleShading");
 }
 
 void GLMethods::BlendEquationi(GLuint buf, GLenum mode) const {
     _BlendEquationi(buf, mode);
-    TRACE("BlendEquationi");
+    TRACE("glBlendEquationi");
 }
 
 void GLMethods::BlendEquationSeparatei(GLuint buf, GLenum modeRGB, GLenum modeAlpha) const {
     _BlendEquationSeparatei(buf, modeRGB, modeAlpha);
-    TRACE("BlendEquationSeparatei");
+    TRACE("glBlendEquationSeparatei");
 }
 
 void GLMethods::BlendFunci(GLuint buf, GLenum src, GLenum dst) const {
     _BlendFunci(buf, src, dst);
-    TRACE("BlendFunci");
+    TRACE("glBlendFunci");
 }
 
 void GLMethods::BlendFuncSeparatei(GLuint buf, GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha) const {
     _BlendFuncSeparatei(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
-    TRACE("BlendFuncSeparatei");
+    TRACE("glBlendFuncSeparatei");
 }
 
 void GLMethods::DrawArraysIndirect(GLenum mode, const void * indirect) const {
     _DrawArraysIndirect(mode, indirect);
-    TRACE("DrawArraysIndirect");
+    TRACE("glDrawArraysIndirect");
 }
 
 void GLMethods::DrawElementsIndirect(GLenum mode, GLenum type, const void * indirect) const {
     _DrawElementsIndirect(mode, type, indirect);
-    TRACE("DrawElementsIndirect");
+    TRACE("glDrawElementsIndirect");
 }
 
 void GLMethods::Uniform1d(GLint location, GLdouble x) const {
     _Uniform1d(location, x);
-    TRACE("Uniform1d");
+    TRACE("glUniform1d");
 }
 
 void GLMethods::Uniform2d(GLint location, GLdouble x, GLdouble y) const {
     _Uniform2d(location, x, y);
-    TRACE("Uniform2d");
+    TRACE("glUniform2d");
 }
 
 void GLMethods::Uniform3d(GLint location, GLdouble x, GLdouble y, GLdouble z) const {
     _Uniform3d(location, x, y, z);
-    TRACE("Uniform3d");
+    TRACE("glUniform3d");
 }
 
 void GLMethods::Uniform4d(GLint location, GLdouble x, GLdouble y, GLdouble z, GLdouble w) const {
     _Uniform4d(location, x, y, z, w);
-    TRACE("Uniform4d");
+    TRACE("glUniform4d");
 }
 
 void GLMethods::Uniform1dv(GLint location, GLsizei count, const GLdouble * value) const {
     _Uniform1dv(location, count, value);
-    TRACE("Uniform1dv");
+    TRACE("glUniform1dv");
 }
 
 void GLMethods::Uniform2dv(GLint location, GLsizei count, const GLdouble * value) const {
     _Uniform2dv(location, count, value);
-    TRACE("Uniform2dv");
+    TRACE("glUniform2dv");
 }
 
 void GLMethods::Uniform3dv(GLint location, GLsizei count, const GLdouble * value) const {
     _Uniform3dv(location, count, value);
-    TRACE("Uniform3dv");
+    TRACE("glUniform3dv");
 }
 
 void GLMethods::Uniform4dv(GLint location, GLsizei count, const GLdouble * value) const {
     _Uniform4dv(location, count, value);
-    TRACE("Uniform4dv");
+    TRACE("glUniform4dv");
 }
 
 void GLMethods::UniformMatrix2dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _UniformMatrix2dv(location, count, transpose, value);
-    TRACE("UniformMatrix2dv");
+    TRACE("glUniformMatrix2dv");
 }
 
 void GLMethods::UniformMatrix3dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _UniformMatrix3dv(location, count, transpose, value);
-    TRACE("UniformMatrix3dv");
+    TRACE("glUniformMatrix3dv");
 }
 
 void GLMethods::UniformMatrix4dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _UniformMatrix4dv(location, count, transpose, value);
-    TRACE("UniformMatrix4dv");
+    TRACE("glUniformMatrix4dv");
 }
 
 void GLMethods::UniformMatrix2x3dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _UniformMatrix2x3dv(location, count, transpose, value);
-    TRACE("UniformMatrix2x3dv");
+    TRACE("glUniformMatrix2x3dv");
 }
 
 void GLMethods::UniformMatrix2x4dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _UniformMatrix2x4dv(location, count, transpose, value);
-    TRACE("UniformMatrix2x4dv");
+    TRACE("glUniformMatrix2x4dv");
 }
 
 void GLMethods::UniformMatrix3x2dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _UniformMatrix3x2dv(location, count, transpose, value);
-    TRACE("UniformMatrix3x2dv");
+    TRACE("glUniformMatrix3x2dv");
 }
 
 void GLMethods::UniformMatrix3x4dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _UniformMatrix3x4dv(location, count, transpose, value);
-    TRACE("UniformMatrix3x4dv");
+    TRACE("glUniformMatrix3x4dv");
 }
 
 void GLMethods::UniformMatrix4x2dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _UniformMatrix4x2dv(location, count, transpose, value);
-    TRACE("UniformMatrix4x2dv");
+    TRACE("glUniformMatrix4x2dv");
 }
 
 void GLMethods::UniformMatrix4x3dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _UniformMatrix4x3dv(location, count, transpose, value);
-    TRACE("UniformMatrix4x3dv");
+    TRACE("glUniformMatrix4x3dv");
 }
 
 void GLMethods::GetUniformdv(GLuint program, GLint location, GLdouble * params) const {
     _GetUniformdv(program, location, params);
-    TRACE("GetUniformdv");
+    TRACE("glGetUniformdv");
 }
 
 GLint GLMethods::GetSubroutineUniformLocation(GLuint program, GLenum shadertype, const GLchar * name) const {
     GLint __result = _GetSubroutineUniformLocation(program, shadertype, name);
-    TRACE("GetSubroutineUniformLocation");
+    TRACE("glGetSubroutineUniformLocation");
     return __result;
 }
 
 GLuint GLMethods::GetSubroutineIndex(GLuint program, GLenum shadertype, const GLchar * name) const {
     GLuint __result = _GetSubroutineIndex(program, shadertype, name);
-    TRACE("GetSubroutineIndex");
+    TRACE("glGetSubroutineIndex");
     return __result;
 }
 
 void GLMethods::GetActiveSubroutineUniformiv(GLuint program, GLenum shadertype, GLuint index, GLenum pname, GLint * values) const {
     _GetActiveSubroutineUniformiv(program, shadertype, index, pname, values);
-    TRACE("GetActiveSubroutineUniformiv");
+    TRACE("glGetActiveSubroutineUniformiv");
 }
 
 void GLMethods::GetActiveSubroutineUniformName(GLuint program, GLenum shadertype, GLuint index, GLsizei bufsize, GLsizei * length, GLchar * name) const {
     _GetActiveSubroutineUniformName(program, shadertype, index, bufsize, length, name);
-    TRACE("GetActiveSubroutineUniformName");
+    TRACE("glGetActiveSubroutineUniformName");
 }
 
 void GLMethods::GetActiveSubroutineName(GLuint program, GLenum shadertype, GLuint index, GLsizei bufsize, GLsizei * length, GLchar * name) const {
     _GetActiveSubroutineName(program, shadertype, index, bufsize, length, name);
-    TRACE("GetActiveSubroutineName");
+    TRACE("glGetActiveSubroutineName");
 }
 
 void GLMethods::UniformSubroutinesuiv(GLenum shadertype, GLsizei count, const GLuint * indices) const {
     _UniformSubroutinesuiv(shadertype, count, indices);
-    TRACE("UniformSubroutinesuiv");
+    TRACE("glUniformSubroutinesuiv");
 }
 
 void GLMethods::GetUniformSubroutineuiv(GLenum shadertype, GLint location, GLuint * params) const {
     _GetUniformSubroutineuiv(shadertype, location, params);
-    TRACE("GetUniformSubroutineuiv");
+    TRACE("glGetUniformSubroutineuiv");
 }
 
 void GLMethods::GetProgramStageiv(GLuint program, GLenum shadertype, GLenum pname, GLint * values) const {
     _GetProgramStageiv(program, shadertype, pname, values);
-    TRACE("GetProgramStageiv");
+    TRACE("glGetProgramStageiv");
 }
 
 void GLMethods::PatchParameteri(GLenum pname, GLint value) const {
     _PatchParameteri(pname, value);
-    TRACE("PatchParameteri");
+    TRACE("glPatchParameteri");
 }
 
 void GLMethods::PatchParameterfv(GLenum pname, const GLfloat * values) const {
     _PatchParameterfv(pname, values);
-    TRACE("PatchParameterfv");
+    TRACE("glPatchParameterfv");
 }
 
 void GLMethods::BindTransformFeedback(GLenum target, GLuint id) const {
     _BindTransformFeedback(target, id);
-    TRACE("BindTransformFeedback");
+    TRACE("glBindTransformFeedback");
 }
 
 void GLMethods::DeleteTransformFeedbacks(GLsizei n, const GLuint * ids) const {
     _DeleteTransformFeedbacks(n, ids);
-    TRACE("DeleteTransformFeedbacks");
+    TRACE("glDeleteTransformFeedbacks");
 }
 
 void GLMethods::GenTransformFeedbacks(GLsizei n, GLuint * ids) const {
     _GenTransformFeedbacks(n, ids);
-    TRACE("GenTransformFeedbacks");
+    TRACE("glGenTransformFeedbacks");
 }
 
 GLboolean GLMethods::IsTransformFeedback(GLuint id) const {
     GLboolean __result = _IsTransformFeedback(id);
-    TRACE("IsTransformFeedback");
+    TRACE("glIsTransformFeedback");
     return __result;
 }
 
 void GLMethods::PauseTransformFeedback() const {
     _PauseTransformFeedback();
-    TRACE("PauseTransformFeedback");
+    TRACE("glPauseTransformFeedback");
 }
 
 void GLMethods::ResumeTransformFeedback() const {
     _ResumeTransformFeedback();
-    TRACE("ResumeTransformFeedback");
+    TRACE("glResumeTransformFeedback");
 }
 
 void GLMethods::DrawTransformFeedback(GLenum mode, GLuint id) const {
     _DrawTransformFeedback(mode, id);
-    TRACE("DrawTransformFeedback");
+    TRACE("glDrawTransformFeedback");
 }
 
 void GLMethods::DrawTransformFeedbackStream(GLenum mode, GLuint id, GLuint stream) const {
     _DrawTransformFeedbackStream(mode, id, stream);
-    TRACE("DrawTransformFeedbackStream");
+    TRACE("glDrawTransformFeedbackStream");
 }
 
 void GLMethods::BeginQueryIndexed(GLenum target, GLuint index, GLuint id) const {
     _BeginQueryIndexed(target, index, id);
-    TRACE("BeginQueryIndexed");
+    TRACE("glBeginQueryIndexed");
 }
 
 void GLMethods::EndQueryIndexed(GLenum target, GLuint index) const {
     _EndQueryIndexed(target, index);
-    TRACE("EndQueryIndexed");
+    TRACE("glEndQueryIndexed");
 }
 
 void GLMethods::GetQueryIndexediv(GLenum target, GLuint index, GLenum pname, GLint * params) const {
     _GetQueryIndexediv(target, index, pname, params);
-    TRACE("GetQueryIndexediv");
+    TRACE("glGetQueryIndexediv");
 }
 
 void GLMethods::ReleaseShaderCompiler() const {
     _ReleaseShaderCompiler();
-    TRACE("ReleaseShaderCompiler");
+    TRACE("glReleaseShaderCompiler");
 }
 
 void GLMethods::ShaderBinary(GLsizei count, const GLuint * shaders, GLenum binaryformat, const void * binary, GLsizei length) const {
     _ShaderBinary(count, shaders, binaryformat, binary, length);
-    TRACE("ShaderBinary");
+    TRACE("glShaderBinary");
 }
 
 void GLMethods::GetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint * range, GLint * precision) const {
     _GetShaderPrecisionFormat(shadertype, precisiontype, range, precision);
-    TRACE("GetShaderPrecisionFormat");
+    TRACE("glGetShaderPrecisionFormat");
 }
 
 void GLMethods::DepthRangef(GLfloat n, GLfloat f) const {
     _DepthRangef(n, f);
-    TRACE("DepthRangef");
+    TRACE("glDepthRangef");
 }
 
 void GLMethods::ClearDepthf(GLfloat d) const {
     _ClearDepthf(d);
-    TRACE("ClearDepthf");
+    TRACE("glClearDepthf");
 }
 
 void GLMethods::GetProgramBinary(GLuint program, GLsizei bufSize, GLsizei * length, GLenum * binaryFormat, void * binary) const {
     _GetProgramBinary(program, bufSize, length, binaryFormat, binary);
-    TRACE("GetProgramBinary");
+    TRACE("glGetProgramBinary");
 }
 
 void GLMethods::ProgramBinary(GLuint program, GLenum binaryFormat, const void * binary, GLsizei length) const {
     _ProgramBinary(program, binaryFormat, binary, length);
-    TRACE("ProgramBinary");
+    TRACE("glProgramBinary");
 }
 
 void GLMethods::ProgramParameteri(GLuint program, GLenum pname, GLint value) const {
     _ProgramParameteri(program, pname, value);
-    TRACE("ProgramParameteri");
+    TRACE("glProgramParameteri");
 }
 
 void GLMethods::UseProgramStages(GLuint pipeline, GLbitfield stages, GLuint program) const {
     _UseProgramStages(pipeline, stages, program);
-    TRACE("UseProgramStages");
+    TRACE("glUseProgramStages");
 }
 
 void GLMethods::ActiveShaderProgram(GLuint pipeline, GLuint program) const {
     _ActiveShaderProgram(pipeline, program);
-    TRACE("ActiveShaderProgram");
+    TRACE("glActiveShaderProgram");
 }
 
 GLuint GLMethods::CreateShaderProgramv(GLenum type, GLsizei count, const GLchar * const * strings) const {
     GLuint __result = _CreateShaderProgramv(type, count, strings);
-    TRACE("CreateShaderProgramv");
+    TRACE("glCreateShaderProgramv");
     return __result;
 }
 
 void GLMethods::BindProgramPipeline(GLuint pipeline) const {
     _BindProgramPipeline(pipeline);
-    TRACE("BindProgramPipeline");
+    TRACE("glBindProgramPipeline");
 }
 
 void GLMethods::DeleteProgramPipelines(GLsizei n, const GLuint * pipelines) const {
     _DeleteProgramPipelines(n, pipelines);
-    TRACE("DeleteProgramPipelines");
+    TRACE("glDeleteProgramPipelines");
 }
 
 void GLMethods::GenProgramPipelines(GLsizei n, GLuint * pipelines) const {
     _GenProgramPipelines(n, pipelines);
-    TRACE("GenProgramPipelines");
+    TRACE("glGenProgramPipelines");
 }
 
 GLboolean GLMethods::IsProgramPipeline(GLuint pipeline) const {
     GLboolean __result = _IsProgramPipeline(pipeline);
-    TRACE("IsProgramPipeline");
+    TRACE("glIsProgramPipeline");
     return __result;
 }
 
 void GLMethods::GetProgramPipelineiv(GLuint pipeline, GLenum pname, GLint * params) const {
     _GetProgramPipelineiv(pipeline, pname, params);
-    TRACE("GetProgramPipelineiv");
+    TRACE("glGetProgramPipelineiv");
 }
 
 void GLMethods::ProgramUniform1i(GLuint program, GLint location, GLint v0) const {
     _ProgramUniform1i(program, location, v0);
-    TRACE("ProgramUniform1i");
+    TRACE("glProgramUniform1i");
 }
 
 void GLMethods::ProgramUniform1iv(GLuint program, GLint location, GLsizei count, const GLint * value) const {
     _ProgramUniform1iv(program, location, count, value);
-    TRACE("ProgramUniform1iv");
+    TRACE("glProgramUniform1iv");
 }
 
 void GLMethods::ProgramUniform1f(GLuint program, GLint location, GLfloat v0) const {
     _ProgramUniform1f(program, location, v0);
-    TRACE("ProgramUniform1f");
+    TRACE("glProgramUniform1f");
 }
 
 void GLMethods::ProgramUniform1fv(GLuint program, GLint location, GLsizei count, const GLfloat * value) const {
     _ProgramUniform1fv(program, location, count, value);
-    TRACE("ProgramUniform1fv");
+    TRACE("glProgramUniform1fv");
 }
 
 void GLMethods::ProgramUniform1d(GLuint program, GLint location, GLdouble v0) const {
     _ProgramUniform1d(program, location, v0);
-    TRACE("ProgramUniform1d");
+    TRACE("glProgramUniform1d");
 }
 
 void GLMethods::ProgramUniform1dv(GLuint program, GLint location, GLsizei count, const GLdouble * value) const {
     _ProgramUniform1dv(program, location, count, value);
-    TRACE("ProgramUniform1dv");
+    TRACE("glProgramUniform1dv");
 }
 
 void GLMethods::ProgramUniform1ui(GLuint program, GLint location, GLuint v0) const {
     _ProgramUniform1ui(program, location, v0);
-    TRACE("ProgramUniform1ui");
+    TRACE("glProgramUniform1ui");
 }
 
 void GLMethods::ProgramUniform1uiv(GLuint program, GLint location, GLsizei count, const GLuint * value) const {
     _ProgramUniform1uiv(program, location, count, value);
-    TRACE("ProgramUniform1uiv");
+    TRACE("glProgramUniform1uiv");
 }
 
 void GLMethods::ProgramUniform2i(GLuint program, GLint location, GLint v0, GLint v1) const {
     _ProgramUniform2i(program, location, v0, v1);
-    TRACE("ProgramUniform2i");
+    TRACE("glProgramUniform2i");
 }
 
 void GLMethods::ProgramUniform2iv(GLuint program, GLint location, GLsizei count, const GLint * value) const {
     _ProgramUniform2iv(program, location, count, value);
-    TRACE("ProgramUniform2iv");
+    TRACE("glProgramUniform2iv");
 }
 
 void GLMethods::ProgramUniform2f(GLuint program, GLint location, GLfloat v0, GLfloat v1) const {
     _ProgramUniform2f(program, location, v0, v1);
-    TRACE("ProgramUniform2f");
+    TRACE("glProgramUniform2f");
 }
 
 void GLMethods::ProgramUniform2fv(GLuint program, GLint location, GLsizei count, const GLfloat * value) const {
     _ProgramUniform2fv(program, location, count, value);
-    TRACE("ProgramUniform2fv");
+    TRACE("glProgramUniform2fv");
 }
 
 void GLMethods::ProgramUniform2d(GLuint program, GLint location, GLdouble v0, GLdouble v1) const {
     _ProgramUniform2d(program, location, v0, v1);
-    TRACE("ProgramUniform2d");
+    TRACE("glProgramUniform2d");
 }
 
 void GLMethods::ProgramUniform2dv(GLuint program, GLint location, GLsizei count, const GLdouble * value) const {
     _ProgramUniform2dv(program, location, count, value);
-    TRACE("ProgramUniform2dv");
+    TRACE("glProgramUniform2dv");
 }
 
 void GLMethods::ProgramUniform2ui(GLuint program, GLint location, GLuint v0, GLuint v1) const {
     _ProgramUniform2ui(program, location, v0, v1);
-    TRACE("ProgramUniform2ui");
+    TRACE("glProgramUniform2ui");
 }
 
 void GLMethods::ProgramUniform2uiv(GLuint program, GLint location, GLsizei count, const GLuint * value) const {
     _ProgramUniform2uiv(program, location, count, value);
-    TRACE("ProgramUniform2uiv");
+    TRACE("glProgramUniform2uiv");
 }
 
 void GLMethods::ProgramUniform3i(GLuint program, GLint location, GLint v0, GLint v1, GLint v2) const {
     _ProgramUniform3i(program, location, v0, v1, v2);
-    TRACE("ProgramUniform3i");
+    TRACE("glProgramUniform3i");
 }
 
 void GLMethods::ProgramUniform3iv(GLuint program, GLint location, GLsizei count, const GLint * value) const {
     _ProgramUniform3iv(program, location, count, value);
-    TRACE("ProgramUniform3iv");
+    TRACE("glProgramUniform3iv");
 }
 
 void GLMethods::ProgramUniform3f(GLuint program, GLint location, GLfloat v0, GLfloat v1, GLfloat v2) const {
     _ProgramUniform3f(program, location, v0, v1, v2);
-    TRACE("ProgramUniform3f");
+    TRACE("glProgramUniform3f");
 }
 
 void GLMethods::ProgramUniform3fv(GLuint program, GLint location, GLsizei count, const GLfloat * value) const {
     _ProgramUniform3fv(program, location, count, value);
-    TRACE("ProgramUniform3fv");
+    TRACE("glProgramUniform3fv");
 }
 
 void GLMethods::ProgramUniform3d(GLuint program, GLint location, GLdouble v0, GLdouble v1, GLdouble v2) const {
     _ProgramUniform3d(program, location, v0, v1, v2);
-    TRACE("ProgramUniform3d");
+    TRACE("glProgramUniform3d");
 }
 
 void GLMethods::ProgramUniform3dv(GLuint program, GLint location, GLsizei count, const GLdouble * value) const {
     _ProgramUniform3dv(program, location, count, value);
-    TRACE("ProgramUniform3dv");
+    TRACE("glProgramUniform3dv");
 }
 
 void GLMethods::ProgramUniform3ui(GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2) const {
     _ProgramUniform3ui(program, location, v0, v1, v2);
-    TRACE("ProgramUniform3ui");
+    TRACE("glProgramUniform3ui");
 }
 
 void GLMethods::ProgramUniform3uiv(GLuint program, GLint location, GLsizei count, const GLuint * value) const {
     _ProgramUniform3uiv(program, location, count, value);
-    TRACE("ProgramUniform3uiv");
+    TRACE("glProgramUniform3uiv");
 }
 
 void GLMethods::ProgramUniform4i(GLuint program, GLint location, GLint v0, GLint v1, GLint v2, GLint v3) const {
     _ProgramUniform4i(program, location, v0, v1, v2, v3);
-    TRACE("ProgramUniform4i");
+    TRACE("glProgramUniform4i");
 }
 
 void GLMethods::ProgramUniform4iv(GLuint program, GLint location, GLsizei count, const GLint * value) const {
     _ProgramUniform4iv(program, location, count, value);
-    TRACE("ProgramUniform4iv");
+    TRACE("glProgramUniform4iv");
 }
 
 void GLMethods::ProgramUniform4f(GLuint program, GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3) const {
     _ProgramUniform4f(program, location, v0, v1, v2, v3);
-    TRACE("ProgramUniform4f");
+    TRACE("glProgramUniform4f");
 }
 
 void GLMethods::ProgramUniform4fv(GLuint program, GLint location, GLsizei count, const GLfloat * value) const {
     _ProgramUniform4fv(program, location, count, value);
-    TRACE("ProgramUniform4fv");
+    TRACE("glProgramUniform4fv");
 }
 
 void GLMethods::ProgramUniform4d(GLuint program, GLint location, GLdouble v0, GLdouble v1, GLdouble v2, GLdouble v3) const {
     _ProgramUniform4d(program, location, v0, v1, v2, v3);
-    TRACE("ProgramUniform4d");
+    TRACE("glProgramUniform4d");
 }
 
 void GLMethods::ProgramUniform4dv(GLuint program, GLint location, GLsizei count, const GLdouble * value) const {
     _ProgramUniform4dv(program, location, count, value);
-    TRACE("ProgramUniform4dv");
+    TRACE("glProgramUniform4dv");
 }
 
 void GLMethods::ProgramUniform4ui(GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3) const {
     _ProgramUniform4ui(program, location, v0, v1, v2, v3);
-    TRACE("ProgramUniform4ui");
+    TRACE("glProgramUniform4ui");
 }
 
 void GLMethods::ProgramUniform4uiv(GLuint program, GLint location, GLsizei count, const GLuint * value) const {
     _ProgramUniform4uiv(program, location, count, value);
-    TRACE("ProgramUniform4uiv");
+    TRACE("glProgramUniform4uiv");
 }
 
 void GLMethods::ProgramUniformMatrix2fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _ProgramUniformMatrix2fv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix2fv");
+    TRACE("glProgramUniformMatrix2fv");
 }
 
 void GLMethods::ProgramUniformMatrix3fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _ProgramUniformMatrix3fv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix3fv");
+    TRACE("glProgramUniformMatrix3fv");
 }
 
 void GLMethods::ProgramUniformMatrix4fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _ProgramUniformMatrix4fv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix4fv");
+    TRACE("glProgramUniformMatrix4fv");
 }
 
 void GLMethods::ProgramUniformMatrix2dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _ProgramUniformMatrix2dv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix2dv");
+    TRACE("glProgramUniformMatrix2dv");
 }
 
 void GLMethods::ProgramUniformMatrix3dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _ProgramUniformMatrix3dv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix3dv");
+    TRACE("glProgramUniformMatrix3dv");
 }
 
 void GLMethods::ProgramUniformMatrix4dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _ProgramUniformMatrix4dv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix4dv");
+    TRACE("glProgramUniformMatrix4dv");
 }
 
 void GLMethods::ProgramUniformMatrix2x3fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _ProgramUniformMatrix2x3fv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix2x3fv");
+    TRACE("glProgramUniformMatrix2x3fv");
 }
 
 void GLMethods::ProgramUniformMatrix3x2fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _ProgramUniformMatrix3x2fv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix3x2fv");
+    TRACE("glProgramUniformMatrix3x2fv");
 }
 
 void GLMethods::ProgramUniformMatrix2x4fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _ProgramUniformMatrix2x4fv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix2x4fv");
+    TRACE("glProgramUniformMatrix2x4fv");
 }
 
 void GLMethods::ProgramUniformMatrix4x2fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _ProgramUniformMatrix4x2fv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix4x2fv");
+    TRACE("glProgramUniformMatrix4x2fv");
 }
 
 void GLMethods::ProgramUniformMatrix3x4fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _ProgramUniformMatrix3x4fv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix3x4fv");
+    TRACE("glProgramUniformMatrix3x4fv");
 }
 
 void GLMethods::ProgramUniformMatrix4x3fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat * value) const {
     _ProgramUniformMatrix4x3fv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix4x3fv");
+    TRACE("glProgramUniformMatrix4x3fv");
 }
 
 void GLMethods::ProgramUniformMatrix2x3dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _ProgramUniformMatrix2x3dv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix2x3dv");
+    TRACE("glProgramUniformMatrix2x3dv");
 }
 
 void GLMethods::ProgramUniformMatrix3x2dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _ProgramUniformMatrix3x2dv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix3x2dv");
+    TRACE("glProgramUniformMatrix3x2dv");
 }
 
 void GLMethods::ProgramUniformMatrix2x4dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _ProgramUniformMatrix2x4dv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix2x4dv");
+    TRACE("glProgramUniformMatrix2x4dv");
 }
 
 void GLMethods::ProgramUniformMatrix4x2dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _ProgramUniformMatrix4x2dv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix4x2dv");
+    TRACE("glProgramUniformMatrix4x2dv");
 }
 
 void GLMethods::ProgramUniformMatrix3x4dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _ProgramUniformMatrix3x4dv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix3x4dv");
+    TRACE("glProgramUniformMatrix3x4dv");
 }
 
 void GLMethods::ProgramUniformMatrix4x3dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble * value) const {
     _ProgramUniformMatrix4x3dv(program, location, count, transpose, value);
-    TRACE("ProgramUniformMatrix4x3dv");
+    TRACE("glProgramUniformMatrix4x3dv");
 }
 
 void GLMethods::ValidateProgramPipeline(GLuint pipeline) const {
     _ValidateProgramPipeline(pipeline);
-    TRACE("ValidateProgramPipeline");
+    TRACE("glValidateProgramPipeline");
 }
 
 void GLMethods::GetProgramPipelineInfoLog(GLuint pipeline, GLsizei bufSize, GLsizei * length, GLchar * infoLog) const {
     _GetProgramPipelineInfoLog(pipeline, bufSize, length, infoLog);
-    TRACE("GetProgramPipelineInfoLog");
+    TRACE("glGetProgramPipelineInfoLog");
 }
 
 void GLMethods::VertexAttribL1d(GLuint index, GLdouble x) const {
     _VertexAttribL1d(index, x);
-    TRACE("VertexAttribL1d");
+    TRACE("glVertexAttribL1d");
 }
 
 void GLMethods::VertexAttribL2d(GLuint index, GLdouble x, GLdouble y) const {
     _VertexAttribL2d(index, x, y);
-    TRACE("VertexAttribL2d");
+    TRACE("glVertexAttribL2d");
 }
 
 void GLMethods::VertexAttribL3d(GLuint index, GLdouble x, GLdouble y, GLdouble z) const {
     _VertexAttribL3d(index, x, y, z);
-    TRACE("VertexAttribL3d");
+    TRACE("glVertexAttribL3d");
 }
 
 void GLMethods::VertexAttribL4d(GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w) const {
     _VertexAttribL4d(index, x, y, z, w);
-    TRACE("VertexAttribL4d");
+    TRACE("glVertexAttribL4d");
 }
 
 void GLMethods::VertexAttribL1dv(GLuint index, const GLdouble * v) const {
     _VertexAttribL1dv(index, v);
-    TRACE("VertexAttribL1dv");
+    TRACE("glVertexAttribL1dv");
 }
 
 void GLMethods::VertexAttribL2dv(GLuint index, const GLdouble * v) const {
     _VertexAttribL2dv(index, v);
-    TRACE("VertexAttribL2dv");
+    TRACE("glVertexAttribL2dv");
 }
 
 void GLMethods::VertexAttribL3dv(GLuint index, const GLdouble * v) const {
     _VertexAttribL3dv(index, v);
-    TRACE("VertexAttribL3dv");
+    TRACE("glVertexAttribL3dv");
 }
 
 void GLMethods::VertexAttribL4dv(GLuint index, const GLdouble * v) const {
     _VertexAttribL4dv(index, v);
-    TRACE("VertexAttribL4dv");
+    TRACE("glVertexAttribL4dv");
 }
 
 void GLMethods::VertexAttribLPointer(GLuint index, GLint size, GLenum type, GLsizei stride, const void * pointer) const {
     _VertexAttribLPointer(index, size, type, stride, pointer);
-    TRACE("VertexAttribLPointer");
+    TRACE("glVertexAttribLPointer");
 }
 
 void GLMethods::GetVertexAttribLdv(GLuint index, GLenum pname, GLdouble * params) const {
     _GetVertexAttribLdv(index, pname, params);
-    TRACE("GetVertexAttribLdv");
+    TRACE("glGetVertexAttribLdv");
 }
 
 void GLMethods::ViewportArrayv(GLuint first, GLsizei count, const GLfloat * v) const {
     _ViewportArrayv(first, count, v);
-    TRACE("ViewportArrayv");
+    TRACE("glViewportArrayv");
 }
 
 void GLMethods::ViewportIndexedf(GLuint index, GLfloat x, GLfloat y, GLfloat w, GLfloat h) const {
     _ViewportIndexedf(index, x, y, w, h);
-    TRACE("ViewportIndexedf");
+    TRACE("glViewportIndexedf");
 }
 
 void GLMethods::ViewportIndexedfv(GLuint index, const GLfloat * v) const {
     _ViewportIndexedfv(index, v);
-    TRACE("ViewportIndexedfv");
+    TRACE("glViewportIndexedfv");
 }
 
 void GLMethods::ScissorArrayv(GLuint first, GLsizei count, const GLint * v) const {
     _ScissorArrayv(first, count, v);
-    TRACE("ScissorArrayv");
+    TRACE("glScissorArrayv");
 }
 
 void GLMethods::ScissorIndexed(GLuint index, GLint left, GLint bottom, GLsizei width, GLsizei height) const {
     _ScissorIndexed(index, left, bottom, width, height);
-    TRACE("ScissorIndexed");
+    TRACE("glScissorIndexed");
 }
 
 void GLMethods::ScissorIndexedv(GLuint index, const GLint * v) const {
     _ScissorIndexedv(index, v);
-    TRACE("ScissorIndexedv");
+    TRACE("glScissorIndexedv");
 }
 
 void GLMethods::DepthRangeArrayv(GLuint first, GLsizei count, const GLdouble * v) const {
     _DepthRangeArrayv(first, count, v);
-    TRACE("DepthRangeArrayv");
+    TRACE("glDepthRangeArrayv");
 }
 
 void GLMethods::DepthRangeIndexed(GLuint index, GLdouble n, GLdouble f) const {
     _DepthRangeIndexed(index, n, f);
-    TRACE("DepthRangeIndexed");
+    TRACE("glDepthRangeIndexed");
 }
 
 void GLMethods::GetFloati_v(GLenum target, GLuint index, GLfloat * data) const {
     _GetFloati_v(target, index, data);
-    TRACE("GetFloati_v");
+    TRACE("glGetFloati_v");
 }
 
 void GLMethods::GetDoublei_v(GLenum target, GLuint index, GLdouble * data) const {
     _GetDoublei_v(target, index, data);
-    TRACE("GetDoublei_v");
+    TRACE("glGetDoublei_v");
 }
 
 void GLMethods::DrawArraysInstancedBaseInstance(GLenum mode, GLint first, GLsizei count, GLsizei instancecount, GLuint baseinstance) const {
     _DrawArraysInstancedBaseInstance(mode, first, count, instancecount, baseinstance);
-    TRACE("DrawArraysInstancedBaseInstance");
+    TRACE("glDrawArraysInstancedBaseInstance");
 }
 
 void GLMethods::DrawElementsInstancedBaseInstance(GLenum mode, GLsizei count, GLenum type, const void * indices, GLsizei instancecount, GLuint baseinstance) const {
     _DrawElementsInstancedBaseInstance(mode, count, type, indices, instancecount, baseinstance);
-    TRACE("DrawElementsInstancedBaseInstance");
+    TRACE("glDrawElementsInstancedBaseInstance");
 }
 
 void GLMethods::DrawElementsInstancedBaseVertexBaseInstance(GLenum mode, GLsizei count, GLenum type, const void * indices, GLsizei instancecount, GLint basevertex, GLuint baseinstance) const {
     _DrawElementsInstancedBaseVertexBaseInstance(mode, count, type, indices, instancecount, basevertex, baseinstance);
-    TRACE("DrawElementsInstancedBaseVertexBaseInstance");
+    TRACE("glDrawElementsInstancedBaseVertexBaseInstance");
 }
 
 void GLMethods::GetInternalformativ(GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint * params) const {
     _GetInternalformativ(target, internalformat, pname, bufSize, params);
-    TRACE("GetInternalformativ");
+    TRACE("glGetInternalformativ");
 }
 
 void GLMethods::GetActiveAtomicCounterBufferiv(GLuint program, GLuint bufferIndex, GLenum pname, GLint * params) const {
     _GetActiveAtomicCounterBufferiv(program, bufferIndex, pname, params);
-    TRACE("GetActiveAtomicCounterBufferiv");
+    TRACE("glGetActiveAtomicCounterBufferiv");
 }
 
 void GLMethods::BindImageTexture(GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format) const {
     _BindImageTexture(unit, texture, level, layered, layer, access, format);
-    TRACE("BindImageTexture");
+    TRACE("glBindImageTexture");
 }
 
 void GLMethods::MemoryBarrier(GLbitfield barriers) const {
     _MemoryBarrier(barriers);
-    TRACE("MemoryBarrier");
+    TRACE("glMemoryBarrier");
 }
 
 void GLMethods::TexStorage1D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width) const {
     _TexStorage1D(target, levels, internalformat, width);
-    TRACE("TexStorage1D");
+    TRACE("glTexStorage1D");
 }
 
 void GLMethods::TexStorage2D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height) const {
     _TexStorage2D(target, levels, internalformat, width, height);
-    TRACE("TexStorage2D");
+    TRACE("glTexStorage2D");
 }
 
 void GLMethods::TexStorage3D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth) const {
     _TexStorage3D(target, levels, internalformat, width, height, depth);
-    TRACE("TexStorage3D");
+    TRACE("glTexStorage3D");
 }
 
 void GLMethods::DrawTransformFeedbackInstanced(GLenum mode, GLuint id, GLsizei instancecount) const {
     _DrawTransformFeedbackInstanced(mode, id, instancecount);
-    TRACE("DrawTransformFeedbackInstanced");
+    TRACE("glDrawTransformFeedbackInstanced");
 }
 
 void GLMethods::DrawTransformFeedbackStreamInstanced(GLenum mode, GLuint id, GLuint stream, GLsizei instancecount) const {
     _DrawTransformFeedbackStreamInstanced(mode, id, stream, instancecount);
-    TRACE("DrawTransformFeedbackStreamInstanced");
+    TRACE("glDrawTransformFeedbackStreamInstanced");
 }
 
 void GLMethods::ClearBufferData(GLenum target, GLenum internalformat, GLenum format, GLenum type, const void * data) const {
     _ClearBufferData(target, internalformat, format, type, data);
-    TRACE("ClearBufferData");
+    TRACE("glClearBufferData");
 }
 
 void GLMethods::ClearBufferSubData(GLenum target, GLenum internalformat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void * data) const {
     _ClearBufferSubData(target, internalformat, offset, size, format, type, data);
-    TRACE("ClearBufferSubData");
+    TRACE("glClearBufferSubData");
 }
 
 void GLMethods::DispatchCompute(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z) const {
     _DispatchCompute(num_groups_x, num_groups_y, num_groups_z);
-    TRACE("DispatchCompute");
+    TRACE("glDispatchCompute");
 }
 
 void GLMethods::DispatchComputeIndirect(GLintptr indirect) const {
     _DispatchComputeIndirect(indirect);
-    TRACE("DispatchComputeIndirect");
+    TRACE("glDispatchComputeIndirect");
 }
 
 void GLMethods::CopyImageSubData(GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei srcWidth, GLsizei srcHeight, GLsizei srcDepth) const {
     _CopyImageSubData(srcName, srcTarget, srcLevel, srcX, srcY, srcZ, dstName, dstTarget, dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight, srcDepth);
-    TRACE("CopyImageSubData");
+    TRACE("glCopyImageSubData");
 }
 
 void GLMethods::FramebufferParameteri(GLenum target, GLenum pname, GLint param) const {
     _FramebufferParameteri(target, pname, param);
-    TRACE("FramebufferParameteri");
+    TRACE("glFramebufferParameteri");
 }
 
 void GLMethods::GetFramebufferParameteriv(GLenum target, GLenum pname, GLint * params) const {
     _GetFramebufferParameteriv(target, pname, params);
-    TRACE("GetFramebufferParameteriv");
+    TRACE("glGetFramebufferParameteriv");
 }
 
 void GLMethods::GetInternalformati64v(GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint64 * params) const {
     _GetInternalformati64v(target, internalformat, pname, bufSize, params);
-    TRACE("GetInternalformati64v");
+    TRACE("glGetInternalformati64v");
 }
 
 void GLMethods::InvalidateTexSubImage(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth) const {
     _InvalidateTexSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth);
-    TRACE("InvalidateTexSubImage");
+    TRACE("glInvalidateTexSubImage");
 }
 
 void GLMethods::InvalidateTexImage(GLuint texture, GLint level) const {
     _InvalidateTexImage(texture, level);
-    TRACE("InvalidateTexImage");
+    TRACE("glInvalidateTexImage");
 }
 
 void GLMethods::InvalidateBufferSubData(GLuint buffer, GLintptr offset, GLsizeiptr length) const {
     _InvalidateBufferSubData(buffer, offset, length);
-    TRACE("InvalidateBufferSubData");
+    TRACE("glInvalidateBufferSubData");
 }
 
 void GLMethods::InvalidateBufferData(GLuint buffer) const {
     _InvalidateBufferData(buffer);
-    TRACE("InvalidateBufferData");
+    TRACE("glInvalidateBufferData");
 }
 
 void GLMethods::InvalidateFramebuffer(GLenum target, GLsizei numAttachments, const GLenum * attachments) const {
     _InvalidateFramebuffer(target, numAttachments, attachments);
-    TRACE("InvalidateFramebuffer");
+    TRACE("glInvalidateFramebuffer");
 }
 
 void GLMethods::InvalidateSubFramebuffer(GLenum target, GLsizei numAttachments, const GLenum * attachments, GLint x, GLint y, GLsizei width, GLsizei height) const {
     _InvalidateSubFramebuffer(target, numAttachments, attachments, x, y, width, height);
-    TRACE("InvalidateSubFramebuffer");
+    TRACE("glInvalidateSubFramebuffer");
 }
 
 void GLMethods::MultiDrawArraysIndirect(GLenum mode, const void * indirect, GLsizei drawcount, GLsizei stride) const {
     _MultiDrawArraysIndirect(mode, indirect, drawcount, stride);
-    TRACE("MultiDrawArraysIndirect");
+    TRACE("glMultiDrawArraysIndirect");
 }
 
 void GLMethods::MultiDrawElementsIndirect(GLenum mode, GLenum type, const void * indirect, GLsizei drawcount, GLsizei stride) const {
     _MultiDrawElementsIndirect(mode, type, indirect, drawcount, stride);
-    TRACE("MultiDrawElementsIndirect");
+    TRACE("glMultiDrawElementsIndirect");
 }
 
 void GLMethods::GetProgramInterfaceiv(GLuint program, GLenum programInterface, GLenum pname, GLint * params) const {
     _GetProgramInterfaceiv(program, programInterface, pname, params);
-    TRACE("GetProgramInterfaceiv");
+    TRACE("glGetProgramInterfaceiv");
 }
 
 GLuint GLMethods::GetProgramResourceIndex(GLuint program, GLenum programInterface, const GLchar * name) const {
     GLuint __result = _GetProgramResourceIndex(program, programInterface, name);
-    TRACE("GetProgramResourceIndex");
+    TRACE("glGetProgramResourceIndex");
     return __result;
 }
 
 void GLMethods::GetProgramResourceName(GLuint program, GLenum programInterface, GLuint index, GLsizei bufSize, GLsizei * length, GLchar * name) const {
     _GetProgramResourceName(program, programInterface, index, bufSize, length, name);
-    TRACE("GetProgramResourceName");
+    TRACE("glGetProgramResourceName");
 }
 
 void GLMethods::GetProgramResourceiv(GLuint program, GLenum programInterface, GLuint index, GLsizei propCount, const GLenum * props, GLsizei bufSize, GLsizei * length, GLint * params) const {
     _GetProgramResourceiv(program, programInterface, index, propCount, props, bufSize, length, params);
-    TRACE("GetProgramResourceiv");
+    TRACE("glGetProgramResourceiv");
 }
 
 GLint GLMethods::GetProgramResourceLocation(GLuint program, GLenum programInterface, const GLchar * name) const {
     GLint __result = _GetProgramResourceLocation(program, programInterface, name);
-    TRACE("GetProgramResourceLocation");
+    TRACE("glGetProgramResourceLocation");
     return __result;
 }
 
 GLint GLMethods::GetProgramResourceLocationIndex(GLuint program, GLenum programInterface, const GLchar * name) const {
     GLint __result = _GetProgramResourceLocationIndex(program, programInterface, name);
-    TRACE("GetProgramResourceLocationIndex");
+    TRACE("glGetProgramResourceLocationIndex");
     return __result;
 }
 
 void GLMethods::ShaderStorageBlockBinding(GLuint program, GLuint storageBlockIndex, GLuint storageBlockBinding) const {
     _ShaderStorageBlockBinding(program, storageBlockIndex, storageBlockBinding);
-    TRACE("ShaderStorageBlockBinding");
+    TRACE("glShaderStorageBlockBinding");
 }
 
 void GLMethods::TexBufferRange(GLenum target, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size) const {
     _TexBufferRange(target, internalformat, buffer, offset, size);
-    TRACE("TexBufferRange");
+    TRACE("glTexBufferRange");
 }
 
 void GLMethods::TexStorage2DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations) const {
     _TexStorage2DMultisample(target, samples, internalformat, width, height, fixedsamplelocations);
-    TRACE("TexStorage2DMultisample");
+    TRACE("glTexStorage2DMultisample");
 }
 
 void GLMethods::TexStorage3DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean fixedsamplelocations) const {
     _TexStorage3DMultisample(target, samples, internalformat, width, height, depth, fixedsamplelocations);
-    TRACE("TexStorage3DMultisample");
+    TRACE("glTexStorage3DMultisample");
 }
 
 void GLMethods::TextureView(GLuint texture, GLenum target, GLuint origtexture, GLenum internalformat, GLuint minlevel, GLuint numlevels, GLuint minlayer, GLuint numlayers) const {
     _TextureView(texture, target, origtexture, internalformat, minlevel, numlevels, minlayer, numlayers);
-    TRACE("TextureView");
+    TRACE("glTextureView");
 }
 
 void GLMethods::BindVertexBuffer(GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride) const {
     _BindVertexBuffer(bindingindex, buffer, offset, stride);
-    TRACE("BindVertexBuffer");
+    TRACE("glBindVertexBuffer");
 }
 
 void GLMethods::VertexAttribFormat(GLuint attribindex, GLint size, GLenum type, GLboolean normalized, GLuint relativeoffset) const {
     _VertexAttribFormat(attribindex, size, type, normalized, relativeoffset);
-    TRACE("VertexAttribFormat");
+    TRACE("glVertexAttribFormat");
 }
 
 void GLMethods::VertexAttribIFormat(GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset) const {
     _VertexAttribIFormat(attribindex, size, type, relativeoffset);
-    TRACE("VertexAttribIFormat");
+    TRACE("glVertexAttribIFormat");
 }
 
 void GLMethods::VertexAttribLFormat(GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset) const {
     _VertexAttribLFormat(attribindex, size, type, relativeoffset);
-    TRACE("VertexAttribLFormat");
+    TRACE("glVertexAttribLFormat");
 }
 
 void GLMethods::VertexAttribBinding(GLuint attribindex, GLuint bindingindex) const {
     _VertexAttribBinding(attribindex, bindingindex);
-    TRACE("VertexAttribBinding");
+    TRACE("glVertexAttribBinding");
 }
 
 void GLMethods::VertexBindingDivisor(GLuint bindingindex, GLuint divisor) const {
     _VertexBindingDivisor(bindingindex, divisor);
-    TRACE("VertexBindingDivisor");
+    TRACE("glVertexBindingDivisor");
 }
 
 void GLMethods::DebugMessageControl(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint * ids, GLboolean enabled) const {
     _DebugMessageControl(source, type, severity, count, ids, enabled);
-    TRACE("DebugMessageControl");
+    TRACE("glDebugMessageControl");
 }
 
 void GLMethods::DebugMessageInsert(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * buf) const {
     _DebugMessageInsert(source, type, id, severity, length, buf);
-    TRACE("DebugMessageInsert");
+    TRACE("glDebugMessageInsert");
 }
 
 void GLMethods::DebugMessageCallback(GLDEBUGPROC callback, const void * userParam) const {
     _DebugMessageCallback(callback, userParam);
-    TRACE("DebugMessageCallback");
+    TRACE("glDebugMessageCallback");
 }
 
 GLuint GLMethods::GetDebugMessageLog(GLuint count, GLsizei bufSize, GLenum * sources, GLenum * types, GLuint * ids, GLenum * severities, GLsizei * lengths, GLchar * messageLog) const {
     GLuint __result = _GetDebugMessageLog(count, bufSize, sources, types, ids, severities, lengths, messageLog);
-    TRACE("GetDebugMessageLog");
+    TRACE("glGetDebugMessageLog");
     return __result;
 }
 
 void GLMethods::PushDebugGroup(GLenum source, GLuint id, GLsizei length, const GLchar * message) const {
     _PushDebugGroup(source, id, length, message);
-    TRACE("PushDebugGroup");
+    TRACE("glPushDebugGroup");
 }
 
 void GLMethods::PopDebugGroup() const {
     _PopDebugGroup();
-    TRACE("PopDebugGroup");
+    TRACE("glPopDebugGroup");
 }
 
 void GLMethods::ObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar * label) const {
     _ObjectLabel(identifier, name, length, label);
-    TRACE("ObjectLabel");
+    TRACE("glObjectLabel");
 }
 
 void GLMethods::GetObjectLabel(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei * length, GLchar * label) const {
     _GetObjectLabel(identifier, name, bufSize, length, label);
-    TRACE("GetObjectLabel");
+    TRACE("glGetObjectLabel");
 }
 
 void GLMethods::ObjectPtrLabel(const void * ptr, GLsizei length, const GLchar * label) const {
     _ObjectPtrLabel(ptr, length, label);
-    TRACE("ObjectPtrLabel");
+    TRACE("glObjectPtrLabel");
 }
 
 void GLMethods::GetObjectPtrLabel(const void * ptr, GLsizei bufSize, GLsizei * length, GLchar * label) const {
     _GetObjectPtrLabel(ptr, bufSize, length, label);
-    TRACE("GetObjectPtrLabel");
+    TRACE("glGetObjectPtrLabel");
 }
 
 void GLMethods::BufferStorage(GLenum target, GLsizeiptr size, const void * data, GLbitfield flags) const {
     _BufferStorage(target, size, data, flags);
-    TRACE("BufferStorage");
+    TRACE("glBufferStorage");
 }
 
 void GLMethods::ClearTexImage(GLuint texture, GLint level, GLenum format, GLenum type, const void * data) const {
     _ClearTexImage(texture, level, format, type, data);
-    TRACE("ClearTexImage");
+    TRACE("glClearTexImage");
 }
 
 void GLMethods::ClearTexSubImage(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void * data) const {
     _ClearTexSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data);
-    TRACE("ClearTexSubImage");
+    TRACE("glClearTexSubImage");
 }
 
 void GLMethods::BindBuffersBase(GLenum target, GLuint first, GLsizei count, const GLuint * buffers) const {
     _BindBuffersBase(target, first, count, buffers);
-    TRACE("BindBuffersBase");
+    TRACE("glBindBuffersBase");
 }
 
 void GLMethods::BindBuffersRange(GLenum target, GLuint first, GLsizei count, const GLuint * buffers, const GLintptr * offsets, const GLsizeiptr * sizes) const {
     _BindBuffersRange(target, first, count, buffers, offsets, sizes);
-    TRACE("BindBuffersRange");
+    TRACE("glBindBuffersRange");
 }
 
 void GLMethods::BindTextures(GLuint first, GLsizei count, const GLuint * textures) const {
     _BindTextures(first, count, textures);
-    TRACE("BindTextures");
+    TRACE("glBindTextures");
 }
 
 void GLMethods::BindSamplers(GLuint first, GLsizei count, const GLuint * samplers) const {
     _BindSamplers(first, count, samplers);
-    TRACE("BindSamplers");
+    TRACE("glBindSamplers");
 }
 
 void GLMethods::BindImageTextures(GLuint first, GLsizei count, const GLuint * textures) const {
     _BindImageTextures(first, count, textures);
-    TRACE("BindImageTextures");
+    TRACE("glBindImageTextures");
 }
 
 void GLMethods::BindVertexBuffers(GLuint first, GLsizei count, const GLuint * buffers, const GLintptr * offsets, const GLsizei * strides) const {
     _BindVertexBuffers(first, count, buffers, offsets, strides);
-    TRACE("BindVertexBuffers");
+    TRACE("glBindVertexBuffers");
 }
 
 void GLMethods::ClipControl(GLenum origin, GLenum depth) const {
     _ClipControl(origin, depth);
-    TRACE("ClipControl");
+    TRACE("glClipControl");
 }
 
 void GLMethods::CreateTransformFeedbacks(GLsizei n, GLuint * ids) const {
     _CreateTransformFeedbacks(n, ids);
-    TRACE("CreateTransformFeedbacks");
+    TRACE("glCreateTransformFeedbacks");
 }
 
 void GLMethods::TransformFeedbackBufferBase(GLuint xfb, GLuint index, GLuint buffer) const {
     _TransformFeedbackBufferBase(xfb, index, buffer);
-    TRACE("TransformFeedbackBufferBase");
+    TRACE("glTransformFeedbackBufferBase");
 }
 
 void GLMethods::TransformFeedbackBufferRange(GLuint xfb, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size) const {
     _TransformFeedbackBufferRange(xfb, index, buffer, offset, size);
-    TRACE("TransformFeedbackBufferRange");
+    TRACE("glTransformFeedbackBufferRange");
 }
 
 void GLMethods::GetTransformFeedbackiv(GLuint xfb, GLenum pname, GLint * param) const {
     _GetTransformFeedbackiv(xfb, pname, param);
-    TRACE("GetTransformFeedbackiv");
+    TRACE("glGetTransformFeedbackiv");
 }
 
 void GLMethods::GetTransformFeedbacki_v(GLuint xfb, GLenum pname, GLuint index, GLint * param) const {
     _GetTransformFeedbacki_v(xfb, pname, index, param);
-    TRACE("GetTransformFeedbacki_v");
+    TRACE("glGetTransformFeedbacki_v");
 }
 
 void GLMethods::GetTransformFeedbacki64_v(GLuint xfb, GLenum pname, GLuint index, GLint64 * param) const {
     _GetTransformFeedbacki64_v(xfb, pname, index, param);
-    TRACE("GetTransformFeedbacki64_v");
+    TRACE("glGetTransformFeedbacki64_v");
 }
 
 void GLMethods::CreateBuffers(GLsizei n, GLuint * buffers) const {
     _CreateBuffers(n, buffers);
-    TRACE("CreateBuffers");
+    TRACE("glCreateBuffers");
 }
 
 void GLMethods::NamedBufferStorage(GLuint buffer, GLsizeiptr size, const void * data, GLbitfield flags) const {
     _NamedBufferStorage(buffer, size, data, flags);
-    TRACE("NamedBufferStorage");
+    TRACE("glNamedBufferStorage");
 }
 
 void GLMethods::NamedBufferData(GLuint buffer, GLsizeiptr size, const void * data, GLenum usage) const {
     _NamedBufferData(buffer, size, data, usage);
-    TRACE("NamedBufferData");
+    TRACE("glNamedBufferData");
 }
 
 void GLMethods::NamedBufferSubData(GLuint buffer, GLintptr offset, GLsizeiptr size, const void * data) const {
     _NamedBufferSubData(buffer, offset, size, data);
-    TRACE("NamedBufferSubData");
+    TRACE("glNamedBufferSubData");
 }
 
 void GLMethods::CopyNamedBufferSubData(GLuint readBuffer, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size) const {
     _CopyNamedBufferSubData(readBuffer, writeBuffer, readOffset, writeOffset, size);
-    TRACE("CopyNamedBufferSubData");
+    TRACE("glCopyNamedBufferSubData");
 }
 
 void GLMethods::ClearNamedBufferData(GLuint buffer, GLenum internalformat, GLenum format, GLenum type, const void * data) const {
     _ClearNamedBufferData(buffer, internalformat, format, type, data);
-    TRACE("ClearNamedBufferData");
+    TRACE("glClearNamedBufferData");
 }
 
 void GLMethods::ClearNamedBufferSubData(GLuint buffer, GLenum internalformat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void * data) const {
     _ClearNamedBufferSubData(buffer, internalformat, offset, size, format, type, data);
-    TRACE("ClearNamedBufferSubData");
+    TRACE("glClearNamedBufferSubData");
 }
 
 void * GLMethods::MapNamedBuffer(GLuint buffer, GLenum access) const {
     void * __result = _MapNamedBuffer(buffer, access);
-    TRACE("MapNamedBuffer");
+    TRACE("glMapNamedBuffer");
     return __result;
 }
 
 void * GLMethods::MapNamedBufferRange(GLuint buffer, GLintptr offset, GLsizeiptr length, GLbitfield access) const {
     void * __result = _MapNamedBufferRange(buffer, offset, length, access);
-    TRACE("MapNamedBufferRange");
+    TRACE("glMapNamedBufferRange");
     return __result;
 }
 
 GLboolean GLMethods::UnmapNamedBuffer(GLuint buffer) const {
     GLboolean __result = _UnmapNamedBuffer(buffer);
-    TRACE("UnmapNamedBuffer");
+    TRACE("glUnmapNamedBuffer");
     return __result;
 }
 
 void GLMethods::FlushMappedNamedBufferRange(GLuint buffer, GLintptr offset, GLsizeiptr length) const {
     _FlushMappedNamedBufferRange(buffer, offset, length);
-    TRACE("FlushMappedNamedBufferRange");
+    TRACE("glFlushMappedNamedBufferRange");
 }
 
 void GLMethods::GetNamedBufferParameteriv(GLuint buffer, GLenum pname, GLint * params) const {
     _GetNamedBufferParameteriv(buffer, pname, params);
-    TRACE("GetNamedBufferParameteriv");
+    TRACE("glGetNamedBufferParameteriv");
 }
 
 void GLMethods::GetNamedBufferParameteri64v(GLuint buffer, GLenum pname, GLint64 * params) const {
     _GetNamedBufferParameteri64v(buffer, pname, params);
-    TRACE("GetNamedBufferParameteri64v");
+    TRACE("glGetNamedBufferParameteri64v");
 }
 
 void GLMethods::GetNamedBufferPointerv(GLuint buffer, GLenum pname, void ** params) const {
     _GetNamedBufferPointerv(buffer, pname, params);
-    TRACE("GetNamedBufferPointerv");
+    TRACE("glGetNamedBufferPointerv");
 }
 
 void GLMethods::GetNamedBufferSubData(GLuint buffer, GLintptr offset, GLsizeiptr size, void * data) const {
     _GetNamedBufferSubData(buffer, offset, size, data);
-    TRACE("GetNamedBufferSubData");
+    TRACE("glGetNamedBufferSubData");
 }
 
 void GLMethods::CreateFramebuffers(GLsizei n, GLuint * framebuffers) const {
     _CreateFramebuffers(n, framebuffers);
-    TRACE("CreateFramebuffers");
+    TRACE("glCreateFramebuffers");
 }
 
 void GLMethods::NamedFramebufferRenderbuffer(GLuint framebuffer, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer) const {
     _NamedFramebufferRenderbuffer(framebuffer, attachment, renderbuffertarget, renderbuffer);
-    TRACE("NamedFramebufferRenderbuffer");
+    TRACE("glNamedFramebufferRenderbuffer");
 }
 
 void GLMethods::NamedFramebufferParameteri(GLuint framebuffer, GLenum pname, GLint param) const {
     _NamedFramebufferParameteri(framebuffer, pname, param);
-    TRACE("NamedFramebufferParameteri");
+    TRACE("glNamedFramebufferParameteri");
 }
 
 void GLMethods::NamedFramebufferTexture(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level) const {
     _NamedFramebufferTexture(framebuffer, attachment, texture, level);
-    TRACE("NamedFramebufferTexture");
+    TRACE("glNamedFramebufferTexture");
 }
 
 void GLMethods::NamedFramebufferTextureLayer(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level, GLint layer) const {
     _NamedFramebufferTextureLayer(framebuffer, attachment, texture, level, layer);
-    TRACE("NamedFramebufferTextureLayer");
+    TRACE("glNamedFramebufferTextureLayer");
 }
 
 void GLMethods::NamedFramebufferDrawBuffer(GLuint framebuffer, GLenum buf) const {
     _NamedFramebufferDrawBuffer(framebuffer, buf);
-    TRACE("NamedFramebufferDrawBuffer");
+    TRACE("glNamedFramebufferDrawBuffer");
 }
 
 void GLMethods::NamedFramebufferDrawBuffers(GLuint framebuffer, GLsizei n, const GLenum * bufs) const {
     _NamedFramebufferDrawBuffers(framebuffer, n, bufs);
-    TRACE("NamedFramebufferDrawBuffers");
+    TRACE("glNamedFramebufferDrawBuffers");
 }
 
 void GLMethods::NamedFramebufferReadBuffer(GLuint framebuffer, GLenum src) const {
     _NamedFramebufferReadBuffer(framebuffer, src);
-    TRACE("NamedFramebufferReadBuffer");
+    TRACE("glNamedFramebufferReadBuffer");
 }
 
 void GLMethods::InvalidateNamedFramebufferData(GLuint framebuffer, GLsizei numAttachments, const GLenum * attachments) const {
     _InvalidateNamedFramebufferData(framebuffer, numAttachments, attachments);
-    TRACE("InvalidateNamedFramebufferData");
+    TRACE("glInvalidateNamedFramebufferData");
 }
 
 void GLMethods::InvalidateNamedFramebufferSubData(GLuint framebuffer, GLsizei numAttachments, const GLenum * attachments, GLint x, GLint y, GLsizei width, GLsizei height) const {
     _InvalidateNamedFramebufferSubData(framebuffer, numAttachments, attachments, x, y, width, height);
-    TRACE("InvalidateNamedFramebufferSubData");
+    TRACE("glInvalidateNamedFramebufferSubData");
 }
 
 void GLMethods::ClearNamedFramebufferiv(GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLint * value) const {
     _ClearNamedFramebufferiv(framebuffer, buffer, drawbuffer, value);
-    TRACE("ClearNamedFramebufferiv");
+    TRACE("glClearNamedFramebufferiv");
 }
 
 void GLMethods::ClearNamedFramebufferuiv(GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLuint * value) const {
     _ClearNamedFramebufferuiv(framebuffer, buffer, drawbuffer, value);
-    TRACE("ClearNamedFramebufferuiv");
+    TRACE("glClearNamedFramebufferuiv");
 }
 
 void GLMethods::ClearNamedFramebufferfv(GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLfloat * value) const {
     _ClearNamedFramebufferfv(framebuffer, buffer, drawbuffer, value);
-    TRACE("ClearNamedFramebufferfv");
+    TRACE("glClearNamedFramebufferfv");
 }
 
 void GLMethods::ClearNamedFramebufferfi(GLuint framebuffer, GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil) const {
     _ClearNamedFramebufferfi(framebuffer, buffer, drawbuffer, depth, stencil);
-    TRACE("ClearNamedFramebufferfi");
+    TRACE("glClearNamedFramebufferfi");
 }
 
 void GLMethods::BlitNamedFramebuffer(GLuint readFramebuffer, GLuint drawFramebuffer, GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter) const {
     _BlitNamedFramebuffer(readFramebuffer, drawFramebuffer, srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
-    TRACE("BlitNamedFramebuffer");
+    TRACE("glBlitNamedFramebuffer");
 }
 
 GLenum GLMethods::CheckNamedFramebufferStatus(GLuint framebuffer, GLenum target) const {
     GLenum __result = _CheckNamedFramebufferStatus(framebuffer, target);
-    TRACE("CheckNamedFramebufferStatus");
+    TRACE("glCheckNamedFramebufferStatus");
     return __result;
 }
 
 void GLMethods::GetNamedFramebufferParameteriv(GLuint framebuffer, GLenum pname, GLint * param) const {
     _GetNamedFramebufferParameteriv(framebuffer, pname, param);
-    TRACE("GetNamedFramebufferParameteriv");
+    TRACE("glGetNamedFramebufferParameteriv");
 }
 
 void GLMethods::GetNamedFramebufferAttachmentParameteriv(GLuint framebuffer, GLenum attachment, GLenum pname, GLint * params) const {
     _GetNamedFramebufferAttachmentParameteriv(framebuffer, attachment, pname, params);
-    TRACE("GetNamedFramebufferAttachmentParameteriv");
+    TRACE("glGetNamedFramebufferAttachmentParameteriv");
 }
 
 void GLMethods::CreateRenderbuffers(GLsizei n, GLuint * renderbuffers) const {
     _CreateRenderbuffers(n, renderbuffers);
-    TRACE("CreateRenderbuffers");
+    TRACE("glCreateRenderbuffers");
 }
 
 void GLMethods::NamedRenderbufferStorage(GLuint renderbuffer, GLenum internalformat, GLsizei width, GLsizei height) const {
     _NamedRenderbufferStorage(renderbuffer, internalformat, width, height);
-    TRACE("NamedRenderbufferStorage");
+    TRACE("glNamedRenderbufferStorage");
 }
 
 void GLMethods::NamedRenderbufferStorageMultisample(GLuint renderbuffer, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height) const {
     _NamedRenderbufferStorageMultisample(renderbuffer, samples, internalformat, width, height);
-    TRACE("NamedRenderbufferStorageMultisample");
+    TRACE("glNamedRenderbufferStorageMultisample");
 }
 
 void GLMethods::GetNamedRenderbufferParameteriv(GLuint renderbuffer, GLenum pname, GLint * params) const {
     _GetNamedRenderbufferParameteriv(renderbuffer, pname, params);
-    TRACE("GetNamedRenderbufferParameteriv");
+    TRACE("glGetNamedRenderbufferParameteriv");
 }
 
 void GLMethods::CreateTextures(GLenum target, GLsizei n, GLuint * textures) const {
     _CreateTextures(target, n, textures);
-    TRACE("CreateTextures");
+    TRACE("glCreateTextures");
 }
 
 void GLMethods::TextureBuffer(GLuint texture, GLenum internalformat, GLuint buffer) const {
     _TextureBuffer(texture, internalformat, buffer);
-    TRACE("TextureBuffer");
+    TRACE("glTextureBuffer");
 }
 
 void GLMethods::TextureBufferRange(GLuint texture, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size) const {
     _TextureBufferRange(texture, internalformat, buffer, offset, size);
-    TRACE("TextureBufferRange");
+    TRACE("glTextureBufferRange");
 }
 
 void GLMethods::TextureStorage1D(GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width) const {
     _TextureStorage1D(texture, levels, internalformat, width);
-    TRACE("TextureStorage1D");
+    TRACE("glTextureStorage1D");
 }
 
 void GLMethods::TextureStorage2D(GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height) const {
     _TextureStorage2D(texture, levels, internalformat, width, height);
-    TRACE("TextureStorage2D");
+    TRACE("glTextureStorage2D");
 }
 
 void GLMethods::TextureStorage3D(GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth) const {
     _TextureStorage3D(texture, levels, internalformat, width, height, depth);
-    TRACE("TextureStorage3D");
+    TRACE("glTextureStorage3D");
 }
 
 void GLMethods::TextureStorage2DMultisample(GLuint texture, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations) const {
     _TextureStorage2DMultisample(texture, samples, internalformat, width, height, fixedsamplelocations);
-    TRACE("TextureStorage2DMultisample");
+    TRACE("glTextureStorage2DMultisample");
 }
 
 void GLMethods::TextureStorage3DMultisample(GLuint texture, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean fixedsamplelocations) const {
     _TextureStorage3DMultisample(texture, samples, internalformat, width, height, depth, fixedsamplelocations);
-    TRACE("TextureStorage3DMultisample");
+    TRACE("glTextureStorage3DMultisample");
 }
 
 void GLMethods::TextureSubImage1D(GLuint texture, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void * pixels) const {
     _TextureSubImage1D(texture, level, xoffset, width, format, type, pixels);
-    TRACE("TextureSubImage1D");
+    TRACE("glTextureSubImage1D");
 }
 
 void GLMethods::TextureSubImage2D(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void * pixels) const {
     _TextureSubImage2D(texture, level, xoffset, yoffset, width, height, format, type, pixels);
-    TRACE("TextureSubImage2D");
+    TRACE("glTextureSubImage2D");
 }
 
 void GLMethods::TextureSubImage3D(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void * pixels) const {
     _TextureSubImage3D(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
-    TRACE("TextureSubImage3D");
+    TRACE("glTextureSubImage3D");
 }
 
 void GLMethods::CompressedTextureSubImage1D(GLuint texture, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void * data) const {
     _CompressedTextureSubImage1D(texture, level, xoffset, width, format, imageSize, data);
-    TRACE("CompressedTextureSubImage1D");
+    TRACE("glCompressedTextureSubImage1D");
 }
 
 void GLMethods::CompressedTextureSubImage2D(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void * data) const {
     _CompressedTextureSubImage2D(texture, level, xoffset, yoffset, width, height, format, imageSize, data);
-    TRACE("CompressedTextureSubImage2D");
+    TRACE("glCompressedTextureSubImage2D");
 }
 
 void GLMethods::CompressedTextureSubImage3D(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void * data) const {
     _CompressedTextureSubImage3D(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
-    TRACE("CompressedTextureSubImage3D");
+    TRACE("glCompressedTextureSubImage3D");
 }
 
 void GLMethods::CopyTextureSubImage1D(GLuint texture, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width) const {
     _CopyTextureSubImage1D(texture, level, xoffset, x, y, width);
-    TRACE("CopyTextureSubImage1D");
+    TRACE("glCopyTextureSubImage1D");
 }
 
 void GLMethods::CopyTextureSubImage2D(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height) const {
     _CopyTextureSubImage2D(texture, level, xoffset, yoffset, x, y, width, height);
-    TRACE("CopyTextureSubImage2D");
+    TRACE("glCopyTextureSubImage2D");
 }
 
 void GLMethods::CopyTextureSubImage3D(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height) const {
     _CopyTextureSubImage3D(texture, level, xoffset, yoffset, zoffset, x, y, width, height);
-    TRACE("CopyTextureSubImage3D");
+    TRACE("glCopyTextureSubImage3D");
 }
 
 void GLMethods::TextureParameterf(GLuint texture, GLenum pname, GLfloat param) const {
     _TextureParameterf(texture, pname, param);
-    TRACE("TextureParameterf");
+    TRACE("glTextureParameterf");
 }
 
 void GLMethods::TextureParameterfv(GLuint texture, GLenum pname, const GLfloat * param) const {
     _TextureParameterfv(texture, pname, param);
-    TRACE("TextureParameterfv");
+    TRACE("glTextureParameterfv");
 }
 
 void GLMethods::TextureParameteri(GLuint texture, GLenum pname, GLint param) const {
     _TextureParameteri(texture, pname, param);
-    TRACE("TextureParameteri");
+    TRACE("glTextureParameteri");
 }
 
 void GLMethods::TextureParameterIiv(GLuint texture, GLenum pname, const GLint * params) const {
     _TextureParameterIiv(texture, pname, params);
-    TRACE("TextureParameterIiv");
+    TRACE("glTextureParameterIiv");
 }
 
 void GLMethods::TextureParameterIuiv(GLuint texture, GLenum pname, const GLuint * params) const {
     _TextureParameterIuiv(texture, pname, params);
-    TRACE("TextureParameterIuiv");
+    TRACE("glTextureParameterIuiv");
 }
 
 void GLMethods::TextureParameteriv(GLuint texture, GLenum pname, const GLint * param) const {
     _TextureParameteriv(texture, pname, param);
-    TRACE("TextureParameteriv");
+    TRACE("glTextureParameteriv");
 }
 
 void GLMethods::GenerateTextureMipmap(GLuint texture) const {
     _GenerateTextureMipmap(texture);
-    TRACE("GenerateTextureMipmap");
+    TRACE("glGenerateTextureMipmap");
 }
 
 void GLMethods::BindTextureUnit(GLuint unit, GLuint texture) const {
     _BindTextureUnit(unit, texture);
-    TRACE("BindTextureUnit");
+    TRACE("glBindTextureUnit");
 }
 
 void GLMethods::GetTextureImage(GLuint texture, GLint level, GLenum format, GLenum type, GLsizei bufSize, void * pixels) const {
     _GetTextureImage(texture, level, format, type, bufSize, pixels);
-    TRACE("GetTextureImage");
+    TRACE("glGetTextureImage");
 }
 
 void GLMethods::GetCompressedTextureImage(GLuint texture, GLint level, GLsizei bufSize, void * pixels) const {
     _GetCompressedTextureImage(texture, level, bufSize, pixels);
-    TRACE("GetCompressedTextureImage");
+    TRACE("glGetCompressedTextureImage");
 }
 
 void GLMethods::GetTextureLevelParameterfv(GLuint texture, GLint level, GLenum pname, GLfloat * params) const {
     _GetTextureLevelParameterfv(texture, level, pname, params);
-    TRACE("GetTextureLevelParameterfv");
+    TRACE("glGetTextureLevelParameterfv");
 }
 
 void GLMethods::GetTextureLevelParameteriv(GLuint texture, GLint level, GLenum pname, GLint * params) const {
     _GetTextureLevelParameteriv(texture, level, pname, params);
-    TRACE("GetTextureLevelParameteriv");
+    TRACE("glGetTextureLevelParameteriv");
 }
 
 void GLMethods::GetTextureParameterfv(GLuint texture, GLenum pname, GLfloat * params) const {
     _GetTextureParameterfv(texture, pname, params);
-    TRACE("GetTextureParameterfv");
+    TRACE("glGetTextureParameterfv");
 }
 
 void GLMethods::GetTextureParameterIiv(GLuint texture, GLenum pname, GLint * params) const {
     _GetTextureParameterIiv(texture, pname, params);
-    TRACE("GetTextureParameterIiv");
+    TRACE("glGetTextureParameterIiv");
 }
 
 void GLMethods::GetTextureParameterIuiv(GLuint texture, GLenum pname, GLuint * params) const {
     _GetTextureParameterIuiv(texture, pname, params);
-    TRACE("GetTextureParameterIuiv");
+    TRACE("glGetTextureParameterIuiv");
 }
 
 void GLMethods::GetTextureParameteriv(GLuint texture, GLenum pname, GLint * params) const {
     _GetTextureParameteriv(texture, pname, params);
-    TRACE("GetTextureParameteriv");
+    TRACE("glGetTextureParameteriv");
 }
 
 void GLMethods::CreateVertexArrays(GLsizei n, GLuint * arrays) const {
     _CreateVertexArrays(n, arrays);
-    TRACE("CreateVertexArrays");
+    TRACE("glCreateVertexArrays");
 }
 
 void GLMethods::DisableVertexArrayAttrib(GLuint vaobj, GLuint index) const {
     _DisableVertexArrayAttrib(vaobj, index);
-    TRACE("DisableVertexArrayAttrib");
+    TRACE("glDisableVertexArrayAttrib");
 }
 
 void GLMethods::EnableVertexArrayAttrib(GLuint vaobj, GLuint index) const {
     _EnableVertexArrayAttrib(vaobj, index);
-    TRACE("EnableVertexArrayAttrib");
+    TRACE("glEnableVertexArrayAttrib");
 }
 
 void GLMethods::VertexArrayElementBuffer(GLuint vaobj, GLuint buffer) const {
     _VertexArrayElementBuffer(vaobj, buffer);
-    TRACE("VertexArrayElementBuffer");
+    TRACE("glVertexArrayElementBuffer");
 }
 
 void GLMethods::VertexArrayVertexBuffer(GLuint vaobj, GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride) const {
     _VertexArrayVertexBuffer(vaobj, bindingindex, buffer, offset, stride);
-    TRACE("VertexArrayVertexBuffer");
+    TRACE("glVertexArrayVertexBuffer");
 }
 
 void GLMethods::VertexArrayVertexBuffers(GLuint vaobj, GLuint first, GLsizei count, const GLuint * buffers, const GLintptr * offsets, const GLsizei * strides) const {
     _VertexArrayVertexBuffers(vaobj, first, count, buffers, offsets, strides);
-    TRACE("VertexArrayVertexBuffers");
+    TRACE("glVertexArrayVertexBuffers");
 }
 
 void GLMethods::VertexArrayAttribBinding(GLuint vaobj, GLuint attribindex, GLuint bindingindex) const {
     _VertexArrayAttribBinding(vaobj, attribindex, bindingindex);
-    TRACE("VertexArrayAttribBinding");
+    TRACE("glVertexArrayAttribBinding");
 }
 
 void GLMethods::VertexArrayAttribFormat(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLboolean normalized, GLuint relativeoffset) const {
     _VertexArrayAttribFormat(vaobj, attribindex, size, type, normalized, relativeoffset);
-    TRACE("VertexArrayAttribFormat");
+    TRACE("glVertexArrayAttribFormat");
 }
 
 void GLMethods::VertexArrayAttribIFormat(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset) const {
     _VertexArrayAttribIFormat(vaobj, attribindex, size, type, relativeoffset);
-    TRACE("VertexArrayAttribIFormat");
+    TRACE("glVertexArrayAttribIFormat");
 }
 
 void GLMethods::VertexArrayAttribLFormat(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset) const {
     _VertexArrayAttribLFormat(vaobj, attribindex, size, type, relativeoffset);
-    TRACE("VertexArrayAttribLFormat");
+    TRACE("glVertexArrayAttribLFormat");
 }
 
 void GLMethods::VertexArrayBindingDivisor(GLuint vaobj, GLuint bindingindex, GLuint divisor) const {
     _VertexArrayBindingDivisor(vaobj, bindingindex, divisor);
-    TRACE("VertexArrayBindingDivisor");
+    TRACE("glVertexArrayBindingDivisor");
 }
 
 void GLMethods::GetVertexArrayiv(GLuint vaobj, GLenum pname, GLint * param) const {
     _GetVertexArrayiv(vaobj, pname, param);
-    TRACE("GetVertexArrayiv");
+    TRACE("glGetVertexArrayiv");
 }
 
 void GLMethods::GetVertexArrayIndexediv(GLuint vaobj, GLuint index, GLenum pname, GLint * param) const {
     _GetVertexArrayIndexediv(vaobj, index, pname, param);
-    TRACE("GetVertexArrayIndexediv");
+    TRACE("glGetVertexArrayIndexediv");
 }
 
 void GLMethods::GetVertexArrayIndexed64iv(GLuint vaobj, GLuint index, GLenum pname, GLint64 * param) const {
     _GetVertexArrayIndexed64iv(vaobj, index, pname, param);
-    TRACE("GetVertexArrayIndexed64iv");
+    TRACE("glGetVertexArrayIndexed64iv");
 }
 
 void GLMethods::CreateSamplers(GLsizei n, GLuint * samplers) const {
     _CreateSamplers(n, samplers);
-    TRACE("CreateSamplers");
+    TRACE("glCreateSamplers");
 }
 
 void GLMethods::CreateProgramPipelines(GLsizei n, GLuint * pipelines) const {
     _CreateProgramPipelines(n, pipelines);
-    TRACE("CreateProgramPipelines");
+    TRACE("glCreateProgramPipelines");
 }
 
 void GLMethods::CreateQueries(GLenum target, GLsizei n, GLuint * ids) const {
     _CreateQueries(target, n, ids);
-    TRACE("CreateQueries");
+    TRACE("glCreateQueries");
 }
 
 void GLMethods::GetQueryBufferObjecti64v(GLuint id, GLuint buffer, GLenum pname, GLintptr offset) const {
     _GetQueryBufferObjecti64v(id, buffer, pname, offset);
-    TRACE("GetQueryBufferObjecti64v");
+    TRACE("glGetQueryBufferObjecti64v");
 }
 
 void GLMethods::GetQueryBufferObjectiv(GLuint id, GLuint buffer, GLenum pname, GLintptr offset) const {
     _GetQueryBufferObjectiv(id, buffer, pname, offset);
-    TRACE("GetQueryBufferObjectiv");
+    TRACE("glGetQueryBufferObjectiv");
 }
 
 void GLMethods::GetQueryBufferObjectui64v(GLuint id, GLuint buffer, GLenum pname, GLintptr offset) const {
     _GetQueryBufferObjectui64v(id, buffer, pname, offset);
-    TRACE("GetQueryBufferObjectui64v");
+    TRACE("glGetQueryBufferObjectui64v");
 }
 
 void GLMethods::GetQueryBufferObjectuiv(GLuint id, GLuint buffer, GLenum pname, GLintptr offset) const {
     _GetQueryBufferObjectuiv(id, buffer, pname, offset);
-    TRACE("GetQueryBufferObjectuiv");
+    TRACE("glGetQueryBufferObjectuiv");
 }
 
 void GLMethods::MemoryBarrierByRegion(GLbitfield barriers) const {
     _MemoryBarrierByRegion(barriers);
-    TRACE("MemoryBarrierByRegion");
+    TRACE("glMemoryBarrierByRegion");
 }
 
 void GLMethods::GetTextureSubImage(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLsizei bufSize, void * pixels) const {
     _GetTextureSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, bufSize, pixels);
-    TRACE("GetTextureSubImage");
+    TRACE("glGetTextureSubImage");
 }
 
 void GLMethods::GetCompressedTextureSubImage(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLsizei bufSize, void * pixels) const {
     _GetCompressedTextureSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth, bufSize, pixels);
-    TRACE("GetCompressedTextureSubImage");
+    TRACE("glGetCompressedTextureSubImage");
 }
 
 GLenum GLMethods::GetGraphicsResetStatus() const {
     GLenum __result = _GetGraphicsResetStatus();
-    TRACE("GetGraphicsResetStatus");
+    TRACE("glGetGraphicsResetStatus");
     return __result;
 }
 
 void GLMethods::GetnCompressedTexImage(GLenum target, GLint lod, GLsizei bufSize, void * pixels) const {
     _GetnCompressedTexImage(target, lod, bufSize, pixels);
-    TRACE("GetnCompressedTexImage");
+    TRACE("glGetnCompressedTexImage");
 }
 
 void GLMethods::GetnTexImage(GLenum target, GLint level, GLenum format, GLenum type, GLsizei bufSize, void * pixels) const {
     _GetnTexImage(target, level, format, type, bufSize, pixels);
-    TRACE("GetnTexImage");
+    TRACE("glGetnTexImage");
 }
 
 void GLMethods::GetnUniformdv(GLuint program, GLint location, GLsizei bufSize, GLdouble * params) const {
     _GetnUniformdv(program, location, bufSize, params);
-    TRACE("GetnUniformdv");
+    TRACE("glGetnUniformdv");
 }
 
 void GLMethods::GetnUniformfv(GLuint program, GLint location, GLsizei bufSize, GLfloat * params) const {
     _GetnUniformfv(program, location, bufSize, params);
-    TRACE("GetnUniformfv");
+    TRACE("glGetnUniformfv");
 }
 
 void GLMethods::GetnUniformiv(GLuint program, GLint location, GLsizei bufSize, GLint * params) const {
     _GetnUniformiv(program, location, bufSize, params);
-    TRACE("GetnUniformiv");
+    TRACE("glGetnUniformiv");
 }
 
 void GLMethods::GetnUniformuiv(GLuint program, GLint location, GLsizei bufSize, GLuint * params) const {
     _GetnUniformuiv(program, location, bufSize, params);
-    TRACE("GetnUniformuiv");
+    TRACE("glGetnUniformuiv");
 }
 
 void GLMethods::ReadnPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei bufSize, void * data) const {
     _ReadnPixels(x, y, width, height, format, type, bufSize, data);
-    TRACE("ReadnPixels");
+    TRACE("glReadnPixels");
 }
 
 void GLMethods::TextureBarrier() const {
     _TextureBarrier();
-    TRACE("TextureBarrier");
+    TRACE("glTextureBarrier");
 }
 
 void GLMethods::SpecializeShader(GLuint shader, const GLchar * pEntryPoint, GLuint numSpecializationConstants, const GLuint * pConstantIndex, const GLuint * pConstantValue) const {
     _SpecializeShader(shader, pEntryPoint, numSpecializationConstants, pConstantIndex, pConstantValue);
-    TRACE("SpecializeShader");
+    TRACE("glSpecializeShader");
 }
 
 void GLMethods::MultiDrawArraysIndirectCount(GLenum mode, const void * indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride) const {
     _MultiDrawArraysIndirectCount(mode, indirect, drawcount, maxdrawcount, stride);
-    TRACE("MultiDrawArraysIndirectCount");
+    TRACE("glMultiDrawArraysIndirectCount");
 }
 
 void GLMethods::MultiDrawElementsIndirectCount(GLenum mode, GLenum type, const void * indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride) const {
     _MultiDrawElementsIndirectCount(mode, type, indirect, drawcount, maxdrawcount, stride);
-    TRACE("MultiDrawElementsIndirectCount");
+    TRACE("glMultiDrawElementsIndirectCount");
 }
 
 void GLMethods::PolygonOffsetClamp(GLfloat factor, GLfloat units, GLfloat clamp) const {
     _PolygonOffsetClamp(factor, units, clamp);
-    TRACE("PolygonOffsetClamp");
+    TRACE("glPolygonOffsetClamp");
 }
 
 bool GLMethods::load() {
