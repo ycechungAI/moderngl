@@ -66,7 +66,7 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
 	if (gl.has.BufferStorage) {
 		buffer->flags |= MGL_BUFFER_IMMUTABLE;
 		flags = (readable ? GL_MAP_READ_BIT : 0) | (writable ? GL_MAP_WRITE_BIT : 0);
-		flags |= (writable ? (GL_DYNAMIC_STORAGE_BIT) : 0) | (local ? GL_CLIENT_STORAGE_BIT : 0);
+		// flags |= (writable ? (GL_DYNAMIC_STORAGE_BIT) : 0) | (local ? GL_CLIENT_STORAGE_BIT : 0);
 	} else {
 		flags = writable ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	}
