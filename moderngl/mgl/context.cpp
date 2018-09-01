@@ -36,6 +36,7 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
     int version_code = major * 100 + minor * 10;
 
     if (version_code == 0) {
+        gl.GetError();
         const char * ver = (const char *)gl.GetString(GL_VERSION);
         if (ver && '0' <= ver[0] && ver[0] <= '9' && ver[1] == '.' && '0' <= ver[2] && ver[2] <= '9') {
             version_code = (ver[0] - '0') * 100 + (ver[2] - '0') * 10;
