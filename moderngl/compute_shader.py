@@ -1,10 +1,7 @@
-from typing import Any, Dict
-
-from .attribute import Attribute
-from .uniform import Uniform
+from typing import Any
 
 
-class Program:
+class ComputeShader:
     __slots__ = ['__mglo', 'attributes', 'uniforms', 'extra']
 
     def __init__(self):
@@ -15,3 +12,6 @@ class Program:
 
     def __setitem__(self, key, value):
         self.__mglo.uniform(self.uniforms.get(key), value)
+
+    def run(self, group_x=1, group_y=1, group_z=1) -> None:
+        self.__mglo.run(group_x, group_y, group_z)

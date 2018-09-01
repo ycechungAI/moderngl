@@ -5,21 +5,17 @@
 int MGLBuffer_core_write(MGLBuffer * self, const Py_ssize_t & offset, Py_buffer * view, bool contiguos) {
 	const GLMethods & gl = self->context->gl;
 	gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj);
-    printf("gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj) %x\n", gl.GetError());
 
 	if (contiguos) {
 		gl.BufferSubData(GL_ARRAY_BUFFER, offset, view->len, view->buf);
-        printf("gl.BufferSubData(GL_ARRAY_BUFFER, offset, view->len, view->buf) %x\n", gl.GetError());
 	} else {
 		void * map = gl.MapBufferRange(GL_ARRAY_BUFFER, offset, view->len, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
-        printf("gl.MapBufferRange(GL_ARRAY_BUFFER, offset, view->len, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT) %x\n", gl.GetError());
 		if (!map) {
 			PyErr_Format(moderngl_error, "cannot map the buffer");
 			return -1;
 		}
 		PyBuffer_ToContiguous(map, view, view->len, 'C');
 		gl.UnmapBuffer(GL_ARRAY_BUFFER);
-        printf("gl.UnmapBuffer(GL_ARRAY_BUFFER) %x\n", gl.GetError());
 	}
 
 	return 0;
@@ -55,9 +51,7 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
 	buffer->flags = (readable ? MGL_BUFFER_READABLE : 0) | (writable ? MGL_BUFFER_WRITABLE : 0) | (local ? MGL_BUFFER_LOCAL : 0);
 
 	const GLMethods & gl = self->gl;
-    printf("%x\n", gl.GetError());
 	gl.GenBuffers(1, (GLuint *)&buffer->buffer_obj);
-    printf("gl.GenBuffers(1, (GLuint *)&buffer->buffer_obj) %x\n", gl.GetError());
 
 	if (!buffer->buffer_obj) {
 		PyErr_Format(moderngl_error, "cannot create buffer");
@@ -65,29 +59,25 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
 		return 0;
 	}
 
-    printf("buffer->buffer_obj = %d\n", buffer->buffer_obj);
 	gl.BindBuffer(GL_ARRAY_BUFFER, buffer->buffer_obj);
-    printf("gl.BindBuffer(GL_ARRAY_BUFFER, buffer->buffer_obj) %x\n", gl.GetError());
 
 	unsigned flags;
-	PFNGLBUFFERDATAPROC initializer;
 
-	if (gl.BufferStorage) {
-		initializer = gl.BufferStorage;
-        printf("initializer = gl.BufferStorage\n");
+	if (gl.has.BufferStorage) {
 		buffer->flags |= MGL_BUFFER_IMMUTABLE;
 		flags = (readable ? GL_MAP_READ_BIT : 0) | (writable ? GL_MAP_WRITE_BIT : 0);
 		flags |= (writable ? (GL_DYNAMIC_STORAGE_BIT) : 0) | (local ? GL_CLIENT_STORAGE_BIT : 0);
 	} else {
-		initializer = gl.BufferData;
-        printf("initializer = gl.BufferData\n");
 		flags = writable ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	}
 
 	if (reserve_size) {
 		buffer->size = reserve_size;
-		initializer(GL_ARRAY_BUFFER, reserve_size, 0, flags);
-        printf("initializer(GL_ARRAY_BUFFER, reserve_size, 0, flags) %x\n", gl.GetError());
+		if (gl.has.BufferStorage) {
+			gl.BufferStorage(GL_ARRAY_BUFFER, reserve_size, 0, flags);
+		} else {
+			gl.BufferData(GL_ARRAY_BUFFER, reserve_size, 0, flags);
+		}
 	} else {
 		Py_buffer view = {};
 		if (prepare_buffer(data, &view) < 0) {
@@ -96,11 +86,17 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
 		}
 		buffer->size = view.len;
 		if (PyBuffer_IsContiguous(&view, 'C')) {
-			initializer(GL_ARRAY_BUFFER, view.len, view.buf, flags);
-            printf("initializer(GL_ARRAY_BUFFER, view.len, view.buf, flags) %x\n", gl.GetError());
+			if (gl.has.BufferStorage) {
+				gl.BufferStorage(GL_ARRAY_BUFFER, view.len, view.buf, flags);
+			} else {
+				gl.BufferData(GL_ARRAY_BUFFER, view.len, view.buf, flags);
+			}
 		} else {
-			initializer(GL_ARRAY_BUFFER, view.len, 0, flags);
-            printf("initializer(GL_ARRAY_BUFFER, view.len, 0, flags) %x\n", gl.GetError());
+			if (gl.has.BufferStorage) {
+				gl.BufferStorage(GL_ARRAY_BUFFER, view.len, 0, flags);
+			} else {
+				gl.BufferData(GL_ARRAY_BUFFER, view.len, 0, flags);
+			}
 			if (MGLBuffer_core_write(buffer, 0, &view, false) < 0) {
 				PyBuffer_Release(&view);
 				Py_DECREF(buffer);
@@ -190,9 +186,7 @@ PyObject * MGLBuffer_meth_read(MGLBuffer * self, PyObject * const * args, Py_ssi
 	const GLMethods & gl = self->context->gl;
 
 	gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj);
-    printf("gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj) %x\n", gl.GetError());
 	void * map = gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_READ_BIT);
-    printf("gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_READ_BIT) %x\n", gl.GetError());
 
 	if (!map) {
 		PyErr_Format(moderngl_error, "cannot map the buffer");
@@ -306,22 +300,18 @@ PyObject * MGLBuffer_meth_clear(MGLBuffer * self) {
 
 	const GLMethods & gl = self->context->gl;
 	gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj);
-    printf("gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj) %x\n", gl.GetError());
 
-	if (gl.ClearBufferData) {
+	if (gl.has.ClearBufferData) {
 		char zero = 0;
 		gl.ClearBufferData(GL_ARRAY_BUFFER, GL_R8I, GL_RED, GL_UNSIGNED_BYTE, &zero);
-        printf("gl.ClearBufferData(GL_ARRAY_BUFFER, GL_R8I, GL_RED, GL_UNSIGNED_BYTE, &zero) %x\n", gl.GetError());
 	} else {
 		void * map = gl.MapBuffer(GL_ARRAY_BUFFER, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-        printf("gl.MapBuffer(GL_ARRAY_BUFFER, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT) %x\n", gl.GetError());
 		if (!map) {
 			PyErr_Format(moderngl_error, "cannot map the buffer");
 			return 0;
 		}
 		memset(map, 0, self->size);
 		gl.UnmapBuffer(GL_ARRAY_BUFFER);
-        printf("gl.UnmapBuffer(GL_ARRAY_BUFFER) %x\n", gl.GetError());
 	}
 	Py_RETURN_NONE;
 }
