@@ -78,7 +78,7 @@ void * LoadMethod(const char * method) {
 
 #endif
 
-#define TRACE(name, ...) trace_gl_method(_GetError(), name, __VA_ARGS__);
+#define TRACE(name, ...) trace_gl_method(_GetError(), name, ##__VA_ARGS__);
 
 void GLMethods::CullFace(GLenum mode) const {
     _CullFace(mode);
