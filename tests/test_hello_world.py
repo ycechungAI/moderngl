@@ -24,6 +24,7 @@ def test_hello(ctx: mgl.Context):
     buf2 = ctx.buffer(reserve=100, readable=True, writable=False)
     buf3 = ctx.buffer(reserve=100, readable=False, writable=True)
     buf4 = ctx.buffer(reserve=100, readable=False, writable=False)
+    raise Exception()
     # buf1 = ctx.buffer(np.array([1.0, 2.0, 3.0, 4.0], dtype='f4'))
     # buf2 = ctx.buffer(reserve=buf1.size)
     # buf2.clear()
