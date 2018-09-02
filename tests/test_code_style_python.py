@@ -7,7 +7,7 @@ import pytest
 
 
 def test_style():
-    config_file = os.path.join(__file__, '../../tox.ini')
+    config_file = os.path.normpath(os.path.join(__file__, '../../tox.ini'))
     style = pycodestyle.StyleGuide(config_file=config_file)
     files = glob.glob(os.path.normpath(os.path.join(__file__, '../../moderngl/**/*.py')), recursive=True)
     files += glob.glob(os.path.normpath(os.path.join(__file__, '../../tests/**/*.py')), recursive=True)
