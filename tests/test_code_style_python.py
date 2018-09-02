@@ -6,7 +6,6 @@ import pycodestyle
 import pytest
 
 
-@pytest.mark.before_build
 def test_style():
     config_file = os.path.join(__file__, '../../tox.ini')
     style = pycodestyle.StyleGuide(config_file=config_file)

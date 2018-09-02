@@ -6,7 +6,6 @@ import moderngl
 import pytest
 
 
-@pytest.mark.before_build
 def test_style():
     files = glob.glob(os.path.normpath(os.path.join(__file__, '../../moderngl/mgl/**/*.cpp')), recursive=True)
     files += glob.glob(os.path.normpath(os.path.join(__file__, '../../moderngl/mgl/**/*.hpp')), recursive=True)
