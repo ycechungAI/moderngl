@@ -1,14 +1,19 @@
+import os
 import struct
 
-import numpy as np
 import moderngl as mgl
+import numpy as np
 import pytest
 
 
 @pytest.fixture(scope='module')
 def ctx():
     context = mgl.create_context(standalone=True, debug=True)
-    procs = np.frombuffer(mgl.glprocs(context), dtype='u%d' % struct.calcsize('P'))
-    procs[534] = 0 # disable glBufferStorage
-    procs[491] = 0 # disable glClearBufferData
+
+    if os.getenv('TRAVIS') == 'True':
+        import gltraces
+        mgl_procs = np.frombuffer(mgl.glprocs(context), dtype='u%d' % struct.calcsize('P'))
+        mgl_procs[gltraces.lookup['glBufferStorage']] = 0
+        mgl_procs[gltraces.lookup['glClearBufferData']] = 0
+
     return context
