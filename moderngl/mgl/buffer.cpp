@@ -305,7 +305,7 @@ PyObject * MGLBuffer_meth_clear(MGLBuffer * self) {
 		char zero = 0;
 		gl.ClearBufferData(GL_ARRAY_BUFFER, GL_R8I, GL_RED, GL_UNSIGNED_BYTE, &zero);
 	} else {
-		void * map = gl.MapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY); // TODO: MapBufferRange: GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+		void * map = gl.MapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 		if (!map) {
 			PyErr_Format(moderngl_error, "cannot map the buffer");
 			return 0;
