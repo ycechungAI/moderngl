@@ -55,6 +55,73 @@ void print_gl_error(GLenum error) {
     }
 }
 
+void print_cull_face(GLenum face) {
+    switch (face) {
+        case GL_FRONT: printf("GL_FRONT"); break;
+        case GL_BACK: printf("GL_BACK"); break;
+        case GL_FRONT_AND_BACK: printf("GL_FRONT_AND_BACK"); break;
+        default: printf("%04x", face);
+    }
+}
+
+void print_tex_parameter_pname(GLenum pname) {
+    switch (pname) {
+        case GL_DEPTH_STENCIL_TEXTURE_MODE: printf("GL_DEPTH_STENCIL_TEXTURE_MODE"); break;
+        case GL_TEXTURE_BASE_LEVEL: printf("GL_TEXTURE_BASE_LEVEL"); break;
+        case GL_TEXTURE_COMPARE_FUNC: printf("GL_TEXTURE_COMPARE_FUNC"); break;
+        case GL_TEXTURE_COMPARE_MODE: printf("GL_TEXTURE_COMPARE_MODE"); break;
+        case GL_TEXTURE_LOD_BIAS: printf("GL_TEXTURE_LOD_BIAS"); break;
+        case GL_TEXTURE_MIN_FILTER: printf("GL_TEXTURE_MIN_FILTER"); break;
+        case GL_TEXTURE_MAG_FILTER: printf("GL_TEXTURE_MAG_FILTER"); break;
+        case GL_TEXTURE_MIN_LOD: printf("GL_TEXTURE_MIN_LOD"); break;
+        case GL_TEXTURE_MAX_LOD: printf("GL_TEXTURE_MAX_LOD"); break;
+        case GL_TEXTURE_MAX_LEVEL: printf("GL_TEXTURE_MAX_LEVEL"); break;
+        case GL_TEXTURE_SWIZZLE_R: printf("GL_TEXTURE_SWIZZLE_R"); break;
+        case GL_TEXTURE_SWIZZLE_G: printf("GL_TEXTURE_SWIZZLE_G"); break;
+        case GL_TEXTURE_SWIZZLE_B: printf("GL_TEXTURE_SWIZZLE_B"); break;
+        case GL_TEXTURE_SWIZZLE_A: printf("GL_TEXTURE_SWIZZLE_A"); break;
+        case GL_TEXTURE_WRAP_S: printf("GL_TEXTURE_WRAP_S"); break;
+        case GL_TEXTURE_WRAP_T: printf("GL_TEXTURE_WRAP_T"); break;
+        case GL_TEXTURE_WRAP_R: printf("GL_TEXTURE_WRAP_R"); break;
+        default: printf("%04x", pname);
+    }
+}
+
+void print_tex_level_parameter_pname(GLenum pname) {
+    switch (pname) {
+        case GL_TEXTURE_WIDTH: printf("GL_TEXTURE_WIDTH"); break;
+        case GL_TEXTURE_HEIGHT: printf("GL_TEXTURE_HEIGHT"); break;
+        case GL_TEXTURE_DEPTH: printf("GL_TEXTURE_DEPTH"); break;
+        case GL_TEXTURE_INTERNAL_FORMAT: printf("GL_TEXTURE_INTERNAL_FORMAT"); break;
+        case GL_TEXTURE_RED_SIZE: printf("GL_TEXTURE_RED_SIZE"); break;
+        case GL_TEXTURE_GREEN_SIZE: printf("GL_TEXTURE_GREEN_SIZE"); break;
+        case GL_TEXTURE_BLUE_SIZE: printf("GL_TEXTURE_BLUE_SIZE"); break;
+        case GL_TEXTURE_ALPHA_SIZE: printf("GL_TEXTURE_ALPHA_SIZE"); break;
+        case GL_TEXTURE_DEPTH_SIZE: printf("GL_TEXTURE_DEPTH_SIZE"); break;
+        case GL_TEXTURE_COMPRESSED: printf("GL_TEXTURE_COMPRESSED"); break;
+        case GL_TEXTURE_COMPRESSED_IMAGE_SIZE: printf("GL_TEXTURE_COMPRESSED_IMAGE_SIZE"); break;
+        case GL_TEXTURE_BUFFER_OFFSET: printf("GL_TEXTURE_BUFFER_OFFSET"); break;
+        default: printf("%04x", pname);
+    }
+}
+
+void print_sampler_parameter_pname(GLenum pname) {
+    switch (pname) {
+        case GL_TEXTURE_MAG_FILTER: printf("GL_TEXTURE_MAG_FILTER"); break;
+        case GL_TEXTURE_MIN_FILTER: printf("GL_TEXTURE_MIN_FILTER"); break;
+        case GL_TEXTURE_MIN_LOD: printf("GL_TEXTURE_MIN_LOD"); break;
+        case GL_TEXTURE_MAX_LOD: printf("GL_TEXTURE_MAX_LOD"); break;
+        case GL_TEXTURE_LOD_BIAS: printf("GL_TEXTURE_LOD_BIAS"); break;
+        case GL_TEXTURE_WRAP_S: printf("GL_TEXTURE_WRAP_S"); break;
+        case GL_TEXTURE_WRAP_T: printf("GL_TEXTURE_WRAP_T"); break;
+        case GL_TEXTURE_WRAP_R: printf("GL_TEXTURE_WRAP_R"); break;
+        case GL_TEXTURE_BORDER_COLOR: printf("GL_TEXTURE_BORDER_COLOR"); break;
+        case GL_TEXTURE_COMPARE_MODE: printf("GL_TEXTURE_COMPARE_MODE"); break;
+        case GL_TEXTURE_COMPARE_FUNC: printf("GL_TEXTURE_COMPARE_FUNC"); break;
+        default: printf("%04x", pname);
+    }
+}
+
 void print_gl_get_pname(GLenum pname) {
     switch (pname) {
         case GL_ACTIVE_TEXTURE: printf("GL_ACTIVE_TEXTURE"); break;
@@ -287,7 +354,7 @@ void print_gl_get_pname(GLenum pname) {
 extern "C" void GLAPI CullFace(GLenum mode) {
     printf("glCullFace(");
     printf("mode=");
-    printf("0x%04x", mode);
+    print_cull_face(mode);
     printf(")");
     gl.CullFace(mode);
     printf("\n");
@@ -340,7 +407,7 @@ extern "C" void GLAPI PointSize(GLfloat size) {
 extern "C" void GLAPI PolygonMode(GLenum face, GLenum mode) {
     printf("glPolygonMode(");
     printf("face=");
-    printf("0x%04x", face);
+    print_cull_face(face);
     printf(", ");
     printf("mode=");
     printf("0x%04x", mode);
@@ -375,7 +442,7 @@ extern "C" void GLAPI TexParameterf(GLenum target, GLenum pname, GLfloat param) 
     print_texture_target(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_tex_parameter_pname(pname);
     printf(", ");
     printf("param=");
     printf("%f", param);
@@ -391,7 +458,7 @@ extern "C" void GLAPI TexParameterfv(GLenum target, GLenum pname, const GLfloat 
     print_texture_target(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_tex_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -407,7 +474,7 @@ extern "C" void GLAPI TexParameteri(GLenum target, GLenum pname, GLint param) {
     print_texture_target(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_tex_parameter_pname(pname);
     printf(", ");
     printf("param=");
     printf("%d", param);
@@ -423,7 +490,7 @@ extern "C" void GLAPI TexParameteriv(GLenum target, GLenum pname, const GLint * 
     print_texture_target(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_tex_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -865,7 +932,7 @@ extern "C" void GLAPI GetTexParameterfv(GLenum target, GLenum pname, GLfloat * p
     print_texture_target(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_tex_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -881,7 +948,7 @@ extern "C" void GLAPI GetTexParameteriv(GLenum target, GLenum pname, GLint * par
     print_texture_target(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_tex_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -900,7 +967,7 @@ extern "C" void GLAPI GetTexLevelParameterfv(GLenum target, GLint level, GLenum 
     printf("%d", level);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_tex_level_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -919,7 +986,7 @@ extern "C" void GLAPI GetTexLevelParameteriv(GLenum target, GLint level, GLenum 
     printf("%d", level);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_tex_level_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -4381,7 +4448,7 @@ extern "C" void GLAPI TexParameterIiv(GLenum target, GLenum pname, const GLint *
     print_texture_target(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_tex_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -4397,7 +4464,7 @@ extern "C" void GLAPI TexParameterIuiv(GLenum target, GLenum pname, const GLuint
     print_texture_target(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_tex_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -4413,7 +4480,7 @@ extern "C" void GLAPI GetTexParameterIiv(GLenum target, GLenum pname, GLint * pa
     print_texture_target(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_tex_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -4429,7 +4496,7 @@ extern "C" void GLAPI GetTexParameterIuiv(GLenum target, GLenum pname, GLuint * 
     print_texture_target(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_tex_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -5629,7 +5696,7 @@ extern "C" void GLAPI SamplerParameteri(GLuint sampler, GLenum pname, GLint para
     printf("%u", sampler);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_sampler_parameter_pname(pname);
     printf(", ");
     printf("param=");
     printf("%d", param);
@@ -5645,7 +5712,7 @@ extern "C" void GLAPI SamplerParameteriv(GLuint sampler, GLenum pname, const GLi
     printf("%u", sampler);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_sampler_parameter_pname(pname);
     printf(", ");
     printf("param=");
     printf("%p", param);
@@ -5661,7 +5728,7 @@ extern "C" void GLAPI SamplerParameterf(GLuint sampler, GLenum pname, GLfloat pa
     printf("%u", sampler);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_sampler_parameter_pname(pname);
     printf(", ");
     printf("param=");
     printf("%f", param);
@@ -5677,7 +5744,7 @@ extern "C" void GLAPI SamplerParameterfv(GLuint sampler, GLenum pname, const GLf
     printf("%u", sampler);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_sampler_parameter_pname(pname);
     printf(", ");
     printf("param=");
     printf("%p", param);
@@ -5693,7 +5760,7 @@ extern "C" void GLAPI SamplerParameterIiv(GLuint sampler, GLenum pname, const GL
     printf("%u", sampler);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_sampler_parameter_pname(pname);
     printf(", ");
     printf("param=");
     printf("%p", param);
@@ -5709,7 +5776,7 @@ extern "C" void GLAPI SamplerParameterIuiv(GLuint sampler, GLenum pname, const G
     printf("%u", sampler);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_sampler_parameter_pname(pname);
     printf(", ");
     printf("param=");
     printf("%p", param);
@@ -5725,7 +5792,7 @@ extern "C" void GLAPI GetSamplerParameteriv(GLuint sampler, GLenum pname, GLint 
     printf("%u", sampler);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_sampler_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -5741,7 +5808,7 @@ extern "C" void GLAPI GetSamplerParameterIiv(GLuint sampler, GLenum pname, GLint
     printf("%u", sampler);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_sampler_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -5757,7 +5824,7 @@ extern "C" void GLAPI GetSamplerParameterfv(GLuint sampler, GLenum pname, GLfloa
     printf("%u", sampler);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_sampler_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -5773,7 +5840,7 @@ extern "C" void GLAPI GetSamplerParameterIuiv(GLuint sampler, GLenum pname, GLui
     printf("%u", sampler);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_sampler_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
