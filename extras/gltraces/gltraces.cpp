@@ -41,6 +41,20 @@ void print_texture_target(GLenum target) {
     }
 }
 
+void print_gl_error(GLenum error) {
+    switch (error) {
+        case GL_NO_ERROR: printf("GL_NO_ERROR"); break;
+        case GL_INVALID_ENUM: printf("GL_INVALID_ENUM"); break;
+        case GL_INVALID_VALUE: printf("GL_INVALID_VALUE"); break;
+        case GL_INVALID_OPERATION: printf("GL_INVALID_OPERATION"); break;
+        case GL_INVALID_FRAMEBUFFER_OPERATION: printf("GL_INVALID_FRAMEBUFFER_OPERATION"); break;
+        case GL_OUT_OF_MEMORY: printf("GL_OUT_OF_MEMORY"); break;
+        case GL_STACK_UNDERFLOW: printf("GL_STACK_UNDERFLOW"); break;
+        case GL_STACK_OVERFLOW: printf("GL_STACK_OVERFLOW"); break;
+        default: printf("%04x", error);
+    }
+}
+
 void print_gl_get_pname(GLenum pname) {
     switch (pname) {
         case GL_ACTIVE_TEXTURE: printf("GL_ACTIVE_TEXTURE"); break;
@@ -778,7 +792,7 @@ extern "C" GLenum GLAPI GetError() {
     printf(")");
     printf(" -> ");
     GLenum result = gl.GetError();
-    printf("0x%04x", result);
+    print_gl_error(result);
     printf("\n");
     fflush(stdout);
     return result;
