@@ -24,6 +24,23 @@ void print_buffer_target(GLenum target) {
     }
 }
 
+void print_texture_target(GLenum target) {
+    switch (target) {
+        case GL_TEXTURE_1D: printf("GL_TEXTURE_1D"); break;
+        case GL_TEXTURE_2D: printf("GL_TEXTURE_2D"); break;
+        case GL_TEXTURE_3D: printf("GL_TEXTURE_3D"); break;
+        case GL_TEXTURE_1D_ARRAY: printf("GL_TEXTURE_1D_ARRAY"); break;
+        case GL_TEXTURE_2D_ARRAY: printf("GL_TEXTURE_2D_ARRAY"); break;
+        case GL_TEXTURE_RECTANGLE: printf("GL_TEXTURE_RECTANGLE"); break;
+        case GL_TEXTURE_CUBE_MAP: printf("GL_TEXTURE_CUBE_MAP"); break;
+        case GL_TEXTURE_CUBE_MAP_ARRAY: printf("GL_TEXTURE_CUBE_MAP_ARRAY"); break;
+        case GL_TEXTURE_BUFFER: printf("GL_TEXTURE_BUFFER"); break;
+        case GL_TEXTURE_2D_MULTISAMPLE: printf("GL_TEXTURE_2D_MULTISAMPLE"); break;
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY: printf("GL_TEXTURE_2D_MULTISAMPLE_ARRAY"); break;
+        default: printf("%04x", target);
+    }
+}
+
 extern "C" void GLAPI CullFace(GLenum mode) {
     printf("glCullFace(");
     printf("mode=");
@@ -112,7 +129,7 @@ extern "C" void GLAPI Scissor(GLint x, GLint y, GLsizei width, GLsizei height) {
 extern "C" void GLAPI TexParameterf(GLenum target, GLenum pname, GLfloat param) {
     printf("glTexParameterf(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("pname=");
     printf("0x%04x", pname);
@@ -128,7 +145,7 @@ extern "C" void GLAPI TexParameterf(GLenum target, GLenum pname, GLfloat param) 
 extern "C" void GLAPI TexParameterfv(GLenum target, GLenum pname, const GLfloat * params) {
     printf("glTexParameterfv(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("pname=");
     printf("0x%04x", pname);
@@ -144,7 +161,7 @@ extern "C" void GLAPI TexParameterfv(GLenum target, GLenum pname, const GLfloat 
 extern "C" void GLAPI TexParameteri(GLenum target, GLenum pname, GLint param) {
     printf("glTexParameteri(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("pname=");
     printf("0x%04x", pname);
@@ -160,7 +177,7 @@ extern "C" void GLAPI TexParameteri(GLenum target, GLenum pname, GLint param) {
 extern "C" void GLAPI TexParameteriv(GLenum target, GLenum pname, const GLint * params) {
     printf("glTexParameteriv(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("pname=");
     printf("0x%04x", pname);
@@ -176,7 +193,7 @@ extern "C" void GLAPI TexParameteriv(GLenum target, GLenum pname, const GLint * 
 extern "C" void GLAPI TexImage1D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const void * pixels) {
     printf("glTexImage1D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -207,7 +224,7 @@ extern "C" void GLAPI TexImage1D(GLenum target, GLint level, GLint internalforma
 extern "C" void GLAPI TexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void * pixels) {
     printf("glTexImage2D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -580,7 +597,7 @@ extern "C" const GLubyte * GLAPI GetString(GLenum name) {
 extern "C" void GLAPI GetTexImage(GLenum target, GLint level, GLenum format, GLenum type, void * pixels) {
     printf("glGetTexImage(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -602,7 +619,7 @@ extern "C" void GLAPI GetTexImage(GLenum target, GLint level, GLenum format, GLe
 extern "C" void GLAPI GetTexParameterfv(GLenum target, GLenum pname, GLfloat * params) {
     printf("glGetTexParameterfv(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("pname=");
     printf("0x%04x", pname);
@@ -618,7 +635,7 @@ extern "C" void GLAPI GetTexParameterfv(GLenum target, GLenum pname, GLfloat * p
 extern "C" void GLAPI GetTexParameteriv(GLenum target, GLenum pname, GLint * params) {
     printf("glGetTexParameteriv(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("pname=");
     printf("0x%04x", pname);
@@ -634,7 +651,7 @@ extern "C" void GLAPI GetTexParameteriv(GLenum target, GLenum pname, GLint * par
 extern "C" void GLAPI GetTexLevelParameterfv(GLenum target, GLint level, GLenum pname, GLfloat * params) {
     printf("glGetTexLevelParameterfv(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -653,7 +670,7 @@ extern "C" void GLAPI GetTexLevelParameterfv(GLenum target, GLint level, GLenum 
 extern "C" void GLAPI GetTexLevelParameteriv(GLenum target, GLint level, GLenum pname, GLint * params) {
     printf("glGetTexLevelParameteriv(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -778,7 +795,7 @@ extern "C" void GLAPI PolygonOffset(GLfloat factor, GLfloat units) {
 extern "C" void GLAPI CopyTexImage1D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border) {
     printf("glCopyTexImage1D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -806,7 +823,7 @@ extern "C" void GLAPI CopyTexImage1D(GLenum target, GLint level, GLenum internal
 extern "C" void GLAPI CopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border) {
     printf("glCopyTexImage2D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -837,7 +854,7 @@ extern "C" void GLAPI CopyTexImage2D(GLenum target, GLint level, GLenum internal
 extern "C" void GLAPI CopyTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width) {
     printf("glCopyTexSubImage1D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -862,7 +879,7 @@ extern "C" void GLAPI CopyTexSubImage1D(GLenum target, GLint level, GLint xoffse
 extern "C" void GLAPI CopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height) {
     printf("glCopyTexSubImage2D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -893,7 +910,7 @@ extern "C" void GLAPI CopyTexSubImage2D(GLenum target, GLint level, GLint xoffse
 extern "C" void GLAPI TexSubImage1D(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void * pixels) {
     printf("glTexSubImage1D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -921,7 +938,7 @@ extern "C" void GLAPI TexSubImage1D(GLenum target, GLint level, GLint xoffset, G
 extern "C" void GLAPI TexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void * pixels) {
     printf("glTexSubImage2D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -1032,7 +1049,7 @@ extern "C" void GLAPI DrawRangeElements(GLenum mode, GLuint start, GLuint end, G
 extern "C" void GLAPI TexImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void * pixels) {
     printf("glTexImage3D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -1069,7 +1086,7 @@ extern "C" void GLAPI TexImage3D(GLenum target, GLint level, GLint internalforma
 extern "C" void GLAPI TexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void * pixels) {
     printf("glTexSubImage3D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -1109,7 +1126,7 @@ extern "C" void GLAPI TexSubImage3D(GLenum target, GLint level, GLint xoffset, G
 extern "C" void GLAPI CopyTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height) {
     printf("glCopyTexSubImage3D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -1166,7 +1183,7 @@ extern "C" void GLAPI SampleCoverage(GLfloat value, GLboolean invert) {
 extern "C" void GLAPI CompressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const void * data) {
     printf("glCompressedTexImage3D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -1200,7 +1217,7 @@ extern "C" void GLAPI CompressedTexImage3D(GLenum target, GLint level, GLenum in
 extern "C" void GLAPI CompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void * data) {
     printf("glCompressedTexImage2D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -1231,7 +1248,7 @@ extern "C" void GLAPI CompressedTexImage2D(GLenum target, GLint level, GLenum in
 extern "C" void GLAPI CompressedTexImage1D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const void * data) {
     printf("glCompressedTexImage1D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -1259,7 +1276,7 @@ extern "C" void GLAPI CompressedTexImage1D(GLenum target, GLint level, GLenum in
 extern "C" void GLAPI CompressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void * data) {
     printf("glCompressedTexSubImage3D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -1299,7 +1316,7 @@ extern "C" void GLAPI CompressedTexSubImage3D(GLenum target, GLint level, GLint 
 extern "C" void GLAPI CompressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void * data) {
     printf("glCompressedTexSubImage2D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -1333,7 +1350,7 @@ extern "C" void GLAPI CompressedTexSubImage2D(GLenum target, GLint level, GLint 
 extern "C" void GLAPI CompressedTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void * data) {
     printf("glCompressedTexSubImage1D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -1361,7 +1378,7 @@ extern "C" void GLAPI CompressedTexSubImage1D(GLenum target, GLint level, GLint 
 extern "C" void GLAPI GetCompressedTexImage(GLenum target, GLint level, void * img) {
     printf("glGetCompressedTexImage(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
@@ -4118,7 +4135,7 @@ extern "C" void GLAPI Uniform4uiv(GLint location, GLsizei count, const GLuint * 
 extern "C" void GLAPI TexParameterIiv(GLenum target, GLenum pname, const GLint * params) {
     printf("glTexParameterIiv(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("pname=");
     printf("0x%04x", pname);
@@ -4134,7 +4151,7 @@ extern "C" void GLAPI TexParameterIiv(GLenum target, GLenum pname, const GLint *
 extern "C" void GLAPI TexParameterIuiv(GLenum target, GLenum pname, const GLuint * params) {
     printf("glTexParameterIuiv(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("pname=");
     printf("0x%04x", pname);
@@ -4150,7 +4167,7 @@ extern "C" void GLAPI TexParameterIuiv(GLenum target, GLenum pname, const GLuint
 extern "C" void GLAPI GetTexParameterIiv(GLenum target, GLenum pname, GLint * params) {
     printf("glGetTexParameterIiv(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("pname=");
     printf("0x%04x", pname);
@@ -4166,7 +4183,7 @@ extern "C" void GLAPI GetTexParameterIiv(GLenum target, GLenum pname, GLint * pa
 extern "C" void GLAPI GetTexParameterIuiv(GLenum target, GLenum pname, GLuint * params) {
     printf("glGetTexParameterIuiv(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("pname=");
     printf("0x%04x", pname);
@@ -4524,7 +4541,7 @@ extern "C" void GLAPI GetFramebufferAttachmentParameteriv(GLenum target, GLenum 
 extern "C" void GLAPI GenerateMipmap(GLenum target) {
     printf("glGenerateMipmap(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(")");
     gl.GenerateMipmap(target);
     printf("\n");
@@ -5197,7 +5214,7 @@ extern "C" void GLAPI FramebufferTexture(GLenum target, GLenum attachment, GLuin
 extern "C" void GLAPI TexImage2DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations) {
     printf("glTexImage2DMultisample(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("samples=");
     printf("%d", samples);
@@ -5222,7 +5239,7 @@ extern "C" void GLAPI TexImage2DMultisample(GLenum target, GLsizei samples, GLen
 extern "C" void GLAPI TexImage3DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean fixedsamplelocations) {
     printf("glTexImage3DMultisample(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("samples=");
     printf("%d", samples);
@@ -8274,7 +8291,7 @@ extern "C" void GLAPI MemoryBarrier(GLbitfield barriers) {
 extern "C" void GLAPI TexStorage1D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width) {
     printf("glTexStorage1D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("levels=");
     printf("%d", levels);
@@ -8293,7 +8310,7 @@ extern "C" void GLAPI TexStorage1D(GLenum target, GLsizei levels, GLenum interna
 extern "C" void GLAPI TexStorage2D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height) {
     printf("glTexStorage2D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("levels=");
     printf("%d", levels);
@@ -8315,7 +8332,7 @@ extern "C" void GLAPI TexStorage2D(GLenum target, GLsizei levels, GLenum interna
 extern "C" void GLAPI TexStorage3D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth) {
     printf("glTexStorage3D(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("levels=");
     printf("%d", levels);
@@ -8882,7 +8899,7 @@ extern "C" void GLAPI TexBufferRange(GLenum target, GLenum internalformat, GLuin
 extern "C" void GLAPI TexStorage2DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations) {
     printf("glTexStorage2DMultisample(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("samples=");
     printf("%d", samples);
@@ -8907,7 +8924,7 @@ extern "C" void GLAPI TexStorage2DMultisample(GLenum target, GLsizei samples, GL
 extern "C" void GLAPI TexStorage3DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean fixedsamplelocations) {
     printf("glTexStorage3DMultisample(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("samples=");
     printf("%d", samples);
@@ -8938,7 +8955,7 @@ extern "C" void GLAPI TextureView(GLuint texture, GLenum target, GLuint origtext
     printf("%u", texture);
     printf(", ");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("origtexture=");
     printf("%u", origtexture);
@@ -10278,7 +10295,7 @@ extern "C" void GLAPI GetNamedRenderbufferParameteriv(GLuint renderbuffer, GLenu
 extern "C" void GLAPI CreateTextures(GLenum target, GLsizei n, GLuint * textures) {
     printf("glCreateTextures(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("n=");
     printf("%d", n);
@@ -11483,7 +11500,7 @@ extern "C" GLenum GLAPI GetGraphicsResetStatus() {
 extern "C" void GLAPI GetnCompressedTexImage(GLenum target, GLint lod, GLsizei bufSize, void * pixels) {
     printf("glGetnCompressedTexImage(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("lod=");
     printf("%d", lod);
@@ -11502,7 +11519,7 @@ extern "C" void GLAPI GetnCompressedTexImage(GLenum target, GLint lod, GLsizei b
 extern "C" void GLAPI GetnTexImage(GLenum target, GLint level, GLenum format, GLenum type, GLsizei bufSize, void * pixels) {
     printf("glGetnTexImage(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("level=");
     printf("%d", level);
