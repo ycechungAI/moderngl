@@ -3,7 +3,6 @@ import numpy as np
 import pytest
 
 
-@pytest.mark.usefixtures('ctx')
 def test_hello(ctx: mgl.Context):
     prog = ctx.program(
         vertex_shader='''
@@ -31,4 +30,4 @@ def test_hello(ctx: mgl.Context):
 
 
 if __name__ == '__main__':
-    pytest.main()
+    pytest.main([__file__])

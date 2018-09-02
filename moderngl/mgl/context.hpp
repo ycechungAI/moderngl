@@ -9,13 +9,13 @@ struct MGLContext {
     GLContext gl_context;
     GLMethods gl;
 
-	int version_code;
-	int default_texture_unit;
-	int enable_flags;
+    int version_code;
+    int default_texture_unit;
+    int enable_flags;
 
     PyTypeObject * MGLBuffer_class;
     PyTypeObject * MGLProgram_class;
-	PyTypeObject * MGLVertexArray_class;
+    PyTypeObject * MGLVertexArray_class;
 };
 
 PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssize_t nargs);

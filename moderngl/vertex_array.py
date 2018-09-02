@@ -3,6 +3,7 @@ from typing import Any
 from .buffer import Buffer
 from .program import Program
 
+
 class VertexArray:
     __slots__ = ['__mglo', '__ibo', 'program', 'mode', 'vertices', 'extra']
 

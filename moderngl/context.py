@@ -20,8 +20,11 @@ class Context:
     def buffer(self, data=None, reserve=0, readable=True, writable=True, local=False) -> Buffer:
         return self.__mglo.buffer(data, reserve, readable, writable, local)
 
-    def program(self, vertex_shader, fragment_shader=None, geometry_shader=None, tess_control_shader=None, tess_evaluation_shader=None, varyings=()) -> Program:
-        return self.__mglo.program(vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader, varyings)
+    def program(
+            self, vertex_shader, fragment_shader=None, geometry_shader=None, tess_control_shader=None,
+            tess_evaluation_shader=None, varyings=()) -> Program:
+        return self.__mglo.program(
+            vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader, varyings)
 
     def vertex_array(self, program, content, index_buffer=None) -> VertexArray:
         return self.__mglo.vertex_array(program, content, index_buffer)

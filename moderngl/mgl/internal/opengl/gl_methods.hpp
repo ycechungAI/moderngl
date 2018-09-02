@@ -660,9 +660,9 @@ struct GLMethods {
     PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC MultiDrawElementsIndirectCount;
     PFNGLPOLYGONOFFSETCLAMPPROC PolygonOffsetClamp;
 
-	bool load();
+    bool load();
 
 private:
-	// GLMethods(const GLMethods & copy);
-	void operator = (const GLMethods & rhs);
+    // GLMethods(const GLMethods & copy);
+    void operator = (const GLMethods & rhs);
 };

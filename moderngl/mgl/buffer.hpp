@@ -6,9 +6,9 @@ struct MGLBuffer {
     PyObject_HEAD
     PyObject * wrapper;
     MGLContext * context;
-	int buffer_obj;
-	int flags;
-	Py_ssize_t size;
+    int buffer_obj;
+    int flags;
+    Py_ssize_t size;
 };
 
 PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);

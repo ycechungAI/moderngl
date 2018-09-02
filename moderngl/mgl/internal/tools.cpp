@@ -58,24 +58,24 @@ Py_ssize_t unpack_size(PyObject * size) {
 }
 
 int prepare_buffer(PyObject * data, Py_buffer * view) {
-	if (data->ob_type->tp_as_buffer && data->ob_type->tp_as_buffer->bf_getbuffer) {
-		if (data->ob_type->tp_as_buffer->bf_getbuffer(data, view, PyBUF_STRIDED_RO) < 0) {
-			return -1;
-		}
-	} else {
-		PyObject * bytes = PyObject_CallMethodObjArgs(data, tobytes_str, 0);
-		if (!bytes) {
-			return -1;
-		}
-		if (bytes->ob_type != &PyBytes_Type) {
-			PyErr_Format(PyExc_TypeError, "tobytes returned %s not bytes", bytes->ob_type->tp_name);
-			Py_DECREF(bytes);
-			return -1;
-		}
-		view->buf = PyBytes_AS_STRING(bytes);
-		view->len = PyBytes_GET_SIZE(bytes);
-		view->obj = bytes;
-		view->readonly = true;
-	}
-	return 0;
+    if (data->ob_type->tp_as_buffer && data->ob_type->tp_as_buffer->bf_getbuffer) {
+        if (data->ob_type->tp_as_buffer->bf_getbuffer(data, view, PyBUF_STRIDED_RO) < 0) {
+            return -1;
+        }
+    } else {
+        PyObject * bytes = PyObject_CallMethodObjArgs(data, tobytes_str, 0);
+        if (!bytes) {
+            return -1;
+        }
+        if (bytes->ob_type != &PyBytes_Type) {
+            PyErr_Format(PyExc_TypeError, "tobytes returned %s not bytes", bytes->ob_type->tp_name);
+            Py_DECREF(bytes);
+            return -1;
+        }
+        view->buf = PyBytes_AS_STRING(bytes);
+        view->len = PyBytes_GET_SIZE(bytes);
+        view->obj = bytes;
+        view->readonly = true;
+    }
+    return 0;
 }

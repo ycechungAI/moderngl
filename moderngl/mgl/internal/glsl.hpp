@@ -2,9 +2,9 @@
 #include "python.hpp"
 
 struct GLTypeInfo {
-	int cols;
-	int rows;
-	int shape;
+    int cols;
+    int rows;
+    int shape;
 };
 
 void clean_glsl_name(char * name, int & name_len);
