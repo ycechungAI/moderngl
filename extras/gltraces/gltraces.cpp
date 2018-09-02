@@ -4,6 +4,26 @@
 
 GLMethods gl;
 
+void print_buffer_target(GLenum target) {
+    switch (target) {
+        case GL_ARRAY_BUFFER: printf("GL_ARRAY_BUFFER"); break;
+        case GL_ATOMIC_COUNTER_BUFFER: printf("GL_ATOMIC_COUNTER_BUFFER"); break;
+        case GL_COPY_READ_BUFFER: printf("GL_COPY_READ_BUFFER"); break;
+        case GL_COPY_WRITE_BUFFER: printf("GL_COPY_WRITE_BUFFER"); break;
+        case GL_DISPATCH_INDIRECT_BUFFER: printf("GL_DISPATCH_INDIRECT_BUFFER"); break;
+        case GL_DRAW_INDIRECT_BUFFER: printf("GL_DRAW_INDIRECT_BUFFER"); break;
+        case GL_ELEMENT_ARRAY_BUFFER: printf("GL_ELEMENT_ARRAY_BUFFER"); break;
+        case GL_PIXEL_PACK_BUFFER: printf("GL_PIXEL_PACK_BUFFER"); break;
+        case GL_PIXEL_UNPACK_BUFFER: printf("GL_PIXEL_UNPACK_BUFFER"); break;
+        case GL_QUERY_BUFFER: printf("GL_QUERY_BUFFER"); break;
+        case GL_SHADER_STORAGE_BUFFER: printf("GL_SHADER_STORAGE_BUFFER"); break;
+        case GL_TEXTURE_BUFFER: printf("GL_TEXTURE_BUFFER"); break;
+        case GL_TRANSFORM_FEEDBACK_BUFFER: printf("GL_TRANSFORM_FEEDBACK_BUFFER"); break;
+        case GL_UNIFORM_BUFFER: printf("GL_UNIFORM_BUFFER"); break;
+        default: printf("%04x", target);
+    }
+}
+
 extern "C" void GLAPI CullFace(GLenum mode) {
     printf("glCullFace(");
     printf("mode=");
@@ -935,7 +955,7 @@ extern "C" void GLAPI TexSubImage2D(GLenum target, GLint level, GLint xoffset, G
 extern "C" void GLAPI BindTexture(GLenum target, GLuint texture) {
     printf("glBindTexture(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("texture=");
     printf("%u", texture);
@@ -1608,7 +1628,7 @@ extern "C" void GLAPI GetQueryObjectuiv(GLuint id, GLenum pname, GLuint * params
 extern "C" void GLAPI BindBuffer(GLenum target, GLuint buffer) {
     printf("glBindBuffer(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("buffer=");
     printf("%u", buffer);
@@ -1660,7 +1680,7 @@ extern "C" GLboolean GLAPI IsBuffer(GLuint buffer) {
 extern "C" void GLAPI BufferData(GLenum target, GLsizeiptr size, const void * data, GLenum usage) {
     printf("glBufferData(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("size=");
     printf("%lld", size);
@@ -1679,7 +1699,7 @@ extern "C" void GLAPI BufferData(GLenum target, GLsizeiptr size, const void * da
 extern "C" void GLAPI BufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void * data) {
     printf("glBufferSubData(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("offset=");
     printf("%lld", offset);
@@ -1698,7 +1718,7 @@ extern "C" void GLAPI BufferSubData(GLenum target, GLintptr offset, GLsizeiptr s
 extern "C" void GLAPI GetBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, void * data) {
     printf("glGetBufferSubData(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("offset=");
     printf("%lld", offset);
@@ -1717,7 +1737,7 @@ extern "C" void GLAPI GetBufferSubData(GLenum target, GLintptr offset, GLsizeipt
 extern "C" void * GLAPI MapBuffer(GLenum target, GLenum access) {
     printf("glMapBuffer(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("access=");
     printf("0x%04x", access);
@@ -1733,7 +1753,7 @@ extern "C" void * GLAPI MapBuffer(GLenum target, GLenum access) {
 extern "C" GLboolean GLAPI UnmapBuffer(GLenum target) {
     printf("glUnmapBuffer(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(")");
     printf(" -> ");
     GLboolean result = gl.UnmapBuffer(target);
@@ -1746,7 +1766,7 @@ extern "C" GLboolean GLAPI UnmapBuffer(GLenum target) {
 extern "C" void GLAPI GetBufferParameteriv(GLenum target, GLenum pname, GLint * params) {
     printf("glGetBufferParameteriv(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("pname=");
     printf("0x%04x", pname);
@@ -1762,7 +1782,7 @@ extern "C" void GLAPI GetBufferParameteriv(GLenum target, GLenum pname, GLint * 
 extern "C" void GLAPI GetBufferPointerv(GLenum target, GLenum pname, void ** params) {
     printf("glGetBufferPointerv(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("pname=");
     printf("0x%04x", pname);
@@ -3447,7 +3467,7 @@ extern "C" void GLAPI EndTransformFeedback() {
 extern "C" void GLAPI BindBufferRange(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size) {
     printf("glBindBufferRange(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("index=");
     printf("%u", index);
@@ -3469,7 +3489,7 @@ extern "C" void GLAPI BindBufferRange(GLenum target, GLuint index, GLuint buffer
 extern "C" void GLAPI BindBufferBase(GLenum target, GLuint index, GLuint buffer) {
     printf("glBindBufferBase(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("index=");
     printf("%u", index);
@@ -4595,7 +4615,7 @@ extern "C" void GLAPI FramebufferTextureLayer(GLenum target, GLenum attachment, 
 extern "C" void * GLAPI MapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access) {
     printf("glMapBufferRange(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("offset=");
     printf("%lld", offset);
@@ -4617,7 +4637,7 @@ extern "C" void * GLAPI MapBufferRange(GLenum target, GLintptr offset, GLsizeipt
 extern "C" void GLAPI FlushMappedBufferRange(GLenum target, GLintptr offset, GLsizeiptr length) {
     printf("glFlushMappedBufferRange(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("offset=");
     printf("%lld", offset);
@@ -4723,7 +4743,7 @@ extern "C" void GLAPI DrawElementsInstanced(GLenum mode, GLsizei count, GLenum t
 extern "C" void GLAPI TexBuffer(GLenum target, GLenum internalformat, GLuint buffer) {
     printf("glTexBuffer(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("internalformat=");
     printf("0x%04x", internalformat);
@@ -5142,7 +5162,7 @@ extern "C" void GLAPI GetInteger64i_v(GLenum target, GLuint index, GLint64 * dat
 extern "C" void GLAPI GetBufferParameteri64v(GLenum target, GLenum pname, GLint64 * params) {
     printf("glGetBufferParameteri64v(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("pname=");
     printf("0x%04x", pname);
@@ -6330,7 +6350,7 @@ extern "C" void GLAPI PatchParameterfv(GLenum pname, const GLfloat * values) {
 extern "C" void GLAPI BindTransformFeedback(GLenum target, GLuint id) {
     printf("glBindTransformFeedback(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("id=");
     printf("%u", id);
@@ -8355,7 +8375,7 @@ extern "C" void GLAPI DrawTransformFeedbackStreamInstanced(GLenum mode, GLuint i
 extern "C" void GLAPI ClearBufferData(GLenum target, GLenum internalformat, GLenum format, GLenum type, const void * data) {
     printf("glClearBufferData(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("internalformat=");
     printf("0x%04x", internalformat);
@@ -8377,7 +8397,7 @@ extern "C" void GLAPI ClearBufferData(GLenum target, GLenum internalformat, GLen
 extern "C" void GLAPI ClearBufferSubData(GLenum target, GLenum internalformat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void * data) {
     printf("glClearBufferSubData(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("internalformat=");
     printf("0x%04x", internalformat);
@@ -8840,7 +8860,7 @@ extern "C" void GLAPI ShaderStorageBlockBinding(GLuint program, GLuint storageBl
 extern "C" void GLAPI TexBufferRange(GLenum target, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size) {
     printf("glTexBufferRange(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("internalformat=");
     printf("0x%04x", internalformat);
@@ -9251,7 +9271,7 @@ extern "C" void GLAPI GetObjectPtrLabel(const void * ptr, GLsizei bufSize, GLsiz
 extern "C" void GLAPI BufferStorage(GLenum target, GLsizeiptr size, const void * data, GLbitfield flags) {
     printf("glBufferStorage(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("size=");
     printf("%lld", size);
@@ -9332,7 +9352,7 @@ extern "C" void GLAPI ClearTexSubImage(GLuint texture, GLint level, GLint xoffse
 extern "C" void GLAPI BindBuffersBase(GLenum target, GLuint first, GLsizei count, const GLuint * buffers) {
     printf("glBindBuffersBase(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("first=");
     printf("%u", first);
@@ -9351,7 +9371,7 @@ extern "C" void GLAPI BindBuffersBase(GLenum target, GLuint first, GLsizei count
 extern "C" void GLAPI BindBuffersRange(GLenum target, GLuint first, GLsizei count, const GLuint * buffers, const GLintptr * offsets, const GLsizeiptr * sizes) {
     printf("glBindBuffersRange(");
     printf("target=");
-    printf("0x%04x", target);
+    print_buffer_target(target);
     printf(", ");
     printf("first=");
     printf("%u", first);

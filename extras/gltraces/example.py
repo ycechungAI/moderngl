@@ -12,4 +12,7 @@ mglprocs = moderngl.glprocs(ctx)
 gltraces.glprocs[:] = mglprocs
 mglprocs[:] = gltraces.gltraces
 
-buf = ctx.buffer(reserve=1024)
+buf = ctx.buffer(reserve=16)
+buf.clear()
+buf.write(b'1234')
+print(buf.read())
