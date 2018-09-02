@@ -663,6 +663,6 @@ struct GLMethods {
 	bool load();
 
 private:
-	GLMethods(const GLMethods & copy);
+	// GLMethods(const GLMethods & copy);
 	void operator = (const GLMethods & rhs);
 };
