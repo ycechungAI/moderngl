@@ -1,0 +1,4 @@
+numpy
+pycodestyle
+pillow
+pytest

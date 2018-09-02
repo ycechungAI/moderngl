@@ -1,5 +1,5 @@
-import numpy as np
 import moderngl as mgl
+import numpy as np
 import pytest
 
 
@@ -28,3 +28,7 @@ def test_hello(ctx: mgl.Context):
     vao.transform(buf2)
 
     np.testing.assert_almost_equal(buf2.read(dtype='f4'), [1.0, 2.0, 3.0, 4.0])
+
+
+if __name__ == '__main__':
+    pytest.main()
