@@ -4,6 +4,21 @@
 
 GLMethods gl;
 
+void print_error() {
+    GLenum error = gl.GetError();
+    switch (error) {
+        case GL_NO_ERROR: break;
+        case GL_INVALID_ENUM: printf(" // GL_INVALID_ENUM"); break;
+        case GL_INVALID_VALUE: printf(" // GL_INVALID_VALUE"); break;
+        case GL_INVALID_OPERATION: printf(" // GL_INVALID_OPERATION"); break;
+        case GL_INVALID_FRAMEBUFFER_OPERATION: printf(" // GL_INVALID_FRAMEBUFFER_OPERATION"); break;
+        case GL_OUT_OF_MEMORY: printf(" // GL_OUT_OF_MEMORY"); break;
+        case GL_STACK_UNDERFLOW: printf(" // GL_STACK_UNDERFLOW"); break;
+        case GL_STACK_OVERFLOW: printf(" // GL_STACK_OVERFLOW"); break;
+        default: printf(" // UNKNOWN_ERROR: %04x", error);
+    }
+}
+
 void print_render_mode(GLenum mode) {
     switch (mode) {
         case GL_POINTS: printf("GL_POINTS"); break;
@@ -574,6 +589,7 @@ extern "C" void GLAPI CullFace(GLenum mode) {
     print_cull_face(mode);
     printf(")");
     gl.CullFace(mode);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -584,6 +600,7 @@ extern "C" void GLAPI FrontFace(GLenum mode) {
     printf("0x%04x", mode);
     printf(")");
     gl.FrontFace(mode);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -597,6 +614,7 @@ extern "C" void GLAPI Hint(GLenum target, GLenum mode) {
     printf("0x%04x", mode);
     printf(")");
     gl.Hint(target, mode);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -607,6 +625,7 @@ extern "C" void GLAPI LineWidth(GLfloat width) {
     printf("%f", width);
     printf(")");
     gl.LineWidth(width);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -617,6 +636,7 @@ extern "C" void GLAPI PointSize(GLfloat size) {
     printf("%f", size);
     printf(")");
     gl.PointSize(size);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -630,6 +650,7 @@ extern "C" void GLAPI PolygonMode(GLenum face, GLenum mode) {
     printf("0x%04x", mode);
     printf(")");
     gl.PolygonMode(face, mode);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -649,6 +670,7 @@ extern "C" void GLAPI Scissor(GLint x, GLint y, GLsizei width, GLsizei height) {
     printf("%d", height);
     printf(")");
     gl.Scissor(x, y, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -665,6 +687,7 @@ extern "C" void GLAPI TexParameterf(GLenum target, GLenum pname, GLfloat param) 
     printf("%f", param);
     printf(")");
     gl.TexParameterf(target, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -681,6 +704,7 @@ extern "C" void GLAPI TexParameterfv(GLenum target, GLenum pname, const GLfloat 
     printf("%p", params);
     printf(")");
     gl.TexParameterfv(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -697,6 +721,7 @@ extern "C" void GLAPI TexParameteri(GLenum target, GLenum pname, GLint param) {
     printf("%d", param);
     printf(")");
     gl.TexParameteri(target, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -713,6 +738,7 @@ extern "C" void GLAPI TexParameteriv(GLenum target, GLenum pname, const GLint * 
     printf("%p", params);
     printf(")");
     gl.TexParameteriv(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -744,6 +770,7 @@ extern "C" void GLAPI TexImage1D(GLenum target, GLint level, GLint internalforma
     printf("%p", pixels);
     printf(")");
     gl.TexImage1D(target, level, internalformat, width, border, format, type, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -778,6 +805,7 @@ extern "C" void GLAPI TexImage2D(GLenum target, GLint level, GLint internalforma
     printf("%p", pixels);
     printf(")");
     gl.TexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -788,6 +816,7 @@ extern "C" void GLAPI DrawBuffer(GLenum buf) {
     printf("0x%04x", buf);
     printf(")");
     gl.DrawBuffer(buf);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -798,6 +827,7 @@ extern "C" void GLAPI Clear(GLbitfield mask) {
     printf("0x%08x", mask);
     printf(")");
     gl.Clear(mask);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -817,6 +847,7 @@ extern "C" void GLAPI ClearColor(GLfloat red, GLfloat green, GLfloat blue, GLflo
     printf("%f", alpha);
     printf(")");
     gl.ClearColor(red, green, blue, alpha);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -827,6 +858,7 @@ extern "C" void GLAPI ClearStencil(GLint s) {
     printf("%d", s);
     printf(")");
     gl.ClearStencil(s);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -837,6 +869,7 @@ extern "C" void GLAPI ClearDepth(GLdouble depth) {
     printf("%lf", depth);
     printf(")");
     gl.ClearDepth(depth);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -847,6 +880,7 @@ extern "C" void GLAPI StencilMask(GLuint mask) {
     printf("%u", mask);
     printf(")");
     gl.StencilMask(mask);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -866,6 +900,7 @@ extern "C" void GLAPI ColorMask(GLboolean red, GLboolean green, GLboolean blue, 
     printf("%s", alpha ? "true" : "false");
     printf(")");
     gl.ColorMask(red, green, blue, alpha);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -876,6 +911,7 @@ extern "C" void GLAPI DepthMask(GLboolean flag) {
     printf("%s", flag ? "true" : "false");
     printf(")");
     gl.DepthMask(flag);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -886,6 +922,7 @@ extern "C" void GLAPI Disable(GLenum cap) {
     printf("0x%04x", cap);
     printf(")");
     gl.Disable(cap);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -896,6 +933,7 @@ extern "C" void GLAPI Enable(GLenum cap) {
     printf("0x%04x", cap);
     printf(")");
     gl.Enable(cap);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -904,6 +942,7 @@ extern "C" void GLAPI Finish() {
     printf("glFinish(");
     printf(")");
     gl.Finish();
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -912,6 +951,7 @@ extern "C" void GLAPI Flush() {
     printf("glFlush(");
     printf(")");
     gl.Flush();
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -925,6 +965,7 @@ extern "C" void GLAPI BlendFunc(GLenum sfactor, GLenum dfactor) {
     printf("0x%04x", dfactor);
     printf(")");
     gl.BlendFunc(sfactor, dfactor);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -935,6 +976,7 @@ extern "C" void GLAPI LogicOp(GLenum opcode) {
     printf("0x%04x", opcode);
     printf(")");
     gl.LogicOp(opcode);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -951,6 +993,7 @@ extern "C" void GLAPI StencilFunc(GLenum func, GLint ref, GLuint mask) {
     printf("%u", mask);
     printf(")");
     gl.StencilFunc(func, ref, mask);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -967,6 +1010,7 @@ extern "C" void GLAPI StencilOp(GLenum fail, GLenum zfail, GLenum zpass) {
     printf("0x%04x", zpass);
     printf(")");
     gl.StencilOp(fail, zfail, zpass);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -977,6 +1021,7 @@ extern "C" void GLAPI DepthFunc(GLenum func) {
     printf("0x%04x", func);
     printf(")");
     gl.DepthFunc(func);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -990,6 +1035,7 @@ extern "C" void GLAPI PixelStoref(GLenum pname, GLfloat param) {
     printf("%f", param);
     printf(")");
     gl.PixelStoref(pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1003,6 +1049,7 @@ extern "C" void GLAPI PixelStorei(GLenum pname, GLint param) {
     printf("%d", param);
     printf(")");
     gl.PixelStorei(pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1013,6 +1060,7 @@ extern "C" void GLAPI ReadBuffer(GLenum src) {
     printf("0x%04x", src);
     printf(")");
     gl.ReadBuffer(src);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1041,6 +1089,7 @@ extern "C" void GLAPI ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height
     printf("%p", pixels);
     printf(")");
     gl.ReadPixels(x, y, width, height, format, type, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1054,6 +1103,7 @@ extern "C" void GLAPI GetBooleanv(GLenum pname, GLboolean * data) {
     printf("%p", data);
     printf(")");
     gl.GetBooleanv(pname, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1067,6 +1117,7 @@ extern "C" void GLAPI GetDoublev(GLenum pname, GLdouble * data) {
     printf("%p", data);
     printf(")");
     gl.GetDoublev(pname, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1077,6 +1128,7 @@ extern "C" GLenum GLAPI GetError() {
     printf(" -> ");
     GLenum result = gl.GetError();
     print_gl_error(result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -1091,6 +1143,7 @@ extern "C" void GLAPI GetFloatv(GLenum pname, GLfloat * data) {
     printf("%p", data);
     printf(")");
     gl.GetFloatv(pname, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1104,6 +1157,7 @@ extern "C" void GLAPI GetIntegerv(GLenum pname, GLint * data) {
     printf("%p", data);
     printf(")");
     gl.GetIntegerv(pname, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1116,6 +1170,7 @@ extern "C" const GLubyte * GLAPI GetString(GLenum name) {
     printf(" -> ");
     const GLubyte * result = gl.GetString(name);
     printf("%p", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -1139,6 +1194,7 @@ extern "C" void GLAPI GetTexImage(GLenum target, GLint level, GLenum format, GLe
     printf("%p", pixels);
     printf(")");
     gl.GetTexImage(target, level, format, type, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1155,6 +1211,7 @@ extern "C" void GLAPI GetTexParameterfv(GLenum target, GLenum pname, GLfloat * p
     printf("%p", params);
     printf(")");
     gl.GetTexParameterfv(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1171,6 +1228,7 @@ extern "C" void GLAPI GetTexParameteriv(GLenum target, GLenum pname, GLint * par
     printf("%p", params);
     printf(")");
     gl.GetTexParameteriv(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1190,6 +1248,7 @@ extern "C" void GLAPI GetTexLevelParameterfv(GLenum target, GLint level, GLenum 
     printf("%p", params);
     printf(")");
     gl.GetTexLevelParameterfv(target, level, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1209,6 +1268,7 @@ extern "C" void GLAPI GetTexLevelParameteriv(GLenum target, GLint level, GLenum 
     printf("%p", params);
     printf(")");
     gl.GetTexLevelParameteriv(target, level, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1221,6 +1281,7 @@ extern "C" GLboolean GLAPI IsEnabled(GLenum cap) {
     printf(" -> ");
     GLboolean result = gl.IsEnabled(cap);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -1235,6 +1296,7 @@ extern "C" void GLAPI DepthRange(GLdouble n, GLdouble f) {
     printf("%lf", f);
     printf(")");
     gl.DepthRange(n, f);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1254,6 +1316,7 @@ extern "C" void GLAPI Viewport(GLint x, GLint y, GLsizei width, GLsizei height) 
     printf("%d", height);
     printf(")");
     gl.Viewport(x, y, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1270,6 +1333,7 @@ extern "C" void GLAPI DrawArrays(GLenum mode, GLint first, GLsizei count) {
     printf("%d", count);
     printf(")");
     gl.DrawArrays(mode, first, count);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1289,6 +1353,7 @@ extern "C" void GLAPI DrawElements(GLenum mode, GLsizei count, GLenum type, cons
     printf("%p", indices);
     printf(")");
     gl.DrawElements(mode, count, type, indices);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1302,6 +1367,7 @@ extern "C" void GLAPI GetPointerv(GLenum pname, void ** params) {
     printf("%p", params);
     printf(")");
     gl.GetPointerv(pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1315,6 +1381,7 @@ extern "C" void GLAPI PolygonOffset(GLfloat factor, GLfloat units) {
     printf("%f", units);
     printf(")");
     gl.PolygonOffset(factor, units);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1343,6 +1410,7 @@ extern "C" void GLAPI CopyTexImage1D(GLenum target, GLint level, GLenum internal
     printf("%d", border);
     printf(")");
     gl.CopyTexImage1D(target, level, internalformat, x, y, width, border);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1374,6 +1442,7 @@ extern "C" void GLAPI CopyTexImage2D(GLenum target, GLint level, GLenum internal
     printf("%d", border);
     printf(")");
     gl.CopyTexImage2D(target, level, internalformat, x, y, width, height, border);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1399,6 +1468,7 @@ extern "C" void GLAPI CopyTexSubImage1D(GLenum target, GLint level, GLint xoffse
     printf("%d", width);
     printf(")");
     gl.CopyTexSubImage1D(target, level, xoffset, x, y, width);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1430,6 +1500,7 @@ extern "C" void GLAPI CopyTexSubImage2D(GLenum target, GLint level, GLint xoffse
     printf("%d", height);
     printf(")");
     gl.CopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1458,6 +1529,7 @@ extern "C" void GLAPI TexSubImage1D(GLenum target, GLint level, GLint xoffset, G
     printf("%p", pixels);
     printf(")");
     gl.TexSubImage1D(target, level, xoffset, width, format, type, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1492,6 +1564,7 @@ extern "C" void GLAPI TexSubImage2D(GLenum target, GLint level, GLint xoffset, G
     printf("%p", pixels);
     printf(")");
     gl.TexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1505,6 +1578,7 @@ extern "C" void GLAPI BindTexture(GLenum target, GLuint texture) {
     printf("%u", texture);
     printf(")");
     gl.BindTexture(target, texture);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1518,6 +1592,7 @@ extern "C" void GLAPI DeleteTextures(GLsizei n, const GLuint * textures) {
     printf("%p", textures);
     printf(")");
     gl.DeleteTextures(n, textures);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1531,6 +1606,7 @@ extern "C" void GLAPI GenTextures(GLsizei n, GLuint * textures) {
     printf("%p", textures);
     printf(")");
     gl.GenTextures(n, textures);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1543,6 +1619,7 @@ extern "C" GLboolean GLAPI IsTexture(GLuint texture) {
     printf(" -> ");
     GLboolean result = gl.IsTexture(texture);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -1569,6 +1646,7 @@ extern "C" void GLAPI DrawRangeElements(GLenum mode, GLuint start, GLuint end, G
     printf("%p", indices);
     printf(")");
     gl.DrawRangeElements(mode, start, end, count, type, indices);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1606,6 +1684,7 @@ extern "C" void GLAPI TexImage3D(GLenum target, GLint level, GLint internalforma
     printf("%p", pixels);
     printf(")");
     gl.TexImage3D(target, level, internalformat, width, height, depth, border, format, type, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1646,6 +1725,7 @@ extern "C" void GLAPI TexSubImage3D(GLenum target, GLint level, GLint xoffset, G
     printf("%p", pixels);
     printf(")");
     gl.TexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1680,6 +1760,7 @@ extern "C" void GLAPI CopyTexSubImage3D(GLenum target, GLint level, GLint xoffse
     printf("%d", height);
     printf(")");
     gl.CopyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1690,6 +1771,7 @@ extern "C" void GLAPI ActiveTexture(GLenum texture) {
     printf("0x%04x", texture);
     printf(")");
     gl.ActiveTexture(texture);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1703,6 +1785,7 @@ extern "C" void GLAPI SampleCoverage(GLfloat value, GLboolean invert) {
     printf("%s", invert ? "true" : "false");
     printf(")");
     gl.SampleCoverage(value, invert);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1737,6 +1820,7 @@ extern "C" void GLAPI CompressedTexImage3D(GLenum target, GLint level, GLenum in
     printf("%p", data);
     printf(")");
     gl.CompressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1768,6 +1852,7 @@ extern "C" void GLAPI CompressedTexImage2D(GLenum target, GLint level, GLenum in
     printf("%p", data);
     printf(")");
     gl.CompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1796,6 +1881,7 @@ extern "C" void GLAPI CompressedTexImage1D(GLenum target, GLint level, GLenum in
     printf("%p", data);
     printf(")");
     gl.CompressedTexImage1D(target, level, internalformat, width, border, imageSize, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1836,6 +1922,7 @@ extern "C" void GLAPI CompressedTexSubImage3D(GLenum target, GLint level, GLint 
     printf("%p", data);
     printf(")");
     gl.CompressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1870,6 +1957,7 @@ extern "C" void GLAPI CompressedTexSubImage2D(GLenum target, GLint level, GLint 
     printf("%p", data);
     printf(")");
     gl.CompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1898,6 +1986,7 @@ extern "C" void GLAPI CompressedTexSubImage1D(GLenum target, GLint level, GLint 
     printf("%p", data);
     printf(")");
     gl.CompressedTexSubImage1D(target, level, xoffset, width, format, imageSize, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1914,6 +2003,7 @@ extern "C" void GLAPI GetCompressedTexImage(GLenum target, GLint level, void * i
     printf("%p", img);
     printf(")");
     gl.GetCompressedTexImage(target, level, img);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1933,6 +2023,7 @@ extern "C" void GLAPI BlendFuncSeparate(GLenum sfactorRGB, GLenum dfactorRGB, GL
     printf("0x%04x", dfactorAlpha);
     printf(")");
     gl.BlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1952,6 +2043,7 @@ extern "C" void GLAPI MultiDrawArrays(GLenum mode, const GLint * first, const GL
     printf("%d", drawcount);
     printf(")");
     gl.MultiDrawArrays(mode, first, count, drawcount);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1974,6 +2066,7 @@ extern "C" void GLAPI MultiDrawElements(GLenum mode, const GLsizei * count, GLen
     printf("%d", drawcount);
     printf(")");
     gl.MultiDrawElements(mode, count, type, indices, drawcount);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -1987,6 +2080,7 @@ extern "C" void GLAPI PointParameterf(GLenum pname, GLfloat param) {
     printf("%f", param);
     printf(")");
     gl.PointParameterf(pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2000,6 +2094,7 @@ extern "C" void GLAPI PointParameterfv(GLenum pname, const GLfloat * params) {
     printf("%p", params);
     printf(")");
     gl.PointParameterfv(pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2013,6 +2108,7 @@ extern "C" void GLAPI PointParameteri(GLenum pname, GLint param) {
     printf("%d", param);
     printf(")");
     gl.PointParameteri(pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2026,6 +2122,7 @@ extern "C" void GLAPI PointParameteriv(GLenum pname, const GLint * params) {
     printf("%p", params);
     printf(")");
     gl.PointParameteriv(pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2045,6 +2142,7 @@ extern "C" void GLAPI BlendColor(GLfloat red, GLfloat green, GLfloat blue, GLflo
     printf("%f", alpha);
     printf(")");
     gl.BlendColor(red, green, blue, alpha);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2055,6 +2153,7 @@ extern "C" void GLAPI BlendEquation(GLenum mode) {
     printf("0x%04x", mode);
     printf(")");
     gl.BlendEquation(mode);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2068,6 +2167,7 @@ extern "C" void GLAPI GenQueries(GLsizei n, GLuint * ids) {
     printf("%p", ids);
     printf(")");
     gl.GenQueries(n, ids);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2081,6 +2181,7 @@ extern "C" void GLAPI DeleteQueries(GLsizei n, const GLuint * ids) {
     printf("%p", ids);
     printf(")");
     gl.DeleteQueries(n, ids);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2093,6 +2194,7 @@ extern "C" GLboolean GLAPI IsQuery(GLuint id) {
     printf(" -> ");
     GLboolean result = gl.IsQuery(id);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -2107,6 +2209,7 @@ extern "C" void GLAPI BeginQuery(GLenum target, GLuint id) {
     printf("%u", id);
     printf(")");
     gl.BeginQuery(target, id);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2117,6 +2220,7 @@ extern "C" void GLAPI EndQuery(GLenum target) {
     printf("0x%04x", target);
     printf(")");
     gl.EndQuery(target);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2133,6 +2237,7 @@ extern "C" void GLAPI GetQueryiv(GLenum target, GLenum pname, GLint * params) {
     printf("%p", params);
     printf(")");
     gl.GetQueryiv(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2149,6 +2254,7 @@ extern "C" void GLAPI GetQueryObjectiv(GLuint id, GLenum pname, GLint * params) 
     printf("%p", params);
     printf(")");
     gl.GetQueryObjectiv(id, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2165,6 +2271,7 @@ extern "C" void GLAPI GetQueryObjectuiv(GLuint id, GLenum pname, GLuint * params
     printf("%p", params);
     printf(")");
     gl.GetQueryObjectuiv(id, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2178,6 +2285,7 @@ extern "C" void GLAPI BindBuffer(GLenum target, GLuint buffer) {
     printf("%u", buffer);
     printf(")");
     gl.BindBuffer(target, buffer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2191,6 +2299,7 @@ extern "C" void GLAPI DeleteBuffers(GLsizei n, const GLuint * buffers) {
     printf("%p", buffers);
     printf(")");
     gl.DeleteBuffers(n, buffers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2204,6 +2313,7 @@ extern "C" void GLAPI GenBuffers(GLsizei n, GLuint * buffers) {
     printf("%p", buffers);
     printf(")");
     gl.GenBuffers(n, buffers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2216,6 +2326,7 @@ extern "C" GLboolean GLAPI IsBuffer(GLuint buffer) {
     printf(" -> ");
     GLboolean result = gl.IsBuffer(buffer);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -2236,6 +2347,7 @@ extern "C" void GLAPI BufferData(GLenum target, GLsizeiptr size, const void * da
     printf("0x%04x", usage);
     printf(")");
     gl.BufferData(target, size, data, usage);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2255,6 +2367,7 @@ extern "C" void GLAPI BufferSubData(GLenum target, GLintptr offset, GLsizeiptr s
     printf("%p", data);
     printf(")");
     gl.BufferSubData(target, offset, size, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2274,6 +2387,7 @@ extern "C" void GLAPI GetBufferSubData(GLenum target, GLintptr offset, GLsizeipt
     printf("%p", data);
     printf(")");
     gl.GetBufferSubData(target, offset, size, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2289,6 +2403,7 @@ extern "C" void * GLAPI MapBuffer(GLenum target, GLenum access) {
     printf(" -> ");
     void * result = gl.MapBuffer(target, access);
     printf("%p", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -2302,6 +2417,7 @@ extern "C" GLboolean GLAPI UnmapBuffer(GLenum target) {
     printf(" -> ");
     GLboolean result = gl.UnmapBuffer(target);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -2319,6 +2435,7 @@ extern "C" void GLAPI GetBufferParameteriv(GLenum target, GLenum pname, GLint * 
     printf("%p", params);
     printf(")");
     gl.GetBufferParameteriv(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2335,6 +2452,7 @@ extern "C" void GLAPI GetBufferPointerv(GLenum target, GLenum pname, void ** par
     printf("%p", params);
     printf(")");
     gl.GetBufferPointerv(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2348,6 +2466,7 @@ extern "C" void GLAPI BlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha) {
     printf("0x%04x", modeAlpha);
     printf(")");
     gl.BlendEquationSeparate(modeRGB, modeAlpha);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2361,6 +2480,7 @@ extern "C" void GLAPI DrawBuffers(GLsizei n, const GLenum * bufs) {
     printf("%p", bufs);
     printf(")");
     gl.DrawBuffers(n, bufs);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2380,6 +2500,7 @@ extern "C" void GLAPI StencilOpSeparate(GLenum face, GLenum sfail, GLenum dpfail
     printf("0x%04x", dppass);
     printf(")");
     gl.StencilOpSeparate(face, sfail, dpfail, dppass);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2399,6 +2520,7 @@ extern "C" void GLAPI StencilFuncSeparate(GLenum face, GLenum func, GLint ref, G
     printf("%u", mask);
     printf(")");
     gl.StencilFuncSeparate(face, func, ref, mask);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2412,6 +2534,7 @@ extern "C" void GLAPI StencilMaskSeparate(GLenum face, GLuint mask) {
     printf("%u", mask);
     printf(")");
     gl.StencilMaskSeparate(face, mask);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2425,6 +2548,7 @@ extern "C" void GLAPI AttachShader(GLuint program, GLuint shader) {
     printf("%u", shader);
     printf(")");
     gl.AttachShader(program, shader);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2441,6 +2565,7 @@ extern "C" void GLAPI BindAttribLocation(GLuint program, GLuint index, const GLc
     printf("%p", name);
     printf(")");
     gl.BindAttribLocation(program, index, name);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2451,6 +2576,7 @@ extern "C" void GLAPI CompileShader(GLuint shader) {
     printf("%u", shader);
     printf(")");
     gl.CompileShader(shader);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2461,6 +2587,7 @@ extern "C" GLuint GLAPI CreateProgram() {
     printf(" -> ");
     GLuint result = gl.CreateProgram();
     printf("%u", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -2474,6 +2601,7 @@ extern "C" GLuint GLAPI CreateShader(GLenum type) {
     printf(" -> ");
     GLuint result = gl.CreateShader(type);
     printf("%u", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -2485,6 +2613,7 @@ extern "C" void GLAPI DeleteProgram(GLuint program) {
     printf("%u", program);
     printf(")");
     gl.DeleteProgram(program);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2495,6 +2624,7 @@ extern "C" void GLAPI DeleteShader(GLuint shader) {
     printf("%u", shader);
     printf(")");
     gl.DeleteShader(shader);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2508,6 +2638,7 @@ extern "C" void GLAPI DetachShader(GLuint program, GLuint shader) {
     printf("%u", shader);
     printf(")");
     gl.DetachShader(program, shader);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2518,6 +2649,7 @@ extern "C" void GLAPI DisableVertexAttribArray(GLuint index) {
     printf("%u", index);
     printf(")");
     gl.DisableVertexAttribArray(index);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2528,6 +2660,7 @@ extern "C" void GLAPI EnableVertexAttribArray(GLuint index) {
     printf("%u", index);
     printf(")");
     gl.EnableVertexAttribArray(index);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2556,6 +2689,7 @@ extern "C" void GLAPI GetActiveAttrib(GLuint program, GLuint index, GLsizei bufS
     printf("%p", name);
     printf(")");
     gl.GetActiveAttrib(program, index, bufSize, length, size, type, name);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2584,6 +2718,7 @@ extern "C" void GLAPI GetActiveUniform(GLuint program, GLuint index, GLsizei buf
     printf("%p", name);
     printf(")");
     gl.GetActiveUniform(program, index, bufSize, length, size, type, name);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2603,6 +2738,7 @@ extern "C" void GLAPI GetAttachedShaders(GLuint program, GLsizei maxCount, GLsiz
     printf("%p", shaders);
     printf(")");
     gl.GetAttachedShaders(program, maxCount, count, shaders);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2618,6 +2754,7 @@ extern "C" GLint GLAPI GetAttribLocation(GLuint program, const GLchar * name) {
     printf(" -> ");
     GLint result = gl.GetAttribLocation(program, name);
     printf("%d", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -2635,6 +2772,7 @@ extern "C" void GLAPI GetProgramiv(GLuint program, GLenum pname, GLint * params)
     printf("%p", params);
     printf(")");
     gl.GetProgramiv(program, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2654,6 +2792,7 @@ extern "C" void GLAPI GetProgramInfoLog(GLuint program, GLsizei bufSize, GLsizei
     printf("%p", infoLog);
     printf(")");
     gl.GetProgramInfoLog(program, bufSize, length, infoLog);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2670,6 +2809,7 @@ extern "C" void GLAPI GetShaderiv(GLuint shader, GLenum pname, GLint * params) {
     printf("%p", params);
     printf(")");
     gl.GetShaderiv(shader, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2689,6 +2829,7 @@ extern "C" void GLAPI GetShaderInfoLog(GLuint shader, GLsizei bufSize, GLsizei *
     printf("%p", infoLog);
     printf(")");
     gl.GetShaderInfoLog(shader, bufSize, length, infoLog);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2708,6 +2849,7 @@ extern "C" void GLAPI GetShaderSource(GLuint shader, GLsizei bufSize, GLsizei * 
     printf("%p", source);
     printf(")");
     gl.GetShaderSource(shader, bufSize, length, source);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2723,6 +2865,7 @@ extern "C" GLint GLAPI GetUniformLocation(GLuint program, const GLchar * name) {
     printf(" -> ");
     GLint result = gl.GetUniformLocation(program, name);
     printf("%d", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -2740,6 +2883,7 @@ extern "C" void GLAPI GetUniformfv(GLuint program, GLint location, GLfloat * par
     printf("%p", params);
     printf(")");
     gl.GetUniformfv(program, location, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2756,6 +2900,7 @@ extern "C" void GLAPI GetUniformiv(GLuint program, GLint location, GLint * param
     printf("%p", params);
     printf(")");
     gl.GetUniformiv(program, location, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2772,6 +2917,7 @@ extern "C" void GLAPI GetVertexAttribdv(GLuint index, GLenum pname, GLdouble * p
     printf("%p", params);
     printf(")");
     gl.GetVertexAttribdv(index, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2788,6 +2934,7 @@ extern "C" void GLAPI GetVertexAttribfv(GLuint index, GLenum pname, GLfloat * pa
     printf("%p", params);
     printf(")");
     gl.GetVertexAttribfv(index, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2804,6 +2951,7 @@ extern "C" void GLAPI GetVertexAttribiv(GLuint index, GLenum pname, GLint * para
     printf("%p", params);
     printf(")");
     gl.GetVertexAttribiv(index, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2820,6 +2968,7 @@ extern "C" void GLAPI GetVertexAttribPointerv(GLuint index, GLenum pname, void *
     printf("%p", pointer);
     printf(")");
     gl.GetVertexAttribPointerv(index, pname, pointer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2832,6 +2981,7 @@ extern "C" GLboolean GLAPI IsProgram(GLuint program) {
     printf(" -> ");
     GLboolean result = gl.IsProgram(program);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -2845,6 +2995,7 @@ extern "C" GLboolean GLAPI IsShader(GLuint shader) {
     printf(" -> ");
     GLboolean result = gl.IsShader(shader);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -2856,6 +3007,7 @@ extern "C" void GLAPI LinkProgram(GLuint program) {
     printf("%u", program);
     printf(")");
     gl.LinkProgram(program);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2875,6 +3027,7 @@ extern "C" void GLAPI ShaderSource(GLuint shader, GLsizei count, const GLchar * 
     printf("%p", length);
     printf(")");
     gl.ShaderSource(shader, count, string, length);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2885,6 +3038,7 @@ extern "C" void GLAPI UseProgram(GLuint program) {
     printf("%u", program);
     printf(")");
     gl.UseProgram(program);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2898,6 +3052,7 @@ extern "C" void GLAPI Uniform1f(GLint location, GLfloat v0) {
     printf("%f", v0);
     printf(")");
     gl.Uniform1f(location, v0);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2914,6 +3069,7 @@ extern "C" void GLAPI Uniform2f(GLint location, GLfloat v0, GLfloat v1) {
     printf("%f", v1);
     printf(")");
     gl.Uniform2f(location, v0, v1);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2933,6 +3089,7 @@ extern "C" void GLAPI Uniform3f(GLint location, GLfloat v0, GLfloat v1, GLfloat 
     printf("%f", v2);
     printf(")");
     gl.Uniform3f(location, v0, v1, v2);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2955,6 +3112,7 @@ extern "C" void GLAPI Uniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat 
     printf("%f", v3);
     printf(")");
     gl.Uniform4f(location, v0, v1, v2, v3);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2968,6 +3126,7 @@ extern "C" void GLAPI Uniform1i(GLint location, GLint v0) {
     printf("%d", v0);
     printf(")");
     gl.Uniform1i(location, v0);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -2984,6 +3143,7 @@ extern "C" void GLAPI Uniform2i(GLint location, GLint v0, GLint v1) {
     printf("%d", v1);
     printf(")");
     gl.Uniform2i(location, v0, v1);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3003,6 +3163,7 @@ extern "C" void GLAPI Uniform3i(GLint location, GLint v0, GLint v1, GLint v2) {
     printf("%d", v2);
     printf(")");
     gl.Uniform3i(location, v0, v1, v2);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3025,6 +3186,7 @@ extern "C" void GLAPI Uniform4i(GLint location, GLint v0, GLint v1, GLint v2, GL
     printf("%d", v3);
     printf(")");
     gl.Uniform4i(location, v0, v1, v2, v3);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3041,6 +3203,7 @@ extern "C" void GLAPI Uniform1fv(GLint location, GLsizei count, const GLfloat * 
     printf("%p", value);
     printf(")");
     gl.Uniform1fv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3057,6 +3220,7 @@ extern "C" void GLAPI Uniform2fv(GLint location, GLsizei count, const GLfloat * 
     printf("%p", value);
     printf(")");
     gl.Uniform2fv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3073,6 +3237,7 @@ extern "C" void GLAPI Uniform3fv(GLint location, GLsizei count, const GLfloat * 
     printf("%p", value);
     printf(")");
     gl.Uniform3fv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3089,6 +3254,7 @@ extern "C" void GLAPI Uniform4fv(GLint location, GLsizei count, const GLfloat * 
     printf("%p", value);
     printf(")");
     gl.Uniform4fv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3105,6 +3271,7 @@ extern "C" void GLAPI Uniform1iv(GLint location, GLsizei count, const GLint * va
     printf("%p", value);
     printf(")");
     gl.Uniform1iv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3121,6 +3288,7 @@ extern "C" void GLAPI Uniform2iv(GLint location, GLsizei count, const GLint * va
     printf("%p", value);
     printf(")");
     gl.Uniform2iv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3137,6 +3305,7 @@ extern "C" void GLAPI Uniform3iv(GLint location, GLsizei count, const GLint * va
     printf("%p", value);
     printf(")");
     gl.Uniform3iv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3153,6 +3322,7 @@ extern "C" void GLAPI Uniform4iv(GLint location, GLsizei count, const GLint * va
     printf("%p", value);
     printf(")");
     gl.Uniform4iv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3172,6 +3342,7 @@ extern "C" void GLAPI UniformMatrix2fv(GLint location, GLsizei count, GLboolean 
     printf("%p", value);
     printf(")");
     gl.UniformMatrix2fv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3191,6 +3362,7 @@ extern "C" void GLAPI UniformMatrix3fv(GLint location, GLsizei count, GLboolean 
     printf("%p", value);
     printf(")");
     gl.UniformMatrix3fv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3210,6 +3382,7 @@ extern "C" void GLAPI UniformMatrix4fv(GLint location, GLsizei count, GLboolean 
     printf("%p", value);
     printf(")");
     gl.UniformMatrix4fv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3220,6 +3393,7 @@ extern "C" void GLAPI ValidateProgram(GLuint program) {
     printf("%u", program);
     printf(")");
     gl.ValidateProgram(program);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3233,6 +3407,7 @@ extern "C" void GLAPI VertexAttrib1d(GLuint index, GLdouble x) {
     printf("%lf", x);
     printf(")");
     gl.VertexAttrib1d(index, x);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3246,6 +3421,7 @@ extern "C" void GLAPI VertexAttrib1dv(GLuint index, const GLdouble * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib1dv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3259,6 +3435,7 @@ extern "C" void GLAPI VertexAttrib1f(GLuint index, GLfloat x) {
     printf("%f", x);
     printf(")");
     gl.VertexAttrib1f(index, x);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3272,6 +3449,7 @@ extern "C" void GLAPI VertexAttrib1fv(GLuint index, const GLfloat * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib1fv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3285,6 +3463,7 @@ extern "C" void GLAPI VertexAttrib1s(GLuint index, GLshort x) {
     printf("%d", x);
     printf(")");
     gl.VertexAttrib1s(index, x);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3298,6 +3477,7 @@ extern "C" void GLAPI VertexAttrib1sv(GLuint index, const GLshort * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib1sv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3314,6 +3494,7 @@ extern "C" void GLAPI VertexAttrib2d(GLuint index, GLdouble x, GLdouble y) {
     printf("%lf", y);
     printf(")");
     gl.VertexAttrib2d(index, x, y);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3327,6 +3508,7 @@ extern "C" void GLAPI VertexAttrib2dv(GLuint index, const GLdouble * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib2dv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3343,6 +3525,7 @@ extern "C" void GLAPI VertexAttrib2f(GLuint index, GLfloat x, GLfloat y) {
     printf("%f", y);
     printf(")");
     gl.VertexAttrib2f(index, x, y);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3356,6 +3539,7 @@ extern "C" void GLAPI VertexAttrib2fv(GLuint index, const GLfloat * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib2fv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3372,6 +3556,7 @@ extern "C" void GLAPI VertexAttrib2s(GLuint index, GLshort x, GLshort y) {
     printf("%d", y);
     printf(")");
     gl.VertexAttrib2s(index, x, y);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3385,6 +3570,7 @@ extern "C" void GLAPI VertexAttrib2sv(GLuint index, const GLshort * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib2sv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3404,6 +3590,7 @@ extern "C" void GLAPI VertexAttrib3d(GLuint index, GLdouble x, GLdouble y, GLdou
     printf("%lf", z);
     printf(")");
     gl.VertexAttrib3d(index, x, y, z);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3417,6 +3604,7 @@ extern "C" void GLAPI VertexAttrib3dv(GLuint index, const GLdouble * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib3dv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3436,6 +3624,7 @@ extern "C" void GLAPI VertexAttrib3f(GLuint index, GLfloat x, GLfloat y, GLfloat
     printf("%f", z);
     printf(")");
     gl.VertexAttrib3f(index, x, y, z);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3449,6 +3638,7 @@ extern "C" void GLAPI VertexAttrib3fv(GLuint index, const GLfloat * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib3fv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3468,6 +3658,7 @@ extern "C" void GLAPI VertexAttrib3s(GLuint index, GLshort x, GLshort y, GLshort
     printf("%d", z);
     printf(")");
     gl.VertexAttrib3s(index, x, y, z);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3481,6 +3672,7 @@ extern "C" void GLAPI VertexAttrib3sv(GLuint index, const GLshort * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib3sv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3494,6 +3686,7 @@ extern "C" void GLAPI VertexAttrib4Nbv(GLuint index, const GLbyte * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4Nbv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3507,6 +3700,7 @@ extern "C" void GLAPI VertexAttrib4Niv(GLuint index, const GLint * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4Niv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3520,6 +3714,7 @@ extern "C" void GLAPI VertexAttrib4Nsv(GLuint index, const GLshort * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4Nsv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3542,6 +3737,7 @@ extern "C" void GLAPI VertexAttrib4Nub(GLuint index, GLubyte x, GLubyte y, GLuby
     printf("%d", w);
     printf(")");
     gl.VertexAttrib4Nub(index, x, y, z, w);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3555,6 +3751,7 @@ extern "C" void GLAPI VertexAttrib4Nubv(GLuint index, const GLubyte * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4Nubv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3568,6 +3765,7 @@ extern "C" void GLAPI VertexAttrib4Nuiv(GLuint index, const GLuint * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4Nuiv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3581,6 +3779,7 @@ extern "C" void GLAPI VertexAttrib4Nusv(GLuint index, const GLushort * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4Nusv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3594,6 +3793,7 @@ extern "C" void GLAPI VertexAttrib4bv(GLuint index, const GLbyte * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4bv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3616,6 +3816,7 @@ extern "C" void GLAPI VertexAttrib4d(GLuint index, GLdouble x, GLdouble y, GLdou
     printf("%lf", w);
     printf(")");
     gl.VertexAttrib4d(index, x, y, z, w);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3629,6 +3830,7 @@ extern "C" void GLAPI VertexAttrib4dv(GLuint index, const GLdouble * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4dv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3651,6 +3853,7 @@ extern "C" void GLAPI VertexAttrib4f(GLuint index, GLfloat x, GLfloat y, GLfloat
     printf("%f", w);
     printf(")");
     gl.VertexAttrib4f(index, x, y, z, w);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3664,6 +3867,7 @@ extern "C" void GLAPI VertexAttrib4fv(GLuint index, const GLfloat * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4fv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3677,6 +3881,7 @@ extern "C" void GLAPI VertexAttrib4iv(GLuint index, const GLint * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4iv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3699,6 +3904,7 @@ extern "C" void GLAPI VertexAttrib4s(GLuint index, GLshort x, GLshort y, GLshort
     printf("%d", w);
     printf(")");
     gl.VertexAttrib4s(index, x, y, z, w);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3712,6 +3918,7 @@ extern "C" void GLAPI VertexAttrib4sv(GLuint index, const GLshort * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4sv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3725,6 +3932,7 @@ extern "C" void GLAPI VertexAttrib4ubv(GLuint index, const GLubyte * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4ubv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3738,6 +3946,7 @@ extern "C" void GLAPI VertexAttrib4uiv(GLuint index, const GLuint * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4uiv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3751,6 +3960,7 @@ extern "C" void GLAPI VertexAttrib4usv(GLuint index, const GLushort * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttrib4usv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3776,6 +3986,7 @@ extern "C" void GLAPI VertexAttribPointer(GLuint index, GLint size, GLenum type,
     printf("%p", pointer);
     printf(")");
     gl.VertexAttribPointer(index, size, type, normalized, stride, pointer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3795,6 +4006,7 @@ extern "C" void GLAPI UniformMatrix2x3fv(GLint location, GLsizei count, GLboolea
     printf("%p", value);
     printf(")");
     gl.UniformMatrix2x3fv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3814,6 +4026,7 @@ extern "C" void GLAPI UniformMatrix3x2fv(GLint location, GLsizei count, GLboolea
     printf("%p", value);
     printf(")");
     gl.UniformMatrix3x2fv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3833,6 +4046,7 @@ extern "C" void GLAPI UniformMatrix2x4fv(GLint location, GLsizei count, GLboolea
     printf("%p", value);
     printf(")");
     gl.UniformMatrix2x4fv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3852,6 +4066,7 @@ extern "C" void GLAPI UniformMatrix4x2fv(GLint location, GLsizei count, GLboolea
     printf("%p", value);
     printf(")");
     gl.UniformMatrix4x2fv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3871,6 +4086,7 @@ extern "C" void GLAPI UniformMatrix3x4fv(GLint location, GLsizei count, GLboolea
     printf("%p", value);
     printf(")");
     gl.UniformMatrix3x4fv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3890,6 +4106,7 @@ extern "C" void GLAPI UniformMatrix4x3fv(GLint location, GLsizei count, GLboolea
     printf("%p", value);
     printf(")");
     gl.UniformMatrix4x3fv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3912,6 +4129,7 @@ extern "C" void GLAPI ColorMaski(GLuint index, GLboolean r, GLboolean g, GLboole
     printf("%s", a ? "true" : "false");
     printf(")");
     gl.ColorMaski(index, r, g, b, a);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3928,6 +4146,7 @@ extern "C" void GLAPI GetBooleani_v(GLenum target, GLuint index, GLboolean * dat
     printf("%p", data);
     printf(")");
     gl.GetBooleani_v(target, index, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3944,6 +4163,7 @@ extern "C" void GLAPI GetIntegeri_v(GLenum target, GLuint index, GLint * data) {
     printf("%p", data);
     printf(")");
     gl.GetIntegeri_v(target, index, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3957,6 +4177,7 @@ extern "C" void GLAPI Enablei(GLenum target, GLuint index) {
     printf("%u", index);
     printf(")");
     gl.Enablei(target, index);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3970,6 +4191,7 @@ extern "C" void GLAPI Disablei(GLenum target, GLuint index) {
     printf("%u", index);
     printf(")");
     gl.Disablei(target, index);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -3985,6 +4207,7 @@ extern "C" GLboolean GLAPI IsEnabledi(GLenum target, GLuint index) {
     printf(" -> ");
     GLboolean result = gl.IsEnabledi(target, index);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -3996,6 +4219,7 @@ extern "C" void GLAPI BeginTransformFeedback(GLenum primitiveMode) {
     printf("0x%04x", primitiveMode);
     printf(")");
     gl.BeginTransformFeedback(primitiveMode);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4004,6 +4228,7 @@ extern "C" void GLAPI EndTransformFeedback() {
     printf("glEndTransformFeedback(");
     printf(")");
     gl.EndTransformFeedback();
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4026,6 +4251,7 @@ extern "C" void GLAPI BindBufferRange(GLenum target, GLuint index, GLuint buffer
     printf("%lld", size);
     printf(")");
     gl.BindBufferRange(target, index, buffer, offset, size);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4042,6 +4268,7 @@ extern "C" void GLAPI BindBufferBase(GLenum target, GLuint index, GLuint buffer)
     printf("%u", buffer);
     printf(")");
     gl.BindBufferBase(target, index, buffer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4061,6 +4288,7 @@ extern "C" void GLAPI TransformFeedbackVaryings(GLuint program, GLsizei count, c
     print_buffer_mode(bufferMode);
     printf(")");
     gl.TransformFeedbackVaryings(program, count, varyings, bufferMode);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4089,6 +4317,7 @@ extern "C" void GLAPI GetTransformFeedbackVarying(GLuint program, GLuint index, 
     printf("%p", name);
     printf(")");
     gl.GetTransformFeedbackVarying(program, index, bufSize, length, size, type, name);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4102,6 +4331,7 @@ extern "C" void GLAPI ClampColor(GLenum target, GLenum clamp) {
     printf("0x%04x", clamp);
     printf(")");
     gl.ClampColor(target, clamp);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4115,6 +4345,7 @@ extern "C" void GLAPI BeginConditionalRender(GLuint id, GLenum mode) {
     printf("0x%04x", mode);
     printf(")");
     gl.BeginConditionalRender(id, mode);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4123,6 +4354,7 @@ extern "C" void GLAPI EndConditionalRender() {
     printf("glEndConditionalRender(");
     printf(")");
     gl.EndConditionalRender();
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4145,6 +4377,7 @@ extern "C" void GLAPI VertexAttribIPointer(GLuint index, GLint size, GLenum type
     printf("%p", pointer);
     printf(")");
     gl.VertexAttribIPointer(index, size, type, stride, pointer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4161,6 +4394,7 @@ extern "C" void GLAPI GetVertexAttribIiv(GLuint index, GLenum pname, GLint * par
     printf("%p", params);
     printf(")");
     gl.GetVertexAttribIiv(index, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4177,6 +4411,7 @@ extern "C" void GLAPI GetVertexAttribIuiv(GLuint index, GLenum pname, GLuint * p
     printf("%p", params);
     printf(")");
     gl.GetVertexAttribIuiv(index, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4190,6 +4425,7 @@ extern "C" void GLAPI VertexAttribI1i(GLuint index, GLint x) {
     printf("%d", x);
     printf(")");
     gl.VertexAttribI1i(index, x);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4206,6 +4442,7 @@ extern "C" void GLAPI VertexAttribI2i(GLuint index, GLint x, GLint y) {
     printf("%d", y);
     printf(")");
     gl.VertexAttribI2i(index, x, y);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4225,6 +4462,7 @@ extern "C" void GLAPI VertexAttribI3i(GLuint index, GLint x, GLint y, GLint z) {
     printf("%d", z);
     printf(")");
     gl.VertexAttribI3i(index, x, y, z);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4247,6 +4485,7 @@ extern "C" void GLAPI VertexAttribI4i(GLuint index, GLint x, GLint y, GLint z, G
     printf("%d", w);
     printf(")");
     gl.VertexAttribI4i(index, x, y, z, w);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4260,6 +4499,7 @@ extern "C" void GLAPI VertexAttribI1ui(GLuint index, GLuint x) {
     printf("%u", x);
     printf(")");
     gl.VertexAttribI1ui(index, x);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4276,6 +4516,7 @@ extern "C" void GLAPI VertexAttribI2ui(GLuint index, GLuint x, GLuint y) {
     printf("%u", y);
     printf(")");
     gl.VertexAttribI2ui(index, x, y);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4295,6 +4536,7 @@ extern "C" void GLAPI VertexAttribI3ui(GLuint index, GLuint x, GLuint y, GLuint 
     printf("%u", z);
     printf(")");
     gl.VertexAttribI3ui(index, x, y, z);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4317,6 +4559,7 @@ extern "C" void GLAPI VertexAttribI4ui(GLuint index, GLuint x, GLuint y, GLuint 
     printf("%u", w);
     printf(")");
     gl.VertexAttribI4ui(index, x, y, z, w);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4330,6 +4573,7 @@ extern "C" void GLAPI VertexAttribI1iv(GLuint index, const GLint * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribI1iv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4343,6 +4587,7 @@ extern "C" void GLAPI VertexAttribI2iv(GLuint index, const GLint * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribI2iv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4356,6 +4601,7 @@ extern "C" void GLAPI VertexAttribI3iv(GLuint index, const GLint * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribI3iv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4369,6 +4615,7 @@ extern "C" void GLAPI VertexAttribI4iv(GLuint index, const GLint * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribI4iv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4382,6 +4629,7 @@ extern "C" void GLAPI VertexAttribI1uiv(GLuint index, const GLuint * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribI1uiv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4395,6 +4643,7 @@ extern "C" void GLAPI VertexAttribI2uiv(GLuint index, const GLuint * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribI2uiv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4408,6 +4657,7 @@ extern "C" void GLAPI VertexAttribI3uiv(GLuint index, const GLuint * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribI3uiv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4421,6 +4671,7 @@ extern "C" void GLAPI VertexAttribI4uiv(GLuint index, const GLuint * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribI4uiv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4434,6 +4685,7 @@ extern "C" void GLAPI VertexAttribI4bv(GLuint index, const GLbyte * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribI4bv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4447,6 +4699,7 @@ extern "C" void GLAPI VertexAttribI4sv(GLuint index, const GLshort * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribI4sv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4460,6 +4713,7 @@ extern "C" void GLAPI VertexAttribI4ubv(GLuint index, const GLubyte * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribI4ubv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4473,6 +4727,7 @@ extern "C" void GLAPI VertexAttribI4usv(GLuint index, const GLushort * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribI4usv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4489,6 +4744,7 @@ extern "C" void GLAPI GetUniformuiv(GLuint program, GLint location, GLuint * par
     printf("%p", params);
     printf(")");
     gl.GetUniformuiv(program, location, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4505,6 +4761,7 @@ extern "C" void GLAPI BindFragDataLocation(GLuint program, GLuint color, const G
     printf("%p", name);
     printf(")");
     gl.BindFragDataLocation(program, color, name);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4520,6 +4777,7 @@ extern "C" GLint GLAPI GetFragDataLocation(GLuint program, const GLchar * name) 
     printf(" -> ");
     GLint result = gl.GetFragDataLocation(program, name);
     printf("%d", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -4534,6 +4792,7 @@ extern "C" void GLAPI Uniform1ui(GLint location, GLuint v0) {
     printf("%u", v0);
     printf(")");
     gl.Uniform1ui(location, v0);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4550,6 +4809,7 @@ extern "C" void GLAPI Uniform2ui(GLint location, GLuint v0, GLuint v1) {
     printf("%u", v1);
     printf(")");
     gl.Uniform2ui(location, v0, v1);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4569,6 +4829,7 @@ extern "C" void GLAPI Uniform3ui(GLint location, GLuint v0, GLuint v1, GLuint v2
     printf("%u", v2);
     printf(")");
     gl.Uniform3ui(location, v0, v1, v2);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4591,6 +4852,7 @@ extern "C" void GLAPI Uniform4ui(GLint location, GLuint v0, GLuint v1, GLuint v2
     printf("%u", v3);
     printf(")");
     gl.Uniform4ui(location, v0, v1, v2, v3);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4607,6 +4869,7 @@ extern "C" void GLAPI Uniform1uiv(GLint location, GLsizei count, const GLuint * 
     printf("%p", value);
     printf(")");
     gl.Uniform1uiv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4623,6 +4886,7 @@ extern "C" void GLAPI Uniform2uiv(GLint location, GLsizei count, const GLuint * 
     printf("%p", value);
     printf(")");
     gl.Uniform2uiv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4639,6 +4903,7 @@ extern "C" void GLAPI Uniform3uiv(GLint location, GLsizei count, const GLuint * 
     printf("%p", value);
     printf(")");
     gl.Uniform3uiv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4655,6 +4920,7 @@ extern "C" void GLAPI Uniform4uiv(GLint location, GLsizei count, const GLuint * 
     printf("%p", value);
     printf(")");
     gl.Uniform4uiv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4671,6 +4937,7 @@ extern "C" void GLAPI TexParameterIiv(GLenum target, GLenum pname, const GLint *
     printf("%p", params);
     printf(")");
     gl.TexParameterIiv(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4687,6 +4954,7 @@ extern "C" void GLAPI TexParameterIuiv(GLenum target, GLenum pname, const GLuint
     printf("%p", params);
     printf(")");
     gl.TexParameterIuiv(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4703,6 +4971,7 @@ extern "C" void GLAPI GetTexParameterIiv(GLenum target, GLenum pname, GLint * pa
     printf("%p", params);
     printf(")");
     gl.GetTexParameterIiv(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4719,6 +4988,7 @@ extern "C" void GLAPI GetTexParameterIuiv(GLenum target, GLenum pname, GLuint * 
     printf("%p", params);
     printf(")");
     gl.GetTexParameterIuiv(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4735,6 +5005,7 @@ extern "C" void GLAPI ClearBufferiv(GLenum buffer, GLint drawbuffer, const GLint
     printf("%p", value);
     printf(")");
     gl.ClearBufferiv(buffer, drawbuffer, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4751,6 +5022,7 @@ extern "C" void GLAPI ClearBufferuiv(GLenum buffer, GLint drawbuffer, const GLui
     printf("%p", value);
     printf(")");
     gl.ClearBufferuiv(buffer, drawbuffer, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4767,6 +5039,7 @@ extern "C" void GLAPI ClearBufferfv(GLenum buffer, GLint drawbuffer, const GLflo
     printf("%p", value);
     printf(")");
     gl.ClearBufferfv(buffer, drawbuffer, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4786,6 +5059,7 @@ extern "C" void GLAPI ClearBufferfi(GLenum buffer, GLint drawbuffer, GLfloat dep
     printf("%d", stencil);
     printf(")");
     gl.ClearBufferfi(buffer, drawbuffer, depth, stencil);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4801,6 +5075,7 @@ extern "C" const GLubyte * GLAPI GetStringi(GLenum name, GLuint index) {
     printf(" -> ");
     const GLubyte * result = gl.GetStringi(name, index);
     printf("%p", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -4814,6 +5089,7 @@ extern "C" GLboolean GLAPI IsRenderbuffer(GLuint renderbuffer) {
     printf(" -> ");
     GLboolean result = gl.IsRenderbuffer(renderbuffer);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -4828,6 +5104,7 @@ extern "C" void GLAPI BindRenderbuffer(GLenum target, GLuint renderbuffer) {
     printf("%u", renderbuffer);
     printf(")");
     gl.BindRenderbuffer(target, renderbuffer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4841,6 +5118,7 @@ extern "C" void GLAPI DeleteRenderbuffers(GLsizei n, const GLuint * renderbuffer
     printf("%p", renderbuffers);
     printf(")");
     gl.DeleteRenderbuffers(n, renderbuffers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4854,6 +5132,7 @@ extern "C" void GLAPI GenRenderbuffers(GLsizei n, GLuint * renderbuffers) {
     printf("%p", renderbuffers);
     printf(")");
     gl.GenRenderbuffers(n, renderbuffers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4873,6 +5152,7 @@ extern "C" void GLAPI RenderbufferStorage(GLenum target, GLenum internalformat, 
     printf("%d", height);
     printf(")");
     gl.RenderbufferStorage(target, internalformat, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4889,6 +5169,7 @@ extern "C" void GLAPI GetRenderbufferParameteriv(GLenum target, GLenum pname, GL
     printf("%p", params);
     printf(")");
     gl.GetRenderbufferParameteriv(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4901,6 +5182,7 @@ extern "C" GLboolean GLAPI IsFramebuffer(GLuint framebuffer) {
     printf(" -> ");
     GLboolean result = gl.IsFramebuffer(framebuffer);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -4915,6 +5197,7 @@ extern "C" void GLAPI BindFramebuffer(GLenum target, GLuint framebuffer) {
     printf("%u", framebuffer);
     printf(")");
     gl.BindFramebuffer(target, framebuffer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4928,6 +5211,7 @@ extern "C" void GLAPI DeleteFramebuffers(GLsizei n, const GLuint * framebuffers)
     printf("%p", framebuffers);
     printf(")");
     gl.DeleteFramebuffers(n, framebuffers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4941,6 +5225,7 @@ extern "C" void GLAPI GenFramebuffers(GLsizei n, GLuint * framebuffers) {
     printf("%p", framebuffers);
     printf(")");
     gl.GenFramebuffers(n, framebuffers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4953,6 +5238,7 @@ extern "C" GLenum GLAPI CheckFramebufferStatus(GLenum target) {
     printf(" -> ");
     GLenum result = gl.CheckFramebufferStatus(target);
     printf("0x%04x", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -4976,6 +5262,7 @@ extern "C" void GLAPI FramebufferTexture1D(GLenum target, GLenum attachment, GLe
     printf("%d", level);
     printf(")");
     gl.FramebufferTexture1D(target, attachment, textarget, texture, level);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -4998,6 +5285,7 @@ extern "C" void GLAPI FramebufferTexture2D(GLenum target, GLenum attachment, GLe
     printf("%d", level);
     printf(")");
     gl.FramebufferTexture2D(target, attachment, textarget, texture, level);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5023,6 +5311,7 @@ extern "C" void GLAPI FramebufferTexture3D(GLenum target, GLenum attachment, GLe
     printf("%d", zoffset);
     printf(")");
     gl.FramebufferTexture3D(target, attachment, textarget, texture, level, zoffset);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5042,6 +5331,7 @@ extern "C" void GLAPI FramebufferRenderbuffer(GLenum target, GLenum attachment, 
     printf("%u", renderbuffer);
     printf(")");
     gl.FramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5061,6 +5351,7 @@ extern "C" void GLAPI GetFramebufferAttachmentParameteriv(GLenum target, GLenum 
     printf("%p", params);
     printf(")");
     gl.GetFramebufferAttachmentParameteriv(target, attachment, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5071,6 +5362,7 @@ extern "C" void GLAPI GenerateMipmap(GLenum target) {
     print_texture_target(target);
     printf(")");
     gl.GenerateMipmap(target);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5108,6 +5400,7 @@ extern "C" void GLAPI BlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLi
     printf("0x%04x", filter);
     printf(")");
     gl.BlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5130,6 +5423,7 @@ extern "C" void GLAPI RenderbufferStorageMultisample(GLenum target, GLsizei samp
     printf("%d", height);
     printf(")");
     gl.RenderbufferStorageMultisample(target, samples, internalformat, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5152,6 +5446,7 @@ extern "C" void GLAPI FramebufferTextureLayer(GLenum target, GLenum attachment, 
     printf("%d", layer);
     printf(")");
     gl.FramebufferTextureLayer(target, attachment, texture, level, layer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5173,6 +5468,7 @@ extern "C" void * GLAPI MapBufferRange(GLenum target, GLintptr offset, GLsizeipt
     printf(" -> ");
     void * result = gl.MapBufferRange(target, offset, length, access);
     printf("%p", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -5190,6 +5486,7 @@ extern "C" void GLAPI FlushMappedBufferRange(GLenum target, GLintptr offset, GLs
     printf("%lld", length);
     printf(")");
     gl.FlushMappedBufferRange(target, offset, length);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5200,6 +5497,7 @@ extern "C" void GLAPI BindVertexArray(GLuint array) {
     printf("%u", array);
     printf(")");
     gl.BindVertexArray(array);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5213,6 +5511,7 @@ extern "C" void GLAPI DeleteVertexArrays(GLsizei n, const GLuint * arrays) {
     printf("%p", arrays);
     printf(")");
     gl.DeleteVertexArrays(n, arrays);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5226,6 +5525,7 @@ extern "C" void GLAPI GenVertexArrays(GLsizei n, GLuint * arrays) {
     printf("%p", arrays);
     printf(")");
     gl.GenVertexArrays(n, arrays);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5238,6 +5538,7 @@ extern "C" GLboolean GLAPI IsVertexArray(GLuint array) {
     printf(" -> ");
     GLboolean result = gl.IsVertexArray(array);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -5258,6 +5559,7 @@ extern "C" void GLAPI DrawArraysInstanced(GLenum mode, GLint first, GLsizei coun
     printf("%d", instancecount);
     printf(")");
     gl.DrawArraysInstanced(mode, first, count, instancecount);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5280,6 +5582,7 @@ extern "C" void GLAPI DrawElementsInstanced(GLenum mode, GLsizei count, GLenum t
     printf("%d", instancecount);
     printf(")");
     gl.DrawElementsInstanced(mode, count, type, indices, instancecount);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5296,6 +5599,7 @@ extern "C" void GLAPI TexBuffer(GLenum target, GLenum internalformat, GLuint buf
     printf("%u", buffer);
     printf(")");
     gl.TexBuffer(target, internalformat, buffer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5306,6 +5610,7 @@ extern "C" void GLAPI PrimitiveRestartIndex(GLuint index) {
     printf("%u", index);
     printf(")");
     gl.PrimitiveRestartIndex(index);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5328,6 +5633,7 @@ extern "C" void GLAPI CopyBufferSubData(GLenum readTarget, GLenum writeTarget, G
     printf("%lld", size);
     printf(")");
     gl.CopyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5347,6 +5653,7 @@ extern "C" void GLAPI GetUniformIndices(GLuint program, GLsizei uniformCount, co
     printf("%p", uniformIndices);
     printf(")");
     gl.GetUniformIndices(program, uniformCount, uniformNames, uniformIndices);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5369,6 +5676,7 @@ extern "C" void GLAPI GetActiveUniformsiv(GLuint program, GLsizei uniformCount, 
     printf("%p", params);
     printf(")");
     gl.GetActiveUniformsiv(program, uniformCount, uniformIndices, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5391,6 +5699,7 @@ extern "C" void GLAPI GetActiveUniformName(GLuint program, GLuint uniformIndex, 
     printf("%p", uniformName);
     printf(")");
     gl.GetActiveUniformName(program, uniformIndex, bufSize, length, uniformName);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5406,6 +5715,7 @@ extern "C" GLuint GLAPI GetUniformBlockIndex(GLuint program, const GLchar * unif
     printf(" -> ");
     GLuint result = gl.GetUniformBlockIndex(program, uniformBlockName);
     printf("%u", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -5426,6 +5736,7 @@ extern "C" void GLAPI GetActiveUniformBlockiv(GLuint program, GLuint uniformBloc
     printf("%p", params);
     printf(")");
     gl.GetActiveUniformBlockiv(program, uniformBlockIndex, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5448,6 +5759,7 @@ extern "C" void GLAPI GetActiveUniformBlockName(GLuint program, GLuint uniformBl
     printf("%p", uniformBlockName);
     printf(")");
     gl.GetActiveUniformBlockName(program, uniformBlockIndex, bufSize, length, uniformBlockName);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5464,6 +5776,7 @@ extern "C" void GLAPI UniformBlockBinding(GLuint program, GLuint uniformBlockInd
     printf("%u", uniformBlockBinding);
     printf(")");
     gl.UniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5486,6 +5799,7 @@ extern "C" void GLAPI DrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum 
     printf("%d", basevertex);
     printf(")");
     gl.DrawElementsBaseVertex(mode, count, type, indices, basevertex);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5514,6 +5828,7 @@ extern "C" void GLAPI DrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLu
     printf("%d", basevertex);
     printf(")");
     gl.DrawRangeElementsBaseVertex(mode, start, end, count, type, indices, basevertex);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5539,6 +5854,7 @@ extern "C" void GLAPI DrawElementsInstancedBaseVertex(GLenum mode, GLsizei count
     printf("%d", basevertex);
     printf(")");
     gl.DrawElementsInstancedBaseVertex(mode, count, type, indices, instancecount, basevertex);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5564,6 +5880,7 @@ extern "C" void GLAPI MultiDrawElementsBaseVertex(GLenum mode, const GLsizei * c
     printf("%p", basevertex);
     printf(")");
     gl.MultiDrawElementsBaseVertex(mode, count, type, indices, drawcount, basevertex);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5574,6 +5891,7 @@ extern "C" void GLAPI ProvokingVertex(GLenum mode) {
     printf("0x%04x", mode);
     printf(")");
     gl.ProvokingVertex(mode);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5589,6 +5907,7 @@ extern "C" GLsync GLAPI FenceSync(GLenum condition, GLbitfield flags) {
     printf(" -> ");
     GLsync result = gl.FenceSync(condition, flags);
     printf("%p", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -5602,6 +5921,7 @@ extern "C" GLboolean GLAPI IsSync(GLsync sync) {
     printf(" -> ");
     GLboolean result = gl.IsSync(sync);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -5613,6 +5933,7 @@ extern "C" void GLAPI DeleteSync(GLsync sync) {
     printf("%p", sync);
     printf(")");
     gl.DeleteSync(sync);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5631,6 +5952,7 @@ extern "C" GLenum GLAPI ClientWaitSync(GLsync sync, GLbitfield flags, GLuint64 t
     printf(" -> ");
     GLenum result = gl.ClientWaitSync(sync, flags, timeout);
     printf("0x%04x", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -5648,6 +5970,7 @@ extern "C" void GLAPI WaitSync(GLsync sync, GLbitfield flags, GLuint64 timeout) 
     printf("%llu", timeout);
     printf(")");
     gl.WaitSync(sync, flags, timeout);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5661,6 +5984,7 @@ extern "C" void GLAPI GetInteger64v(GLenum pname, GLint64 * data) {
     printf("%p", data);
     printf(")");
     gl.GetInteger64v(pname, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5683,6 +6007,7 @@ extern "C" void GLAPI GetSynciv(GLsync sync, GLenum pname, GLsizei bufSize, GLsi
     printf("%p", values);
     printf(")");
     gl.GetSynciv(sync, pname, bufSize, length, values);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5699,6 +6024,7 @@ extern "C" void GLAPI GetInteger64i_v(GLenum target, GLuint index, GLint64 * dat
     printf("%p", data);
     printf(")");
     gl.GetInteger64i_v(target, index, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5715,6 +6041,7 @@ extern "C" void GLAPI GetBufferParameteri64v(GLenum target, GLenum pname, GLint6
     printf("%p", params);
     printf(")");
     gl.GetBufferParameteri64v(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5734,6 +6061,7 @@ extern "C" void GLAPI FramebufferTexture(GLenum target, GLenum attachment, GLuin
     printf("%d", level);
     printf(")");
     gl.FramebufferTexture(target, attachment, texture, level);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5759,6 +6087,7 @@ extern "C" void GLAPI TexImage2DMultisample(GLenum target, GLsizei samples, GLen
     printf("%s", fixedsamplelocations ? "true" : "false");
     printf(")");
     gl.TexImage2DMultisample(target, samples, internalformat, width, height, fixedsamplelocations);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5787,6 +6116,7 @@ extern "C" void GLAPI TexImage3DMultisample(GLenum target, GLsizei samples, GLen
     printf("%s", fixedsamplelocations ? "true" : "false");
     printf(")");
     gl.TexImage3DMultisample(target, samples, internalformat, width, height, depth, fixedsamplelocations);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5803,6 +6133,7 @@ extern "C" void GLAPI GetMultisamplefv(GLenum pname, GLuint index, GLfloat * val
     printf("%p", val);
     printf(")");
     gl.GetMultisamplefv(pname, index, val);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5816,6 +6147,7 @@ extern "C" void GLAPI SampleMaski(GLuint maskNumber, GLbitfield mask) {
     printf("0x%08x", mask);
     printf(")");
     gl.SampleMaski(maskNumber, mask);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5835,6 +6167,7 @@ extern "C" void GLAPI BindFragDataLocationIndexed(GLuint program, GLuint colorNu
     printf("%p", name);
     printf(")");
     gl.BindFragDataLocationIndexed(program, colorNumber, index, name);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5850,6 +6183,7 @@ extern "C" GLint GLAPI GetFragDataIndex(GLuint program, const GLchar * name) {
     printf(" -> ");
     GLint result = gl.GetFragDataIndex(program, name);
     printf("%d", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -5864,6 +6198,7 @@ extern "C" void GLAPI GenSamplers(GLsizei count, GLuint * samplers) {
     printf("%p", samplers);
     printf(")");
     gl.GenSamplers(count, samplers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5877,6 +6212,7 @@ extern "C" void GLAPI DeleteSamplers(GLsizei count, const GLuint * samplers) {
     printf("%p", samplers);
     printf(")");
     gl.DeleteSamplers(count, samplers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5889,6 +6225,7 @@ extern "C" GLboolean GLAPI IsSampler(GLuint sampler) {
     printf(" -> ");
     GLboolean result = gl.IsSampler(sampler);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -5903,6 +6240,7 @@ extern "C" void GLAPI BindSampler(GLuint unit, GLuint sampler) {
     printf("%u", sampler);
     printf(")");
     gl.BindSampler(unit, sampler);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5919,6 +6257,7 @@ extern "C" void GLAPI SamplerParameteri(GLuint sampler, GLenum pname, GLint para
     printf("%d", param);
     printf(")");
     gl.SamplerParameteri(sampler, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5935,6 +6274,7 @@ extern "C" void GLAPI SamplerParameteriv(GLuint sampler, GLenum pname, const GLi
     printf("%p", param);
     printf(")");
     gl.SamplerParameteriv(sampler, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5951,6 +6291,7 @@ extern "C" void GLAPI SamplerParameterf(GLuint sampler, GLenum pname, GLfloat pa
     printf("%f", param);
     printf(")");
     gl.SamplerParameterf(sampler, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5967,6 +6308,7 @@ extern "C" void GLAPI SamplerParameterfv(GLuint sampler, GLenum pname, const GLf
     printf("%p", param);
     printf(")");
     gl.SamplerParameterfv(sampler, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5983,6 +6325,7 @@ extern "C" void GLAPI SamplerParameterIiv(GLuint sampler, GLenum pname, const GL
     printf("%p", param);
     printf(")");
     gl.SamplerParameterIiv(sampler, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -5999,6 +6342,7 @@ extern "C" void GLAPI SamplerParameterIuiv(GLuint sampler, GLenum pname, const G
     printf("%p", param);
     printf(")");
     gl.SamplerParameterIuiv(sampler, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6015,6 +6359,7 @@ extern "C" void GLAPI GetSamplerParameteriv(GLuint sampler, GLenum pname, GLint 
     printf("%p", params);
     printf(")");
     gl.GetSamplerParameteriv(sampler, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6031,6 +6376,7 @@ extern "C" void GLAPI GetSamplerParameterIiv(GLuint sampler, GLenum pname, GLint
     printf("%p", params);
     printf(")");
     gl.GetSamplerParameterIiv(sampler, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6047,6 +6393,7 @@ extern "C" void GLAPI GetSamplerParameterfv(GLuint sampler, GLenum pname, GLfloa
     printf("%p", params);
     printf(")");
     gl.GetSamplerParameterfv(sampler, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6063,6 +6410,7 @@ extern "C" void GLAPI GetSamplerParameterIuiv(GLuint sampler, GLenum pname, GLui
     printf("%p", params);
     printf(")");
     gl.GetSamplerParameterIuiv(sampler, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6076,6 +6424,7 @@ extern "C" void GLAPI QueryCounter(GLuint id, GLenum target) {
     printf("0x%04x", target);
     printf(")");
     gl.QueryCounter(id, target);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6092,6 +6441,7 @@ extern "C" void GLAPI GetQueryObjecti64v(GLuint id, GLenum pname, GLint64 * para
     printf("%p", params);
     printf(")");
     gl.GetQueryObjecti64v(id, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6108,6 +6458,7 @@ extern "C" void GLAPI GetQueryObjectui64v(GLuint id, GLenum pname, GLuint64 * pa
     printf("%p", params);
     printf(")");
     gl.GetQueryObjectui64v(id, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6121,6 +6472,7 @@ extern "C" void GLAPI VertexAttribDivisor(GLuint index, GLuint divisor) {
     printf("%u", divisor);
     printf(")");
     gl.VertexAttribDivisor(index, divisor);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6140,6 +6492,7 @@ extern "C" void GLAPI VertexAttribP1ui(GLuint index, GLenum type, GLboolean norm
     printf("%u", value);
     printf(")");
     gl.VertexAttribP1ui(index, type, normalized, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6159,6 +6512,7 @@ extern "C" void GLAPI VertexAttribP1uiv(GLuint index, GLenum type, GLboolean nor
     printf("%p", value);
     printf(")");
     gl.VertexAttribP1uiv(index, type, normalized, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6178,6 +6532,7 @@ extern "C" void GLAPI VertexAttribP2ui(GLuint index, GLenum type, GLboolean norm
     printf("%u", value);
     printf(")");
     gl.VertexAttribP2ui(index, type, normalized, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6197,6 +6552,7 @@ extern "C" void GLAPI VertexAttribP2uiv(GLuint index, GLenum type, GLboolean nor
     printf("%p", value);
     printf(")");
     gl.VertexAttribP2uiv(index, type, normalized, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6216,6 +6572,7 @@ extern "C" void GLAPI VertexAttribP3ui(GLuint index, GLenum type, GLboolean norm
     printf("%u", value);
     printf(")");
     gl.VertexAttribP3ui(index, type, normalized, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6235,6 +6592,7 @@ extern "C" void GLAPI VertexAttribP3uiv(GLuint index, GLenum type, GLboolean nor
     printf("%p", value);
     printf(")");
     gl.VertexAttribP3uiv(index, type, normalized, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6254,6 +6612,7 @@ extern "C" void GLAPI VertexAttribP4ui(GLuint index, GLenum type, GLboolean norm
     printf("%u", value);
     printf(")");
     gl.VertexAttribP4ui(index, type, normalized, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6273,6 +6632,7 @@ extern "C" void GLAPI VertexAttribP4uiv(GLuint index, GLenum type, GLboolean nor
     printf("%p", value);
     printf(")");
     gl.VertexAttribP4uiv(index, type, normalized, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6283,6 +6643,7 @@ extern "C" void GLAPI MinSampleShading(GLfloat value) {
     printf("%f", value);
     printf(")");
     gl.MinSampleShading(value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6296,6 +6657,7 @@ extern "C" void GLAPI BlendEquationi(GLuint buf, GLenum mode) {
     printf("0x%04x", mode);
     printf(")");
     gl.BlendEquationi(buf, mode);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6312,6 +6674,7 @@ extern "C" void GLAPI BlendEquationSeparatei(GLuint buf, GLenum modeRGB, GLenum 
     printf("0x%04x", modeAlpha);
     printf(")");
     gl.BlendEquationSeparatei(buf, modeRGB, modeAlpha);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6328,6 +6691,7 @@ extern "C" void GLAPI BlendFunci(GLuint buf, GLenum src, GLenum dst) {
     printf("0x%04x", dst);
     printf(")");
     gl.BlendFunci(buf, src, dst);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6350,6 +6714,7 @@ extern "C" void GLAPI BlendFuncSeparatei(GLuint buf, GLenum srcRGB, GLenum dstRG
     printf("0x%04x", dstAlpha);
     printf(")");
     gl.BlendFuncSeparatei(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6363,6 +6728,7 @@ extern "C" void GLAPI DrawArraysIndirect(GLenum mode, const void * indirect) {
     printf("%p", indirect);
     printf(")");
     gl.DrawArraysIndirect(mode, indirect);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6379,6 +6745,7 @@ extern "C" void GLAPI DrawElementsIndirect(GLenum mode, GLenum type, const void 
     printf("%p", indirect);
     printf(")");
     gl.DrawElementsIndirect(mode, type, indirect);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6392,6 +6759,7 @@ extern "C" void GLAPI Uniform1d(GLint location, GLdouble x) {
     printf("%lf", x);
     printf(")");
     gl.Uniform1d(location, x);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6408,6 +6776,7 @@ extern "C" void GLAPI Uniform2d(GLint location, GLdouble x, GLdouble y) {
     printf("%lf", y);
     printf(")");
     gl.Uniform2d(location, x, y);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6427,6 +6796,7 @@ extern "C" void GLAPI Uniform3d(GLint location, GLdouble x, GLdouble y, GLdouble
     printf("%lf", z);
     printf(")");
     gl.Uniform3d(location, x, y, z);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6449,6 +6819,7 @@ extern "C" void GLAPI Uniform4d(GLint location, GLdouble x, GLdouble y, GLdouble
     printf("%lf", w);
     printf(")");
     gl.Uniform4d(location, x, y, z, w);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6465,6 +6836,7 @@ extern "C" void GLAPI Uniform1dv(GLint location, GLsizei count, const GLdouble *
     printf("%p", value);
     printf(")");
     gl.Uniform1dv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6481,6 +6853,7 @@ extern "C" void GLAPI Uniform2dv(GLint location, GLsizei count, const GLdouble *
     printf("%p", value);
     printf(")");
     gl.Uniform2dv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6497,6 +6870,7 @@ extern "C" void GLAPI Uniform3dv(GLint location, GLsizei count, const GLdouble *
     printf("%p", value);
     printf(")");
     gl.Uniform3dv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6513,6 +6887,7 @@ extern "C" void GLAPI Uniform4dv(GLint location, GLsizei count, const GLdouble *
     printf("%p", value);
     printf(")");
     gl.Uniform4dv(location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6532,6 +6907,7 @@ extern "C" void GLAPI UniformMatrix2dv(GLint location, GLsizei count, GLboolean 
     printf("%p", value);
     printf(")");
     gl.UniformMatrix2dv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6551,6 +6927,7 @@ extern "C" void GLAPI UniformMatrix3dv(GLint location, GLsizei count, GLboolean 
     printf("%p", value);
     printf(")");
     gl.UniformMatrix3dv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6570,6 +6947,7 @@ extern "C" void GLAPI UniformMatrix4dv(GLint location, GLsizei count, GLboolean 
     printf("%p", value);
     printf(")");
     gl.UniformMatrix4dv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6589,6 +6967,7 @@ extern "C" void GLAPI UniformMatrix2x3dv(GLint location, GLsizei count, GLboolea
     printf("%p", value);
     printf(")");
     gl.UniformMatrix2x3dv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6608,6 +6987,7 @@ extern "C" void GLAPI UniformMatrix2x4dv(GLint location, GLsizei count, GLboolea
     printf("%p", value);
     printf(")");
     gl.UniformMatrix2x4dv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6627,6 +7007,7 @@ extern "C" void GLAPI UniformMatrix3x2dv(GLint location, GLsizei count, GLboolea
     printf("%p", value);
     printf(")");
     gl.UniformMatrix3x2dv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6646,6 +7027,7 @@ extern "C" void GLAPI UniformMatrix3x4dv(GLint location, GLsizei count, GLboolea
     printf("%p", value);
     printf(")");
     gl.UniformMatrix3x4dv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6665,6 +7047,7 @@ extern "C" void GLAPI UniformMatrix4x2dv(GLint location, GLsizei count, GLboolea
     printf("%p", value);
     printf(")");
     gl.UniformMatrix4x2dv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6684,6 +7067,7 @@ extern "C" void GLAPI UniformMatrix4x3dv(GLint location, GLsizei count, GLboolea
     printf("%p", value);
     printf(")");
     gl.UniformMatrix4x3dv(location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6700,6 +7084,7 @@ extern "C" void GLAPI GetUniformdv(GLuint program, GLint location, GLdouble * pa
     printf("%p", params);
     printf(")");
     gl.GetUniformdv(program, location, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6718,6 +7103,7 @@ extern "C" GLint GLAPI GetSubroutineUniformLocation(GLuint program, GLenum shade
     printf(" -> ");
     GLint result = gl.GetSubroutineUniformLocation(program, shadertype, name);
     printf("%d", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -6737,6 +7123,7 @@ extern "C" GLuint GLAPI GetSubroutineIndex(GLuint program, GLenum shadertype, co
     printf(" -> ");
     GLuint result = gl.GetSubroutineIndex(program, shadertype, name);
     printf("%u", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -6760,6 +7147,7 @@ extern "C" void GLAPI GetActiveSubroutineUniformiv(GLuint program, GLenum shader
     printf("%p", values);
     printf(")");
     gl.GetActiveSubroutineUniformiv(program, shadertype, index, pname, values);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6785,6 +7173,7 @@ extern "C" void GLAPI GetActiveSubroutineUniformName(GLuint program, GLenum shad
     printf("%p", name);
     printf(")");
     gl.GetActiveSubroutineUniformName(program, shadertype, index, bufsize, length, name);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6810,6 +7199,7 @@ extern "C" void GLAPI GetActiveSubroutineName(GLuint program, GLenum shadertype,
     printf("%p", name);
     printf(")");
     gl.GetActiveSubroutineName(program, shadertype, index, bufsize, length, name);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6826,6 +7216,7 @@ extern "C" void GLAPI UniformSubroutinesuiv(GLenum shadertype, GLsizei count, co
     printf("%p", indices);
     printf(")");
     gl.UniformSubroutinesuiv(shadertype, count, indices);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6842,6 +7233,7 @@ extern "C" void GLAPI GetUniformSubroutineuiv(GLenum shadertype, GLint location,
     printf("%p", params);
     printf(")");
     gl.GetUniformSubroutineuiv(shadertype, location, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6861,6 +7253,7 @@ extern "C" void GLAPI GetProgramStageiv(GLuint program, GLenum shadertype, GLenu
     printf("%p", values);
     printf(")");
     gl.GetProgramStageiv(program, shadertype, pname, values);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6874,6 +7267,7 @@ extern "C" void GLAPI PatchParameteri(GLenum pname, GLint value) {
     printf("%d", value);
     printf(")");
     gl.PatchParameteri(pname, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6887,6 +7281,7 @@ extern "C" void GLAPI PatchParameterfv(GLenum pname, const GLfloat * values) {
     printf("%p", values);
     printf(")");
     gl.PatchParameterfv(pname, values);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6900,6 +7295,7 @@ extern "C" void GLAPI BindTransformFeedback(GLenum target, GLuint id) {
     printf("%u", id);
     printf(")");
     gl.BindTransformFeedback(target, id);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6913,6 +7309,7 @@ extern "C" void GLAPI DeleteTransformFeedbacks(GLsizei n, const GLuint * ids) {
     printf("%p", ids);
     printf(")");
     gl.DeleteTransformFeedbacks(n, ids);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6926,6 +7323,7 @@ extern "C" void GLAPI GenTransformFeedbacks(GLsizei n, GLuint * ids) {
     printf("%p", ids);
     printf(")");
     gl.GenTransformFeedbacks(n, ids);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6938,6 +7336,7 @@ extern "C" GLboolean GLAPI IsTransformFeedback(GLuint id) {
     printf(" -> ");
     GLboolean result = gl.IsTransformFeedback(id);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -6947,6 +7346,7 @@ extern "C" void GLAPI PauseTransformFeedback() {
     printf("glPauseTransformFeedback(");
     printf(")");
     gl.PauseTransformFeedback();
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6955,6 +7355,7 @@ extern "C" void GLAPI ResumeTransformFeedback() {
     printf("glResumeTransformFeedback(");
     printf(")");
     gl.ResumeTransformFeedback();
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6968,6 +7369,7 @@ extern "C" void GLAPI DrawTransformFeedback(GLenum mode, GLuint id) {
     printf("%u", id);
     printf(")");
     gl.DrawTransformFeedback(mode, id);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -6984,6 +7386,7 @@ extern "C" void GLAPI DrawTransformFeedbackStream(GLenum mode, GLuint id, GLuint
     printf("%u", stream);
     printf(")");
     gl.DrawTransformFeedbackStream(mode, id, stream);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7000,6 +7403,7 @@ extern "C" void GLAPI BeginQueryIndexed(GLenum target, GLuint index, GLuint id) 
     printf("%u", id);
     printf(")");
     gl.BeginQueryIndexed(target, index, id);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7013,6 +7417,7 @@ extern "C" void GLAPI EndQueryIndexed(GLenum target, GLuint index) {
     printf("%u", index);
     printf(")");
     gl.EndQueryIndexed(target, index);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7032,6 +7437,7 @@ extern "C" void GLAPI GetQueryIndexediv(GLenum target, GLuint index, GLenum pnam
     printf("%p", params);
     printf(")");
     gl.GetQueryIndexediv(target, index, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7040,6 +7446,7 @@ extern "C" void GLAPI ReleaseShaderCompiler() {
     printf("glReleaseShaderCompiler(");
     printf(")");
     gl.ReleaseShaderCompiler();
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7062,6 +7469,7 @@ extern "C" void GLAPI ShaderBinary(GLsizei count, const GLuint * shaders, GLenum
     printf("%d", length);
     printf(")");
     gl.ShaderBinary(count, shaders, binaryformat, binary, length);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7081,6 +7489,7 @@ extern "C" void GLAPI GetShaderPrecisionFormat(GLenum shadertype, GLenum precisi
     printf("%p", precision);
     printf(")");
     gl.GetShaderPrecisionFormat(shadertype, precisiontype, range, precision);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7094,6 +7503,7 @@ extern "C" void GLAPI DepthRangef(GLfloat n, GLfloat f) {
     printf("%f", f);
     printf(")");
     gl.DepthRangef(n, f);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7104,6 +7514,7 @@ extern "C" void GLAPI ClearDepthf(GLfloat d) {
     printf("%f", d);
     printf(")");
     gl.ClearDepthf(d);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7126,6 +7537,7 @@ extern "C" void GLAPI GetProgramBinary(GLuint program, GLsizei bufSize, GLsizei 
     printf("%p", binary);
     printf(")");
     gl.GetProgramBinary(program, bufSize, length, binaryFormat, binary);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7145,6 +7557,7 @@ extern "C" void GLAPI ProgramBinary(GLuint program, GLenum binaryFormat, const v
     printf("%d", length);
     printf(")");
     gl.ProgramBinary(program, binaryFormat, binary, length);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7161,6 +7574,7 @@ extern "C" void GLAPI ProgramParameteri(GLuint program, GLenum pname, GLint valu
     printf("%d", value);
     printf(")");
     gl.ProgramParameteri(program, pname, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7177,6 +7591,7 @@ extern "C" void GLAPI UseProgramStages(GLuint pipeline, GLbitfield stages, GLuin
     printf("%u", program);
     printf(")");
     gl.UseProgramStages(pipeline, stages, program);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7190,6 +7605,7 @@ extern "C" void GLAPI ActiveShaderProgram(GLuint pipeline, GLuint program) {
     printf("%u", program);
     printf(")");
     gl.ActiveShaderProgram(pipeline, program);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7208,6 +7624,7 @@ extern "C" GLuint GLAPI CreateShaderProgramv(GLenum type, GLsizei count, const G
     printf(" -> ");
     GLuint result = gl.CreateShaderProgramv(type, count, strings);
     printf("%u", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -7219,6 +7636,7 @@ extern "C" void GLAPI BindProgramPipeline(GLuint pipeline) {
     printf("%u", pipeline);
     printf(")");
     gl.BindProgramPipeline(pipeline);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7232,6 +7650,7 @@ extern "C" void GLAPI DeleteProgramPipelines(GLsizei n, const GLuint * pipelines
     printf("%p", pipelines);
     printf(")");
     gl.DeleteProgramPipelines(n, pipelines);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7245,6 +7664,7 @@ extern "C" void GLAPI GenProgramPipelines(GLsizei n, GLuint * pipelines) {
     printf("%p", pipelines);
     printf(")");
     gl.GenProgramPipelines(n, pipelines);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7257,6 +7677,7 @@ extern "C" GLboolean GLAPI IsProgramPipeline(GLuint pipeline) {
     printf(" -> ");
     GLboolean result = gl.IsProgramPipeline(pipeline);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -7274,6 +7695,7 @@ extern "C" void GLAPI GetProgramPipelineiv(GLuint pipeline, GLenum pname, GLint 
     printf("%p", params);
     printf(")");
     gl.GetProgramPipelineiv(pipeline, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7290,6 +7712,7 @@ extern "C" void GLAPI ProgramUniform1i(GLuint program, GLint location, GLint v0)
     printf("%d", v0);
     printf(")");
     gl.ProgramUniform1i(program, location, v0);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7309,6 +7732,7 @@ extern "C" void GLAPI ProgramUniform1iv(GLuint program, GLint location, GLsizei 
     printf("%p", value);
     printf(")");
     gl.ProgramUniform1iv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7325,6 +7749,7 @@ extern "C" void GLAPI ProgramUniform1f(GLuint program, GLint location, GLfloat v
     printf("%f", v0);
     printf(")");
     gl.ProgramUniform1f(program, location, v0);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7344,6 +7769,7 @@ extern "C" void GLAPI ProgramUniform1fv(GLuint program, GLint location, GLsizei 
     printf("%p", value);
     printf(")");
     gl.ProgramUniform1fv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7360,6 +7786,7 @@ extern "C" void GLAPI ProgramUniform1d(GLuint program, GLint location, GLdouble 
     printf("%lf", v0);
     printf(")");
     gl.ProgramUniform1d(program, location, v0);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7379,6 +7806,7 @@ extern "C" void GLAPI ProgramUniform1dv(GLuint program, GLint location, GLsizei 
     printf("%p", value);
     printf(")");
     gl.ProgramUniform1dv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7395,6 +7823,7 @@ extern "C" void GLAPI ProgramUniform1ui(GLuint program, GLint location, GLuint v
     printf("%u", v0);
     printf(")");
     gl.ProgramUniform1ui(program, location, v0);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7414,6 +7843,7 @@ extern "C" void GLAPI ProgramUniform1uiv(GLuint program, GLint location, GLsizei
     printf("%p", value);
     printf(")");
     gl.ProgramUniform1uiv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7433,6 +7863,7 @@ extern "C" void GLAPI ProgramUniform2i(GLuint program, GLint location, GLint v0,
     printf("%d", v1);
     printf(")");
     gl.ProgramUniform2i(program, location, v0, v1);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7452,6 +7883,7 @@ extern "C" void GLAPI ProgramUniform2iv(GLuint program, GLint location, GLsizei 
     printf("%p", value);
     printf(")");
     gl.ProgramUniform2iv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7471,6 +7903,7 @@ extern "C" void GLAPI ProgramUniform2f(GLuint program, GLint location, GLfloat v
     printf("%f", v1);
     printf(")");
     gl.ProgramUniform2f(program, location, v0, v1);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7490,6 +7923,7 @@ extern "C" void GLAPI ProgramUniform2fv(GLuint program, GLint location, GLsizei 
     printf("%p", value);
     printf(")");
     gl.ProgramUniform2fv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7509,6 +7943,7 @@ extern "C" void GLAPI ProgramUniform2d(GLuint program, GLint location, GLdouble 
     printf("%lf", v1);
     printf(")");
     gl.ProgramUniform2d(program, location, v0, v1);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7528,6 +7963,7 @@ extern "C" void GLAPI ProgramUniform2dv(GLuint program, GLint location, GLsizei 
     printf("%p", value);
     printf(")");
     gl.ProgramUniform2dv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7547,6 +7983,7 @@ extern "C" void GLAPI ProgramUniform2ui(GLuint program, GLint location, GLuint v
     printf("%u", v1);
     printf(")");
     gl.ProgramUniform2ui(program, location, v0, v1);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7566,6 +8003,7 @@ extern "C" void GLAPI ProgramUniform2uiv(GLuint program, GLint location, GLsizei
     printf("%p", value);
     printf(")");
     gl.ProgramUniform2uiv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7588,6 +8026,7 @@ extern "C" void GLAPI ProgramUniform3i(GLuint program, GLint location, GLint v0,
     printf("%d", v2);
     printf(")");
     gl.ProgramUniform3i(program, location, v0, v1, v2);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7607,6 +8046,7 @@ extern "C" void GLAPI ProgramUniform3iv(GLuint program, GLint location, GLsizei 
     printf("%p", value);
     printf(")");
     gl.ProgramUniform3iv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7629,6 +8069,7 @@ extern "C" void GLAPI ProgramUniform3f(GLuint program, GLint location, GLfloat v
     printf("%f", v2);
     printf(")");
     gl.ProgramUniform3f(program, location, v0, v1, v2);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7648,6 +8089,7 @@ extern "C" void GLAPI ProgramUniform3fv(GLuint program, GLint location, GLsizei 
     printf("%p", value);
     printf(")");
     gl.ProgramUniform3fv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7670,6 +8112,7 @@ extern "C" void GLAPI ProgramUniform3d(GLuint program, GLint location, GLdouble 
     printf("%lf", v2);
     printf(")");
     gl.ProgramUniform3d(program, location, v0, v1, v2);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7689,6 +8132,7 @@ extern "C" void GLAPI ProgramUniform3dv(GLuint program, GLint location, GLsizei 
     printf("%p", value);
     printf(")");
     gl.ProgramUniform3dv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7711,6 +8155,7 @@ extern "C" void GLAPI ProgramUniform3ui(GLuint program, GLint location, GLuint v
     printf("%u", v2);
     printf(")");
     gl.ProgramUniform3ui(program, location, v0, v1, v2);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7730,6 +8175,7 @@ extern "C" void GLAPI ProgramUniform3uiv(GLuint program, GLint location, GLsizei
     printf("%p", value);
     printf(")");
     gl.ProgramUniform3uiv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7755,6 +8201,7 @@ extern "C" void GLAPI ProgramUniform4i(GLuint program, GLint location, GLint v0,
     printf("%d", v3);
     printf(")");
     gl.ProgramUniform4i(program, location, v0, v1, v2, v3);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7774,6 +8221,7 @@ extern "C" void GLAPI ProgramUniform4iv(GLuint program, GLint location, GLsizei 
     printf("%p", value);
     printf(")");
     gl.ProgramUniform4iv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7799,6 +8247,7 @@ extern "C" void GLAPI ProgramUniform4f(GLuint program, GLint location, GLfloat v
     printf("%f", v3);
     printf(")");
     gl.ProgramUniform4f(program, location, v0, v1, v2, v3);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7818,6 +8267,7 @@ extern "C" void GLAPI ProgramUniform4fv(GLuint program, GLint location, GLsizei 
     printf("%p", value);
     printf(")");
     gl.ProgramUniform4fv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7843,6 +8293,7 @@ extern "C" void GLAPI ProgramUniform4d(GLuint program, GLint location, GLdouble 
     printf("%lf", v3);
     printf(")");
     gl.ProgramUniform4d(program, location, v0, v1, v2, v3);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7862,6 +8313,7 @@ extern "C" void GLAPI ProgramUniform4dv(GLuint program, GLint location, GLsizei 
     printf("%p", value);
     printf(")");
     gl.ProgramUniform4dv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7887,6 +8339,7 @@ extern "C" void GLAPI ProgramUniform4ui(GLuint program, GLint location, GLuint v
     printf("%u", v3);
     printf(")");
     gl.ProgramUniform4ui(program, location, v0, v1, v2, v3);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7906,6 +8359,7 @@ extern "C" void GLAPI ProgramUniform4uiv(GLuint program, GLint location, GLsizei
     printf("%p", value);
     printf(")");
     gl.ProgramUniform4uiv(program, location, count, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7928,6 +8382,7 @@ extern "C" void GLAPI ProgramUniformMatrix2fv(GLuint program, GLint location, GL
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix2fv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7950,6 +8405,7 @@ extern "C" void GLAPI ProgramUniformMatrix3fv(GLuint program, GLint location, GL
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix3fv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7972,6 +8428,7 @@ extern "C" void GLAPI ProgramUniformMatrix4fv(GLuint program, GLint location, GL
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix4fv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -7994,6 +8451,7 @@ extern "C" void GLAPI ProgramUniformMatrix2dv(GLuint program, GLint location, GL
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix2dv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8016,6 +8474,7 @@ extern "C" void GLAPI ProgramUniformMatrix3dv(GLuint program, GLint location, GL
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix3dv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8038,6 +8497,7 @@ extern "C" void GLAPI ProgramUniformMatrix4dv(GLuint program, GLint location, GL
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix4dv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8060,6 +8520,7 @@ extern "C" void GLAPI ProgramUniformMatrix2x3fv(GLuint program, GLint location, 
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix2x3fv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8082,6 +8543,7 @@ extern "C" void GLAPI ProgramUniformMatrix3x2fv(GLuint program, GLint location, 
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix3x2fv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8104,6 +8566,7 @@ extern "C" void GLAPI ProgramUniformMatrix2x4fv(GLuint program, GLint location, 
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix2x4fv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8126,6 +8589,7 @@ extern "C" void GLAPI ProgramUniformMatrix4x2fv(GLuint program, GLint location, 
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix4x2fv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8148,6 +8612,7 @@ extern "C" void GLAPI ProgramUniformMatrix3x4fv(GLuint program, GLint location, 
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix3x4fv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8170,6 +8635,7 @@ extern "C" void GLAPI ProgramUniformMatrix4x3fv(GLuint program, GLint location, 
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix4x3fv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8192,6 +8658,7 @@ extern "C" void GLAPI ProgramUniformMatrix2x3dv(GLuint program, GLint location, 
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix2x3dv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8214,6 +8681,7 @@ extern "C" void GLAPI ProgramUniformMatrix3x2dv(GLuint program, GLint location, 
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix3x2dv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8236,6 +8704,7 @@ extern "C" void GLAPI ProgramUniformMatrix2x4dv(GLuint program, GLint location, 
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix2x4dv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8258,6 +8727,7 @@ extern "C" void GLAPI ProgramUniformMatrix4x2dv(GLuint program, GLint location, 
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix4x2dv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8280,6 +8750,7 @@ extern "C" void GLAPI ProgramUniformMatrix3x4dv(GLuint program, GLint location, 
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix3x4dv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8302,6 +8773,7 @@ extern "C" void GLAPI ProgramUniformMatrix4x3dv(GLuint program, GLint location, 
     printf("%p", value);
     printf(")");
     gl.ProgramUniformMatrix4x3dv(program, location, count, transpose, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8312,6 +8784,7 @@ extern "C" void GLAPI ValidateProgramPipeline(GLuint pipeline) {
     printf("%u", pipeline);
     printf(")");
     gl.ValidateProgramPipeline(pipeline);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8331,6 +8804,7 @@ extern "C" void GLAPI GetProgramPipelineInfoLog(GLuint pipeline, GLsizei bufSize
     printf("%p", infoLog);
     printf(")");
     gl.GetProgramPipelineInfoLog(pipeline, bufSize, length, infoLog);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8344,6 +8818,7 @@ extern "C" void GLAPI VertexAttribL1d(GLuint index, GLdouble x) {
     printf("%lf", x);
     printf(")");
     gl.VertexAttribL1d(index, x);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8360,6 +8835,7 @@ extern "C" void GLAPI VertexAttribL2d(GLuint index, GLdouble x, GLdouble y) {
     printf("%lf", y);
     printf(")");
     gl.VertexAttribL2d(index, x, y);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8379,6 +8855,7 @@ extern "C" void GLAPI VertexAttribL3d(GLuint index, GLdouble x, GLdouble y, GLdo
     printf("%lf", z);
     printf(")");
     gl.VertexAttribL3d(index, x, y, z);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8401,6 +8878,7 @@ extern "C" void GLAPI VertexAttribL4d(GLuint index, GLdouble x, GLdouble y, GLdo
     printf("%lf", w);
     printf(")");
     gl.VertexAttribL4d(index, x, y, z, w);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8414,6 +8892,7 @@ extern "C" void GLAPI VertexAttribL1dv(GLuint index, const GLdouble * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribL1dv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8427,6 +8906,7 @@ extern "C" void GLAPI VertexAttribL2dv(GLuint index, const GLdouble * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribL2dv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8440,6 +8920,7 @@ extern "C" void GLAPI VertexAttribL3dv(GLuint index, const GLdouble * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribL3dv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8453,6 +8934,7 @@ extern "C" void GLAPI VertexAttribL4dv(GLuint index, const GLdouble * v) {
     printf("%p", v);
     printf(")");
     gl.VertexAttribL4dv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8475,6 +8957,7 @@ extern "C" void GLAPI VertexAttribLPointer(GLuint index, GLint size, GLenum type
     printf("%p", pointer);
     printf(")");
     gl.VertexAttribLPointer(index, size, type, stride, pointer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8491,6 +8974,7 @@ extern "C" void GLAPI GetVertexAttribLdv(GLuint index, GLenum pname, GLdouble * 
     printf("%p", params);
     printf(")");
     gl.GetVertexAttribLdv(index, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8507,6 +8991,7 @@ extern "C" void GLAPI ViewportArrayv(GLuint first, GLsizei count, const GLfloat 
     printf("%p", v);
     printf(")");
     gl.ViewportArrayv(first, count, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8529,6 +9014,7 @@ extern "C" void GLAPI ViewportIndexedf(GLuint index, GLfloat x, GLfloat y, GLflo
     printf("%f", h);
     printf(")");
     gl.ViewportIndexedf(index, x, y, w, h);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8542,6 +9028,7 @@ extern "C" void GLAPI ViewportIndexedfv(GLuint index, const GLfloat * v) {
     printf("%p", v);
     printf(")");
     gl.ViewportIndexedfv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8558,6 +9045,7 @@ extern "C" void GLAPI ScissorArrayv(GLuint first, GLsizei count, const GLint * v
     printf("%p", v);
     printf(")");
     gl.ScissorArrayv(first, count, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8580,6 +9068,7 @@ extern "C" void GLAPI ScissorIndexed(GLuint index, GLint left, GLint bottom, GLs
     printf("%d", height);
     printf(")");
     gl.ScissorIndexed(index, left, bottom, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8593,6 +9082,7 @@ extern "C" void GLAPI ScissorIndexedv(GLuint index, const GLint * v) {
     printf("%p", v);
     printf(")");
     gl.ScissorIndexedv(index, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8609,6 +9099,7 @@ extern "C" void GLAPI DepthRangeArrayv(GLuint first, GLsizei count, const GLdoub
     printf("%p", v);
     printf(")");
     gl.DepthRangeArrayv(first, count, v);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8625,6 +9116,7 @@ extern "C" void GLAPI DepthRangeIndexed(GLuint index, GLdouble n, GLdouble f) {
     printf("%lf", f);
     printf(")");
     gl.DepthRangeIndexed(index, n, f);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8641,6 +9133,7 @@ extern "C" void GLAPI GetFloati_v(GLenum target, GLuint index, GLfloat * data) {
     printf("%p", data);
     printf(")");
     gl.GetFloati_v(target, index, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8657,6 +9150,7 @@ extern "C" void GLAPI GetDoublei_v(GLenum target, GLuint index, GLdouble * data)
     printf("%p", data);
     printf(")");
     gl.GetDoublei_v(target, index, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8679,6 +9173,7 @@ extern "C" void GLAPI DrawArraysInstancedBaseInstance(GLenum mode, GLint first, 
     printf("%u", baseinstance);
     printf(")");
     gl.DrawArraysInstancedBaseInstance(mode, first, count, instancecount, baseinstance);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8704,6 +9199,7 @@ extern "C" void GLAPI DrawElementsInstancedBaseInstance(GLenum mode, GLsizei cou
     printf("%u", baseinstance);
     printf(")");
     gl.DrawElementsInstancedBaseInstance(mode, count, type, indices, instancecount, baseinstance);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8732,6 +9228,7 @@ extern "C" void GLAPI DrawElementsInstancedBaseVertexBaseInstance(GLenum mode, G
     printf("%u", baseinstance);
     printf(")");
     gl.DrawElementsInstancedBaseVertexBaseInstance(mode, count, type, indices, instancecount, basevertex, baseinstance);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8754,6 +9251,7 @@ extern "C" void GLAPI GetInternalformativ(GLenum target, GLenum internalformat, 
     printf("%p", params);
     printf(")");
     gl.GetInternalformativ(target, internalformat, pname, bufSize, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8773,6 +9271,7 @@ extern "C" void GLAPI GetActiveAtomicCounterBufferiv(GLuint program, GLuint buff
     printf("%p", params);
     printf(")");
     gl.GetActiveAtomicCounterBufferiv(program, bufferIndex, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8801,6 +9300,7 @@ extern "C" void GLAPI BindImageTexture(GLuint unit, GLuint texture, GLint level,
     printf("0x%04x", format);
     printf(")");
     gl.BindImageTexture(unit, texture, level, layered, layer, access, format);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8811,6 +9311,7 @@ extern "C" void GLAPI MemoryBarrier(GLbitfield barriers) {
     printf("0x%08x", barriers);
     printf(")");
     gl.MemoryBarrier(barriers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8830,6 +9331,7 @@ extern "C" void GLAPI TexStorage1D(GLenum target, GLsizei levels, GLenum interna
     printf("%d", width);
     printf(")");
     gl.TexStorage1D(target, levels, internalformat, width);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8852,6 +9354,7 @@ extern "C" void GLAPI TexStorage2D(GLenum target, GLsizei levels, GLenum interna
     printf("%d", height);
     printf(")");
     gl.TexStorage2D(target, levels, internalformat, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8877,6 +9380,7 @@ extern "C" void GLAPI TexStorage3D(GLenum target, GLsizei levels, GLenum interna
     printf("%d", depth);
     printf(")");
     gl.TexStorage3D(target, levels, internalformat, width, height, depth);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8893,6 +9397,7 @@ extern "C" void GLAPI DrawTransformFeedbackInstanced(GLenum mode, GLuint id, GLs
     printf("%d", instancecount);
     printf(")");
     gl.DrawTransformFeedbackInstanced(mode, id, instancecount);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8912,6 +9417,7 @@ extern "C" void GLAPI DrawTransformFeedbackStreamInstanced(GLenum mode, GLuint i
     printf("%d", instancecount);
     printf(")");
     gl.DrawTransformFeedbackStreamInstanced(mode, id, stream, instancecount);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8934,6 +9440,7 @@ extern "C" void GLAPI ClearBufferData(GLenum target, GLenum internalformat, GLen
     printf("%p", data);
     printf(")");
     gl.ClearBufferData(target, internalformat, format, type, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8962,6 +9469,7 @@ extern "C" void GLAPI ClearBufferSubData(GLenum target, GLenum internalformat, G
     printf("%p", data);
     printf(")");
     gl.ClearBufferSubData(target, internalformat, offset, size, format, type, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8978,6 +9486,7 @@ extern "C" void GLAPI DispatchCompute(GLuint num_groups_x, GLuint num_groups_y, 
     printf("%u", num_groups_z);
     printf(")");
     gl.DispatchCompute(num_groups_x, num_groups_y, num_groups_z);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -8988,6 +9497,7 @@ extern "C" void GLAPI DispatchComputeIndirect(GLintptr indirect) {
     printf("%lld", indirect);
     printf(")");
     gl.DispatchComputeIndirect(indirect);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9040,6 +9550,7 @@ extern "C" void GLAPI CopyImageSubData(GLuint srcName, GLenum srcTarget, GLint s
     printf("%d", srcDepth);
     printf(")");
     gl.CopyImageSubData(srcName, srcTarget, srcLevel, srcX, srcY, srcZ, dstName, dstTarget, dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight, srcDepth);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9056,6 +9567,7 @@ extern "C" void GLAPI FramebufferParameteri(GLenum target, GLenum pname, GLint p
     printf("%d", param);
     printf(")");
     gl.FramebufferParameteri(target, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9072,6 +9584,7 @@ extern "C" void GLAPI GetFramebufferParameteriv(GLenum target, GLenum pname, GLi
     printf("%p", params);
     printf(")");
     gl.GetFramebufferParameteriv(target, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9094,6 +9607,7 @@ extern "C" void GLAPI GetInternalformati64v(GLenum target, GLenum internalformat
     printf("%p", params);
     printf(")");
     gl.GetInternalformati64v(target, internalformat, pname, bufSize, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9125,6 +9639,7 @@ extern "C" void GLAPI InvalidateTexSubImage(GLuint texture, GLint level, GLint x
     printf("%d", depth);
     printf(")");
     gl.InvalidateTexSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9138,6 +9653,7 @@ extern "C" void GLAPI InvalidateTexImage(GLuint texture, GLint level) {
     printf("%d", level);
     printf(")");
     gl.InvalidateTexImage(texture, level);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9154,6 +9670,7 @@ extern "C" void GLAPI InvalidateBufferSubData(GLuint buffer, GLintptr offset, GL
     printf("%lld", length);
     printf(")");
     gl.InvalidateBufferSubData(buffer, offset, length);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9164,6 +9681,7 @@ extern "C" void GLAPI InvalidateBufferData(GLuint buffer) {
     printf("%u", buffer);
     printf(")");
     gl.InvalidateBufferData(buffer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9180,6 +9698,7 @@ extern "C" void GLAPI InvalidateFramebuffer(GLenum target, GLsizei numAttachment
     printf("%p", attachments);
     printf(")");
     gl.InvalidateFramebuffer(target, numAttachments, attachments);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9208,6 +9727,7 @@ extern "C" void GLAPI InvalidateSubFramebuffer(GLenum target, GLsizei numAttachm
     printf("%d", height);
     printf(")");
     gl.InvalidateSubFramebuffer(target, numAttachments, attachments, x, y, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9227,6 +9747,7 @@ extern "C" void GLAPI MultiDrawArraysIndirect(GLenum mode, const void * indirect
     printf("%d", stride);
     printf(")");
     gl.MultiDrawArraysIndirect(mode, indirect, drawcount, stride);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9249,6 +9770,7 @@ extern "C" void GLAPI MultiDrawElementsIndirect(GLenum mode, GLenum type, const 
     printf("%d", stride);
     printf(")");
     gl.MultiDrawElementsIndirect(mode, type, indirect, drawcount, stride);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9268,6 +9790,7 @@ extern "C" void GLAPI GetProgramInterfaceiv(GLuint program, GLenum programInterf
     printf("%p", params);
     printf(")");
     gl.GetProgramInterfaceiv(program, programInterface, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9286,6 +9809,7 @@ extern "C" GLuint GLAPI GetProgramResourceIndex(GLuint program, GLenum programIn
     printf(" -> ");
     GLuint result = gl.GetProgramResourceIndex(program, programInterface, name);
     printf("%u", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -9312,6 +9836,7 @@ extern "C" void GLAPI GetProgramResourceName(GLuint program, GLenum programInter
     printf("%p", name);
     printf(")");
     gl.GetProgramResourceName(program, programInterface, index, bufSize, length, name);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9343,6 +9868,7 @@ extern "C" void GLAPI GetProgramResourceiv(GLuint program, GLenum programInterfa
     printf("%p", params);
     printf(")");
     gl.GetProgramResourceiv(program, programInterface, index, propCount, props, bufSize, length, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9361,6 +9887,7 @@ extern "C" GLint GLAPI GetProgramResourceLocation(GLuint program, GLenum program
     printf(" -> ");
     GLint result = gl.GetProgramResourceLocation(program, programInterface, name);
     printf("%d", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -9380,6 +9907,7 @@ extern "C" GLint GLAPI GetProgramResourceLocationIndex(GLuint program, GLenum pr
     printf(" -> ");
     GLint result = gl.GetProgramResourceLocationIndex(program, programInterface, name);
     printf("%d", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -9397,6 +9925,7 @@ extern "C" void GLAPI ShaderStorageBlockBinding(GLuint program, GLuint storageBl
     printf("%u", storageBlockBinding);
     printf(")");
     gl.ShaderStorageBlockBinding(program, storageBlockIndex, storageBlockBinding);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9419,6 +9948,7 @@ extern "C" void GLAPI TexBufferRange(GLenum target, GLenum internalformat, GLuin
     printf("%lld", size);
     printf(")");
     gl.TexBufferRange(target, internalformat, buffer, offset, size);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9444,6 +9974,7 @@ extern "C" void GLAPI TexStorage2DMultisample(GLenum target, GLsizei samples, GL
     printf("%s", fixedsamplelocations ? "true" : "false");
     printf(")");
     gl.TexStorage2DMultisample(target, samples, internalformat, width, height, fixedsamplelocations);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9472,6 +10003,7 @@ extern "C" void GLAPI TexStorage3DMultisample(GLenum target, GLsizei samples, GL
     printf("%s", fixedsamplelocations ? "true" : "false");
     printf(")");
     gl.TexStorage3DMultisample(target, samples, internalformat, width, height, depth, fixedsamplelocations);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9503,6 +10035,7 @@ extern "C" void GLAPI TextureView(GLuint texture, GLenum target, GLuint origtext
     printf("%u", numlayers);
     printf(")");
     gl.TextureView(texture, target, origtexture, internalformat, minlevel, numlevels, minlayer, numlayers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9522,6 +10055,7 @@ extern "C" void GLAPI BindVertexBuffer(GLuint bindingindex, GLuint buffer, GLint
     printf("%d", stride);
     printf(")");
     gl.BindVertexBuffer(bindingindex, buffer, offset, stride);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9544,6 +10078,7 @@ extern "C" void GLAPI VertexAttribFormat(GLuint attribindex, GLint size, GLenum 
     printf("%u", relativeoffset);
     printf(")");
     gl.VertexAttribFormat(attribindex, size, type, normalized, relativeoffset);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9563,6 +10098,7 @@ extern "C" void GLAPI VertexAttribIFormat(GLuint attribindex, GLint size, GLenum
     printf("%u", relativeoffset);
     printf(")");
     gl.VertexAttribIFormat(attribindex, size, type, relativeoffset);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9582,6 +10118,7 @@ extern "C" void GLAPI VertexAttribLFormat(GLuint attribindex, GLint size, GLenum
     printf("%u", relativeoffset);
     printf(")");
     gl.VertexAttribLFormat(attribindex, size, type, relativeoffset);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9595,6 +10132,7 @@ extern "C" void GLAPI VertexAttribBinding(GLuint attribindex, GLuint bindinginde
     printf("%u", bindingindex);
     printf(")");
     gl.VertexAttribBinding(attribindex, bindingindex);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9608,6 +10146,7 @@ extern "C" void GLAPI VertexBindingDivisor(GLuint bindingindex, GLuint divisor) 
     printf("%u", divisor);
     printf(")");
     gl.VertexBindingDivisor(bindingindex, divisor);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9633,6 +10172,7 @@ extern "C" void GLAPI DebugMessageControl(GLenum source, GLenum type, GLenum sev
     printf("%s", enabled ? "true" : "false");
     printf(")");
     gl.DebugMessageControl(source, type, severity, count, ids, enabled);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9658,6 +10198,7 @@ extern "C" void GLAPI DebugMessageInsert(GLenum source, GLenum type, GLuint id, 
     printf("%p", buf);
     printf(")");
     gl.DebugMessageInsert(source, type, id, severity, length, buf);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9671,6 +10212,7 @@ extern "C" void GLAPI DebugMessageCallback(GLDEBUGPROC callback, const void * us
     printf("%p", userParam);
     printf(")");
     gl.DebugMessageCallback(callback, userParam);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9704,6 +10246,7 @@ extern "C" GLuint GLAPI GetDebugMessageLog(GLuint count, GLsizei bufSize, GLenum
     printf(" -> ");
     GLuint result = gl.GetDebugMessageLog(count, bufSize, sources, types, ids, severities, lengths, messageLog);
     printf("%u", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -9724,6 +10267,7 @@ extern "C" void GLAPI PushDebugGroup(GLenum source, GLuint id, GLsizei length, c
     printf("%p", message);
     printf(")");
     gl.PushDebugGroup(source, id, length, message);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9732,6 +10276,7 @@ extern "C" void GLAPI PopDebugGroup() {
     printf("glPopDebugGroup(");
     printf(")");
     gl.PopDebugGroup();
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9751,6 +10296,7 @@ extern "C" void GLAPI ObjectLabel(GLenum identifier, GLuint name, GLsizei length
     printf("%p", label);
     printf(")");
     gl.ObjectLabel(identifier, name, length, label);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9773,6 +10319,7 @@ extern "C" void GLAPI GetObjectLabel(GLenum identifier, GLuint name, GLsizei buf
     printf("%p", label);
     printf(")");
     gl.GetObjectLabel(identifier, name, bufSize, length, label);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9789,6 +10336,7 @@ extern "C" void GLAPI ObjectPtrLabel(const void * ptr, GLsizei length, const GLc
     printf("%p", label);
     printf(")");
     gl.ObjectPtrLabel(ptr, length, label);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9808,6 +10356,7 @@ extern "C" void GLAPI GetObjectPtrLabel(const void * ptr, GLsizei bufSize, GLsiz
     printf("%p", label);
     printf(")");
     gl.GetObjectPtrLabel(ptr, bufSize, length, label);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9827,6 +10376,7 @@ extern "C" void GLAPI BufferStorage(GLenum target, GLsizeiptr size, const void *
     print_buffer_access_bits(flags);
     printf(")");
     gl.BufferStorage(target, size, data, flags);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9849,6 +10399,7 @@ extern "C" void GLAPI ClearTexImage(GLuint texture, GLint level, GLenum format, 
     printf("%p", data);
     printf(")");
     gl.ClearTexImage(texture, level, format, type, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9889,6 +10440,7 @@ extern "C" void GLAPI ClearTexSubImage(GLuint texture, GLint level, GLint xoffse
     printf("%p", data);
     printf(")");
     gl.ClearTexSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9908,6 +10460,7 @@ extern "C" void GLAPI BindBuffersBase(GLenum target, GLuint first, GLsizei count
     printf("%p", buffers);
     printf(")");
     gl.BindBuffersBase(target, first, count, buffers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9933,6 +10486,7 @@ extern "C" void GLAPI BindBuffersRange(GLenum target, GLuint first, GLsizei coun
     printf("%p", sizes);
     printf(")");
     gl.BindBuffersRange(target, first, count, buffers, offsets, sizes);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9949,6 +10503,7 @@ extern "C" void GLAPI BindTextures(GLuint first, GLsizei count, const GLuint * t
     printf("%p", textures);
     printf(")");
     gl.BindTextures(first, count, textures);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9965,6 +10520,7 @@ extern "C" void GLAPI BindSamplers(GLuint first, GLsizei count, const GLuint * s
     printf("%p", samplers);
     printf(")");
     gl.BindSamplers(first, count, samplers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -9981,6 +10537,7 @@ extern "C" void GLAPI BindImageTextures(GLuint first, GLsizei count, const GLuin
     printf("%p", textures);
     printf(")");
     gl.BindImageTextures(first, count, textures);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10003,6 +10560,7 @@ extern "C" void GLAPI BindVertexBuffers(GLuint first, GLsizei count, const GLuin
     printf("%p", strides);
     printf(")");
     gl.BindVertexBuffers(first, count, buffers, offsets, strides);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10016,6 +10574,7 @@ extern "C" void GLAPI ClipControl(GLenum origin, GLenum depth) {
     printf("0x%04x", depth);
     printf(")");
     gl.ClipControl(origin, depth);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10029,6 +10588,7 @@ extern "C" void GLAPI CreateTransformFeedbacks(GLsizei n, GLuint * ids) {
     printf("%p", ids);
     printf(")");
     gl.CreateTransformFeedbacks(n, ids);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10045,6 +10605,7 @@ extern "C" void GLAPI TransformFeedbackBufferBase(GLuint xfb, GLuint index, GLui
     printf("%u", buffer);
     printf(")");
     gl.TransformFeedbackBufferBase(xfb, index, buffer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10067,6 +10628,7 @@ extern "C" void GLAPI TransformFeedbackBufferRange(GLuint xfb, GLuint index, GLu
     printf("%lld", size);
     printf(")");
     gl.TransformFeedbackBufferRange(xfb, index, buffer, offset, size);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10083,6 +10645,7 @@ extern "C" void GLAPI GetTransformFeedbackiv(GLuint xfb, GLenum pname, GLint * p
     printf("%p", param);
     printf(")");
     gl.GetTransformFeedbackiv(xfb, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10102,6 +10665,7 @@ extern "C" void GLAPI GetTransformFeedbacki_v(GLuint xfb, GLenum pname, GLuint i
     printf("%p", param);
     printf(")");
     gl.GetTransformFeedbacki_v(xfb, pname, index, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10121,6 +10685,7 @@ extern "C" void GLAPI GetTransformFeedbacki64_v(GLuint xfb, GLenum pname, GLuint
     printf("%p", param);
     printf(")");
     gl.GetTransformFeedbacki64_v(xfb, pname, index, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10134,6 +10699,7 @@ extern "C" void GLAPI CreateBuffers(GLsizei n, GLuint * buffers) {
     printf("%p", buffers);
     printf(")");
     gl.CreateBuffers(n, buffers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10153,6 +10719,7 @@ extern "C" void GLAPI NamedBufferStorage(GLuint buffer, GLsizeiptr size, const v
     printf("0x%08x", flags);
     printf(")");
     gl.NamedBufferStorage(buffer, size, data, flags);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10172,6 +10739,7 @@ extern "C" void GLAPI NamedBufferData(GLuint buffer, GLsizeiptr size, const void
     printf("0x%04x", usage);
     printf(")");
     gl.NamedBufferData(buffer, size, data, usage);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10191,6 +10759,7 @@ extern "C" void GLAPI NamedBufferSubData(GLuint buffer, GLintptr offset, GLsizei
     printf("%p", data);
     printf(")");
     gl.NamedBufferSubData(buffer, offset, size, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10213,6 +10782,7 @@ extern "C" void GLAPI CopyNamedBufferSubData(GLuint readBuffer, GLuint writeBuff
     printf("%lld", size);
     printf(")");
     gl.CopyNamedBufferSubData(readBuffer, writeBuffer, readOffset, writeOffset, size);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10235,6 +10805,7 @@ extern "C" void GLAPI ClearNamedBufferData(GLuint buffer, GLenum internalformat,
     printf("%p", data);
     printf(")");
     gl.ClearNamedBufferData(buffer, internalformat, format, type, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10263,6 +10834,7 @@ extern "C" void GLAPI ClearNamedBufferSubData(GLuint buffer, GLenum internalform
     printf("%p", data);
     printf(")");
     gl.ClearNamedBufferSubData(buffer, internalformat, offset, size, format, type, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10278,6 +10850,7 @@ extern "C" void * GLAPI MapNamedBuffer(GLuint buffer, GLenum access) {
     printf(" -> ");
     void * result = gl.MapNamedBuffer(buffer, access);
     printf("%p", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -10300,6 +10873,7 @@ extern "C" void * GLAPI MapNamedBufferRange(GLuint buffer, GLintptr offset, GLsi
     printf(" -> ");
     void * result = gl.MapNamedBufferRange(buffer, offset, length, access);
     printf("%p", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -10313,6 +10887,7 @@ extern "C" GLboolean GLAPI UnmapNamedBuffer(GLuint buffer) {
     printf(" -> ");
     GLboolean result = gl.UnmapNamedBuffer(buffer);
     printf("%s", result ? "true" : "false");
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -10330,6 +10905,7 @@ extern "C" void GLAPI FlushMappedNamedBufferRange(GLuint buffer, GLintptr offset
     printf("%lld", length);
     printf(")");
     gl.FlushMappedNamedBufferRange(buffer, offset, length);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10346,6 +10922,7 @@ extern "C" void GLAPI GetNamedBufferParameteriv(GLuint buffer, GLenum pname, GLi
     printf("%p", params);
     printf(")");
     gl.GetNamedBufferParameteriv(buffer, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10362,6 +10939,7 @@ extern "C" void GLAPI GetNamedBufferParameteri64v(GLuint buffer, GLenum pname, G
     printf("%p", params);
     printf(")");
     gl.GetNamedBufferParameteri64v(buffer, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10378,6 +10956,7 @@ extern "C" void GLAPI GetNamedBufferPointerv(GLuint buffer, GLenum pname, void *
     printf("%p", params);
     printf(")");
     gl.GetNamedBufferPointerv(buffer, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10397,6 +10976,7 @@ extern "C" void GLAPI GetNamedBufferSubData(GLuint buffer, GLintptr offset, GLsi
     printf("%p", data);
     printf(")");
     gl.GetNamedBufferSubData(buffer, offset, size, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10410,6 +10990,7 @@ extern "C" void GLAPI CreateFramebuffers(GLsizei n, GLuint * framebuffers) {
     printf("%p", framebuffers);
     printf(")");
     gl.CreateFramebuffers(n, framebuffers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10429,6 +11010,7 @@ extern "C" void GLAPI NamedFramebufferRenderbuffer(GLuint framebuffer, GLenum at
     printf("%u", renderbuffer);
     printf(")");
     gl.NamedFramebufferRenderbuffer(framebuffer, attachment, renderbuffertarget, renderbuffer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10445,6 +11027,7 @@ extern "C" void GLAPI NamedFramebufferParameteri(GLuint framebuffer, GLenum pnam
     printf("%d", param);
     printf(")");
     gl.NamedFramebufferParameteri(framebuffer, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10464,6 +11047,7 @@ extern "C" void GLAPI NamedFramebufferTexture(GLuint framebuffer, GLenum attachm
     printf("%d", level);
     printf(")");
     gl.NamedFramebufferTexture(framebuffer, attachment, texture, level);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10486,6 +11070,7 @@ extern "C" void GLAPI NamedFramebufferTextureLayer(GLuint framebuffer, GLenum at
     printf("%d", layer);
     printf(")");
     gl.NamedFramebufferTextureLayer(framebuffer, attachment, texture, level, layer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10499,6 +11084,7 @@ extern "C" void GLAPI NamedFramebufferDrawBuffer(GLuint framebuffer, GLenum buf)
     printf("0x%04x", buf);
     printf(")");
     gl.NamedFramebufferDrawBuffer(framebuffer, buf);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10515,6 +11101,7 @@ extern "C" void GLAPI NamedFramebufferDrawBuffers(GLuint framebuffer, GLsizei n,
     printf("%p", bufs);
     printf(")");
     gl.NamedFramebufferDrawBuffers(framebuffer, n, bufs);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10528,6 +11115,7 @@ extern "C" void GLAPI NamedFramebufferReadBuffer(GLuint framebuffer, GLenum src)
     printf("0x%04x", src);
     printf(")");
     gl.NamedFramebufferReadBuffer(framebuffer, src);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10544,6 +11132,7 @@ extern "C" void GLAPI InvalidateNamedFramebufferData(GLuint framebuffer, GLsizei
     printf("%p", attachments);
     printf(")");
     gl.InvalidateNamedFramebufferData(framebuffer, numAttachments, attachments);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10572,6 +11161,7 @@ extern "C" void GLAPI InvalidateNamedFramebufferSubData(GLuint framebuffer, GLsi
     printf("%d", height);
     printf(")");
     gl.InvalidateNamedFramebufferSubData(framebuffer, numAttachments, attachments, x, y, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10591,6 +11181,7 @@ extern "C" void GLAPI ClearNamedFramebufferiv(GLuint framebuffer, GLenum buffer,
     printf("%p", value);
     printf(")");
     gl.ClearNamedFramebufferiv(framebuffer, buffer, drawbuffer, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10610,6 +11201,7 @@ extern "C" void GLAPI ClearNamedFramebufferuiv(GLuint framebuffer, GLenum buffer
     printf("%p", value);
     printf(")");
     gl.ClearNamedFramebufferuiv(framebuffer, buffer, drawbuffer, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10629,6 +11221,7 @@ extern "C" void GLAPI ClearNamedFramebufferfv(GLuint framebuffer, GLenum buffer,
     printf("%p", value);
     printf(")");
     gl.ClearNamedFramebufferfv(framebuffer, buffer, drawbuffer, value);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10651,6 +11244,7 @@ extern "C" void GLAPI ClearNamedFramebufferfi(GLuint framebuffer, GLenum buffer,
     printf("%d", stencil);
     printf(")");
     gl.ClearNamedFramebufferfi(framebuffer, buffer, drawbuffer, depth, stencil);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10694,6 +11288,7 @@ extern "C" void GLAPI BlitNamedFramebuffer(GLuint readFramebuffer, GLuint drawFr
     printf("0x%04x", filter);
     printf(")");
     gl.BlitNamedFramebuffer(readFramebuffer, drawFramebuffer, srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10709,6 +11304,7 @@ extern "C" GLenum GLAPI CheckNamedFramebufferStatus(GLuint framebuffer, GLenum t
     printf(" -> ");
     GLenum result = gl.CheckNamedFramebufferStatus(framebuffer, target);
     printf("0x%04x", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -10726,6 +11322,7 @@ extern "C" void GLAPI GetNamedFramebufferParameteriv(GLuint framebuffer, GLenum 
     printf("%p", param);
     printf(")");
     gl.GetNamedFramebufferParameteriv(framebuffer, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10745,6 +11342,7 @@ extern "C" void GLAPI GetNamedFramebufferAttachmentParameteriv(GLuint framebuffe
     printf("%p", params);
     printf(")");
     gl.GetNamedFramebufferAttachmentParameteriv(framebuffer, attachment, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10758,6 +11356,7 @@ extern "C" void GLAPI CreateRenderbuffers(GLsizei n, GLuint * renderbuffers) {
     printf("%p", renderbuffers);
     printf(")");
     gl.CreateRenderbuffers(n, renderbuffers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10777,6 +11376,7 @@ extern "C" void GLAPI NamedRenderbufferStorage(GLuint renderbuffer, GLenum inter
     printf("%d", height);
     printf(")");
     gl.NamedRenderbufferStorage(renderbuffer, internalformat, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10799,6 +11399,7 @@ extern "C" void GLAPI NamedRenderbufferStorageMultisample(GLuint renderbuffer, G
     printf("%d", height);
     printf(")");
     gl.NamedRenderbufferStorageMultisample(renderbuffer, samples, internalformat, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10815,6 +11416,7 @@ extern "C" void GLAPI GetNamedRenderbufferParameteriv(GLuint renderbuffer, GLenu
     printf("%p", params);
     printf(")");
     gl.GetNamedRenderbufferParameteriv(renderbuffer, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10831,6 +11433,7 @@ extern "C" void GLAPI CreateTextures(GLenum target, GLsizei n, GLuint * textures
     printf("%p", textures);
     printf(")");
     gl.CreateTextures(target, n, textures);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10847,6 +11450,7 @@ extern "C" void GLAPI TextureBuffer(GLuint texture, GLenum internalformat, GLuin
     printf("%u", buffer);
     printf(")");
     gl.TextureBuffer(texture, internalformat, buffer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10869,6 +11473,7 @@ extern "C" void GLAPI TextureBufferRange(GLuint texture, GLenum internalformat, 
     printf("%lld", size);
     printf(")");
     gl.TextureBufferRange(texture, internalformat, buffer, offset, size);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10888,6 +11493,7 @@ extern "C" void GLAPI TextureStorage1D(GLuint texture, GLsizei levels, GLenum in
     printf("%d", width);
     printf(")");
     gl.TextureStorage1D(texture, levels, internalformat, width);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10910,6 +11516,7 @@ extern "C" void GLAPI TextureStorage2D(GLuint texture, GLsizei levels, GLenum in
     printf("%d", height);
     printf(")");
     gl.TextureStorage2D(texture, levels, internalformat, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10935,6 +11542,7 @@ extern "C" void GLAPI TextureStorage3D(GLuint texture, GLsizei levels, GLenum in
     printf("%d", depth);
     printf(")");
     gl.TextureStorage3D(texture, levels, internalformat, width, height, depth);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10960,6 +11568,7 @@ extern "C" void GLAPI TextureStorage2DMultisample(GLuint texture, GLsizei sample
     printf("%s", fixedsamplelocations ? "true" : "false");
     printf(")");
     gl.TextureStorage2DMultisample(texture, samples, internalformat, width, height, fixedsamplelocations);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -10988,6 +11597,7 @@ extern "C" void GLAPI TextureStorage3DMultisample(GLuint texture, GLsizei sample
     printf("%s", fixedsamplelocations ? "true" : "false");
     printf(")");
     gl.TextureStorage3DMultisample(texture, samples, internalformat, width, height, depth, fixedsamplelocations);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11016,6 +11626,7 @@ extern "C" void GLAPI TextureSubImage1D(GLuint texture, GLint level, GLint xoffs
     printf("%p", pixels);
     printf(")");
     gl.TextureSubImage1D(texture, level, xoffset, width, format, type, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11050,6 +11661,7 @@ extern "C" void GLAPI TextureSubImage2D(GLuint texture, GLint level, GLint xoffs
     printf("%p", pixels);
     printf(")");
     gl.TextureSubImage2D(texture, level, xoffset, yoffset, width, height, format, type, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11090,6 +11702,7 @@ extern "C" void GLAPI TextureSubImage3D(GLuint texture, GLint level, GLint xoffs
     printf("%p", pixels);
     printf(")");
     gl.TextureSubImage3D(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11118,6 +11731,7 @@ extern "C" void GLAPI CompressedTextureSubImage1D(GLuint texture, GLint level, G
     printf("%p", data);
     printf(")");
     gl.CompressedTextureSubImage1D(texture, level, xoffset, width, format, imageSize, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11152,6 +11766,7 @@ extern "C" void GLAPI CompressedTextureSubImage2D(GLuint texture, GLint level, G
     printf("%p", data);
     printf(")");
     gl.CompressedTextureSubImage2D(texture, level, xoffset, yoffset, width, height, format, imageSize, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11192,6 +11807,7 @@ extern "C" void GLAPI CompressedTextureSubImage3D(GLuint texture, GLint level, G
     printf("%p", data);
     printf(")");
     gl.CompressedTextureSubImage3D(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11217,6 +11833,7 @@ extern "C" void GLAPI CopyTextureSubImage1D(GLuint texture, GLint level, GLint x
     printf("%d", width);
     printf(")");
     gl.CopyTextureSubImage1D(texture, level, xoffset, x, y, width);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11248,6 +11865,7 @@ extern "C" void GLAPI CopyTextureSubImage2D(GLuint texture, GLint level, GLint x
     printf("%d", height);
     printf(")");
     gl.CopyTextureSubImage2D(texture, level, xoffset, yoffset, x, y, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11282,6 +11900,7 @@ extern "C" void GLAPI CopyTextureSubImage3D(GLuint texture, GLint level, GLint x
     printf("%d", height);
     printf(")");
     gl.CopyTextureSubImage3D(texture, level, xoffset, yoffset, zoffset, x, y, width, height);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11298,6 +11917,7 @@ extern "C" void GLAPI TextureParameterf(GLuint texture, GLenum pname, GLfloat pa
     printf("%f", param);
     printf(")");
     gl.TextureParameterf(texture, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11314,6 +11934,7 @@ extern "C" void GLAPI TextureParameterfv(GLuint texture, GLenum pname, const GLf
     printf("%p", param);
     printf(")");
     gl.TextureParameterfv(texture, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11330,6 +11951,7 @@ extern "C" void GLAPI TextureParameteri(GLuint texture, GLenum pname, GLint para
     printf("%d", param);
     printf(")");
     gl.TextureParameteri(texture, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11346,6 +11968,7 @@ extern "C" void GLAPI TextureParameterIiv(GLuint texture, GLenum pname, const GL
     printf("%p", params);
     printf(")");
     gl.TextureParameterIiv(texture, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11362,6 +11985,7 @@ extern "C" void GLAPI TextureParameterIuiv(GLuint texture, GLenum pname, const G
     printf("%p", params);
     printf(")");
     gl.TextureParameterIuiv(texture, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11378,6 +12002,7 @@ extern "C" void GLAPI TextureParameteriv(GLuint texture, GLenum pname, const GLi
     printf("%p", param);
     printf(")");
     gl.TextureParameteriv(texture, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11388,6 +12013,7 @@ extern "C" void GLAPI GenerateTextureMipmap(GLuint texture) {
     printf("%u", texture);
     printf(")");
     gl.GenerateTextureMipmap(texture);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11401,6 +12027,7 @@ extern "C" void GLAPI BindTextureUnit(GLuint unit, GLuint texture) {
     printf("%u", texture);
     printf(")");
     gl.BindTextureUnit(unit, texture);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11426,6 +12053,7 @@ extern "C" void GLAPI GetTextureImage(GLuint texture, GLint level, GLenum format
     printf("%p", pixels);
     printf(")");
     gl.GetTextureImage(texture, level, format, type, bufSize, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11445,6 +12073,7 @@ extern "C" void GLAPI GetCompressedTextureImage(GLuint texture, GLint level, GLs
     printf("%p", pixels);
     printf(")");
     gl.GetCompressedTextureImage(texture, level, bufSize, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11464,6 +12093,7 @@ extern "C" void GLAPI GetTextureLevelParameterfv(GLuint texture, GLint level, GL
     printf("%p", params);
     printf(")");
     gl.GetTextureLevelParameterfv(texture, level, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11483,6 +12113,7 @@ extern "C" void GLAPI GetTextureLevelParameteriv(GLuint texture, GLint level, GL
     printf("%p", params);
     printf(")");
     gl.GetTextureLevelParameteriv(texture, level, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11499,6 +12130,7 @@ extern "C" void GLAPI GetTextureParameterfv(GLuint texture, GLenum pname, GLfloa
     printf("%p", params);
     printf(")");
     gl.GetTextureParameterfv(texture, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11515,6 +12147,7 @@ extern "C" void GLAPI GetTextureParameterIiv(GLuint texture, GLenum pname, GLint
     printf("%p", params);
     printf(")");
     gl.GetTextureParameterIiv(texture, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11531,6 +12164,7 @@ extern "C" void GLAPI GetTextureParameterIuiv(GLuint texture, GLenum pname, GLui
     printf("%p", params);
     printf(")");
     gl.GetTextureParameterIuiv(texture, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11547,6 +12181,7 @@ extern "C" void GLAPI GetTextureParameteriv(GLuint texture, GLenum pname, GLint 
     printf("%p", params);
     printf(")");
     gl.GetTextureParameteriv(texture, pname, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11560,6 +12195,7 @@ extern "C" void GLAPI CreateVertexArrays(GLsizei n, GLuint * arrays) {
     printf("%p", arrays);
     printf(")");
     gl.CreateVertexArrays(n, arrays);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11573,6 +12209,7 @@ extern "C" void GLAPI DisableVertexArrayAttrib(GLuint vaobj, GLuint index) {
     printf("%u", index);
     printf(")");
     gl.DisableVertexArrayAttrib(vaobj, index);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11586,6 +12223,7 @@ extern "C" void GLAPI EnableVertexArrayAttrib(GLuint vaobj, GLuint index) {
     printf("%u", index);
     printf(")");
     gl.EnableVertexArrayAttrib(vaobj, index);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11599,6 +12237,7 @@ extern "C" void GLAPI VertexArrayElementBuffer(GLuint vaobj, GLuint buffer) {
     printf("%u", buffer);
     printf(")");
     gl.VertexArrayElementBuffer(vaobj, buffer);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11621,6 +12260,7 @@ extern "C" void GLAPI VertexArrayVertexBuffer(GLuint vaobj, GLuint bindingindex,
     printf("%d", stride);
     printf(")");
     gl.VertexArrayVertexBuffer(vaobj, bindingindex, buffer, offset, stride);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11646,6 +12286,7 @@ extern "C" void GLAPI VertexArrayVertexBuffers(GLuint vaobj, GLuint first, GLsiz
     printf("%p", strides);
     printf(")");
     gl.VertexArrayVertexBuffers(vaobj, first, count, buffers, offsets, strides);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11662,6 +12303,7 @@ extern "C" void GLAPI VertexArrayAttribBinding(GLuint vaobj, GLuint attribindex,
     printf("%u", bindingindex);
     printf(")");
     gl.VertexArrayAttribBinding(vaobj, attribindex, bindingindex);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11687,6 +12329,7 @@ extern "C" void GLAPI VertexArrayAttribFormat(GLuint vaobj, GLuint attribindex, 
     printf("%u", relativeoffset);
     printf(")");
     gl.VertexArrayAttribFormat(vaobj, attribindex, size, type, normalized, relativeoffset);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11709,6 +12352,7 @@ extern "C" void GLAPI VertexArrayAttribIFormat(GLuint vaobj, GLuint attribindex,
     printf("%u", relativeoffset);
     printf(")");
     gl.VertexArrayAttribIFormat(vaobj, attribindex, size, type, relativeoffset);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11731,6 +12375,7 @@ extern "C" void GLAPI VertexArrayAttribLFormat(GLuint vaobj, GLuint attribindex,
     printf("%u", relativeoffset);
     printf(")");
     gl.VertexArrayAttribLFormat(vaobj, attribindex, size, type, relativeoffset);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11747,6 +12392,7 @@ extern "C" void GLAPI VertexArrayBindingDivisor(GLuint vaobj, GLuint bindinginde
     printf("%u", divisor);
     printf(")");
     gl.VertexArrayBindingDivisor(vaobj, bindingindex, divisor);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11763,6 +12409,7 @@ extern "C" void GLAPI GetVertexArrayiv(GLuint vaobj, GLenum pname, GLint * param
     printf("%p", param);
     printf(")");
     gl.GetVertexArrayiv(vaobj, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11782,6 +12429,7 @@ extern "C" void GLAPI GetVertexArrayIndexediv(GLuint vaobj, GLuint index, GLenum
     printf("%p", param);
     printf(")");
     gl.GetVertexArrayIndexediv(vaobj, index, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11801,6 +12449,7 @@ extern "C" void GLAPI GetVertexArrayIndexed64iv(GLuint vaobj, GLuint index, GLen
     printf("%p", param);
     printf(")");
     gl.GetVertexArrayIndexed64iv(vaobj, index, pname, param);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11814,6 +12463,7 @@ extern "C" void GLAPI CreateSamplers(GLsizei n, GLuint * samplers) {
     printf("%p", samplers);
     printf(")");
     gl.CreateSamplers(n, samplers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11827,6 +12477,7 @@ extern "C" void GLAPI CreateProgramPipelines(GLsizei n, GLuint * pipelines) {
     printf("%p", pipelines);
     printf(")");
     gl.CreateProgramPipelines(n, pipelines);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11843,6 +12494,7 @@ extern "C" void GLAPI CreateQueries(GLenum target, GLsizei n, GLuint * ids) {
     printf("%p", ids);
     printf(")");
     gl.CreateQueries(target, n, ids);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11862,6 +12514,7 @@ extern "C" void GLAPI GetQueryBufferObjecti64v(GLuint id, GLuint buffer, GLenum 
     printf("%lld", offset);
     printf(")");
     gl.GetQueryBufferObjecti64v(id, buffer, pname, offset);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11881,6 +12534,7 @@ extern "C" void GLAPI GetQueryBufferObjectiv(GLuint id, GLuint buffer, GLenum pn
     printf("%lld", offset);
     printf(")");
     gl.GetQueryBufferObjectiv(id, buffer, pname, offset);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11900,6 +12554,7 @@ extern "C" void GLAPI GetQueryBufferObjectui64v(GLuint id, GLuint buffer, GLenum
     printf("%lld", offset);
     printf(")");
     gl.GetQueryBufferObjectui64v(id, buffer, pname, offset);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11919,6 +12574,7 @@ extern "C" void GLAPI GetQueryBufferObjectuiv(GLuint id, GLuint buffer, GLenum p
     printf("%lld", offset);
     printf(")");
     gl.GetQueryBufferObjectuiv(id, buffer, pname, offset);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11929,6 +12585,7 @@ extern "C" void GLAPI MemoryBarrierByRegion(GLbitfield barriers) {
     printf("0x%08x", barriers);
     printf(")");
     gl.MemoryBarrierByRegion(barriers);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -11972,6 +12629,7 @@ extern "C" void GLAPI GetTextureSubImage(GLuint texture, GLint level, GLint xoff
     printf("%p", pixels);
     printf(")");
     gl.GetTextureSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, bufSize, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -12009,6 +12667,7 @@ extern "C" void GLAPI GetCompressedTextureSubImage(GLuint texture, GLint level, 
     printf("%p", pixels);
     printf(")");
     gl.GetCompressedTextureSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth, bufSize, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -12019,6 +12678,7 @@ extern "C" GLenum GLAPI GetGraphicsResetStatus() {
     printf(" -> ");
     GLenum result = gl.GetGraphicsResetStatus();
     printf("0x%04x", result);
+    print_error();
     printf("\n");
     fflush(stdout);
     return result;
@@ -12039,6 +12699,7 @@ extern "C" void GLAPI GetnCompressedTexImage(GLenum target, GLint lod, GLsizei b
     printf("%p", pixels);
     printf(")");
     gl.GetnCompressedTexImage(target, lod, bufSize, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -12064,6 +12725,7 @@ extern "C" void GLAPI GetnTexImage(GLenum target, GLint level, GLenum format, GL
     printf("%p", pixels);
     printf(")");
     gl.GetnTexImage(target, level, format, type, bufSize, pixels);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -12083,6 +12745,7 @@ extern "C" void GLAPI GetnUniformdv(GLuint program, GLint location, GLsizei bufS
     printf("%p", params);
     printf(")");
     gl.GetnUniformdv(program, location, bufSize, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -12102,6 +12765,7 @@ extern "C" void GLAPI GetnUniformfv(GLuint program, GLint location, GLsizei bufS
     printf("%p", params);
     printf(")");
     gl.GetnUniformfv(program, location, bufSize, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -12121,6 +12785,7 @@ extern "C" void GLAPI GetnUniformiv(GLuint program, GLint location, GLsizei bufS
     printf("%p", params);
     printf(")");
     gl.GetnUniformiv(program, location, bufSize, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -12140,6 +12805,7 @@ extern "C" void GLAPI GetnUniformuiv(GLuint program, GLint location, GLsizei buf
     printf("%p", params);
     printf(")");
     gl.GetnUniformuiv(program, location, bufSize, params);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -12171,6 +12837,7 @@ extern "C" void GLAPI ReadnPixels(GLint x, GLint y, GLsizei width, GLsizei heigh
     printf("%p", data);
     printf(")");
     gl.ReadnPixels(x, y, width, height, format, type, bufSize, data);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -12179,6 +12846,7 @@ extern "C" void GLAPI TextureBarrier() {
     printf("glTextureBarrier(");
     printf(")");
     gl.TextureBarrier();
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -12201,6 +12869,7 @@ extern "C" void GLAPI SpecializeShader(GLuint shader, const GLchar * pEntryPoint
     printf("%p", pConstantValue);
     printf(")");
     gl.SpecializeShader(shader, pEntryPoint, numSpecializationConstants, pConstantIndex, pConstantValue);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -12223,6 +12892,7 @@ extern "C" void GLAPI MultiDrawArraysIndirectCount(GLenum mode, const void * ind
     printf("%d", stride);
     printf(")");
     gl.MultiDrawArraysIndirectCount(mode, indirect, drawcount, maxdrawcount, stride);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -12248,6 +12918,7 @@ extern "C" void GLAPI MultiDrawElementsIndirectCount(GLenum mode, GLenum type, c
     printf("%d", stride);
     printf(")");
     gl.MultiDrawElementsIndirectCount(mode, type, indirect, drawcount, maxdrawcount, stride);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
@@ -12264,6 +12935,7 @@ extern "C" void GLAPI PolygonOffsetClamp(GLfloat factor, GLfloat units, GLfloat 
     printf("%f", clamp);
     printf(")");
     gl.PolygonOffsetClamp(factor, units, clamp);
+    print_error();
     printf("\n");
     fflush(stdout);
 }
