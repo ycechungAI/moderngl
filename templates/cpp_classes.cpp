@@ -6,7 +6,11 @@
 ///
 //! for c_name, methods in c_methods:
 //! for m_name, m_name_1, m_name_2, m_args in methods:
+//! if m_args
 extern PyObject * /*{m_name_1}*/(/*{c_name}*/ * self, PyObject * const * args, Py_ssize_t nargs);
+//! else
+extern PyObject * /*{m_name_1}*/(/*{c_name}*/ * self);
+//! endif
 //! endfor
 //! if not loop.last
 ///
@@ -32,7 +36,7 @@ PyMethodDef /*{c_name}*/_methods[] = {
 //! for c_name, methods in c_methods:
 //! for m_name, m_name_1, m_name_2, m_args in methods:
 //! if m_args
-PyObject * /*{m_name_2}*/(/*{c_name}*/ * self, PyObejct * args) {
+PyObject * /*{m_name_2}*/(/*{c_name}*/ * self, PyObject * args) {
     return /*{m_name_1}*/(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 //! if not loop.last

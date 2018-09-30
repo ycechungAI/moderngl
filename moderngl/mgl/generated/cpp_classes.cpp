@@ -9,6 +9,8 @@
 extern PyObject * MGLBuffer_meth_write(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs);
 extern PyObject * MGLBuffer_meth_read(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs);
 extern PyObject * MGLBuffer_meth_map(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs);
+extern PyObject * MGLBuffer_meth_unmap(MGLBuffer * self);
+extern PyObject * MGLBuffer_meth_clear(MGLBuffer * self);
 
 extern PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
 extern PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
@@ -27,6 +29,8 @@ PyMethodDef MGLBuffer_methods[] = {
     {"write", (PyCFunction)MGLBuffer_meth_write, METH_FASTCALL, 0},
     {"read", (PyCFunction)MGLBuffer_meth_read, METH_FASTCALL, 0},
     {"map", (PyCFunction)MGLBuffer_meth_map, METH_FASTCALL, 0},
+    {"unmap", (PyCFunction)MGLBuffer_meth_unmap, METH_NOARGS, 0},
+    {"clear", (PyCFunction)MGLBuffer_meth_clear, METH_NOARGS, 0},
     {0},
 };
 
@@ -67,6 +71,7 @@ PyObject * MGLBuffer_meth_map_va(MGLBuffer * self, PyObject * args) {
     return MGLBuffer_meth_map(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
+
 PyObject * MGLContext_meth_buffer_va(MGLContext * self, PyObject * args) {
     return MGLContext_meth_buffer(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
@@ -99,6 +104,8 @@ PyMethodDef MGLBuffer_methods[] = {
     {"write", (PyCFunction)MGLBuffer_meth_write_va, METH_VARARGS, 0},
     {"read", (PyCFunction)MGLBuffer_meth_read_va, METH_VARARGS, 0},
     {"map", (PyCFunction)MGLBuffer_meth_map_va, METH_VARARGS, 0},
+    {"unmap", (PyCFunction)MGLBuffer_meth_unmap, METH_NOARGS, 0},
+    {"clear", (PyCFunction)MGLBuffer_meth_clear, METH_NOARGS, 0},
     {0},
 };
 

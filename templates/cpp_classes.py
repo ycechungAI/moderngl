@@ -14,7 +14,7 @@ for fn in glob.glob('moderngl/mgl/**/*.cpp', recursive=True):
     with open(fn) as f:
         code = f.read()
 
-    re_methods += re.findall(r'^PyObject \* ([A-Za-z0-9]+)_meth_([A-Za-z0-9]+)\(\1 \* self(, PyObject \* const \* args, Py_ssize_t nargs)\) \{$', code, re.M)
+    re_methods += re.findall(r'^PyObject \* ([A-Za-z0-9]+)_meth_([A-Za-z0-9]+)\(\1 \* self(, PyObject \* const \* args, Py_ssize_t nargs)?\) \{$', code, re.M)
 
 for fn in glob.glob('moderngl/mgl/*.hpp'):
     with open(fn) as f:
