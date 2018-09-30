@@ -1,5 +1,5 @@
 #include "limits.hpp"
-#include "classes/limits_class.hpp"
+#include "generated/py_classes.hpp"
 
 template <typename T>
 PyObject * to_pyobject(const T & value) {

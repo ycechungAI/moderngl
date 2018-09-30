@@ -1,5 +1,5 @@
 #include "extensions.hpp"
-#include "classes/context_class.hpp"
+#include "generated/py_classes.hpp"
 
 /* MGLContext.extensions(...)
  * Returns a list of supported extensions.

@@ -1,7 +1,8 @@
 #include "vertex_array.hpp"
 #include "buffer.hpp"
 #include "program.hpp"
-#include "classes/classes.hpp"
+#include "generated/py_classes.hpp"
+#include "generated/cpp_classes.hpp"
 #include "internal/modules.hpp"
 
 PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
@@ -343,5 +344,5 @@ void MGLVertexArray_define(MGLContext * ctx) {
         {0},
     };
 
-    ctx->MGLVertexArray_class = define_python_class(mgl_name ".VertexArray", sizeof(MGLVertexArray), MGLVertexArray_slots);
+    ctx->MGLVertexArray_class = (PyTypeObject *)PyType_FromSpec(&MGLVertexArray_spec);
 }

@@ -5,6 +5,7 @@ from . import mgl
 from .buffer import Buffer
 from .limits import Limits
 from .program import Program
+from .texture import Texture
 from .vertex_array import VertexArray
 
 
@@ -25,6 +26,9 @@ class Context:
             tess_evaluation_shader=None, varyings=()) -> Program:
         return self.__mglo.program(
             vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader, varyings)
+
+    def texture(self, size, components=3, data=None, levels=-1, samples=0, aligment=1, dtype='f1') -> Texture:
+        return self.__mglo.texture(size, components, data, levels, samples, aligment, dtype)
 
     def vertex_array(self, program, content, index_buffer=None) -> VertexArray:
         return self.__mglo.vertex_array(program, content, index_buffer)

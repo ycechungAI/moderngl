@@ -1,7 +1,7 @@
 #include "mgl.hpp"
 #include "extensions.hpp"
 #include "internal/modules.hpp"
-#include "classes/classes.hpp"
+#include "generated/py_classes.hpp"
 
 /* moderngl.core.initialize()
  * Initializes internal objects that cannot be initialized import time.

@@ -1,5 +1,6 @@
 #include "program.hpp"
-#include "classes/classes.hpp"
+#include "generated/py_classes.hpp"
+#include "generated/cpp_classes.hpp"
 #include "internal/modules.hpp"
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
@@ -376,5 +377,5 @@ void MGLProgram_define(MGLContext * ctx) {
         {0},
     };
 
-    ctx->MGLProgram_class = define_python_class(mgl_name ".Program", sizeof(MGLProgram), MGLProgram_slots);
+    ctx->MGLProgram_class = (PyTypeObject *)PyType_FromSpec(&MGLProgram_spec);
 }

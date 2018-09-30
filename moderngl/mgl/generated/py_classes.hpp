@@ -1,5 +1,37 @@
 #pragma once
-#include "../mgl.hpp"
+
+#include "tools.hpp"
+
+extern PyTypeObject * Attribute_class;
+extern int Attribute_class_type;
+extern int Attribute_class_location;
+extern int Attribute_class_cols;
+extern int Attribute_class_rows;
+extern int Attribute_class_size;
+extern int Attribute_class_shape;
+
+extern PyTypeObject * Buffer_class;
+extern int Buffer_class_mglo;
+extern int Buffer_class_size;
+extern int Buffer_class_extra;
+
+extern PyTypeObject * ComputeShader_class;
+extern int ComputeShader_class_mglo;
+extern int ComputeShader_class_attributes;
+extern int ComputeShader_class_uniforms;
+extern int ComputeShader_class_extra;
+
+extern PyTypeObject * Context_class;
+extern int Context_class_mglo;
+extern int Context_class_version_code;
+extern int Context_class_limits;
+extern int Context_class_extra;
+
+extern PyTypeObject * Framebuffer_class;
+extern int Framebuffer_class_mglo;
+extern int Framebuffer_class_viewport;
+extern int Framebuffer_class_size;
+extern int Framebuffer_class_extra;
 
 extern PyTypeObject * Limits_class;
 extern int Limits_class_point_size_range;
@@ -131,4 +163,62 @@ extern int Limits_class_max_cull_distances;
 extern int Limits_class_max_combined_clip_and_cull_distances;
 extern int Limits_class_max_texture_max_anisotropy;
 
-void MGLLimits_init_wrapper();
+extern PyTypeObject * Program_class;
+extern int Program_class_mglo;
+extern int Program_class_attributes;
+extern int Program_class_uniforms;
+extern int Program_class_extra;
+
+extern PyTypeObject * Query_class;
+extern int Query_class_mglo;
+extern int Query_class_extra;
+
+extern PyTypeObject * Renderbuffer_class;
+extern int Renderbuffer_class_mglo;
+extern int Renderbuffer_class_size;
+extern int Renderbuffer_class_extra;
+
+extern PyTypeObject * Sampler_class;
+extern int Sampler_class_mglo;
+extern int Sampler_class_extra;
+
+extern PyTypeObject * Scope_class;
+extern int Scope_class_mglo;
+extern int Scope_class_extra;
+
+extern PyTypeObject * Texture_class;
+extern int Texture_class_mglo;
+extern int Texture_class_level;
+extern int Texture_class_layer;
+extern int Texture_class_size;
+extern int Texture_class_extra;
+
+extern PyTypeObject * TextureArray_class;
+extern int TextureArray_class_mglo;
+extern int TextureArray_class_extra;
+
+extern PyTypeObject * TextureCube_class;
+extern int TextureCube_class_mglo;
+extern int TextureCube_class_extra;
+
+extern PyTypeObject * TextureCubeArray_class;
+extern int TextureCubeArray_class_mglo;
+extern int TextureCubeArray_class_extra;
+
+extern PyTypeObject * Uniform_class;
+extern int Uniform_class_type;
+extern int Uniform_class_location;
+extern int Uniform_class_cols;
+extern int Uniform_class_rows;
+extern int Uniform_class_size;
+extern int Uniform_class_shape;
+
+extern PyTypeObject * VertexArray_class;
+extern int VertexArray_class_mglo;
+extern int VertexArray_class_ibo;
+extern int VertexArray_class_program;
+extern int VertexArray_class_mode;
+extern int VertexArray_class_vertices;
+extern int VertexArray_class_extra;
+
+void init_wrappers();

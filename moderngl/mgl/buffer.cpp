@@ -1,5 +1,7 @@
 #include "buffer.hpp"
-#include "classes/classes.hpp"
+#include "generated/py_classes.hpp"
+#include "generated/cpp_classes.hpp"
+#include "internal/modules.hpp"
 #include "internal/tools.hpp"
 
 int MGLBuffer_core_write(MGLBuffer * self, const Py_ssize_t & offset, Py_buffer * view, bool contiguos) {
@@ -339,5 +341,5 @@ void MGLBuffer_define(MGLContext * ctx) {
         {0},
     };
 
-    ctx->MGLBuffer_class = define_python_class(mgl_name ".Buffer", sizeof(MGLBuffer), MGLBuffer_slots);
+    ctx->MGLBuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLBuffer_spec);
 }
