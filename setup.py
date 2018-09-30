@@ -34,6 +34,7 @@ sources = [
     'moderngl/mgl/generated/tools.cpp',
     'moderngl/mgl/generated/cpp_classes.cpp',
     'moderngl/mgl/generated/py_classes.cpp',
+    'moderngl/mgl/generated/methods.cpp',
     'moderngl/mgl/internal/modules.cpp',
     'moderngl/mgl/internal/tools.cpp',
     'moderngl/mgl/internal/glsl.cpp',
