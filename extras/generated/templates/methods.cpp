@@ -30,7 +30,7 @@ PyObject * /*{m_name_2}*/(PyObject * self, PyObject * args) {
 //! endif
 //! endfor
 ///
-PyMethodDef PyObject_methods[] = {
+PyMethodDef module_methods[] = {
     //! for m_name, m_name_1, m_name_2, m_args in c_methods:
     {"/*{m_name}*/", (PyCFunction)/*{m_name_2}*/, /*{'METH_VARARGS' if m_args else 'METH_NOARGS'}*/, 0},
     //! endfor
