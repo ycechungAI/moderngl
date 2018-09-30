@@ -4,11 +4,11 @@
 #include "internal/modules.hpp"
 #include "internal/tools.hpp"
 
-int MGLBuffer_core_write(MGLBuffer * self, const Py_ssize_t & offset, Py_buffer * view, bool contiguos) {
+int MGLBuffer_core_write(MGLBuffer * self, const Py_ssize_t & offset, Py_buffer * view, bool contiguous) {
     const GLMethods & gl = self->context->gl;
     gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj);
 
-    if (contiguos) {
+    if (contiguous) {
         gl.BufferSubData(GL_ARRAY_BUFFER, offset, view->len, view->buf);
     } else {
         void * map = gl.MapBufferRange(GL_ARRAY_BUFFER, offset, view->len, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
@@ -141,8 +141,8 @@ PyObject * MGLBuffer_meth_write(MGLBuffer * self, PyObject * const * args, Py_ss
         return 0;
     }
 
-    bool contiguos = PyBuffer_IsContiguous(&view, 'C');
-    if (MGLBuffer_core_write(self, offset, &view, contiguos) < 0) {
+    bool contiguous = PyBuffer_IsContiguous(&view, 'C');
+    if (MGLBuffer_core_write(self, offset, &view, contiguous) < 0) {
         PyBuffer_Release(&view);
         return 0;
     }
