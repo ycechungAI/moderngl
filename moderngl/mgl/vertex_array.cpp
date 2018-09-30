@@ -319,30 +319,8 @@ int MGLVertexArray_set_ibo(MGLVertexArray * self, PyObject * value) {
     return 0;
 }
 
-/* Backward compatible methods */
-
-BC4(MGLVertexArray, render);
-BC4(MGLVertexArray, transform);
-
 /* Definition of MGLVertexArray internal type */
 
 void MGLVertexArray_define(MGLContext * ctx) {
-    PyMethodDef MGLVertexArray_methods[] = {
-        DEF4(MGLVertexArray, render),
-        DEF4(MGLVertexArray, transform),
-        {0},
-    };
-
-    PyGetSetDef MGLVertexArray_getset[] = {
-        {(char *)"ibo", 0, (setter)MGLVertexArray_set_ibo, 0, 0},
-        {0},
-    };
-
-    PyType_Slot MGLVertexArray_slots[] = {
-        {Py_tp_methods, MGLVertexArray_methods},
-        {Py_tp_getset, MGLVertexArray_getset},
-        {0},
-    };
-
     ctx->MGLVertexArray_class = (PyTypeObject *)PyType_FromSpec(&MGLVertexArray_spec);
 }

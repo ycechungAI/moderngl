@@ -318,28 +318,8 @@ PyObject * MGLBuffer_meth_clear(MGLBuffer * self) {
     Py_RETURN_NONE;
 }
 
-/* Backward compatible methods */
-
-BC4(MGLBuffer, write);
-BC4(MGLBuffer, read);
-BC4(MGLBuffer, map);
-
 /* Definition of MGLBuffer internal type */
 
 void MGLBuffer_define(MGLContext * ctx) {
-    PyMethodDef MGLBuffer_methods[] = {
-        DEF4(MGLBuffer, write),
-        DEF4(MGLBuffer, read),
-        DEF4(MGLBuffer, map),
-        DEF3(MGLBuffer, unmap),
-        DEF3(MGLBuffer, clear),
-        {0},
-    };
-
-    PyType_Slot MGLBuffer_slots[] = {
-        {Py_tp_methods, MGLBuffer_methods},
-        {0},
-    };
-
     ctx->MGLBuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLBuffer_spec);
 }

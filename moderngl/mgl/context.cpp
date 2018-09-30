@@ -55,27 +55,9 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
     return NEW_REF(context->wrapper);
 }
 
-/* Backward compatible methods */
-
-BC4(MGLContext, buffer);
-BC4(MGLContext, program);
-BC4(MGLContext, vertex_array);
-
 /* Definition of MGLContext internal type */
 
 void MGLContext_define() {
-    PyMethodDef MGLContext_methods[] = {
-        DEF4(MGLContext, buffer),
-        DEF4(MGLContext, program),
-        DEF4(MGLContext, vertex_array),
-        {0},
-    };
-
-    PyType_Slot MGLContext_slots[] = {
-        {Py_tp_methods, MGLContext_methods},
-        {0},
-    };
-
     MGLContext_class = (PyTypeObject *)PyType_FromSpec(&MGLContext_spec);
 }
 

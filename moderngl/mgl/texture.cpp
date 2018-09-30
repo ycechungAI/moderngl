@@ -22,14 +22,5 @@ PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * const * args, Py_
 /* Definition of MGLTexture internal type */
 
 void MGLTexture_define(MGLContext * ctx) {
-    PyMethodDef MGLTexture_methods[] = {
-        {0},
-    };
-
-    PyType_Slot MGLTexture_slots[] = {
-        {Py_tp_methods, MGLTexture_methods},
-        {0},
-    };
-
     ctx->MGLTexture_class = (PyTypeObject *)PyType_FromSpec(&MGLTexture_spec);
 }

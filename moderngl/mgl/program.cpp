@@ -360,22 +360,8 @@ PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * const * args, P
     Py_RETURN_NONE;
 }
 
-/* Backward compatible methods */
-
-BC4(MGLProgram, uniform);
-
 /* Definition of MGLProgram internal type */
 
 void MGLProgram_define(MGLContext * ctx) {
-    PyMethodDef MGLProgram_methods[] = {
-        DEF4(MGLProgram, uniform),
-        {0},
-    };
-
-    PyType_Slot MGLProgram_slots[] = {
-        {Py_tp_methods, MGLProgram_methods},
-        {0},
-    };
-
     ctx->MGLProgram_class = (PyTypeObject *)PyType_FromSpec(&MGLProgram_spec);
 }
