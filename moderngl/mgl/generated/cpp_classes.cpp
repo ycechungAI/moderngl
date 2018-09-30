@@ -55,43 +55,43 @@ PyMethodDef MGLVertexArray_methods[] = {
 
 #else
 
-PyObject * MGLBuffer_meth_write_va(MGLBuffer * self, PyObejct * args) {
+PyObject * MGLBuffer_meth_write_va(MGLBuffer * self, PyObject * args) {
     return MGLBuffer_meth_write(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
-PyObject * MGLBuffer_meth_read_va(MGLBuffer * self, PyObejct * args) {
+PyObject * MGLBuffer_meth_read_va(MGLBuffer * self, PyObject * args) {
     return MGLBuffer_meth_read(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
-PyObject * MGLBuffer_meth_map_va(MGLBuffer * self, PyObejct * args) {
+PyObject * MGLBuffer_meth_map_va(MGLBuffer * self, PyObject * args) {
     return MGLBuffer_meth_map(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
-PyObject * MGLContext_meth_buffer_va(MGLContext * self, PyObejct * args) {
+PyObject * MGLContext_meth_buffer_va(MGLContext * self, PyObject * args) {
     return MGLContext_meth_buffer(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
-PyObject * MGLContext_meth_program_va(MGLContext * self, PyObejct * args) {
+PyObject * MGLContext_meth_program_va(MGLContext * self, PyObject * args) {
     return MGLContext_meth_program(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
-PyObject * MGLContext_meth_texture_va(MGLContext * self, PyObejct * args) {
+PyObject * MGLContext_meth_texture_va(MGLContext * self, PyObject * args) {
     return MGLContext_meth_texture(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
-PyObject * MGLProgram_meth_uniform_va(MGLProgram * self, PyObejct * args) {
+PyObject * MGLProgram_meth_uniform_va(MGLProgram * self, PyObject * args) {
     return MGLProgram_meth_uniform(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
-PyObject * MGLTexture_meth_write_va(MGLTexture * self, PyObejct * args) {
+PyObject * MGLTexture_meth_write_va(MGLTexture * self, PyObject * args) {
     return MGLTexture_meth_write(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
-PyObject * MGLVertexArray_meth_render_va(MGLVertexArray * self, PyObejct * args) {
+PyObject * MGLVertexArray_meth_render_va(MGLVertexArray * self, PyObject * args) {
     return MGLVertexArray_meth_render(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
-PyObject * MGLVertexArray_meth_transform_va(MGLVertexArray * self, PyObejct * args) {
+PyObject * MGLVertexArray_meth_transform_va(MGLVertexArray * self, PyObject * args) {
     return MGLVertexArray_meth_transform(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
