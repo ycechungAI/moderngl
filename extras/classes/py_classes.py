@@ -4,8 +4,7 @@ import re
 
 import jinja2
 
-if not os.path.isdir('moderngl/mgl'):
-    raise FileNotFoundError('run this from the project root')
+os.chdir(os.path.join(__file__, '../../..'))
 
 re_slots = []
 
@@ -31,13 +30,13 @@ env = jinja2.Environment(
     line_comment_prefix = '///',
 )
 
-with open('templates/py_classes.cpp') as f:
+with open(os.path.join(__file__, '../templates/py_classes.cpp')) as f:
     template = f.read()
 
 with open('moderngl/mgl/generated/py_classes.cpp', 'w') as f:
     f.write(env.from_string(template).render(c_slots=c_slots))
 
-with open('templates/py_classes.hpp') as f:
+with open(os.path.join(__file__, '../templates/py_classes.hpp')) as f:
     template = f.read()
 
 with open('moderngl/mgl/generated/py_classes.hpp', 'w') as f:

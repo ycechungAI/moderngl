@@ -4,8 +4,7 @@ import re
 
 import jinja2
 
-if not os.path.isdir('moderngl/mgl'):
-    raise FileNotFoundError('run this from the project root')
+os.chdir(os.path.join(__file__, '../../..'))
 
 re_methods = []
 includes = []
@@ -46,13 +45,13 @@ env = jinja2.Environment(
     line_comment_prefix = '///',
 )
 
-with open('templates/cpp_classes.cpp') as f:
+with open(os.path.join(__file__, '../templates/cpp_classes.cpp')) as f:
     template = f.read()
 
 with open('moderngl/mgl/generated/cpp_classes.cpp', 'w') as f:
     f.write(env.from_string(template).render(c_methods=c_methods, c_names=c_names, includes=includes))
 
-with open('templates/cpp_classes.hpp') as f:
+with open(os.path.join(__file__, '../templates/cpp_classes.hpp')) as f:
     template = f.read()
 
 with open('moderngl/mgl/generated/cpp_classes.hpp', 'w') as f:
