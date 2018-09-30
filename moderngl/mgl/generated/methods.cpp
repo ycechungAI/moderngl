@@ -36,7 +36,7 @@ PyObject * meth_glprocs_va(PyObject * self, PyObject * args) {
 }
 
 
-PyMethodDef PyObject_methods[] = {
+PyMethodDef module_methods[] = {
     {"create_context", (PyCFunction)meth_create_context_va, METH_VARARGS, 0},
     {"extensions", (PyCFunction)meth_extensions_va, METH_VARARGS, 0},
     {"hwinfo", (PyCFunction)meth_hwinfo_va, METH_VARARGS, 0},
