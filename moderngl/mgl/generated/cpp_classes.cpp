@@ -24,6 +24,8 @@ extern PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * const * ar
 extern PyObject * MGLVertexArray_meth_render(MGLVertexArray * self, PyObject * const * args, Py_ssize_t nargs);
 extern PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const * args, Py_ssize_t nargs);
 
+extern int MGLVertexArray_set_ibo(MGLVertexArray * self, PyObject * value);
+
 #if PY_VERSION_HEX >= 0x03070000
 
 PyMethodDef MGLBuffer_methods[] = {
@@ -141,28 +143,54 @@ PyMethodDef MGLVertexArray_methods[] = {
 
 #endif
 
+PyGetSetDef MGLBuffer_getset[] = {
+    {0},
+};
+
+PyGetSetDef MGLContext_getset[] = {
+    {0},
+};
+
+PyGetSetDef MGLProgram_getset[] = {
+    {0},
+};
+
+PyGetSetDef MGLTexture_getset[] = {
+    {0},
+};
+
+PyGetSetDef MGLVertexArray_getset[] = {
+    {"ibo", 0, (setter)MGLVertexArray_set_ibo, 0, 0},
+    {0},
+};
+
 PyType_Slot MGLBuffer_slots[] = {
     {Py_tp_methods, MGLBuffer_methods},
+    {Py_tp_getset, MGLBuffer_getset},
     {0},
 };
 
 PyType_Slot MGLContext_slots[] = {
     {Py_tp_methods, MGLContext_methods},
+    {Py_tp_getset, MGLContext_getset},
     {0},
 };
 
 PyType_Slot MGLProgram_slots[] = {
     {Py_tp_methods, MGLProgram_methods},
+    {Py_tp_getset, MGLProgram_getset},
     {0},
 };
 
 PyType_Slot MGLTexture_slots[] = {
     {Py_tp_methods, MGLTexture_methods},
+    {Py_tp_getset, MGLTexture_getset},
     {0},
 };
 
 PyType_Slot MGLVertexArray_slots[] = {
     {Py_tp_methods, MGLVertexArray_methods},
+    {Py_tp_getset, MGLVertexArray_getset},
     {0},
 };
 
