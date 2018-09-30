@@ -15,6 +15,7 @@ extern PyObject * MGLBuffer_meth_clear(MGLBuffer * self);
 extern PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
 extern PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
 extern PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
+extern PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
 
 extern PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * const * args, Py_ssize_t nargs);
 
@@ -38,6 +39,7 @@ PyMethodDef MGLContext_methods[] = {
     {"buffer", (PyCFunction)MGLContext_meth_buffer, METH_FASTCALL, 0},
     {"program", (PyCFunction)MGLContext_meth_program, METH_FASTCALL, 0},
     {"texture", (PyCFunction)MGLContext_meth_texture, METH_FASTCALL, 0},
+    {"vertex_array", (PyCFunction)MGLContext_meth_vertex_array, METH_FASTCALL, 0},
     {0},
 };
 
@@ -84,6 +86,10 @@ PyObject * MGLContext_meth_texture_va(MGLContext * self, PyObject * args) {
     return MGLContext_meth_texture(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
+PyObject * MGLContext_meth_vertex_array_va(MGLContext * self, PyObject * args) {
+    return MGLContext_meth_vertex_array(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
+}
+
 PyObject * MGLProgram_meth_uniform_va(MGLProgram * self, PyObject * args) {
     return MGLProgram_meth_uniform(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
@@ -113,6 +119,7 @@ PyMethodDef MGLContext_methods[] = {
     {"buffer", (PyCFunction)MGLContext_meth_buffer_va, METH_VARARGS, 0},
     {"program", (PyCFunction)MGLContext_meth_program_va, METH_VARARGS, 0},
     {"texture", (PyCFunction)MGLContext_meth_texture_va, METH_VARARGS, 0},
+    {"vertex_array", (PyCFunction)MGLContext_meth_vertex_array_va, METH_VARARGS, 0},
     {0},
 };
 
