@@ -2,10 +2,9 @@
 #include "mgl.hpp"
 #include "context.hpp"
 
-struct MGLProgram {
+struct MGLSampler {
     PyObject_HEAD
     PyObject * wrapper;
     MGLContext * context;
-    int program_obj;
-    int shader_obj[5];
+    // TODO:
 };

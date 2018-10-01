@@ -318,9 +318,3 @@ int MGLVertexArray_set_ibo(MGLVertexArray * self, PyObject * value) {
 
     return 0;
 }
-
-/* Definition of MGLVertexArray internal type */
-
-void MGLVertexArray_define(MGLContext * ctx) {
-    ctx->MGLVertexArray_class = (PyTypeObject *)PyType_FromSpec(&MGLVertexArray_spec);
-}

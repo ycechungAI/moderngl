@@ -359,9 +359,3 @@ PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * const * args, P
 
     Py_RETURN_NONE;
 }
-
-/* Definition of MGLProgram internal type */
-
-void MGLProgram_define(MGLContext * ctx) {
-    ctx->MGLProgram_class = (PyTypeObject *)PyType_FromSpec(&MGLProgram_spec);
-}

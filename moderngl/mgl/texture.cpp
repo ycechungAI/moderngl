@@ -18,9 +18,3 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * const * args, P
 PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * const * args, Py_ssize_t nargs) {
     Py_RETURN_NONE;
 }
-
-/* Definition of MGLTexture internal type */
-
-void MGLTexture_define(MGLContext * ctx) {
-    ctx->MGLTexture_class = (PyTypeObject *)PyType_FromSpec(&MGLTexture_spec);
-}

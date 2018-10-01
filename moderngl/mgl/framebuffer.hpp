@@ -4,13 +4,10 @@
 
 struct MGLDataType;
 
-struct MGLTexture {
+struct MGLFramebuffer {
     PyObject_HEAD
     PyObject * wrapper;
     MGLContext * context;
-    MGLDataType * data_type;
-    int texture_obj;
-    int texture_target;
     int width;
     int height;
     int depth;

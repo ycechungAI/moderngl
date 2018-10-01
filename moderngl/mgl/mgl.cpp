@@ -2,6 +2,7 @@
 #include "extensions.hpp"
 #include "internal/modules.hpp"
 #include "generated/py_classes.hpp"
+#include "generated/cpp_classes.hpp"
 #include "generated/methods.hpp"
 
 /* moderngl.core.initialize()
@@ -23,7 +24,7 @@ PyObject * meth_initialize(PyObject * self) {
      * The rest of the internal types will be defined by MGLContext.
      */
 
-    MGLContext_define();
+    MGLContext_class = (PyTypeObject *)PyType_FromSpec(&MGLContext_spec);
 
     /* Detect wrapper classes for internal types */
 

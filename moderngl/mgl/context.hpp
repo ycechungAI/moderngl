@@ -14,14 +14,17 @@ struct MGLContext {
     int enable_flags;
 
     PyTypeObject * MGLBuffer_class;
+    PyTypeObject * MGLFramebuffer_class;
     PyTypeObject * MGLProgram_class;
+    PyTypeObject * MGLQuery_class;
+    PyTypeObject * MGLRenderbuffer_class;
+    PyTypeObject * MGLSampler_class;
+    PyTypeObject * MGLScope_class;
     PyTypeObject * MGLTexture_class;
     PyTypeObject * MGLVertexArray_class;
 };
 
 PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssize_t nargs);
-
-void MGLContext_define();
 
 /* Every objects derived from a Context must have the following HEAD */
 

@@ -4,7 +4,7 @@
 
 struct MGLDataType;
 
-struct MGLTexture {
+struct MGLRenderbuffer {
     PyObject_HEAD
     PyObject * wrapper;
     MGLContext * context;

@@ -44,21 +44,21 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
         }
     }
 
-    MGLBuffer_define(context);
-    MGLProgram_define(context);
-    MGLVertexArray_define(context);
+    context->MGLBuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLBuffer_spec);
+    context->MGLFramebuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLFramebuffer_spec);
+    context->MGLProgram_class = (PyTypeObject *)PyType_FromSpec(&MGLProgram_spec);
+    context->MGLQuery_class = (PyTypeObject *)PyType_FromSpec(&MGLQuery_spec);
+    context->MGLRenderbuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLRenderbuffer_spec);
+    context->MGLSampler_class = (PyTypeObject *)PyType_FromSpec(&MGLSampler_spec);
+    context->MGLScope_class = (PyTypeObject *)PyType_FromSpec(&MGLScope_spec);
+    context->MGLTexture_class = (PyTypeObject *)PyType_FromSpec(&MGLTexture_spec);
+    context->MGLVertexArray_class = (PyTypeObject *)PyType_FromSpec(&MGLVertexArray_spec);
 
     context->wrapper = new_object(PyObject, Context_class);
     SLOT(context->wrapper, MGLContext, Context_class_mglo) = context;
     SLOT(context->wrapper, PyObject, Context_class_version_code) = PyLong_FromLong(version_code);
     SLOT(context->wrapper, PyObject, Context_class_limits) = get_limits(gl, version_code);
     return NEW_REF(context->wrapper);
-}
-
-/* Definition of MGLContext internal type */
-
-void MGLContext_define() {
-    MGLContext_class = (PyTypeObject *)PyType_FromSpec(&MGLContext_spec);
 }
 
 PyTypeObject * MGLContext_class;

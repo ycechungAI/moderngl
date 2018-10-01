@@ -318,8 +318,3 @@ PyObject * MGLBuffer_meth_clear(MGLBuffer * self) {
     Py_RETURN_NONE;
 }
 
-/* Definition of MGLBuffer internal type */
-
-void MGLBuffer_define(MGLContext * ctx) {
-    ctx->MGLBuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLBuffer_spec);
-}
