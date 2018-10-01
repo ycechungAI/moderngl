@@ -317,4 +317,3 @@ PyObject * MGLBuffer_meth_clear(MGLBuffer * self) {
     }
     Py_RETURN_NONE;
 }
-
