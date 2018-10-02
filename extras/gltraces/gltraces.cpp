@@ -37,6 +37,39 @@ void print_render_mode(GLenum mode) {
     }
 }
 
+void print_enable_flag(GLenum mode) {
+    switch (mode) {
+        case GL_BLEND: printf("GL_BLEND"); break;
+        case GL_COLOR_LOGIC_OP: printf("GL_COLOR_LOGIC_OP"); break;
+        case GL_CULL_FACE: printf("GL_CULL_FACE"); break;
+        case GL_DEBUG_OUTPUT: printf("GL_DEBUG_OUTPUT"); break;
+        case GL_DEBUG_OUTPUT_SYNCHRONOUS: printf("GL_DEBUG_OUTPUT_SYNCHRONOUS"); break;
+        case GL_DEPTH_CLAMP: printf("GL_DEPTH_CLAMP"); break;
+        case GL_DEPTH_TEST: printf("GL_DEPTH_TEST"); break;
+        case GL_DITHER: printf("GL_DITHER"); break;
+        case GL_FRAMEBUFFER_SRGB: printf("GL_FRAMEBUFFER_SRGB"); break;
+        case GL_LINE_SMOOTH: printf("GL_LINE_SMOOTH"); break;
+        case GL_MULTISAMPLE: printf("GL_MULTISAMPLE"); break;
+        case GL_POLYGON_OFFSET_FILL: printf("GL_POLYGON_OFFSET_FILL"); break;
+        case GL_POLYGON_OFFSET_LINE: printf("GL_POLYGON_OFFSET_LINE"); break;
+        case GL_POLYGON_OFFSET_POINT: printf("GL_POLYGON_OFFSET_POINT"); break;
+        case GL_POLYGON_SMOOTH: printf("GL_POLYGON_SMOOTH"); break;
+        case GL_PRIMITIVE_RESTART: printf("GL_PRIMITIVE_RESTART"); break;
+        case GL_PRIMITIVE_RESTART_FIXED_INDEX: printf("GL_PRIMITIVE_RESTART_FIXED_INDEX"); break;
+        case GL_RASTERIZER_DISCARD: printf("GL_RASTERIZER_DISCARD"); break;
+        case GL_SAMPLE_ALPHA_TO_COVERAGE: printf("GL_SAMPLE_ALPHA_TO_COVERAGE"); break;
+        case GL_SAMPLE_ALPHA_TO_ONE: printf("GL_SAMPLE_ALPHA_TO_ONE"); break;
+        case GL_SAMPLE_COVERAGE: printf("GL_SAMPLE_COVERAGE"); break;
+        case GL_SAMPLE_SHADING: printf("GL_SAMPLE_SHADING"); break;
+        case GL_SAMPLE_MASK: printf("GL_SAMPLE_MASK"); break;
+        case GL_SCISSOR_TEST: printf("GL_SCISSOR_TEST"); break;
+        case GL_STENCIL_TEST: printf("GL_STENCIL_TEST"); break;
+        case GL_TEXTURE_CUBE_MAP_SEAMLESS: printf("GL_TEXTURE_CUBE_MAP_SEAMLESS"); break;
+        case GL_PROGRAM_POINT_SIZE: printf("GL_PROGRAM_POINT_SIZE"); break;
+        default: printf("%04x", mode);
+    }
+}
+
 void print_buffer_access_mode(GLenum access) {
     switch (access) {
         case GL_READ_ONLY: printf("GL_READ_ONLY"); break;
@@ -375,11 +408,15 @@ void print_gl_get_pname(GLenum pname) {
         case GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS: printf("GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS"); break;
         case GL_MAX_COMPUTE_UNIFORM_BLOCKS: printf("GL_MAX_COMPUTE_UNIFORM_BLOCKS"); break;
         case GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS: printf("GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS"); break;
+        case GL_MAX_COMPUTE_IMAGE_UNIFORMS: printf("GL_MAX_COMPUTE_IMAGE_UNIFORMS"); break;
+        case GL_MAX_COMPUTE_SHARED_MEMORY_SIZE: printf("GL_MAX_COMPUTE_SHARED_MEMORY_SIZE"); break;
         case GL_MAX_COMPUTE_UNIFORM_COMPONENTS: printf("GL_MAX_COMPUTE_UNIFORM_COMPONENTS"); break;
         case GL_MAX_COMPUTE_ATOMIC_COUNTERS: printf("GL_MAX_COMPUTE_ATOMIC_COUNTERS"); break;
         case GL_MAX_COMPUTE_ATOMIC_COUNTER_BUFFERS: printf("GL_MAX_COMPUTE_ATOMIC_COUNTER_BUFFERS"); break;
         case GL_MAX_COMBINED_COMPUTE_UNIFORM_COMPONENTS: printf("GL_MAX_COMBINED_COMPUTE_UNIFORM_COMPONENTS"); break;
         case GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS: printf("GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS"); break;
+        case GL_MAX_DEBUG_MESSAGE_LENGTH: printf("GL_MAX_DEBUG_MESSAGE_LENGTH"); break;
+        case GL_MAX_DEBUG_LOGGED_MESSAGES: printf("GL_MAX_DEBUG_LOGGED_MESSAGES"); break;
         case GL_MAX_COMPUTE_WORK_GROUP_COUNT: printf("GL_MAX_COMPUTE_WORK_GROUP_COUNT"); break;
         case GL_MAX_COMPUTE_WORK_GROUP_SIZE: printf("GL_MAX_COMPUTE_WORK_GROUP_SIZE"); break;
         case GL_DISPATCH_INDIRECT_BUFFER_BINDING: printf("GL_DISPATCH_INDIRECT_BUFFER_BINDING"); break;
@@ -414,6 +451,17 @@ void print_gl_get_pname(GLenum pname) {
         case GL_MAX_CLIP_DISTANCES: printf("GL_MAX_CLIP_DISTANCES"); break;
         case GL_MAX_COLOR_TEXTURE_SAMPLES: printf("GL_MAX_COLOR_TEXTURE_SAMPLES"); break;
         case GL_MAX_COMBINED_ATOMIC_COUNTERS: printf("GL_MAX_COMBINED_ATOMIC_COUNTERS"); break;
+        case GL_MAX_ATOMIC_COUNTER_BUFFER_SIZE: printf("GL_MAX_ATOMIC_COUNTER_BUFFER_SIZE"); break;
+        case GL_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS: printf("GL_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS"); break;
+        case GL_MAX_IMAGE_UNITS: printf("GL_MAX_IMAGE_UNITS"); break;
+        case GL_MAX_COMBINED_IMAGE_UNITS_AND_FRAGMENT_OUTPUTS: printf("GL_MAX_COMBINED_IMAGE_UNITS_AND_FRAGMENT_OUTPUTS"); break;
+        case GL_MAX_IMAGE_SAMPLES: printf("GL_MAX_IMAGE_SAMPLES"); break;
+        case GL_MAX_VERTEX_IMAGE_UNIFORMS: printf("GL_MAX_VERTEX_IMAGE_UNIFORMS"); break;
+        case GL_MAX_TESS_CONTROL_IMAGE_UNIFORMS: printf("GL_MAX_TESS_CONTROL_IMAGE_UNIFORMS"); break;
+        case GL_MAX_TESS_EVALUATION_IMAGE_UNIFORMS: printf("GL_MAX_TESS_EVALUATION_IMAGE_UNIFORMS"); break;
+        case GL_MAX_GEOMETRY_IMAGE_UNIFORMS: printf("GL_MAX_GEOMETRY_IMAGE_UNIFORMS"); break;
+        case GL_MAX_FRAGMENT_IMAGE_UNIFORMS: printf("GL_MAX_FRAGMENT_IMAGE_UNIFORMS"); break;
+        case GL_MAX_COMBINED_IMAGE_UNIFORMS: printf("GL_MAX_COMBINED_IMAGE_UNIFORMS"); break;
         case GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS: printf("GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS"); break;
         case GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS: printf("GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS"); break;
         case GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS: printf("GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS"); break;
@@ -428,6 +476,7 @@ void print_gl_get_pname(GLenum pname) {
         case GL_MAX_FRAGMENT_ATOMIC_COUNTERS: printf("GL_MAX_FRAGMENT_ATOMIC_COUNTERS"); break;
         case GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS: printf("GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS"); break;
         case GL_MAX_FRAGMENT_INPUT_COMPONENTS: printf("GL_MAX_FRAGMENT_INPUT_COMPONENTS"); break;
+        case GL_CONTEXT_PROFILE_MASK: printf("GL_CONTEXT_PROFILE_MASK"); break;
         case GL_MAX_FRAGMENT_UNIFORM_COMPONENTS: printf("GL_MAX_FRAGMENT_UNIFORM_COMPONENTS"); break;
         case GL_MAX_FRAGMENT_UNIFORM_VECTORS: printf("GL_MAX_FRAGMENT_UNIFORM_VECTORS"); break;
         case GL_MAX_FRAGMENT_UNIFORM_BLOCKS: printf("GL_MAX_FRAGMENT_UNIFORM_BLOCKS"); break;
@@ -442,16 +491,27 @@ void print_gl_get_pname(GLenum pname) {
         case GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS: printf("GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS"); break;
         case GL_MAX_GEOMETRY_UNIFORM_BLOCKS: printf("GL_MAX_GEOMETRY_UNIFORM_BLOCKS"); break;
         case GL_MAX_GEOMETRY_UNIFORM_COMPONENTS: printf("GL_MAX_GEOMETRY_UNIFORM_COMPONENTS"); break;
+        case GL_MAX_GEOMETRY_OUTPUT_VERTICES: printf("GL_MAX_GEOMETRY_OUTPUT_VERTICES"); break;
+        case GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS: printf("GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS"); break;
         case GL_MAX_INTEGER_SAMPLES: printf("GL_MAX_INTEGER_SAMPLES"); break;
         case GL_MIN_MAP_BUFFER_ALIGNMENT: printf("GL_MIN_MAP_BUFFER_ALIGNMENT"); break;
+        case GL_MAX_VERTEX_ATOMIC_COUNTER_BUFFERS: printf("GL_MAX_VERTEX_ATOMIC_COUNTER_BUFFERS"); break;
+        case GL_MAX_TESS_CONTROL_ATOMIC_COUNTER_BUFFERS: printf("GL_MAX_TESS_CONTROL_ATOMIC_COUNTER_BUFFERS"); break;
+        case GL_MAX_TESS_EVALUATION_ATOMIC_COUNTER_BUFFERS: printf("GL_MAX_TESS_EVALUATION_ATOMIC_COUNTER_BUFFERS"); break;
+        case GL_MAX_GEOMETRY_ATOMIC_COUNTER_BUFFERS: printf("GL_MAX_GEOMETRY_ATOMIC_COUNTER_BUFFERS"); break;
+        case GL_MAX_FRAGMENT_ATOMIC_COUNTER_BUFFERS: printf("GL_MAX_FRAGMENT_ATOMIC_COUNTER_BUFFERS"); break;
+        case GL_MAX_COMBINED_ATOMIC_COUNTER_BUFFERS: printf("GL_MAX_COMBINED_ATOMIC_COUNTER_BUFFERS"); break;
         case GL_MAX_LABEL_LENGTH: printf("GL_MAX_LABEL_LENGTH"); break;
         case GL_MAX_PROGRAM_TEXEL_OFFSET: printf("GL_MAX_PROGRAM_TEXEL_OFFSET"); break;
         case GL_MIN_PROGRAM_TEXEL_OFFSET: printf("GL_MIN_PROGRAM_TEXEL_OFFSET"); break;
         case GL_MAX_RECTANGLE_TEXTURE_SIZE: printf("GL_MAX_RECTANGLE_TEXTURE_SIZE"); break;
         case GL_MAX_RENDERBUFFER_SIZE: printf("GL_MAX_RENDERBUFFER_SIZE"); break;
+        case GL_MAX_COLOR_ATTACHMENTS: printf("GL_MAX_COLOR_ATTACHMENTS"); break;
+        case GL_MAX_SAMPLES: printf("GL_MAX_SAMPLES"); break;
         case GL_MAX_SAMPLE_MASK_WORDS: printf("GL_MAX_SAMPLE_MASK_WORDS"); break;
         case GL_MAX_SERVER_WAIT_TIMEOUT: printf("GL_MAX_SERVER_WAIT_TIMEOUT"); break;
         case GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS: printf("GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS"); break;
+        case GL_MAX_SHADER_STORAGE_BLOCK_SIZE: printf("GL_MAX_SHADER_STORAGE_BLOCK_SIZE"); break;
         case GL_MAX_TESS_CONTROL_ATOMIC_COUNTERS: printf("GL_MAX_TESS_CONTROL_ATOMIC_COUNTERS"); break;
         case GL_MAX_TESS_EVALUATION_ATOMIC_COUNTERS: printf("GL_MAX_TESS_EVALUATION_ATOMIC_COUNTERS"); break;
         case GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS: printf("GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS"); break;
@@ -574,6 +634,9 @@ void print_gl_get_pname(GLenum pname) {
         case GL_VERTEX_BINDING_STRIDE: printf("GL_VERTEX_BINDING_STRIDE"); break;
         case GL_MAX_VERTEX_ATTRIB_RELATIVE_OFFSET: printf("GL_MAX_VERTEX_ATTRIB_RELATIVE_OFFSET"); break;
         case GL_MAX_VERTEX_ATTRIB_BINDINGS: printf("GL_MAX_VERTEX_ATTRIB_BINDINGS"); break;
+        case GL_MAX_VERTEX_ATTRIB_STRIDE: printf("GL_MAX_VERTEX_ATTRIB_STRIDE"); break;
+        case GL_MAX_CULL_DISTANCES: printf("GL_MAX_CULL_DISTANCES"); break;
+        case GL_MAX_COMBINED_CLIP_AND_CULL_DISTANCES: printf("GL_MAX_COMBINED_CLIP_AND_CULL_DISTANCES"); break;
         case GL_VIEWPORT: printf("GL_VIEWPORT"); break;
         case GL_VIEWPORT_BOUNDS_RANGE: printf("GL_VIEWPORT_BOUNDS_RANGE"); break;
         case GL_VIEWPORT_INDEX_PROVOKING_VERTEX: printf("GL_VIEWPORT_INDEX_PROVOKING_VERTEX"); break;
@@ -919,7 +982,7 @@ extern "C" void GLAPI DepthMask(GLboolean flag) {
 extern "C" void GLAPI Disable(GLenum cap) {
     printf("glDisable(");
     printf("cap=");
-    printf("0x%04x", cap);
+    print_enable_flag(cap);
     printf(")");
     gl.Disable(cap);
     print_error();
@@ -930,7 +993,7 @@ extern "C" void GLAPI Disable(GLenum cap) {
 extern "C" void GLAPI Enable(GLenum cap) {
     printf("glEnable(");
     printf("cap=");
-    printf("0x%04x", cap);
+    print_enable_flag(cap);
     printf(")");
     gl.Enable(cap);
     print_error();
@@ -1276,7 +1339,7 @@ extern "C" void GLAPI GetTexLevelParameteriv(GLenum target, GLint level, GLenum 
 extern "C" GLboolean GLAPI IsEnabled(GLenum cap) {
     printf("glIsEnabled(");
     printf("cap=");
-    printf("0x%04x", cap);
+    print_enable_flag(cap);
     printf(")");
     printf(" -> ");
     GLboolean result = gl.IsEnabled(cap);
