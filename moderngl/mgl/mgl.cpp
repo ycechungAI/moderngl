@@ -131,7 +131,6 @@ PyObject * meth_release(PyObject * self, PyObject * const * args, Py_ssize_t nar
 
     if (obj->ob_type == Scope_class) {
         MGLScope * scope = MGLObject_pop_mglo(Scope, obj);
-        const GLMethods & gl = scope->context->gl;
         return MGLObject_release(scope);
     }
 

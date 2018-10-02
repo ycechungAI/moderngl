@@ -30,7 +30,7 @@ int slot_offset(PyTypeObject * type, const char * name, int & counter) {
     counter -= 1;
     for (int i = 0; type->tp_members[i].name; ++i) {
         if (!strcmp(type->tp_members[i].name, name)) {
-            return type->tp_members[i].offset;
+            return (int)type->tp_members[i].offset;
         }
     }
 

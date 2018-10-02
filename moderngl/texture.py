@@ -39,8 +39,5 @@ class Texture:
     def read(self, alignment=1, np=False) -> None:
         return self.__mglo.read(self.__level, self.__layer, alignment, np)
 
-    def use(self, location=0) -> None:
-        self.__mglo.use(location)
-
     def build_mipmaps(self, base=0, max=-1) -> None:
         self.__mglo.build_mipmaps(base, max)

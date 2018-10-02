@@ -48,7 +48,7 @@ void gl_force_enable_only(const GLMethods & gl, int flags) {
 }
 
 void gl_diff_enable_only(const GLMethods & gl, int flags, int current_flags) {
-    if (flags < 0 || flags == current_flags) {
+    if (flags == current_flags) {
         return;
     }
 

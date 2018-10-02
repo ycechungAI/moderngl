@@ -171,6 +171,9 @@ extern int Program_class_extra;
 
 extern PyTypeObject * Query_class;
 extern int Query_class_mglo;
+extern int Query_class_samples;
+extern int Query_class_primitives;
+extern int Query_class_elapsed;
 extern int Query_class_extra;
 
 extern PyTypeObject * Renderbuffer_class;

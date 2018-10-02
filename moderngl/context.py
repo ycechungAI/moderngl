@@ -37,8 +37,11 @@ class Context:
     def vertex_array(self, program, content, index_buffer=None) -> VertexArray:
         return self.__mglo.vertex_array(program, content, index_buffer)
 
-    def scope(self, framebuffer=None, enable_only=-1):
-        return self.__mglo.scope(framebuffer, enable_only)
+    def scope(self, framebuffer=None, enable_only=-1, samplers=None, uniform_buffers=None, storage_buffers=None):
+        return self.__mglo.scope(framebuffer, enable_only, samplers, uniform_buffers, storage_buffers)
+
+    def query(self, time=False, primitives=False, samples=False, any_samples=False):
+        return self.__mglo.query(time, primitives, samples, any_samples)
 
 
 def create_context(standalone=False, debug=False, hook=None, gc=None):

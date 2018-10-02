@@ -169,6 +169,9 @@ int Program_class_extra;
 
 PyTypeObject * Query_class;
 int Query_class_mglo;
+int Query_class_samples;
+int Query_class_primitives;
+int Query_class_elapsed;
 int Query_class_extra;
 
 PyTypeObject * Renderbuffer_class;
@@ -405,6 +408,9 @@ void init_wrappers() {
     int Query_slots = 0;
     Query_class = detect_class(moderngl, "Query", Query_slots);
     Query_class_mglo = slot_offset(Query_class, "_Query__mglo", Query_slots);
+    Query_class_samples = slot_offset(Query_class, "samples", Query_slots);
+    Query_class_primitives = slot_offset(Query_class, "primitives", Query_slots);
+    Query_class_elapsed = slot_offset(Query_class, "elapsed", Query_slots);
     Query_class_extra = slot_offset(Query_class, "extra", Query_slots);
     assert_slots_len(Query_class, Query_slots);
 

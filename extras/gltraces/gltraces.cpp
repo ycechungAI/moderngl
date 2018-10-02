@@ -33,7 +33,7 @@ void print_render_mode(GLenum mode) {
         case GL_TRIANGLE_STRIP_ADJACENCY: printf("GL_TRIANGLE_STRIP_ADJACENCY"); break;
         case GL_TRIANGLES_ADJACENCY: printf("GL_TRIANGLES_ADJACENCY"); break;
         case GL_PATCHES: printf("GL_PATCHES"); break;
-        default: printf("%04x", mode);
+        default: printf("0x%04x", mode);
     }
 }
 
@@ -66,7 +66,28 @@ void print_enable_flag(GLenum mode) {
         case GL_STENCIL_TEST: printf("GL_STENCIL_TEST"); break;
         case GL_TEXTURE_CUBE_MAP_SEAMLESS: printf("GL_TEXTURE_CUBE_MAP_SEAMLESS"); break;
         case GL_PROGRAM_POINT_SIZE: printf("GL_PROGRAM_POINT_SIZE"); break;
-        default: printf("%04x", mode);
+        default: printf("0x%04x", mode);
+    }
+}
+
+void print_query_target(GLenum target) {
+    switch (target) {
+        case GL_SAMPLES_PASSED: printf("GL_SAMPLES_PASSED"); break;
+        case GL_ANY_SAMPLES_PASSED: printf("GL_ANY_SAMPLES_PASSED"); break;
+        case GL_ANY_SAMPLES_PASSED_CONSERVATIVE: printf("GL_ANY_SAMPLES_PASSED_CONSERVATIVE"); break;
+        case GL_PRIMITIVES_GENERATED: printf("GL_PRIMITIVES_GENERATED"); break;
+        case GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN: printf("GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN"); break;
+        case GL_TIME_ELAPSED: printf("GL_TIME_ELAPSED"); break;
+        default: printf("0x%04x", target);
+    }
+}
+
+void print_get_query_object_pname(GLenum pname) {
+    switch (pname) {
+        case GL_QUERY_RESULT: printf("GL_QUERY_RESULT"); break;
+        case GL_QUERY_RESULT_NO_WAIT: printf("GL_QUERY_RESULT_NO_WAIT"); break;
+        case GL_QUERY_RESULT_AVAILABLE: printf("GL_QUERY_RESULT_AVAILABLE"); break;
+        default: printf("0x%04x", pname);
     }
 }
 
@@ -75,7 +96,7 @@ void print_buffer_access_mode(GLenum access) {
         case GL_READ_ONLY: printf("GL_READ_ONLY"); break;
         case GL_WRITE_ONLY: printf("GL_WRITE_ONLY"); break;
         case GL_READ_WRITE: printf("GL_READ_WRITE"); break;
-        default: printf("%04x", access);
+        default: printf("0x%04x", access);
     }
 }
 
@@ -143,7 +164,7 @@ void print_buffer_target(GLenum target) {
         case GL_TEXTURE_BUFFER: printf("GL_TEXTURE_BUFFER"); break;
         case GL_TRANSFORM_FEEDBACK_BUFFER: printf("GL_TRANSFORM_FEEDBACK_BUFFER"); break;
         case GL_UNIFORM_BUFFER: printf("GL_UNIFORM_BUFFER"); break;
-        default: printf("%04x", target);
+        default: printf("0x%04x", target);
     }
 }
 
@@ -160,7 +181,7 @@ void print_texture_target(GLenum target) {
         case GL_TEXTURE_BUFFER: printf("GL_TEXTURE_BUFFER"); break;
         case GL_TEXTURE_2D_MULTISAMPLE: printf("GL_TEXTURE_2D_MULTISAMPLE"); break;
         case GL_TEXTURE_2D_MULTISAMPLE_ARRAY: printf("GL_TEXTURE_2D_MULTISAMPLE_ARRAY"); break;
-        default: printf("%04x", target);
+        default: printf("0x%04x", target);
     }
 }
 
@@ -174,7 +195,7 @@ void print_gl_error(GLenum error) {
         case GL_OUT_OF_MEMORY: printf("GL_OUT_OF_MEMORY"); break;
         case GL_STACK_UNDERFLOW: printf("GL_STACK_UNDERFLOW"); break;
         case GL_STACK_OVERFLOW: printf("GL_STACK_OVERFLOW"); break;
-        default: printf("%04x", error);
+        default: printf("0x%04x", error);
     }
 }
 
@@ -183,7 +204,7 @@ void print_cull_face(GLenum face) {
         case GL_FRONT: printf("GL_FRONT"); break;
         case GL_BACK: printf("GL_BACK"); break;
         case GL_FRONT_AND_BACK: printf("GL_FRONT_AND_BACK"); break;
-        default: printf("%04x", face);
+        default: printf("0x%04x", face);
     }
 }
 
@@ -191,7 +212,7 @@ void print_buffer_mode(GLenum mode) {
     switch (mode) {
         case GL_INTERLEAVED_ATTRIBS: printf("GL_INTERLEAVED_ATTRIBS"); break;
         case GL_SEPARATE_ATTRIBS: printf("GL_SEPARATE_ATTRIBS"); break;
-        default: printf("%04x", mode);
+        default: printf("0x%04x", mode);
     }
 }
 
@@ -212,7 +233,7 @@ void print_clear_buffer_format(GLenum format) {
         case GL_STENCIL_INDEX: printf("GL_STENCIL_INDEX"); break;
         case GL_DEPTH_COMPONENT: printf("GL_DEPTH_COMPONENT"); break;
         case GL_DEPTH_STENCIL: printf("GL_DEPTH_STENCIL"); break;
-        default: printf("%04x", format);
+        default: printf("0x%04x", format);
     }
 }
 
@@ -237,7 +258,7 @@ void print_clear_buffer_type(GLenum type) {
         case GL_UNSIGNED_INT_8_8_8_8_REV: printf("GL_UNSIGNED_INT_8_8_8_8_REV"); break;
         case GL_UNSIGNED_INT_10_10_10_2: printf("GL_UNSIGNED_INT_10_10_10_2"); break;
         case GL_UNSIGNED_INT_2_10_10_10_REV: printf("GL_UNSIGNED_INT_2_10_10_10_REV"); break;
-        default: printf("%04x", type);
+        default: printf("0x%04x", type);
     }
 }
 
@@ -276,7 +297,7 @@ void print_clear_buffer_internalformat(GLenum internalformat) {
         case GL_RGBA8UI: printf("GL_RGBA8UI"); break;
         case GL_RGBA16UI: printf("GL_RGBA16UI"); break;
         case GL_RGBA32UI: printf("GL_RGBA32UI"); break;
-        default: printf("%04x", internalformat);
+        default: printf("0x%04x", internalformat);
     }
 }
 
@@ -288,7 +309,7 @@ void print_shader(GLenum shader) {
         case GL_TESS_EVALUATION_SHADER: printf("GL_TESS_EVALUATION_SHADER"); break;
         case GL_GEOMETRY_SHADER: printf("GL_GEOMETRY_SHADER"); break;
         case GL_FRAGMENT_SHADER: printf("GL_FRAGMENT_SHADER"); break;
-        default: printf("%04x", shader);
+        default: printf("0x%04x", shader);
     }
 }
 
@@ -299,7 +320,7 @@ void print_shader_pname(GLenum pname) {
         case GL_COMPILE_STATUS: printf("GL_COMPILE_STATUS"); break;
         case GL_INFO_LOG_LENGTH: printf("GL_INFO_LOG_LENGTH"); break;
         case GL_SHADER_SOURCE_LENGTH: printf("GL_SHADER_SOURCE_LENGTH"); break;
-        default: printf("%04x", pname);
+        default: printf("0x%04x", pname);
     }
 }
 
@@ -325,7 +346,7 @@ void print_program_pname(GLenum pname) {
         case GL_GEOMETRY_VERTICES_OUT: printf("GL_GEOMETRY_VERTICES_OUT"); break;
         case GL_GEOMETRY_INPUT_TYPE: printf("GL_GEOMETRY_INPUT_TYPE"); break;
         case GL_GEOMETRY_OUTPUT_TYPE: printf("GL_GEOMETRY_OUTPUT_TYPE"); break;
-        default: printf("%04x", pname);
+        default: printf("0x%04x", pname);
     }
 }
 
@@ -348,7 +369,7 @@ void print_tex_parameter_pname(GLenum pname) {
         case GL_TEXTURE_WRAP_S: printf("GL_TEXTURE_WRAP_S"); break;
         case GL_TEXTURE_WRAP_T: printf("GL_TEXTURE_WRAP_T"); break;
         case GL_TEXTURE_WRAP_R: printf("GL_TEXTURE_WRAP_R"); break;
-        default: printf("%04x", pname);
+        default: printf("0x%04x", pname);
     }
 }
 
@@ -366,7 +387,7 @@ void print_tex_level_parameter_pname(GLenum pname) {
         case GL_TEXTURE_COMPRESSED: printf("GL_TEXTURE_COMPRESSED"); break;
         case GL_TEXTURE_COMPRESSED_IMAGE_SIZE: printf("GL_TEXTURE_COMPRESSED_IMAGE_SIZE"); break;
         case GL_TEXTURE_BUFFER_OFFSET: printf("GL_TEXTURE_BUFFER_OFFSET"); break;
-        default: printf("%04x", pname);
+        default: printf("0x%04x", pname);
     }
 }
 
@@ -383,7 +404,7 @@ void print_sampler_parameter_pname(GLenum pname) {
         case GL_TEXTURE_BORDER_COLOR: printf("GL_TEXTURE_BORDER_COLOR"); break;
         case GL_TEXTURE_COMPARE_MODE: printf("GL_TEXTURE_COMPARE_MODE"); break;
         case GL_TEXTURE_COMPARE_FUNC: printf("GL_TEXTURE_COMPARE_FUNC"); break;
-        default: printf("%04x", pname);
+        default: printf("0x%04x", pname);
     }
 }
 
@@ -642,7 +663,7 @@ void print_gl_get_pname(GLenum pname) {
         case GL_VIEWPORT_INDEX_PROVOKING_VERTEX: printf("GL_VIEWPORT_INDEX_PROVOKING_VERTEX"); break;
         case GL_VIEWPORT_SUBPIXEL_BITS: printf("GL_VIEWPORT_SUBPIXEL_BITS"); break;
         case GL_MAX_ELEMENT_INDEX: printf("GL_MAX_ELEMENT_INDEX"); break;
-        default: printf("%04x", pname);
+        default: printf("0x%04x", pname);
     }
 }
 
@@ -2266,7 +2287,7 @@ extern "C" GLboolean GLAPI IsQuery(GLuint id) {
 extern "C" void GLAPI BeginQuery(GLenum target, GLuint id) {
     printf("glBeginQuery(");
     printf("target=");
-    printf("0x%04x", target);
+    print_query_target(target);
     printf(", ");
     printf("id=");
     printf("%u", id);
@@ -2280,7 +2301,7 @@ extern "C" void GLAPI BeginQuery(GLenum target, GLuint id) {
 extern "C" void GLAPI EndQuery(GLenum target) {
     printf("glEndQuery(");
     printf("target=");
-    printf("0x%04x", target);
+    print_query_target(target);
     printf(")");
     gl.EndQuery(target);
     print_error();
@@ -2311,7 +2332,7 @@ extern "C" void GLAPI GetQueryObjectiv(GLuint id, GLenum pname, GLint * params) 
     printf("%u", id);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_query_object_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);

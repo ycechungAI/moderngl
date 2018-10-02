@@ -132,18 +132,6 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * const * args, P
     return NEW_REF(texture->wrapper);
 }
 
-/* MGLTexture.use(...)
- */
-PyObject * MGLTexture_meth_use(MGLTexture * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 1) {
-        // TODO: error
-        return 0;
-    }
-
-    int location = PyLong_AsLong(args[1]);
-
-    const GLMethods & gl = self->context->gl;
-    gl.ActiveTexture(GL_TEXTURE0 + location);
-    gl.BindTexture(self->texture_target, self->texture_obj);
+PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * const * args, Py_ssize_t nargs) {
     Py_RETURN_NONE;
 }

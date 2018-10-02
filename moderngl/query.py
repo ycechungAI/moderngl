@@ -1,6 +1,6 @@
 
 class Query:
-    __slots__ = ['__mglo', 'extra']
+    __slots__ = ['__mglo', 'elapsed', 'primitives', 'samples', 'extra']
 
     def __init__(self):
         self.__mglo = None  # type: Any
@@ -12,15 +12,3 @@ class Query:
 
     def __exit__(self, *args):
         self.__mglo.end()
-
-    @property
-    def samples(self) -> int:
-        return self.__mglo.samples
-
-    @property
-    def primitives(self) -> int:
-        return self.__mglo.primitives
-
-    @property
-    def elapsed(self) -> int:
-        return self.__mglo.elapsed
