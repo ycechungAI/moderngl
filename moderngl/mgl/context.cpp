@@ -72,10 +72,10 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
 
     context->enable_only = read_enable_only(gl);
 
-	gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	gl.Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-	gl.Enable(GL_PRIMITIVE_RESTART);
-	gl.PrimitiveRestartIndex(-1);
+    gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    gl.Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    gl.Enable(GL_PRIMITIVE_RESTART);
+    gl.PrimitiveRestartIndex(-1);
 
     context->MGLBuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLBuffer_spec);
     context->MGLFramebuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLFramebuffer_spec);

@@ -47,9 +47,9 @@ PyObject * MGLSampler_meth_use(MGLSampler * self, PyObject * const * args, Py_ss
 
     int location = PyLong_AsLong(args[0]);
 
-	const GLMethods & gl = self->context->gl;
-	gl.ActiveTexture(GL_TEXTURE0 + location);
-	gl.BindTexture(texture->texture_target, texture->texture_obj);
-	gl.BindSampler(location, self->sampler_obj);
-	Py_RETURN_NONE;
+    const GLMethods & gl = self->context->gl;
+    gl.ActiveTexture(GL_TEXTURE0 + location);
+    gl.BindTexture(texture->texture_target, texture->texture_obj);
+    gl.BindSampler(location, self->sampler_obj);
+    Py_RETURN_NONE;
 }

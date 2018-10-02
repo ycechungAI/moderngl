@@ -34,19 +34,19 @@ PyObject * MGLContext_meth_scope(MGLContext * self, PyObject * const * args, Py_
 /* MGLScope.begin()
  */
 PyObject * MGLScope_meth_begin(MGLScope * self) {
-	const GLMethods & gl = self->context->gl;
-	gl_enable_only(gl, self->enable_only, self->context->enable_only);
-	self->context->enable_only = self->enable_only;
-	// return MGLFramebuffer_meth_use(self->framebuffer);
+    const GLMethods & gl = self->context->gl;
+    gl_enable_only(gl, self->enable_only, self->context->enable_only);
+    self->context->enable_only = self->enable_only;
+    // return MGLFramebuffer_meth_use(self->framebuffer);
     Py_RETURN_NONE;
 }
 
 /* MGLScope.end()
  */
 PyObject * MGLScope_meth_end(MGLScope * self) {
-	const GLMethods & gl = self->context->gl;
-	gl_enable_only(gl, self->old_enable_only, self->context->enable_only);
-	self->context->enable_only = self->old_enable_only;
-	// return MGLFramebuffer_meth_use(self->old_framebuffer);
+    const GLMethods & gl = self->context->gl;
+    gl_enable_only(gl, self->old_enable_only, self->context->enable_only);
+    self->context->enable_only = self->old_enable_only;
+    // return MGLFramebuffer_meth_use(self->old_framebuffer);
     Py_RETURN_NONE;
 }
