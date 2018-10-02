@@ -35,7 +35,7 @@ extern PyObject * MGLQuery_meth_write(MGLQuery * self, PyObject * const * args, 
 
 extern PyObject * MGLRenderbuffer_meth_write(MGLRenderbuffer * self, PyObject * const * args, Py_ssize_t nargs);
 
-extern PyObject * MGLSampler_meth_write(MGLSampler * self, PyObject * const * args, Py_ssize_t nargs);
+extern PyObject * MGLSampler_meth_use(MGLSampler * self, PyObject * const * args, Py_ssize_t nargs);
 
 extern PyObject * MGLScope_meth_begin(MGLScope * self);
 extern PyObject * MGLScope_meth_end(MGLScope * self);
@@ -92,7 +92,7 @@ PyMethodDef MGLRenderbuffer_methods[] = {
 };
 
 PyMethodDef MGLSampler_methods[] = {
-    {"write", (PyCFunction)MGLSampler_meth_write, METH_FASTCALL, 0},
+    {"use", (PyCFunction)MGLSampler_meth_use, METH_FASTCALL, 0},
     {0},
 };
 
@@ -180,8 +180,8 @@ PyObject * MGLRenderbuffer_meth_write_va(MGLRenderbuffer * self, PyObject * args
     return MGLRenderbuffer_meth_write(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
-PyObject * MGLSampler_meth_write_va(MGLSampler * self, PyObject * args) {
-    return MGLSampler_meth_write(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
+PyObject * MGLSampler_meth_use_va(MGLSampler * self, PyObject * args) {
+    return MGLSampler_meth_use(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
 
@@ -240,7 +240,7 @@ PyMethodDef MGLRenderbuffer_methods[] = {
 };
 
 PyMethodDef MGLSampler_methods[] = {
-    {"write", (PyCFunction)MGLSampler_meth_write_va, METH_VARARGS, 0},
+    {"use", (PyCFunction)MGLSampler_meth_use_va, METH_VARARGS, 0},
     {0},
 };
 

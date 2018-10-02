@@ -28,8 +28,7 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
     PyObject * hook = args[1];
     PyObject * gc = args[2];
 
-    Py_INCREF(MGLContext_class);
-    MGLContext * context = PyObject_New(MGLContext, MGLContext_class);
+    MGLContext * context = new_object(MGLContext, MGLContext_class);
 
     if (!context->gl_context.load(standalone)) {
         return 0;
@@ -72,6 +71,11 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
     }
 
     context->enable_only = read_enable_only(gl);
+
+	gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	gl.Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	gl.Enable(GL_PRIMITIVE_RESTART);
+	gl.PrimitiveRestartIndex(-1);
 
     context->MGLBuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLBuffer_spec);
     context->MGLFramebuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLFramebuffer_spec);
@@ -123,6 +127,7 @@ PyObject * _MGLObject_release(MGLObject * self) {
             Py_DECREF(result);
         }
     }
+    Py_DECREF(self->wrapper);
     Py_DECREF(self->context);
     Py_DECREF(self);
     Py_RETURN_NONE;

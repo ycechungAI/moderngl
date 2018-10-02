@@ -178,6 +178,7 @@ int Renderbuffer_class_extra;
 
 PyTypeObject * Sampler_class;
 int Sampler_class_mglo;
+int Sampler_class_texture;
 int Sampler_class_extra;
 
 PyTypeObject * Scope_class;
@@ -417,6 +418,7 @@ void init_wrappers() {
     int Sampler_slots = 0;
     Sampler_class = detect_class(moderngl, "Sampler", Sampler_slots);
     Sampler_class_mglo = slot_offset(Sampler_class, "_Sampler__mglo", Sampler_slots);
+    Sampler_class_texture = slot_offset(Sampler_class, "texture", Sampler_slots);
     Sampler_class_extra = slot_offset(Sampler_class, "extra", Sampler_slots);
     assert_slots_len(Sampler_class, Sampler_slots);
 

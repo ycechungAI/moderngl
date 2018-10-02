@@ -36,6 +36,25 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * const * args, P
     int alignment = PyLong_AsLong(args[5]);
 	MGLDataType * data_type = from_dtype(args[6]);
 
+	if (!data_type) {
+		PyErr_Format(moderngl_error, "invalid dtype");
+		return 0;
+	}
+
+	int max_levels = -1;
+	{
+		int size = width > height ? width : height;
+		size = size > depth ? size : depth;
+		while (size) {
+			max_levels += 1;
+			size >>= 1;
+		}
+	}
+
+	if (levels < 0 || levels > max_levels) {
+		levels = max_levels;
+	}
+
 	int expected_size = width * components * data_type->size;
 	expected_size = (expected_size + alignment - 1) / alignment * alignment;
 	expected_size = expected_size * height * depth;

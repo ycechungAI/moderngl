@@ -1635,7 +1635,7 @@ extern "C" void GLAPI TexSubImage2D(GLenum target, GLint level, GLint xoffset, G
 extern "C" void GLAPI BindTexture(GLenum target, GLuint texture) {
     printf("glBindTexture(");
     printf("target=");
-    print_buffer_target(target);
+    print_texture_target(target);
     printf(", ");
     printf("texture=");
     printf("%u", texture);
@@ -1831,7 +1831,7 @@ extern "C" void GLAPI CopyTexSubImage3D(GLenum target, GLint level, GLint xoffse
 extern "C" void GLAPI ActiveTexture(GLenum texture) {
     printf("glActiveTexture(");
     printf("texture=");
-    printf("0x%04x", texture);
+    printf("GL_TEXTURE%d", texture - GL_TEXTURE0);
     printf(")");
     gl.ActiveTexture(texture);
     print_error();

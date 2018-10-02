@@ -10,9 +10,9 @@ struct MGLScope {
     MGLContext * context;
 	MGLFramebuffer * framebuffer;
 	MGLFramebuffer * old_framebuffer;
-	int * textures;
+	int * samplers;
 	int * buffers;
-	int num_textures;
+	int num_samplers;
 	int num_buffers;
 	int enable_only;
 	int old_enable_only;

@@ -6,6 +6,7 @@ from .buffer import Buffer
 from .limits import Limits
 from .program import Program
 from .texture import Texture
+from .sampler import Sampler
 from .vertex_array import VertexArray
 
 
@@ -29,6 +30,9 @@ class Context:
 
     def texture(self, size, components=3, data=None, levels=-1, samples=0, aligment=1, dtype='f1') -> Texture:
         return self.__mglo.texture(size, components, data, levels, samples, aligment, dtype)
+
+    def sampler(self, texture) -> Sampler:
+        return self.__mglo.sampler(texture)
 
     def vertex_array(self, program, content, index_buffer=None) -> VertexArray:
         return self.__mglo.vertex_array(program, content, index_buffer)
