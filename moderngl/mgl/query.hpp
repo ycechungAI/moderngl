@@ -6,5 +6,5 @@ struct MGLQuery {
     PyObject_HEAD
     PyObject * wrapper;
     MGLContext * context;
-    // TODO:
+    int query_obj[4];
 };

@@ -9,8 +9,7 @@ struct MGLRenderbuffer {
     PyObject * wrapper;
     MGLContext * context;
     MGLDataType * data_type;
-    int texture_obj;
-    int texture_target;
+    int renderbuffer_obj;
     int width;
     int height;
     int depth;

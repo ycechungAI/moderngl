@@ -1,4 +1,4 @@
-from .context import Context, create_context, extensions, hwinfo, glprocs
+from .context import Context, create_context, extensions, hwinfo, glprocs, release
 from .attribute import Attribute
 from .buffer import Buffer
 from .compute_shader import ComputeShader
@@ -17,5 +17,11 @@ from .texture import Texture
 from .uniform import Uniform
 from .vertex_array import VertexArray
 from .mgl import initialize
+
+NOTHING = 0
+BLEND = 1
+DEPTH_TEST = 2
+CULL_FACE = 4
+RASTERIZER_DISCARD = 8
 
 initialize()

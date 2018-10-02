@@ -5,6 +5,8 @@
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
 
+/* MGLContext.query(...)
+ */
 PyObject * MGLContext_meth_query(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 0) {
         // TODO: error

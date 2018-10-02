@@ -5,6 +5,8 @@
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
 
+/* MGLContext.sampler(...)
+ */
 PyObject * MGLContext_meth_sampler(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 0) {
         // TODO: error
@@ -15,6 +17,8 @@ PyObject * MGLContext_meth_sampler(MGLContext * self, PyObject * const * args, P
     return NEW_REF(sampler->wrapper);
 }
 
+/* MGLSampler.write(...)
+ */
 PyObject * MGLSampler_meth_write(MGLSampler * self, PyObject * const * args, Py_ssize_t nargs) {
     Py_RETURN_NONE;
 }

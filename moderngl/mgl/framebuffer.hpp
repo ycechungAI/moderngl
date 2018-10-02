@@ -8,6 +8,7 @@ struct MGLFramebuffer {
     PyObject_HEAD
     PyObject * wrapper;
     MGLContext * context;
+    int framebuffer_obj;
     int width;
     int height;
     int depth;

@@ -11,7 +11,7 @@ struct MGLContext {
 
     int version_code;
     int default_texture_unit;
-    int enable_flags;
+    int enable_only;
 
     PyTypeObject * MGLBuffer_class;
     PyTypeObject * MGLFramebuffer_class;
@@ -22,6 +22,8 @@ struct MGLContext {
     PyTypeObject * MGLScope_class;
     PyTypeObject * MGLTexture_class;
     PyTypeObject * MGLVertexArray_class;
+
+    PyObject * gc;
 };
 
 PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssize_t nargs);
@@ -41,16 +43,13 @@ struct MGLObject {
  * The circular reference must be resolved when releasing objects.
  */
 
-inline MGLObject * _MGLContext_new_object(MGLContext * self, PyTypeObject * type, PyTypeObject * cls, int slot) {
-    MGLObject * res = new_object(MGLObject, type);
-    res->wrapper = new_object(PyObject, cls);
-    SLOT(res->wrapper, MGLObject, slot) = res;
-    res->context = self;
-    Py_INCREF(self);
-    return res;
-}
+MGLObject * _MGLContext_new_object(MGLContext * self, PyTypeObject * type, PyTypeObject * cls, int slot);
+MGLObject * _MGLObject_pop_mglo(PyObject * wrapper, int slot);
+PyObject * _MGLObject_release(MGLObject * self);
 
 #define MGLContext_new_object(self, name) (MGL ## name *)_MGLContext_new_object(self, self->MGL ## name ## _class, name ## _class, name ## _class_mglo)
+#define MGLObject_pop_mglo(name, obj) (MGL ## name *)_MGLObject_pop_mglo(obj, name ## _class_mglo)
+#define MGLObject_release(obj) _MGLObject_release((MGLObject *)obj);
 
 extern PyTypeObject * MGLContext_class;
 

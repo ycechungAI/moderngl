@@ -5,6 +5,8 @@
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
 
+/* MGLContext.framebuffer(...)
+ */
 PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 0) {
         // TODO: error
@@ -15,6 +17,8 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * arg
     return NEW_REF(framebuffer->wrapper);
 }
 
+/* MGLFramebuffer.write(...)
+ */
 PyObject * MGLFramebuffer_meth_write(MGLFramebuffer * self, PyObject * const * args, Py_ssize_t nargs) {
     Py_RETURN_NONE;
 }

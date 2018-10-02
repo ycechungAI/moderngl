@@ -21,6 +21,8 @@ const int SHADER_TYPE[] = {
     GL_TESS_EVALUATION_SHADER,
 };
 
+/* MGLContext.program(...)
+ */
 PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 6) {
         // TODO: error

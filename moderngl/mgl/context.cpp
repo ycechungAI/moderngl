@@ -1,21 +1,32 @@
 #include "context.hpp"
-#include "limits.hpp"
+
 #include "buffer.hpp"
+#include "framebuffer.hpp"
+#include "limits.hpp"
 #include "program.hpp"
+#include "query.hpp"
+#include "renderbuffer.hpp"
+#include "sampler.hpp"
+#include "scope.hpp"
+#include "texture.hpp"
 #include "vertex_array.hpp"
+
+#include "internal/enable.hpp"
 #include "generated/py_classes.hpp"
 #include "generated/cpp_classes.hpp"
 
-/* MGLContext.create_context(...)
+/* moderngl.core.create_context(...)
  * Returns a Context object.
  */
 PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 1) {
+    if (nargs != 3) {
         // TODO: error
         return 0;
     }
 
     bool standalone = PyObject_IsTrue(args[0]);
+    PyObject * hook = args[1];
+    PyObject * gc = args[2];
 
     Py_INCREF(MGLContext_class);
     MGLContext * context = PyObject_New(MGLContext, MGLContext_class);
@@ -28,7 +39,23 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
         return 0;
     }
 
+    if (gc != Py_None) {
+        context->gc = NEW_REF(gc);
+    }
+
     const GLMethods & gl = context->gl;
+
+    if (hook != Py_None) {
+        PyObject * dtype = PyUnicode_FromFormat("u%d", sizeof(void *));
+        PyObject * glprocs = PyMemoryView_FromMemory((char *)&context->gl, sizeof(context->gl), PyBUF_WRITE);
+        PyObject * result = call_function(hook, glprocs, dtype);
+        if (!result) {
+            return 0;
+        }
+        Py_DECREF(dtype);
+        Py_DECREF(glprocs);
+        Py_DECREF(result);
+    }
 
     int major = 0;
     int minor = 0;
@@ -43,6 +70,8 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
             version_code = (ver[0] - '0') * 100 + (ver[2] - '0') * 10;
         }
     }
+
+    context->enable_only = read_enable_only(gl);
 
     context->MGLBuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLBuffer_spec);
     context->MGLFramebuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLFramebuffer_spec);
@@ -59,6 +88,52 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
     SLOT(context->wrapper, PyObject, Context_class_version_code) = PyLong_FromLong(version_code);
     SLOT(context->wrapper, PyObject, Context_class_limits) = get_limits(gl, version_code);
     return NEW_REF(context->wrapper);
+}
+
+/* _MGLContext_new_object(...)
+ */
+MGLObject * _MGLContext_new_object(MGLContext * self, PyTypeObject * type, PyTypeObject * cls, int slot) {
+    MGLObject * res = new_object(MGLObject, type);
+    res->wrapper = new_object(PyObject, cls);
+    SLOT(res->wrapper, MGLObject, slot) = NEW_REF(res);
+    res->context = NEW_REF(self);
+    if (self->gc) {
+        PyObject * track = PyObject_GetAttrString(self->gc, "append");
+        if (track) {
+            PyObject * result = call_function(track, res->wrapper);
+            if (!result) {
+                return 0;
+            }
+            Py_DECREF(result);
+        }
+    }
+    return res;
+}
+
+/* _MGLObject_release(...)
+ */
+PyObject * _MGLObject_release(MGLObject * self) {
+    if (self->context->gc) {
+        PyObject * untrack = PyObject_GetAttrString(self->context->gc, "remove");
+        if (untrack) {
+            PyObject * result = call_function(untrack, self->wrapper);
+            if (!result) {
+                return 0;
+            }
+            Py_DECREF(result);
+        }
+    }
+    Py_DECREF(self->context);
+    Py_DECREF(self);
+    Py_RETURN_NONE;
+}
+
+/* _MGLObject_pop_mglo(...)
+ */
+MGLObject * _MGLObject_pop_mglo(PyObject * wrapper, int slot) {
+    MGLObject * mglo = SLOT(wrapper, MGLObject, slot);
+    SLOT(wrapper, MGLObject, slot) = 0;
+    return mglo;
 }
 
 PyTypeObject * MGLContext_class;

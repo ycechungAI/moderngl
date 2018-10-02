@@ -33,13 +33,16 @@ class Context:
     def vertex_array(self, program, content, index_buffer=None) -> VertexArray:
         return self.__mglo.vertex_array(program, content, index_buffer)
 
+    def scope(self, framebuffer=None, enable_only=-1):
+        return self.__mglo.scope(framebuffer, enable_only)
 
-def create_context(standalone=False, debug=False):
+
+def create_context(standalone=False, debug=False, hook=None, gc=None):
     if debug:
         moderngl_debug = importlib.import_module('moderngl.debug')
-        return moderngl_debug.create_context(standalone)
+        return moderngl_debug.create_context(standalone, hook, gc)
     else:
-        return mgl.create_context(standalone)
+        return mgl.create_context(standalone, hook, gc)
 
 
 def extensions(context):
@@ -52,3 +55,7 @@ def hwinfo(context):
 
 def glprocs(context):
     return mgl.glprocs(context)
+
+
+def release(obj):
+    return mgl.release(obj)

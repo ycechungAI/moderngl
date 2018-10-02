@@ -37,9 +37,10 @@ extern PyObject * MGLRenderbuffer_meth_write(MGLRenderbuffer * self, PyObject * 
 
 extern PyObject * MGLSampler_meth_write(MGLSampler * self, PyObject * const * args, Py_ssize_t nargs);
 
-extern PyObject * MGLScope_meth_write(MGLScope * self, PyObject * const * args, Py_ssize_t nargs);
+extern PyObject * MGLScope_meth_begin(MGLScope * self);
+extern PyObject * MGLScope_meth_end(MGLScope * self);
 
-extern PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * const * args, Py_ssize_t nargs);
+extern PyObject * MGLTexture_meth_use(MGLTexture * self, PyObject * const * args, Py_ssize_t nargs);
 
 extern PyObject * MGLVertexArray_meth_render(MGLVertexArray * self, PyObject * const * args, Py_ssize_t nargs);
 extern PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const * args, Py_ssize_t nargs);
@@ -96,12 +97,13 @@ PyMethodDef MGLSampler_methods[] = {
 };
 
 PyMethodDef MGLScope_methods[] = {
-    {"write", (PyCFunction)MGLScope_meth_write, METH_FASTCALL, 0},
+    {"begin", (PyCFunction)MGLScope_meth_begin, METH_NOARGS, 0},
+    {"end", (PyCFunction)MGLScope_meth_end, METH_NOARGS, 0},
     {0},
 };
 
 PyMethodDef MGLTexture_methods[] = {
-    {"write", (PyCFunction)MGLTexture_meth_write, METH_FASTCALL, 0},
+    {"use", (PyCFunction)MGLTexture_meth_use, METH_FASTCALL, 0},
     {0},
 };
 
@@ -182,12 +184,9 @@ PyObject * MGLSampler_meth_write_va(MGLSampler * self, PyObject * args) {
     return MGLSampler_meth_write(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
-PyObject * MGLScope_meth_write_va(MGLScope * self, PyObject * args) {
-    return MGLScope_meth_write(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
 
-PyObject * MGLTexture_meth_write_va(MGLTexture * self, PyObject * args) {
-    return MGLTexture_meth_write(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
+PyObject * MGLTexture_meth_use_va(MGLTexture * self, PyObject * args) {
+    return MGLTexture_meth_use(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
 PyObject * MGLVertexArray_meth_render_va(MGLVertexArray * self, PyObject * args) {
@@ -246,12 +245,13 @@ PyMethodDef MGLSampler_methods[] = {
 };
 
 PyMethodDef MGLScope_methods[] = {
-    {"write", (PyCFunction)MGLScope_meth_write_va, METH_VARARGS, 0},
+    {"begin", (PyCFunction)MGLScope_meth_begin, METH_NOARGS, 0},
+    {"end", (PyCFunction)MGLScope_meth_end, METH_NOARGS, 0},
     {0},
 };
 
 PyMethodDef MGLTexture_methods[] = {
-    {"write", (PyCFunction)MGLTexture_meth_write_va, METH_VARARGS, 0},
+    {"use", (PyCFunction)MGLTexture_meth_use_va, METH_VARARGS, 0},
     {0},
 };
 

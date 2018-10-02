@@ -4,7 +4,10 @@
 #include "generated/py_classes.hpp"
 #include "generated/cpp_classes.hpp"
 #include "internal/modules.hpp"
+#include "internal/enable.hpp"
 
+/* MGLContext.vertex_array(...)
+ */
 PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 3) {
         // TODO: error
@@ -234,6 +237,8 @@ PyObject * MGLVertexArray_meth_render(MGLVertexArray * self, PyObject * const * 
     Py_RETURN_NONE;
 }
 
+/* MGLVertexArray.transform(...)
+ */
 PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 6) {
         // TODO: error
@@ -282,7 +287,7 @@ PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const
     }
 
     gl.EndTransformFeedback();
-    if (~self->context->enable_flags & MGL_RASTERIZER_DISCARD) {
+    if (~self->context->enable_only & MGL_RASTERIZER_DISCARD) {
         gl.Disable(GL_RASTERIZER_DISCARD);
     }
 

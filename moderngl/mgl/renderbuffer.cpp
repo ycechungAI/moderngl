@@ -5,6 +5,8 @@
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
 
+/* MGLContext.renderbuffer(...)
+ */
 PyObject * MGLContext_meth_renderbuffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 0) {
         // TODO: error

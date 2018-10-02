@@ -4,6 +4,8 @@
 #include "internal/modules.hpp"
 #include "internal/tools.hpp"
 
+/* MGLBuffer_core_write(...)
+ */
 int MGLBuffer_core_write(MGLBuffer * self, const Py_ssize_t & offset, Py_buffer * view, bool contiguous) {
     const GLMethods & gl = self->context->gl;
     gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj);
@@ -112,6 +114,8 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
     return NEW_REF(buffer->wrapper);
 }
 
+/* MGLBuffer.write(...)
+ */
 PyObject * MGLBuffer_meth_write(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 2) {
         // TODO: error
@@ -151,6 +155,8 @@ PyObject * MGLBuffer_meth_write(MGLBuffer * self, PyObject * const * args, Py_ss
     Py_RETURN_NONE;
 }
 
+/* MGLBuffer.read(...)
+ */
 PyObject * MGLBuffer_meth_read(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 3) {
         // TODO: error
@@ -208,6 +214,8 @@ PyObject * MGLBuffer_meth_read(MGLBuffer * self, PyObject * const * args, Py_ssi
     return res;
 }
 
+/* MGLBuffer.map(...)
+ */
 PyObject * MGLBuffer_meth_map(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 5) {
         // TODO: error
@@ -279,6 +287,8 @@ PyObject * MGLBuffer_meth_map(MGLBuffer * self, PyObject * const * args, Py_ssiz
     return array;
 }
 
+/* MGLBuffer.unmap()
+ */
 PyObject * MGLBuffer_meth_unmap(MGLBuffer * self) {
     if (self->flags & MGL_BUFFER_OPEN) {
         self->flags &= ~(MGL_BUFFER_OPEN | MGL_BUFFER_READING | MGL_BUFFER_WRITING);
@@ -289,6 +299,8 @@ PyObject * MGLBuffer_meth_unmap(MGLBuffer * self) {
     Py_RETURN_NONE;
 }
 
+/* MGLBuffer.clear()
+ */
 PyObject * MGLBuffer_meth_clear(MGLBuffer * self) {
     if (OPEN_ERROR(self->flags)) {
         PyErr_Format(moderngl_error, "buffer is open");
