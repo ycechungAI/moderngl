@@ -10,7 +10,12 @@ PyObject * moderngl_split_format;
 PyObject * numpy;
 PyObject * numpy_frombuffer;
 
+PyObject * pillow;
+PyObject * pillow_image;
+
 PyObject * tobytes_str;
+PyObject * size_str;
+PyObject * mode_str;
 PyObject * points_long;
 PyObject * triangles_long;
 
@@ -44,7 +49,18 @@ bool load_modules() {
         numpy_frombuffer = PyObject_GetAttrString(numpy, "frombuffer");
     }
 
+    pillow = PyImport_ImportModule("PIL.Image");
+	if (!pillow) {
+		PyErr_Clear();
+	}
+
+    if (pillow) {
+		pillow_image = PyObject_GetAttrString(pillow, "Image");
+	}
+
     tobytes_str = PyUnicode_FromString("tobytes");
+    size_str = PyUnicode_FromString("size");
+    mode_str = PyUnicode_FromString("mode");
     points_long = PyLong_FromLong(GL_POINTS);
     triangles_long = PyLong_FromLong(GL_TRIANGLES);
 

@@ -39,7 +39,10 @@ PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * ar
         return 0;
     }
 
-    gl.BindVertexArray(vertex_array->vertex_array_obj);
+    if (self->active_vertex_array != vertex_array->vertex_array_obj) {
+        gl.BindVertexArray(vertex_array->vertex_array_obj);
+        self->active_vertex_array = vertex_array->vertex_array_obj;
+    }
 
     int vertices = 0x7fffffff;
     int content_len = (int)PySequence_Fast_GET_SIZE(content);
@@ -224,8 +227,8 @@ PyObject * MGLVertexArray_meth_render(MGLVertexArray * self, PyObject * const * 
     const GLMethods & gl = self->context->gl;
 
     PyObject * program = SLOT(self->wrapper, PyObject, VertexArray_class_program);
-    gl.UseProgram(SLOT(program, MGLProgram, Program_class_mglo)->program_obj);
-    gl.BindVertexArray(self->vertex_array_obj);
+    MGLContext_use_program(self->context, SLOT(program, MGLProgram, Program_class_mglo)->program_obj);
+    MGLContext_bind_vertex_array(self->context, self->vertex_array_obj);
 
     if (SLOT(self->wrapper, PyObject, VertexArray_class_ibo) != Py_None) {
         const void * ptr = (const void *)((GLintptr)first * 4);
@@ -234,6 +237,7 @@ PyObject * MGLVertexArray_meth_render(MGLVertexArray * self, PyObject * const * 
         gl.DrawArraysInstanced(render_mode, first, vertices, instances);
     }
 
+    // gl.UseProgram(0); // TODO: check
     Py_RETURN_NONE;
 }
 
@@ -271,8 +275,8 @@ PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const
     const GLMethods & gl = self->context->gl;
 
     PyObject * program = SLOT(self->wrapper, PyObject, VertexArray_class_program);
-    gl.UseProgram(SLOT(program, MGLProgram, Program_class_mglo)->program_obj);
-    gl.BindVertexArray(self->vertex_array_obj);
+    MGLContext_use_program(self->context, SLOT(program, MGLProgram, Program_class_mglo)->program_obj);
+    MGLContext_bind_vertex_array(self->context, self->vertex_array_obj);
 
     MGLBuffer * output = SLOT(buffer, MGLBuffer, Buffer_class_mglo);
     gl.BindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, output->buffer_obj);
@@ -295,6 +299,7 @@ PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const
         gl.Flush();
     }
 
+    // gl.UseProgram(0); // TODO: check
     Py_RETURN_NONE;
 }
 
