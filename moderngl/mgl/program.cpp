@@ -295,21 +295,23 @@ PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * const * args, P
             int size = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_size));
 
             PyObject * result = PyBytes_FromStringAndSize(0, cols * rows * size * (shape == 'd' ? 8 : 4));
+            char * data = PyBytes_AS_STRING(result);
 
             switch (shape) {
-                case 'f': gl.GetUniformfv(self->program_obj, location, (float *)PyBytes_AS_STRING(result)); break;
-                case 'i': gl.GetUniformiv(self->program_obj, location, (int *)PyBytes_AS_STRING(result)); break;
-                case 'u': gl.GetUniformuiv(self->program_obj, location, (unsigned *)PyBytes_AS_STRING(result)); break;
-                case 'd': gl.GetUniformdv(self->program_obj, location, (double *)PyBytes_AS_STRING(result)); break;
-                case 'p': gl.GetUniformiv(self->program_obj, location, (int *)PyBytes_AS_STRING(result)); break;
+                case 'f': gl.GetUniformfv(self->program_obj, location, (float *)data); break;
+                case 'i': gl.GetUniformiv(self->program_obj, location, (int *)data); break;
+                case 'u': gl.GetUniformuiv(self->program_obj, location, (unsigned *)data); break;
+                case 'd': gl.GetUniformdv(self->program_obj, location, (double *)data); break;
+                case 'p': gl.GetUniformiv(self->program_obj, location, (int *)data); break;
                 default:
                     return 0;
             }
 
             return result;
         } else {
-
-            // gl.GetUniformBlockBinding(self->program_obj, location, binding);
+            int binding = -1;
+            gl.GetActiveUniformBlockiv(self->program_obj, location, GL_UNIFORM_BLOCK_BINDING, &binding);
+            return PyLong_FromLong(binding);
         }
     }
 
