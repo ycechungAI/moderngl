@@ -81,72 +81,72 @@ int prepare_buffer(PyObject * data, Py_buffer * view) {
 }
 
 bool unpack_viewport(PyObject * viewport, int & x, int & y, int & width, int & height) {
-	if (viewport == Py_None) {
-		return true;
-	}
+    if (viewport == Py_None) {
+        return true;
+    }
 
-	viewport = PySequence_Fast(viewport, "viewport is not iterable");
-	if (!viewport) {
-		return false;
-	}
+    viewport = PySequence_Fast(viewport, "viewport is not iterable");
+    if (!viewport) {
+        return false;
+    }
 
-	int size = (int)PySequence_Fast_GET_SIZE(viewport);
+    int size = (int)PySequence_Fast_GET_SIZE(viewport);
 
-	if (size == 4) {
-		x = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 0));
-		y = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 1));
-		width = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 2));
-		height = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 3));
-	} else if (size == 2) {
-		width = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 0));
-		height = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 1));
-	} else {
-		PyErr_Format(moderngl_error, "viewport size must be 2 or 4");
-		Py_DECREF(viewport);
-		return false;
-	}
+    if (size == 4) {
+        x = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 0));
+        y = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 1));
+        width = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 2));
+        height = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 3));
+    } else if (size == 2) {
+        width = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 0));
+        height = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 1));
+    } else {
+        PyErr_Format(moderngl_error, "viewport size must be 2 or 4");
+        Py_DECREF(viewport);
+        return false;
+    }
 
-	Py_DECREF(viewport);
-	if (PyErr_Occurred()) {
-		return false;
-	}
+    Py_DECREF(viewport);
+    if (PyErr_Occurred()) {
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 bool unpack_viewport(PyObject * viewport, int & x, int & y, int & z, int & width, int & height, int & depth) {
-	if (viewport == Py_None) {
-		return true;
-	}
+    if (viewport == Py_None) {
+        return true;
+    }
 
-	viewport = PySequence_Fast(viewport, "viewport is not iterable");
-	if (!viewport) {
-		return false;
-	}
+    viewport = PySequence_Fast(viewport, "viewport is not iterable");
+    if (!viewport) {
+        return false;
+    }
 
-	int size = (int)PySequence_Fast_GET_SIZE(viewport);
+    int size = (int)PySequence_Fast_GET_SIZE(viewport);
 
-	if (size == 6) {
-		x = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 0));
-		y = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 1));
-		z = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 2));
-		width = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 3));
-		height = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 4));
-		depth = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 5));
-	} else if (size == 3) {
-		width = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 0));
-		height = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 1));
-		depth = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 2));
-	} else {
-		PyErr_Format(moderngl_error, "viewport size must be 3 or 6");
-		Py_DECREF(viewport);
-		return false;
-	}
+    if (size == 6) {
+        x = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 0));
+        y = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 1));
+        z = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 2));
+        width = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 3));
+        height = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 4));
+        depth = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 5));
+    } else if (size == 3) {
+        width = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 0));
+        height = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 1));
+        depth = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 2));
+    } else {
+        PyErr_Format(moderngl_error, "viewport size must be 3 or 6");
+        Py_DECREF(viewport);
+        return false;
+    }
 
-	Py_DECREF(viewport);
-	if (PyErr_Occurred()) {
-		return false;
-	}
+    Py_DECREF(viewport);
+    if (PyErr_Occurred()) {
+        return false;
+    }
 
-	return true;
+    return true;
 }

@@ -50,13 +50,13 @@ bool load_modules() {
     }
 
     pillow = PyImport_ImportModule("PIL.Image");
-	if (!pillow) {
-		PyErr_Clear();
-	}
+    if (!pillow) {
+        PyErr_Clear();
+    }
 
     if (pillow) {
-		pillow_image = PyObject_GetAttrString(pillow, "Image");
-	}
+        pillow_image = PyObject_GetAttrString(pillow, "Image");
+    }
 
     tobytes_str = PyUnicode_FromString("tobytes");
     size_str = PyUnicode_FromString("size");
