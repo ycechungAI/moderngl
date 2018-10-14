@@ -26,6 +26,7 @@ sources = [
     'moderngl/mgl/mgl.cpp',
     'moderngl/mgl/buffer.cpp',
     'moderngl/mgl/context.cpp',
+    'moderngl/mgl/configuration.cpp',
     'moderngl/mgl/extensions.cpp',
     'moderngl/mgl/framebuffer.cpp',
     'moderngl/mgl/limits.cpp',
@@ -49,26 +50,13 @@ sources = [
     'moderngl/mgl/internal/opengl/gl_context_%s.cpp' % glctx,
 ]
 
-release_sources = sources + [
-]
-
-debug_sources = sources + [
-]
-
 mgl = Extension(
     name='moderngl.mgl',
-    sources=release_sources,
-    libraries=libraries[target],
-)
-
-mgl_dbg = Extension(
-    name='moderngl.mgl_dbg',
-    define_macros=[('MGL_DEBUG', None)],
-    sources=debug_sources,
+    sources=sources,
     libraries=libraries[target],
 )
 
 setup(
     name='moderngl',
-    ext_modules=[mgl, mgl_dbg],
+    ext_modules=[mgl],
 )
