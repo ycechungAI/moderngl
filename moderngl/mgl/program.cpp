@@ -76,7 +76,7 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
             gl.GetShaderInfoLog(shader_obj, log_len, 0, log_text);
             PyObject * name = PyUnicode_FromString(SHADER_NAME[i]);
             PyObject * info = PyUnicode_FromStringAndSize(log_text, log_len);
-            call_function(moderngl_compiler_error, name, args[i], info);
+            call_function(self->glsl_compiler_error, name, args[i], info);
             Py_DECREF(name);
             Py_DECREF(info);
             // Py_DECREF(program);
@@ -128,11 +128,17 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
         char * log_text = (char *)malloc(log_len + 1);
         gl.GetProgramInfoLog(program_obj, log_len, 0, log_text);
         PyObject * info = PyUnicode_FromStringAndSize(log_text, log_len);
-        call_function(moderngl_linker_error, info);
+        call_function(self->glsl_linker_error, info);
         Py_DECREF(info);
         // Py_DECREF(program);
         free(log_text);
         return 0;
+    }
+
+    for (int i = 0; i < 5; ++i) {
+        if (program->shader_obj[i]) {
+            gl.DeleteShader(program->shader_obj[i]);
+        }
     }
 
     MGLContext_use_program(self, program_obj);
@@ -271,62 +277,42 @@ void write_uni(const GLMethods & gl, int location, int type, int size, void * pt
     }
 }
 
-// void write_uni(const GLMethods & gl, int program_obj, int location, int type, int size, void * ptr) {
-//     switch (type) {
-//         case GL_BOOL: gl.ProgramUniform1iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_BOOL_VEC2: gl.ProgramUniform2iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_BOOL_VEC3: gl.ProgramUniform3iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_BOOL_VEC4: gl.ProgramUniform4iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_INT: gl.ProgramUniform1iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_INT_VEC2: gl.ProgramUniform2iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_INT_VEC3: gl.ProgramUniform3iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_INT_VEC4: gl.ProgramUniform4iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_UNSIGNED_INT: gl.ProgramUniform1uiv(program_obj, location, size, (unsigned *)ptr); break;
-//         case GL_UNSIGNED_INT_VEC2: gl.ProgramUniform2uiv(program_obj, location, size, (unsigned *)ptr); break;
-//         case GL_UNSIGNED_INT_VEC3: gl.ProgramUniform3uiv(program_obj, location, size, (unsigned *)ptr); break;
-//         case GL_UNSIGNED_INT_VEC4: gl.ProgramUniform4uiv(program_obj, location, size, (unsigned *)ptr); break;
-//         case GL_FLOAT: gl.ProgramUniform1fv(program_obj, location, size, (float *)ptr); break;
-//         case GL_FLOAT_VEC2: gl.ProgramUniform2fv(program_obj, location, size, (float *)ptr); break;
-//         case GL_FLOAT_VEC3: gl.ProgramUniform3fv(program_obj, location, size, (float *)ptr); break;
-//         case GL_FLOAT_VEC4: gl.ProgramUniform4fv(program_obj, location, size, (float *)ptr); break;
-//         case GL_DOUBLE: gl.ProgramUniform1dv(program_obj, location, size, (double *)ptr); break;
-//         case GL_DOUBLE_VEC2: gl.ProgramUniform2dv(program_obj, location, size, (double *)ptr); break;
-//         case GL_DOUBLE_VEC3: gl.ProgramUniform3dv(program_obj, location, size, (double *)ptr); break;
-//         case GL_DOUBLE_VEC4: gl.ProgramUniform4dv(program_obj, location, size, (double *)ptr); break;
-//         case GL_FLOAT_MAT2: gl.ProgramUniformMatrix2fv(program_obj, location, size, false, (float *)ptr); break;
-//         case GL_FLOAT_MAT2x3: gl.ProgramUniformMatrix2x3fv(program_obj, location, size, false, (float *)ptr); break;
-//         case GL_FLOAT_MAT2x4: gl.ProgramUniformMatrix2x4fv(program_obj, location, size, false, (float *)ptr); break;
-//         case GL_FLOAT_MAT3x2: gl.ProgramUniformMatrix3x2fv(program_obj, location, size, false, (float *)ptr); break;
-//         case GL_FLOAT_MAT3: gl.ProgramUniformMatrix3fv(program_obj, location, size, false, (float *)ptr); break;
-//         case GL_FLOAT_MAT3x4: gl.ProgramUniformMatrix3x4fv(program_obj, location, size, false, (float *)ptr); break;
-//         case GL_FLOAT_MAT4x2: gl.ProgramUniformMatrix4x2fv(program_obj, location, size, false, (float *)ptr); break;
-//         case GL_FLOAT_MAT4x3: gl.ProgramUniformMatrix4x3fv(program_obj, location, size, false, (float *)ptr); break;
-//         case GL_FLOAT_MAT4: gl.ProgramUniformMatrix4fv(program_obj, location, size, false, (float *)ptr); break;
-//         case GL_DOUBLE_MAT2: gl.ProgramUniformMatrix2dv(program_obj, location, size, false, (double *)ptr); break;
-//         case GL_DOUBLE_MAT2x3: gl.ProgramUniformMatrix2x3dv(program_obj, location, size, false, (double *)ptr); break;
-//         case GL_DOUBLE_MAT2x4: gl.ProgramUniformMatrix2x4dv(program_obj, location, size, false, (double *)ptr); break;
-//         case GL_DOUBLE_MAT3x2: gl.ProgramUniformMatrix3x2dv(program_obj, location, size, false, (double *)ptr); break;
-//         case GL_DOUBLE_MAT3: gl.ProgramUniformMatrix3dv(program_obj, location, size, false, (double *)ptr); break;
-//         case GL_DOUBLE_MAT3x4: gl.ProgramUniformMatrix3x4dv(program_obj, location, size, false, (double *)ptr); break;
-//         case GL_DOUBLE_MAT4x2: gl.ProgramUniformMatrix4x2dv(program_obj, location, size, false, (double *)ptr); break;
-//         case GL_DOUBLE_MAT4x3: gl.ProgramUniformMatrix4x3dv(program_obj, location, size, false, (double *)ptr); break;
-//         case GL_DOUBLE_MAT4: gl.ProgramUniformMatrix4dv(program_obj, location, size, false, (double *)ptr); break;
-//         case GL_SAMPLER_2D: gl.ProgramUniform1iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_SAMPLER_3D: gl.ProgramUniform1iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_SAMPLER_2D_ARRAY: gl.ProgramUniform1iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_SAMPLER_2D_SHADOW: gl.ProgramUniform1iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_SAMPLER_2D_MULTISAMPLE: gl.ProgramUniform1iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_SAMPLER_2D_MULTISAMPLE_ARRAY: gl.ProgramUniform1iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_SAMPLER_CUBE: gl.ProgramUniform1iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_SAMPLER_CUBE_SHADOW: gl.ProgramUniform1iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_SAMPLER_CUBE_MAP_ARRAY: gl.ProgramUniform1iv(program_obj, location, size, (int *)ptr); break;
-//         case GL_SAMPLER_CUBE_MAP_ARRAY_SHADOW: gl.ProgramUniform1iv(program_obj, location, size, (int *)ptr); break;
-//     }
-// }
-
 typedef void (* read_value)(void *& ptr, PyObject * value);
 
 PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * const * args, Py_ssize_t nargs) {
+    if (nargs == 1) {
+        PyObject * uniform = args[0];
+
+        const GLMethods & gl = self->context->gl;
+        MGLContext_use_program(self->context, self->program_obj);
+
+        int location = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_location));
+        int shape = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_shape));
+
+        if (shape) {
+            int cols = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_cols));
+            int rows = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_rows));
+            int size = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_size));
+
+            PyObject * result = PyBytes_FromStringAndSize(0, cols * rows * size * (shape == 'd' ? 8 : 4));
+
+            switch (shape) {
+                case 'f': gl.GetUniformfv(self->program_obj, location, (float *)PyBytes_AS_STRING(result)); break;
+                case 'i': gl.GetUniformiv(self->program_obj, location, (int *)PyBytes_AS_STRING(result)); break;
+                case 'u': gl.GetUniformuiv(self->program_obj, location, (unsigned *)PyBytes_AS_STRING(result)); break;
+                case 'd': gl.GetUniformdv(self->program_obj, location, (double *)PyBytes_AS_STRING(result)); break;
+                case 'p': gl.GetUniformiv(self->program_obj, location, (int *)PyBytes_AS_STRING(result)); break;
+                default:
+                    return 0;
+            }
+
+            return result;
+        } else {
+
+            // gl.GetUniformBlockBinding(self->program_obj, location, binding);
+        }
+    }
+
     if (nargs != 2) {
         // TODO: error
         return 0;
@@ -341,10 +327,7 @@ PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * const * args, P
 
     const GLMethods & gl = self->context->gl;
 
-    if (self->context->active_program != self->program_obj) {
-        gl.UseProgram(self->program_obj);
-        self->context->active_program = self->program_obj;
-    }
+    MGLContext_use_program(self->context, self->program_obj);
 
     int location = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_location));
     int shape = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_shape));
@@ -416,7 +399,7 @@ PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * const * args, P
             return 0;
         }
 
-        self->context->gl.UniformBlockBinding(self->program_obj, location, binding);
+        gl.UniformBlockBinding(self->program_obj, location, binding);
     }
 
     Py_RETURN_NONE;

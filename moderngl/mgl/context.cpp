@@ -19,16 +19,19 @@
  * Returns a Context object.
  */
 PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 3) {
+    if (nargs != 4) {
         // TODO: error
         return 0;
     }
 
-    bool standalone = PyObject_IsTrue(args[0]);
-    PyObject * hook = args[1];
-    PyObject * gc = args[2];
+    bool standalone = (bool)PyObject_IsTrue(args[0]);
+    bool debug = (bool)PyObject_IsTrue(args[1]);
+    PyObject * glhook = args[2];
+    PyObject * gc = args[3];
 
     MGLContext * context = new_object(MGLContext, MGLContext_class);
+    context->glsl_compiler_error = moderngl_compiler_error;
+    context->glsl_linker_error = moderngl_linker_error;
 
     if (!context->gl_context.load(standalone)) {
         return 0;
@@ -44,10 +47,10 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
 
     const GLMethods & gl = context->gl;
 
-    if (hook != Py_None) {
+    if (glhook != Py_None) {
         PyObject * dtype = PyUnicode_FromFormat("u%d", sizeof(void *));
         PyObject * glprocs = PyMemoryView_FromMemory((char *)&context->gl, sizeof(context->gl), PyBUF_WRITE);
-        PyObject * result = call_function(hook, glprocs, dtype);
+        PyObject * result = call_function(glhook, glprocs, dtype);
         if (!result) {
             return 0;
         }

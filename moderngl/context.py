@@ -22,11 +22,8 @@ class Context:
     def buffer(self, data=None, reserve=0, readable=True, writable=True, local=False) -> Buffer:
         return self.__mglo.buffer(data, reserve, readable, writable, local)
 
-    def program(
-            self, vertex_shader, fragment_shader=None, geometry_shader=None, tess_control_shader=None,
-            tess_evaluation_shader=None, varyings=()) -> Program:
-        return self.__mglo.program(
-            vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader, varyings)
+    def program(self, vertex_shader, fragment_shader=None, geometry_shader=None, tess_control_shader=None, tess_evaluation_shader=None, varyings=()) -> Program:
+        return self.__mglo.program(vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader, varyings)
 
     def texture(self, size, components=3, data=None, levels=-1, samples=0, aligment=1, dtype='f1') -> Texture:
         return self.__mglo.texture(size, components, data, levels, samples, aligment, dtype)
@@ -43,13 +40,12 @@ class Context:
     def query(self, time=False, primitives=False, samples=False, any_samples=False):
         return self.__mglo.query(time, primitives, samples, any_samples)
 
+    def configure(self, key, **params):
+        return self.__mglo.configure(params)
 
-def create_context(standalone=False, debug=False, hook=None, gc=None):
-    if debug:
-        moderngl_debug = importlib.import_module('moderngl.debug')
-        return moderngl_debug.create_context(standalone, hook, gc)
-    else:
-        return mgl.create_context(standalone, hook, gc)
+
+def create_context(standalone=False, debug=False, glhook=None, gc=None):
+    return mgl.create_context(standalone, debug, glhook, gc)
 
 
 def extensions(context):

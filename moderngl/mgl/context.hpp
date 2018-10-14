@@ -28,6 +28,8 @@ struct MGLContext {
     PyTypeObject * MGLVertexArray_class;
 
     PyObject * gc;
+    PyObject * glsl_compiler_error;
+    PyObject * glsl_linker_error;
 };
 
 PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssize_t nargs);
