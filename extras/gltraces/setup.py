@@ -1,7 +1,9 @@
+import os
 import platform
 
 from setuptools import Extension, setup
 
+os.chdir(os.path.join(__file__, '..'))
 PLATFORMS = {'windows', 'linux', 'darwin', 'cygwin'}
 
 target = platform.system().lower()
@@ -21,15 +23,15 @@ libraries = {
 }
 
 sources = [
-    'extras/gltraces/gltraces.cpp',
-    'moderngl/mgl/internal/opengl/gl_methods.cpp',
+    'gltraces.cpp',
+    '../../moderngl/mgl/internal/opengl/gl_methods.cpp',
 ]
 
 gltraces = Extension(
     name='gltraces',
     sources=sources,
     libraries=libraries[target],
-    include_dirs=['.'],
+    include_dirs=['../..'],
 )
 
 setup(

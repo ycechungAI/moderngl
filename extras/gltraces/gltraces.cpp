@@ -4,11 +4,337 @@
 
 GLMethods gl;
 
-// void print_template(GLenum foobar) {
-//     switch (foobar) {
-//         default: printf("0x%04x", foobar);
-//     }
-// }
+void print_debug_source(GLenum source) {
+    switch (source) {
+		case GL_DEBUG_SOURCE_API: printf("GL_DEBUG_SOURCE_API"); break;
+		case GL_DEBUG_SOURCE_WINDOW_SYSTEM: printf("GL_DEBUG_SOURCE_WINDOW_SYSTEM"); break;
+		case GL_DEBUG_SOURCE_SHADER_COMPILER: printf("GL_DEBUG_SOURCE_SHADER_COMPILER"); break;
+		case GL_DEBUG_SOURCE_THIRD_PARTY: printf("GL_DEBUG_SOURCE_THIRD_PARTY"); break;
+		case GL_DEBUG_SOURCE_APPLICATION: printf("GL_DEBUG_SOURCE_APPLICATION"); break;
+		case GL_DEBUG_SOURCE_OTHER: printf("GL_DEBUG_SOURCE_OTHER"); break;
+        default: printf("0x%04x", source);
+    }
+}
+
+void print_debug_type(GLenum type) {
+    switch (type) {
+		case GL_DEBUG_TYPE_ERROR: printf("GL_DEBUG_TYPE_ERROR"); break;
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: printf("GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR"); break;
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: printf("GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR"); break;
+		case GL_DEBUG_TYPE_PORTABILITY: printf("GL_DEBUG_TYPE_PORTABILITY"); break;
+		case GL_DEBUG_TYPE_PERFORMANCE: printf("GL_DEBUG_TYPE_PERFORMANCE"); break;
+		case GL_DEBUG_TYPE_MARKER: printf("GL_DEBUG_TYPE_MARKER"); break;
+		case GL_DEBUG_TYPE_PUSH_GROUP: printf("GL_DEBUG_TYPE_PUSH_GROUP"); break;
+		case GL_DEBUG_TYPE_POP_GROUP: printf("GL_DEBUG_TYPE_POP_GROUP"); break;
+		case GL_DEBUG_TYPE_OTHER: printf("GL_DEBUG_TYPE_OTHER"); break;
+		case GL_DONT_CARE: printf("GL_DONT_CARE"); break;
+        default: printf("0x%04x", type);
+    }
+}
+
+void print_debug_severity(GLenum severity) {
+    switch (severity) {
+		case GL_DONT_CARE: printf("GL_DONT_CARE"); break;
+		case GL_DEBUG_SEVERITY_LOW: printf("GL_DEBUG_SEVERITY_LOW"); break;
+		case GL_DEBUG_SEVERITY_MEDIUM: printf("GL_DEBUG_SEVERITY_MEDIUM"); break;
+		case GL_DEBUG_SEVERITY_HIGH: printf("GL_DEBUG_SEVERITY_HIGH"); break;
+		case GL_DEBUG_SEVERITY_NOTIFICATION: printf("GL_DEBUG_SEVERITY_NOTIFICATION"); break;
+        default: printf("0x%04x", severity);
+    }
+}
+
+void print_get_transform_feedback_pname(GLenum pname) {
+    switch (pname) {
+		case GL_TRANSFORM_FEEDBACK_BUFFER_BINDING: printf("GL_TRANSFORM_FEEDBACK_BUFFER_BINDING"); break;
+		case GL_TRANSFORM_FEEDBACK_BUFFER_START: printf("GL_TRANSFORM_FEEDBACK_BUFFER_START"); break;
+		case GL_TRANSFORM_FEEDBACK_BUFFER_SIZE: printf("GL_TRANSFORM_FEEDBACK_BUFFER_SIZE"); break;
+		case GL_TRANSFORM_FEEDBACK_PAUSED: printf("GL_TRANSFORM_FEEDBACK_PAUSED"); break;
+		case GL_TRANSFORM_FEEDBACK_ACTIVE: printf("GL_TRANSFORM_FEEDBACK_ACTIVE"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_program_interface_pname(GLenum pname) {
+    switch (pname) {
+		case GL_ACTIVE_RESOURCES: printf("GL_ACTIVE_RESOURCES"); break;
+		case GL_MAX_NAME_LENGTH: printf("GL_MAX_NAME_LENGTH"); break;
+		case GL_MAX_NUM_ACTIVE_VARIABLES: printf("GL_MAX_NUM_ACTIVE_VARIABLES"); break;
+		case GL_MAX_NUM_COMPATIBLE_SUBROUTINES: printf("GL_MAX_NUM_COMPATIBLE_SUBROUTINES"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_framebuffer_parameter_pname(GLenum pname) {
+    switch (pname) {
+		case GL_FRAMEBUFFER_DEFAULT_WIDTH: printf("GL_FRAMEBUFFER_DEFAULT_WIDTH"); break;
+		case GL_FRAMEBUFFER_DEFAULT_HEIGHT: printf("GL_FRAMEBUFFER_DEFAULT_HEIGHT"); break;
+		case GL_FRAMEBUFFER_DEFAULT_LAYERS: printf("GL_FRAMEBUFFER_DEFAULT_LAYERS"); break;
+		case GL_FRAMEBUFFER_DEFAULT_SAMPLES: printf("GL_FRAMEBUFFER_DEFAULT_SAMPLES"); break;
+		case GL_FRAMEBUFFER_DEFAULT_FIXED_SAMPLE_LOCATIONS: printf("GL_FRAMEBUFFER_DEFAULT_FIXED_SAMPLE_LOCATIONS"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_get_active_atomic_counter_buffer_pname(GLenum pname) {
+    switch (pname) {
+		case GL_ATOMIC_COUNTER_BUFFER_BINDING: printf("GL_ATOMIC_COUNTER_BUFFER_BINDING"); break;
+		case GL_ATOMIC_COUNTER_BUFFER_DATA_SIZE: printf("GL_ATOMIC_COUNTER_BUFFER_DATA_SIZE"); break;
+		case GL_ATOMIC_COUNTER_BUFFER_ACTIVE_ATOMIC_COUNTERS: printf("GL_ATOMIC_COUNTER_BUFFER_ACTIVE_ATOMIC_COUNTERS"); break;
+		case GL_ATOMIC_COUNTER_BUFFER_ACTIVE_ATOMIC_COUNTER_INDICES: printf("GL_ATOMIC_COUNTER_BUFFER_ACTIVE_ATOMIC_COUNTER_INDICES"); break;
+		case GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_VERTEX_SHADER: printf("GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_VERTEX_SHADER"); break;
+		case GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_TESS_CONTROL_SHADER: printf("GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_TESS_CONTROL_SHADER"); break;
+		case GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_TESS_EVALUATION_SHADER: printf("GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_TESS_EVALUATION_SHADER"); break;
+		case GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_GEOMETRY_SHADER: printf("GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_GEOMETRY_SHADER"); break;
+		case GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_FRAGMENT_SHADER: printf("GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_FRAGMENT_SHADER"); break;
+		case GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_COMPUTE_SHADER: printf("GL_ATOMIC_COUNTER_BUFFER_REFERENCED_BY_COMPUTE_SHADER"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_object_label_identifier(GLenum identifier) {
+    switch (identifier) {
+		case GL_BUFFER: printf("GL_BUFFER"); break;
+		case GL_SHADER: printf("GL_SHADER"); break;
+		case GL_PROGRAM: printf("GL_PROGRAM"); break;
+		case GL_VERTEX_ARRAY: printf("GL_VERTEX_ARRAY"); break;
+		case GL_QUERY: printf("GL_QUERY"); break;
+		case GL_PROGRAM_PIPELINE: printf("GL_PROGRAM_PIPELINE"); break;
+		case GL_TRANSFORM_FEEDBACK: printf("GL_TRANSFORM_FEEDBACK"); break;
+		case GL_SAMPLER: printf("GL_SAMPLER"); break;
+		case GL_TEXTURE: printf("GL_TEXTURE"); break;
+		case GL_RENDERBUFFER: printf("GL_RENDERBUFFER"); break;
+		case GL_FRAMEBUFFER: printf("GL_FRAMEBUFFER"); break;
+        default: printf("0x%04x", identifier);
+    }
+}
+
+void print_get_internalformat_pname(GLenum pname) {
+    switch (pname) {
+		case GL_NUM_SAMPLE_COUNTS: printf("GL_NUM_SAMPLE_COUNTS"); break;
+		case GL_SAMPLES: printf("GL_SAMPLES"); break;
+		case GL_INTERNALFORMAT_SUPPORTED: printf("GL_INTERNALFORMAT_SUPPORTED"); break;
+		case GL_INTERNALFORMAT_PREFERRED: printf("GL_INTERNALFORMAT_PREFERRED"); break;
+		case GL_INTERNALFORMAT_RED_SIZE: printf("GL_INTERNALFORMAT_RED_SIZE"); break;
+		case GL_INTERNALFORMAT_RED_TYPE: printf("GL_INTERNALFORMAT_RED_TYPE"); break;
+		case GL_MAX_WIDTH: printf("GL_MAX_WIDTH"); break;
+		case GL_MAX_COMBINED_DIMENSIONS: printf("GL_MAX_COMBINED_DIMENSIONS"); break;
+		case GL_COLOR_COMPONENTS: printf("GL_COLOR_COMPONENTS"); break;
+		case GL_DEPTH_COMPONENTS: printf("GL_DEPTH_COMPONENTS"); break;
+		case GL_COLOR_RENDERABLE: printf("GL_COLOR_RENDERABLE"); break;
+		case GL_FRAMEBUFFER_RENDERABLE: printf("GL_FRAMEBUFFER_RENDERABLE"); break;
+		case GL_FRAMEBUFFER_BLEND: printf("GL_FRAMEBUFFER_BLEND"); break;
+		case GL_READ_PIXELS: printf("GL_READ_PIXELS"); break;
+		case GL_READ_PIXELS_FORMAT: printf("GL_READ_PIXELS_FORMAT"); break;
+		case GL_TEXTURE_IMAGE_FORMAT: printf("GL_TEXTURE_IMAGE_FORMAT"); break;
+		case GL_GET_TEXTURE_IMAGE_FORMAT: printf("GL_GET_TEXTURE_IMAGE_FORMAT"); break;
+		case GL_MIPMAP: printf("GL_MIPMAP"); break;
+		// case GL_GENERATE_MIPMAP: printf("GL_GENERATE_MIPMAP"); break;
+		case GL_COLOR_ENCODING: printf("GL_COLOR_ENCODING"); break;
+		case GL_SRGB_READ: printf("GL_SRGB_READ"); break;
+		case GL_FILTER: printf("GL_FILTER"); break;
+		case GL_VERTEX_TEXTURE: printf("GL_VERTEX_TEXTURE"); break;
+		case GL_TEXTURE_SHADOW: printf("GL_TEXTURE_SHADOW"); break;
+		case GL_SHADER_IMAGE_LOAD: printf("GL_SHADER_IMAGE_LOAD"); break;
+		case GL_IMAGE_TEXEL_SIZE: printf("GL_IMAGE_TEXEL_SIZE"); break;
+		case GL_IMAGE_COMPATIBILITY_CLASS: printf("GL_IMAGE_COMPATIBILITY_CLASS"); break;
+		case GL_IMAGE_PIXEL_FORMAT: printf("GL_IMAGE_PIXEL_FORMAT"); break;
+		case GL_IMAGE_FORMAT_COMPATIBILITY_TYPE: printf("GL_IMAGE_FORMAT_COMPATIBILITY_TYPE"); break;
+		case GL_SIMULTANEOUS_TEXTURE_AND_DEPTH_TEST: printf("GL_SIMULTANEOUS_TEXTURE_AND_DEPTH_TEST"); break;
+		case GL_SIMULTANEOUS_TEXTURE_AND_DEPTH_WRITE: printf("GL_SIMULTANEOUS_TEXTURE_AND_DEPTH_WRITE"); break;
+		case GL_TEXTURE_COMPRESSED: printf("GL_TEXTURE_COMPRESSED"); break;
+		case GL_TEXTURE_COMPRESSED_BLOCK_WIDTH: printf("GL_TEXTURE_COMPRESSED_BLOCK_WIDTH"); break;
+		case GL_CLEAR_BUFFER: printf("GL_CLEAR_BUFFER"); break;
+		case GL_TEXTURE_VIEW: printf("GL_TEXTURE_VIEW"); break;
+		case GL_VIEW_COMPATIBILITY_CLASS: printf("GL_VIEW_COMPATIBILITY_CLASS"); break;
+		case GL_CLEAR_TEXTURE: printf("GL_CLEAR_TEXTURE"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_get_program_pipeline_pname(GLenum pname) {
+    switch (pname) {
+		case GL_ACTIVE_PROGRAM: printf("GL_ACTIVE_PROGRAM"); break;
+		case GL_VERTEX_SHADER: printf("GL_VERTEX_SHADER"); break;
+		case GL_TESS_CONTROL_SHADER: printf("GL_TESS_CONTROL_SHADER"); break;
+		case GL_TESS_EVALUATION_SHADER: printf("GL_TESS_EVALUATION_SHADER"); break;
+		case GL_GEOMETRY_SHADER: printf("GL_GEOMETRY_SHADER"); break;
+		case GL_FRAGMENT_SHADER: printf("GL_FRAGMENT_SHADER"); break;
+		case GL_INFO_LOG_LENGTH: printf("GL_INFO_LOG_LENGTH"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_get_program_parameter_pname(GLenum pname) {
+    switch (pname) {
+		case GL_PROGRAM_BINARY_RETRIEVABLE_HINT: printf("GL_PROGRAM_BINARY_RETRIEVABLE_HINT"); break;
+		case GL_PROGRAM_SEPARABLE: printf("GL_PROGRAM_SEPARABLE"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_get_shader_precision_format(GLenum type) {
+    switch (type) {
+		case GL_LOW_FLOAT: printf("GL_LOW_FLOAT"); break;
+		case GL_MEDIUM_FLOAT: printf("GL_MEDIUM_FLOAT"); break;
+		case GL_HIGH_FLOAT: printf("GL_HIGH_FLOAT"); break;
+		case GL_LOW_INT: printf("GL_LOW_INT"); break;
+		case GL_MEDIUM_INT: printf("GL_MEDIUM_INT"); break;
+		case GL_HIGH_INT: printf("GL_HIGH_INT"); break;
+        default: printf("0x%04x", type);
+    }
+}
+
+void print_get_query_indexed_pname(GLenum pname) {
+    switch (pname) {
+		case GL_CURRENT_QUERY: printf("GL_CURRENT_QUERY"); break;
+		case GL_QUERY_COUNTER_BITS: printf("GL_QUERY_COUNTER_BITS"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_patch_parameter_pname(GLenum pname) {
+    switch (pname) {
+		case GL_PATCH_VERTICES: printf("GL_PATCH_VERTICES"); break;
+		case GL_PATCH_DEFAULT_OUTER_LEVEL: printf("GL_PATCH_DEFAULT_OUTER_LEVEL"); break;
+		case GL_PATCH_DEFAULT_INNER_LEVEL: printf("GL_PATCH_DEFAULT_INNER_LEVEL"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_get_program_stage_pname(GLenum pname) {
+    switch (pname) {
+		case GL_ACTIVE_SUBROUTINE_UNIFORMS: printf("GL_ACTIVE_SUBROUTINE_UNIFORMS"); break;
+		case GL_ACTIVE_SUBROUTINE_UNIFORM_LOCATIONS: printf("GL_ACTIVE_SUBROUTINE_UNIFORM_LOCATIONS"); break;
+		case GL_ACTIVE_SUBROUTINES: printf("GL_ACTIVE_SUBROUTINES"); break;
+		case GL_ACTIVE_SUBROUTINE_UNIFORM_MAX_LENGTH: printf("GL_ACTIVE_SUBROUTINE_UNIFORM_MAX_LENGTH"); break;
+		case GL_ACTIVE_SUBROUTINE_MAX_LENGTH: printf("GL_ACTIVE_SUBROUTINE_MAX_LENGTH"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_get_active_subroutine_uniform_pname(GLenum pname) {
+    switch (pname) {
+		case GL_NUM_COMPATIBLE_SUBROUTINES: printf("GL_NUM_COMPATIBLE_SUBROUTINES"); break;
+		case GL_COMPATIBLE_SUBROUTINES: printf("GL_COMPATIBLE_SUBROUTINES"); break;
+		case GL_UNIFORM_SIZE: printf("GL_UNIFORM_SIZE"); break;
+		case GL_UNIFORM_NAME_LENGTH: printf("GL_UNIFORM_NAME_LENGTH"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_get_multisample_pname(GLenum pname) {
+    switch (pname) {
+		case GL_SAMPLE_POSITION: printf("GL_SAMPLE_POSITION"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_get_sync_pname(GLenum pname) {
+    switch (pname) {
+		case GL_OBJECT_TYPE: printf("GL_OBJECT_TYPE"); break;
+		case GL_SYNC_STATUS: printf("GL_SYNC_STATUS"); break;
+		case GL_SYNC_CONDITION: printf("GL_SYNC_CONDITION"); break;
+		case GL_SYNC_FLAGS: printf("GL_SYNC_FLAGS"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_client_wait_sync_result(GLenum result) {
+    switch (result) {
+		case GL_ALREADY_SIGNALED: printf("GL_ALREADY_SIGNALED"); break;
+		case GL_TIMEOUT_EXPIRED: printf("GL_TIMEOUT_EXPIRED"); break;
+		case GL_CONDITION_SATISFIED: printf("GL_CONDITION_SATISFIED"); break;
+		case GL_WAIT_FAILED: printf("GL_WAIT_FAILED"); break;
+        default: printf("0x%04x", result);
+    }
+}
+
+void print_fence_sync_condition(GLenum condition) {
+    switch (condition) {
+		case GL_SYNC_GPU_COMMANDS_COMPLETE: printf("GL_SYNC_GPU_COMMANDS_COMPLETE"); break;
+        default: printf("0x%04x", condition);
+    }
+}
+
+void print_provoking_vertex_mode(GLenum mode) {
+    switch (mode) {
+		case GL_FIRST_VERTEX_CONVENTION: printf("GL_FIRST_VERTEX_CONVENTION"); break;
+		case GL_LAST_VERTEX_CONVENTION: printf("GL_LAST_VERTEX_CONVENTION"); break;
+        default: printf("0x%04x", mode);
+    }
+}
+
+void print_get_active_uniform_block_pname(GLenum pname) {
+    switch (pname) {
+		case GL_UNIFORM_BLOCK_BINDING: printf("GL_UNIFORM_BLOCK_BINDING"); break;
+		case GL_UNIFORM_BLOCK_DATA_SIZE: printf("GL_UNIFORM_BLOCK_DATA_SIZE"); break;
+		case GL_UNIFORM_BLOCK_NAME_LENGTH: printf("GL_UNIFORM_BLOCK_NAME_LENGTH"); break;
+		case GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS: printf("GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS"); break;
+		case GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES: printf("GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES"); break;
+		case GL_UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER: printf("GL_UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER"); break;
+		case GL_UNIFORM_BLOCK_REFERENCED_BY_TESS_CONTROL_SHADER: printf("GL_UNIFORM_BLOCK_REFERENCED_BY_TESS_CONTROL_SHADER"); break;
+		case GL_UNIFORM_BLOCK_REFERENCED_BY_TESS_EVALUATION_SHADER: printf("GL_UNIFORM_BLOCK_REFERENCED_BY_TESS_EVALUATION_SHADER"); break;
+		case GL_UNIFORM_BLOCK_REFERENCED_BY_GEOMETRY_SHADER: printf("GL_UNIFORM_BLOCK_REFERENCED_BY_GEOMETRY_SHADER"); break;
+		case GL_UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER: printf("GL_UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER"); break;
+		case GL_UNIFORM_BLOCK_REFERENCED_BY_COMPUTE_SHADER: printf("GL_UNIFORM_BLOCK_REFERENCED_BY_COMPUTE_SHADER"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_get_framebuffer_attachment_parameter_pname(GLenum pname) {
+    switch (pname) {
+		case GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE: printf("GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE"); break;
+		case GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE: printf("GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE"); break;
+		case GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE: printf("GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE"); break;
+		case GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING: printf("GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING"); break;
+		case GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME: printf("GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME"); break;
+		case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL: printf("GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL"); break;
+		case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE: printf("GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE"); break;
+		case GL_FRAMEBUFFER_ATTACHMENT_LAYERED: printf("GL_FRAMEBUFFER_ATTACHMENT_LAYERED"); break;
+		case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER: printf("GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_get_active_uniforms_pname(GLenum pname) {
+    switch (pname) {
+		case GL_UNIFORM_TYPE: printf("GL_UNIFORM_TYPE"); break;
+		case GL_UNIFORM_SIZE: printf("GL_UNIFORM_SIZE"); break;
+		case GL_UNIFORM_NAME_LENGTH: printf("GL_UNIFORM_NAME_LENGTH"); break;
+		case GL_UNIFORM_BLOCK_INDEX: printf("GL_UNIFORM_BLOCK_INDEX"); break;
+		case GL_UNIFORM_OFFSET: printf("GL_UNIFORM_OFFSET"); break;
+		case GL_UNIFORM_ARRAY_STRIDE: printf("GL_UNIFORM_ARRAY_STRIDE"); break;
+		case GL_UNIFORM_MATRIX_STRIDE: printf("GL_UNIFORM_MATRIX_STRIDE"); break;
+		case GL_UNIFORM_IS_ROW_MAJOR: printf("GL_UNIFORM_IS_ROW_MAJOR"); break;
+		case GL_UNIFORM_ATOMIC_COUNTER_BUFFER_INDEX: printf("GL_UNIFORM_ATOMIC_COUNTER_BUFFER_INDEX"); break;
+        default: printf("0x%04x", pname);
+    }
+}
+
+void print_framebuffer_target(GLenum target) {
+    switch (target) {
+		case GL_DRAW_FRAMEBUFFER: printf("GL_DRAW_FRAMEBUFFER"); break;
+		case GL_READ_FRAMEBUFFER: printf("GL_READ_FRAMEBUFFER"); break;
+		case GL_FRAMEBUFFER: printf("GL_FRAMEBUFFER"); break;
+        default: printf("0x%04x", target);
+    }
+}
+
+void print_get_renderbuffer_parameter_pname(GLenum pname) {
+    switch (pname) {
+		case GL_RENDERBUFFER_WIDTH: printf("GL_RENDERBUFFER_WIDTH"); break;
+		case GL_RENDERBUFFER_HEIGHT: printf("GL_RENDERBUFFER_HEIGHT"); break;
+		case GL_RENDERBUFFER_INTERNAL_FORMAT: printf("GL_RENDERBUFFER_INTERNAL_FORMAT"); break;
+		case GL_RENDERBUFFER_SAMPLES: printf("GL_RENDERBUFFER_SAMPLES"); break;
+		case GL_RENDERBUFFER_RED_SIZE: printf("GL_RENDERBUFFER_RED_SIZE"); break;
+		case GL_RENDERBUFFER_GREEN_SIZE: printf("GL_RENDERBUFFER_GREEN_SIZE"); break;
+		case GL_RENDERBUFFER_BLUE_SIZE: printf("GL_RENDERBUFFER_BLUE_SIZE"); break;
+		case GL_RENDERBUFFER_ALPHA_SIZE: printf("GL_RENDERBUFFER_ALPHA_SIZE"); break;
+		case GL_RENDERBUFFER_DEPTH_SIZE: printf("GL_RENDERBUFFER_DEPTH_SIZE"); break;
+		case GL_RENDERBUFFER_STENCIL_SIZE: printf("GL_RENDERBUFFER_STENCIL_SIZE"); break;
+        default: printf("0x%04x", pname);
+    }
+}
 
 void print_renderbuffer(GLenum renderbuffer) {
     switch (renderbuffer) {
@@ -198,20 +524,19 @@ void print_blend_equation(GLenum mode) {
 }
 
 void print_gl_get_pointer_pname(GLenum pname) {
-    // switch (pname) {
-    //     case GL_COLOR_ARRAY_POINTER: printf("GL_COLOR_ARRAY_POINTER"); break;
-    //     case GL_EDGE_FLAG_ARRAY_POINTER: printf("GL_EDGE_FLAG_ARRAY_POINTER"); break;
-    //     case GL_FOG_COORD_ARRAY_POINTER: printf("GL_FOG_COORD_ARRAY_POINTER"); break;
-    //     case GL_FEEDBACK_BUFFER_POINTER: printf("GL_FEEDBACK_BUFFER_POINTER"); break;
-    //     case GL_INDEX_ARRAY_POINTER: printf("GL_INDEX_ARRAY_POINTER"); break;
-    //     case GL_NORMAL_ARRAY_POINTER: printf("GL_NORMAL_ARRAY_POINTER"); break;
-    //     case GL_SECONDARY_COLOR_ARRAY_POINTER: printf("GL_SECONDARY_COLOR_ARRAY_POINTER"); break;
-    //     case GL_SELECTION_BUFFER_POINTER: printf("GL_SELECTION_BUFFER_POINTER"); break;
-    //     case GL_TEXTURE_COORD_ARRAY_POINTER: printf("GL_TEXTURE_COORD_ARRAY_POINTER"); break;
-    //     case GL_VERTEX_ARRAY_POINTER: printf("GL_VERTEX_ARRAY_POINTER"); break;
-    //     default: printf("0x%04x", pname);
-    // }
-    printf("0x%04x", pname);
+    switch (pname) {
+        // case GL_COLOR_ARRAY_POINTER: printf("GL_COLOR_ARRAY_POINTER"); break;
+        // case GL_EDGE_FLAG_ARRAY_POINTER: printf("GL_EDGE_FLAG_ARRAY_POINTER"); break;
+        // case GL_FOG_COORD_ARRAY_POINTER: printf("GL_FOG_COORD_ARRAY_POINTER"); break;
+        // case GL_FEEDBACK_BUFFER_POINTER: printf("GL_FEEDBACK_BUFFER_POINTER"); break;
+        // case GL_INDEX_ARRAY_POINTER: printf("GL_INDEX_ARRAY_POINTER"); break;
+        // case GL_NORMAL_ARRAY_POINTER: printf("GL_NORMAL_ARRAY_POINTER"); break;
+        // case GL_SECONDARY_COLOR_ARRAY_POINTER: printf("GL_SECONDARY_COLOR_ARRAY_POINTER"); break;
+        // case GL_SELECTION_BUFFER_POINTER: printf("GL_SELECTION_BUFFER_POINTER"); break;
+        // case GL_TEXTURE_COORD_ARRAY_POINTER: printf("GL_TEXTURE_COORD_ARRAY_POINTER"); break;
+        // case GL_VERTEX_ARRAY_POINTER: printf("GL_VERTEX_ARRAY_POINTER"); break;
+        default: printf("0x%04x", pname);
+    }
 }
 
 void print_point_parameter_pname(GLenum pname) {
@@ -343,6 +668,29 @@ void print_draw_buffer(GLenum buffer) {
                 printf("GL_COLOR_ATTACHMENT%d", buffer);
             } else {
                 printf("0x%04x", buffer);
+            }
+    }
+}
+
+void print_clear_named_framebuffer_buffer(GLenum buffer) {
+    switch (buffer) {
+		case GL_COLOR: printf("GL_COLOR"); break;
+		case GL_DEPTH: printf("GL_DEPTH"); break;
+		case GL_STENCIL: printf("GL_STENCIL"); break;
+        default: printf("0x%04x", buffer);
+    }
+}
+
+void print_framebuffer_attachment(GLenum attachment) {
+    switch (attachment) {
+		case GL_DEPTH_ATTACHMENT: printf("GL_DEPTH_ATTACHMENT"); break;
+		case GL_STENCIL_ATTACHMENT: printf("GL_STENCIL_ATTACHMENT"); break;
+		case GL_DEPTH_STENCIL_ATTACHMENT: printf("GL_DEPTH_STENCIL_ATTACHMENT"); break;
+        default:
+            if (GL_COLOR_ATTACHMENT0 <= attachment && attachment < GL_COLOR_ATTACHMENT0 + 32) {
+                printf("GL_COLOR_ATTACHMENT%d", attachment);
+            } else {
+                printf("0x%04x", attachment);
             }
     }
 }
@@ -5777,7 +6125,7 @@ extern "C" void GLAPI GetRenderbufferParameteriv(GLenum target, GLenum pname, GL
     print_renderbuffer(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_renderbuffer_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -5861,13 +6209,13 @@ extern "C" GLenum GLAPI CheckFramebufferStatus(GLenum target) {
 extern "C" void GLAPI FramebufferTexture1D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level) {
     printf("glFramebufferTexture1D(");
     printf("target=");
-    print_framebuffer(target);
+    print_framebuffer_target(target);
     printf(", ");
     printf("attachment=");
-    printf("0x%04x", attachment);
+    print_framebuffer_attachment(attachment);
     printf(", ");
     printf("textarget=");
-    printf("0x%04x", textarget);
+    print_texture_target(textarget);
     printf(", ");
     printf("texture=");
     printf("%u", texture);
@@ -5884,13 +6232,13 @@ extern "C" void GLAPI FramebufferTexture1D(GLenum target, GLenum attachment, GLe
 extern "C" void GLAPI FramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level) {
     printf("glFramebufferTexture2D(");
     printf("target=");
-    print_framebuffer(target);
+    print_framebuffer_target(target);
     printf(", ");
     printf("attachment=");
-    printf("0x%04x", attachment);
+    print_framebuffer_attachment(attachment);
     printf(", ");
     printf("textarget=");
-    printf("0x%04x", textarget);
+    print_texture_target(textarget);
     printf(", ");
     printf("texture=");
     printf("%u", texture);
@@ -5907,13 +6255,13 @@ extern "C" void GLAPI FramebufferTexture2D(GLenum target, GLenum attachment, GLe
 extern "C" void GLAPI FramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset) {
     printf("glFramebufferTexture3D(");
     printf("target=");
-    print_framebuffer(target);
+    print_framebuffer_target(target);
     printf(", ");
     printf("attachment=");
-    printf("0x%04x", attachment);
+    print_framebuffer_attachment(attachment);
     printf(", ");
     printf("textarget=");
-    printf("0x%04x", textarget);
+    print_texture_target(textarget);
     printf(", ");
     printf("texture=");
     printf("%u", texture);
@@ -5933,10 +6281,10 @@ extern "C" void GLAPI FramebufferTexture3D(GLenum target, GLenum attachment, GLe
 extern "C" void GLAPI FramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer) {
     printf("glFramebufferRenderbuffer(");
     printf("target=");
-    print_framebuffer(target);
+    print_framebuffer_target(target);
     printf(", ");
     printf("attachment=");
-    printf("0x%04x", attachment);
+    print_framebuffer_attachment(attachment);
     printf(", ");
     printf("renderbuffertarget=");
     print_renderbuffer(renderbuffertarget);
@@ -5956,10 +6304,10 @@ extern "C" void GLAPI GetFramebufferAttachmentParameteriv(GLenum target, GLenum 
     print_framebuffer(target);
     printf(", ");
     printf("attachment=");
-    printf("0x%04x", attachment);
+    print_framebuffer_attachment(attachment);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_framebuffer_attachment_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -6048,7 +6396,7 @@ extern "C" void GLAPI FramebufferTextureLayer(GLenum target, GLenum attachment, 
     print_framebuffer(target);
     printf(", ");
     printf("attachment=");
-    printf("0x%04x", attachment);
+    print_framebuffer_attachment(attachment);
     printf(", ");
     printf("texture=");
     printf("%u", texture);
@@ -6232,10 +6580,10 @@ extern "C" void GLAPI PrimitiveRestartIndex(GLuint index) {
 extern "C" void GLAPI CopyBufferSubData(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size) {
     printf("glCopyBufferSubData(");
     printf("readTarget=");
-    printf("0x%04x", readTarget);
+    print_buffer_target(readTarget);
     printf(", ");
     printf("writeTarget=");
-    printf("0x%04x", writeTarget);
+    print_buffer_target(writeTarget);
     printf(", ");
     printf("readOffset=");
     printf("%lld", readOffset);
@@ -6284,7 +6632,7 @@ extern "C" void GLAPI GetActiveUniformsiv(GLuint program, GLsizei uniformCount, 
     printf("%p", uniformIndices);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_active_uniforms_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -6344,7 +6692,7 @@ extern "C" void GLAPI GetActiveUniformBlockiv(GLuint program, GLuint uniformBloc
     printf("%u", uniformBlockIndex);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_active_uniform_block_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -6502,7 +6850,7 @@ extern "C" void GLAPI MultiDrawElementsBaseVertex(GLenum mode, const GLsizei * c
 extern "C" void GLAPI ProvokingVertex(GLenum mode) {
     printf("glProvokingVertex(");
     printf("mode=");
-    printf("0x%04x", mode);
+    print_provoking_vertex_mode(mode);
     printf(")");
     gl.ProvokingVertex(mode);
     print_error();
@@ -6513,7 +6861,7 @@ extern "C" void GLAPI ProvokingVertex(GLenum mode) {
 extern "C" GLsync GLAPI FenceSync(GLenum condition, GLbitfield flags) {
     printf("glFenceSync(");
     printf("condition=");
-    printf("0x%04x", condition);
+    print_fence_sync_condition(condition);
     printf(", ");
     printf("flags=");
     printf("0x%08x", flags);
@@ -6565,7 +6913,7 @@ extern "C" GLenum GLAPI ClientWaitSync(GLsync sync, GLbitfield flags, GLuint64 t
     printf(")");
     printf(" -> ");
     GLenum result = gl.ClientWaitSync(sync, flags, timeout);
-    printf("0x%04x", result);
+    print_client_wait_sync_result(result);
     print_error();
     printf("\n");
     fflush(stdout);
@@ -6609,7 +6957,7 @@ extern "C" void GLAPI GetSynciv(GLsync sync, GLenum pname, GLsizei bufSize, GLsi
     printf("%p", sync);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_sync_pname(pname);
     printf(", ");
     printf("bufSize=");
     printf("%d", bufSize);
@@ -6649,7 +6997,7 @@ extern "C" void GLAPI GetBufferParameteri64v(GLenum target, GLenum pname, GLint6
     print_buffer_target(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_buffer_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -6663,10 +7011,10 @@ extern "C" void GLAPI GetBufferParameteri64v(GLenum target, GLenum pname, GLint6
 extern "C" void GLAPI FramebufferTexture(GLenum target, GLenum attachment, GLuint texture, GLint level) {
     printf("glFramebufferTexture(");
     printf("target=");
-    printf("0x%04x", target);
+    print_framebuffer_target(target);
     printf(", ");
     printf("attachment=");
-    printf("0x%04x", attachment);
+    print_framebuffer_attachment(attachment);
     printf(", ");
     printf("texture=");
     printf("%u", texture);
@@ -6738,7 +7086,7 @@ extern "C" void GLAPI TexImage3DMultisample(GLenum target, GLsizei samples, GLen
 extern "C" void GLAPI GetMultisamplefv(GLenum pname, GLuint index, GLfloat * val) {
     printf("glGetMultisamplefv(");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_multisample_pname(pname);
     printf(", ");
     printf("index=");
     printf("%u", index);
@@ -7755,7 +8103,7 @@ extern "C" void GLAPI GetActiveSubroutineUniformiv(GLuint program, GLenum shader
     printf("%u", index);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_active_subroutine_uniform_pname(pname);
     printf(", ");
     printf("values=");
     printf("%p", values);
@@ -7861,7 +8209,7 @@ extern "C" void GLAPI GetProgramStageiv(GLuint program, GLenum shadertype, GLenu
     print_shader(shadertype);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_program_stage_pname(pname);
     printf(", ");
     printf("values=");
     printf("%p", values);
@@ -7875,7 +8223,7 @@ extern "C" void GLAPI GetProgramStageiv(GLuint program, GLenum shadertype, GLenu
 extern "C" void GLAPI PatchParameteri(GLenum pname, GLint value) {
     printf("glPatchParameteri(");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_patch_parameter_pname(pname);
     printf(", ");
     printf("value=");
     printf("%d", value);
@@ -7889,7 +8237,7 @@ extern "C" void GLAPI PatchParameteri(GLenum pname, GLint value) {
 extern "C" void GLAPI PatchParameterfv(GLenum pname, const GLfloat * values) {
     printf("glPatchParameterfv(");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_patch_parameter_pname(pname);
     printf(", ");
     printf("values=");
     printf("%p", values);
@@ -8045,7 +8393,7 @@ extern "C" void GLAPI GetQueryIndexediv(GLenum target, GLuint index, GLenum pnam
     printf("%u", index);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_query_indexed_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -8094,7 +8442,7 @@ extern "C" void GLAPI GetShaderPrecisionFormat(GLenum shadertype, GLenum precisi
     print_shader(shadertype);
     printf(", ");
     printf("precisiontype=");
-    printf("0x%04x", precisiontype);
+    print_get_shader_precision_format(precisiontype);
     printf(", ");
     printf("range=");
     printf("%p", range);
@@ -8162,7 +8510,7 @@ extern "C" void GLAPI ProgramBinary(GLuint program, GLenum binaryFormat, const v
     printf("%u", program);
     printf(", ");
     printf("binaryFormat=");
-    printf("0x%04x", binaryFormat);
+    print_binary_format(binaryFormat);
     printf(", ");
     printf("binary=");
     printf("%p", binary);
@@ -8182,7 +8530,7 @@ extern "C" void GLAPI ProgramParameteri(GLuint program, GLenum pname, GLint valu
     printf("%u", program);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_program_parameter_pname(pname);
     printf(", ");
     printf("value=");
     printf("%d", value);
@@ -8227,7 +8575,7 @@ extern "C" void GLAPI ActiveShaderProgram(GLuint pipeline, GLuint program) {
 extern "C" GLuint GLAPI CreateShaderProgramv(GLenum type, GLsizei count, const GLchar * const * strings) {
     printf("glCreateShaderProgramv(");
     printf("type=");
-    printf("0x%04x", type);
+    print_shader(type);
     printf(", ");
     printf("count=");
     printf("%d", count);
@@ -8303,7 +8651,7 @@ extern "C" void GLAPI GetProgramPipelineiv(GLuint pipeline, GLenum pname, GLint 
     printf("%u", pipeline);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_program_pipeline_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -9850,13 +10198,13 @@ extern "C" void GLAPI DrawElementsInstancedBaseVertexBaseInstance(GLenum mode, G
 extern "C" void GLAPI GetInternalformativ(GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint * params) {
     printf("glGetInternalformativ(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("internalformat=");
     print_texture_internalformat(internalformat);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_internalformat_pname(pname);
     printf(", ");
     printf("bufSize=");
     printf("%d", bufSize);
@@ -9879,7 +10227,7 @@ extern "C" void GLAPI GetActiveAtomicCounterBufferiv(GLuint program, GLuint buff
     printf("%u", bufferIndex);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_active_atomic_counter_buffer_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -9908,7 +10256,7 @@ extern "C" void GLAPI BindImageTexture(GLuint unit, GLuint texture, GLint level,
     printf("%d", layer);
     printf(", ");
     printf("access=");
-    printf("0x%04x", access);
+    print_buffer_access_mode(access);
     printf(", ");
     printf("format=");
     print_texture_format(format);
@@ -10175,7 +10523,7 @@ extern "C" void GLAPI FramebufferParameteri(GLenum target, GLenum pname, GLint p
     print_framebuffer(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_framebuffer_parameter_pname(pname);
     printf(", ");
     printf("param=");
     printf("%d", param);
@@ -10192,7 +10540,7 @@ extern "C" void GLAPI GetFramebufferParameteriv(GLenum target, GLenum pname, GLi
     print_framebuffer(target);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_framebuffer_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -10206,13 +10554,13 @@ extern "C" void GLAPI GetFramebufferParameteriv(GLenum target, GLenum pname, GLi
 extern "C" void GLAPI GetInternalformati64v(GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint64 * params) {
     printf("glGetInternalformati64v(");
     printf("target=");
-    printf("0x%04x", target);
+    print_texture_target(target);
     printf(", ");
     printf("internalformat=");
     print_texture_internalformat(internalformat);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_internalformat_pname(pname);
     printf(", ");
     printf("bufSize=");
     printf("%d", bufSize);
@@ -10303,7 +10651,7 @@ extern "C" void GLAPI InvalidateBufferData(GLuint buffer) {
 extern "C" void GLAPI InvalidateFramebuffer(GLenum target, GLsizei numAttachments, const GLenum * attachments) {
     printf("glInvalidateFramebuffer(");
     printf("target=");
-    printf("0x%04x", target);
+    print_framebuffer_target(target);
     printf(", ");
     printf("numAttachments=");
     printf("%d", numAttachments);
@@ -10320,7 +10668,7 @@ extern "C" void GLAPI InvalidateFramebuffer(GLenum target, GLsizei numAttachment
 extern "C" void GLAPI InvalidateSubFramebuffer(GLenum target, GLsizei numAttachments, const GLenum * attachments, GLint x, GLint y, GLsizei width, GLsizei height) {
     printf("glInvalidateSubFramebuffer(");
     printf("target=");
-    printf("0x%04x", target);
+    print_framebuffer_target(target);
     printf(", ");
     printf("numAttachments=");
     printf("%d", numAttachments);
@@ -10398,7 +10746,7 @@ extern "C" void GLAPI GetProgramInterfaceiv(GLuint program, GLenum programInterf
     print_program_interface(programInterface);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_program_interface_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -10768,13 +11116,13 @@ extern "C" void GLAPI VertexBindingDivisor(GLuint bindingindex, GLuint divisor) 
 extern "C" void GLAPI DebugMessageControl(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint * ids, GLboolean enabled) {
     printf("glDebugMessageControl(");
     printf("source=");
-    printf("0x%04x", source);
+    print_debug_source(source);
     printf(", ");
     printf("type=");
-    printf("0x%04x", type);
+    print_debug_type(type);
     printf(", ");
     printf("severity=");
-    printf("0x%04x", severity);
+    print_debug_severity(severity);
     printf(", ");
     printf("count=");
     printf("%d", count);
@@ -10794,16 +11142,16 @@ extern "C" void GLAPI DebugMessageControl(GLenum source, GLenum type, GLenum sev
 extern "C" void GLAPI DebugMessageInsert(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * buf) {
     printf("glDebugMessageInsert(");
     printf("source=");
-    printf("0x%04x", source);
+    print_debug_source(source);
     printf(", ");
     printf("type=");
-    printf("0x%04x", type);
+    print_debug_type(type);
     printf(", ");
     printf("id=");
     printf("%u", id);
     printf(", ");
     printf("severity=");
-    printf("0x%04x", severity);
+    print_debug_severity(severity);
     printf(", ");
     printf("length=");
     printf("%d", length);
@@ -10869,7 +11217,7 @@ extern "C" GLuint GLAPI GetDebugMessageLog(GLuint count, GLsizei bufSize, GLenum
 extern "C" void GLAPI PushDebugGroup(GLenum source, GLuint id, GLsizei length, const GLchar * message) {
     printf("glPushDebugGroup(");
     printf("source=");
-    printf("0x%04x", source);
+    print_debug_source(source);
     printf(", ");
     printf("id=");
     printf("%u", id);
@@ -10898,7 +11246,7 @@ extern "C" void GLAPI PopDebugGroup() {
 extern "C" void GLAPI ObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar * label) {
     printf("glObjectLabel(");
     printf("identifier=");
-    printf("0x%04x", identifier);
+    print_object_label_identifier(identifier);
     printf(", ");
     printf("name=");
     printf("%u", name);
@@ -10918,7 +11266,7 @@ extern "C" void GLAPI ObjectLabel(GLenum identifier, GLuint name, GLsizei length
 extern "C" void GLAPI GetObjectLabel(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei * length, GLchar * label) {
     printf("glGetObjectLabel(");
     printf("identifier=");
-    printf("0x%04x", identifier);
+    print_object_label_identifier(identifier);
     printf(", ");
     printf("name=");
     printf("%u", name);
@@ -11253,7 +11601,7 @@ extern "C" void GLAPI GetTransformFeedbackiv(GLuint xfb, GLenum pname, GLint * p
     printf("%u", xfb);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_transform_feedback_pname(pname);
     printf(", ");
     printf("param=");
     printf("%p", param);
@@ -11270,7 +11618,7 @@ extern "C" void GLAPI GetTransformFeedbacki_v(GLuint xfb, GLenum pname, GLuint i
     printf("%u", xfb);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_transform_feedback_pname(pname);
     printf(", ");
     printf("index=");
     printf("%u", index);
@@ -11290,7 +11638,7 @@ extern "C" void GLAPI GetTransformFeedbacki64_v(GLuint xfb, GLenum pname, GLuint
     printf("%u", xfb);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_transform_feedback_pname(pname);
     printf(", ");
     printf("index=");
     printf("%u", index);
@@ -11530,7 +11878,7 @@ extern "C" void GLAPI GetNamedBufferParameteriv(GLuint buffer, GLenum pname, GLi
     printf("%u", buffer);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_buffer_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -11547,7 +11895,7 @@ extern "C" void GLAPI GetNamedBufferParameteri64v(GLuint buffer, GLenum pname, G
     printf("%u", buffer);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_buffer_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -11564,7 +11912,7 @@ extern "C" void GLAPI GetNamedBufferPointerv(GLuint buffer, GLenum pname, void *
     printf("%u", buffer);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_buffer_pointer_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -11615,10 +11963,10 @@ extern "C" void GLAPI NamedFramebufferRenderbuffer(GLuint framebuffer, GLenum at
     printf("%u", framebuffer);
     printf(", ");
     printf("attachment=");
-    printf("0x%04x", attachment);
+    print_framebuffer_attachment(attachment);
     printf(", ");
     printf("renderbuffertarget=");
-    printf("0x%04x", renderbuffertarget);
+    print_renderbuffer(renderbuffertarget);
     printf(", ");
     printf("renderbuffer=");
     printf("%u", renderbuffer);
@@ -11635,7 +11983,7 @@ extern "C" void GLAPI NamedFramebufferParameteri(GLuint framebuffer, GLenum pnam
     printf("%u", framebuffer);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_framebuffer_parameter_pname(pname);
     printf(", ");
     printf("param=");
     printf("%d", param);
@@ -11652,7 +12000,7 @@ extern "C" void GLAPI NamedFramebufferTexture(GLuint framebuffer, GLenum attachm
     printf("%u", framebuffer);
     printf(", ");
     printf("attachment=");
-    printf("0x%04x", attachment);
+    print_framebuffer_attachment(attachment);
     printf(", ");
     printf("texture=");
     printf("%u", texture);
@@ -11672,7 +12020,7 @@ extern "C" void GLAPI NamedFramebufferTextureLayer(GLuint framebuffer, GLenum at
     printf("%u", framebuffer);
     printf(", ");
     printf("attachment=");
-    printf("0x%04x", attachment);
+    print_framebuffer_attachment(attachment);
     printf(", ");
     printf("texture=");
     printf("%u", texture);
@@ -11695,7 +12043,7 @@ extern "C" void GLAPI NamedFramebufferDrawBuffer(GLuint framebuffer, GLenum buf)
     printf("%u", framebuffer);
     printf(", ");
     printf("buf=");
-    printf("0x%04x", buf);
+    print_draw_buffer(buf);
     printf(")");
     gl.NamedFramebufferDrawBuffer(framebuffer, buf);
     print_error();
@@ -11726,7 +12074,7 @@ extern "C" void GLAPI NamedFramebufferReadBuffer(GLuint framebuffer, GLenum src)
     printf("%u", framebuffer);
     printf(", ");
     printf("src=");
-    printf("0x%04x", src);
+    print_draw_buffer(src);
     printf(")");
     gl.NamedFramebufferReadBuffer(framebuffer, src);
     print_error();
@@ -11786,7 +12134,7 @@ extern "C" void GLAPI ClearNamedFramebufferiv(GLuint framebuffer, GLenum buffer,
     printf("%u", framebuffer);
     printf(", ");
     printf("buffer=");
-    printf("0x%04x", buffer);
+    print_clear_named_framebuffer_buffer(buffer);
     printf(", ");
     printf("drawbuffer=");
     printf("%d", drawbuffer);
@@ -11806,7 +12154,7 @@ extern "C" void GLAPI ClearNamedFramebufferuiv(GLuint framebuffer, GLenum buffer
     printf("%u", framebuffer);
     printf(", ");
     printf("buffer=");
-    printf("0x%04x", buffer);
+    print_clear_named_framebuffer_buffer(buffer);
     printf(", ");
     printf("drawbuffer=");
     printf("%d", drawbuffer);
@@ -11826,7 +12174,7 @@ extern "C" void GLAPI ClearNamedFramebufferfv(GLuint framebuffer, GLenum buffer,
     printf("%u", framebuffer);
     printf(", ");
     printf("buffer=");
-    printf("0x%04x", buffer);
+    print_clear_named_framebuffer_buffer(buffer);
     printf(", ");
     printf("drawbuffer=");
     printf("%d", drawbuffer);
@@ -11846,7 +12194,7 @@ extern "C" void GLAPI ClearNamedFramebufferfi(GLuint framebuffer, GLenum buffer,
     printf("%u", framebuffer);
     printf(", ");
     printf("buffer=");
-    printf("0x%04x", buffer);
+    print_clear_named_framebuffer_buffer(buffer);
     printf(", ");
     printf("drawbuffer=");
     printf("%d", drawbuffer);
@@ -11913,7 +12261,7 @@ extern "C" GLenum GLAPI CheckNamedFramebufferStatus(GLuint framebuffer, GLenum t
     printf("%u", framebuffer);
     printf(", ");
     printf("target=");
-    printf("0x%04x", target);
+    print_framebuffer_target(target);
     printf(")");
     printf(" -> ");
     GLenum result = gl.CheckNamedFramebufferStatus(framebuffer, target);
@@ -11930,7 +12278,7 @@ extern "C" void GLAPI GetNamedFramebufferParameteriv(GLuint framebuffer, GLenum 
     printf("%u", framebuffer);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_framebuffer_parameter_pname(pname);
     printf(", ");
     printf("param=");
     printf("%p", param);
@@ -11947,10 +12295,10 @@ extern "C" void GLAPI GetNamedFramebufferAttachmentParameteriv(GLuint framebuffe
     printf("%u", framebuffer);
     printf(", ");
     printf("attachment=");
-    printf("0x%04x", attachment);
+    print_framebuffer_attachment(attachment);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_framebuffer_attachment_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
@@ -12024,7 +12372,7 @@ extern "C" void GLAPI GetNamedRenderbufferParameteriv(GLuint renderbuffer, GLenu
     printf("%u", renderbuffer);
     printf(", ");
     printf("pname=");
-    printf("0x%04x", pname);
+    print_get_renderbuffer_parameter_pname(pname);
     printf(", ");
     printf("params=");
     printf("%p", params);
