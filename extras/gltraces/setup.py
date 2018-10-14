@@ -3,7 +3,7 @@ import platform
 
 from setuptools import Extension, setup
 
-os.chdir(os.path.join(__file__, '..'))
+os.chdir(os.path.normpath(os.path.join(__file__, '..')))
 PLATFORMS = {'windows', 'linux', 'darwin', 'cygwin'}
 
 target = platform.system().lower()
