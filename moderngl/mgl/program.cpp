@@ -1,6 +1,9 @@
 #include "program.hpp"
+#include "context.hpp"
+
 #include "generated/py_classes.hpp"
 #include "generated/cpp_classes.hpp"
+
 #include "internal/modules.hpp"
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
@@ -21,7 +24,7 @@ const int SHADER_TYPE[] = {
     GL_TESS_EVALUATION_SHADER,
 };
 
-/* MGLContext.program(...)
+/* MGLContext.program(vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader, varyings)
  */
 PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 6) {
@@ -141,7 +144,7 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
         }
     }
 
-    MGLContext_use_program(self, program_obj);
+    self->use_program(program_obj);
 
     PyObject * uniforms = PyDict_New();
     PyObject * attributes = PyDict_New();
@@ -279,12 +282,14 @@ void write_uni(const GLMethods & gl, int location, int type, int size, void * pt
 
 typedef void (* read_value)(void *& ptr, PyObject * value);
 
+/* MGLProgram.uniform(uniform, value)
+ */
 PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs == 1) {
         PyObject * uniform = args[0];
 
         const GLMethods & gl = self->context->gl;
-        MGLContext_use_program(self->context, self->program_obj);
+        self->context->use_program(self->program_obj);
 
         int location = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_location));
         int shape = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_shape));
@@ -329,7 +334,7 @@ PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * const * args, P
 
     const GLMethods & gl = self->context->gl;
 
-    MGLContext_use_program(self->context, self->program_obj);
+    self->context->use_program(self->program_obj);
 
     int location = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_location));
     int shape = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_shape));

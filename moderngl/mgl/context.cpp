@@ -11,11 +11,10 @@
 #include "texture.hpp"
 #include "vertex_array.hpp"
 
-#include "internal/enable.hpp"
 #include "generated/py_classes.hpp"
 #include "generated/cpp_classes.hpp"
 
-/* moderngl.core.create_context(...)
+/* moderngl.core.create_context(standalone, debug, glhook, gc)
  * Returns a Context object.
  */
 PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
@@ -73,7 +72,14 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
         }
     }
 
-    context->enable_only = read_enable_only(gl);
+    int default_texture_unit = 0;
+    gl.GetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &default_texture_unit);
+    default_texture_unit = GL_TEXTURE0 + (default_texture_unit > 0 ? default_texture_unit - 1 : 0);
+
+    context->default_texture_unit = default_texture_unit;
+    context->current_enable_only = 0;
+    context->current_color_mask = 0xffffffffffffffff;
+    context->current_depth_mask = true;
 
     gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     gl.Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -90,10 +96,21 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
     context->MGLTexture_class = (PyTypeObject *)PyType_FromSpec(&MGLTexture_spec);
     context->MGLVertexArray_class = (PyTypeObject *)PyType_FromSpec(&MGLVertexArray_spec);
 
+    context->default_framebuffer = MGLContext_new_object(context, Framebuffer);
+
+    context->default_framebuffer->color_mask = 0xF;
+    context->default_framebuffer->depth_mask = 1;
+    context->default_framebuffer->attachments = 1;
+    context->default_framebuffer->attachment_type = "f";
+
+    context->bound_framebuffer = NEW_REF(context->default_framebuffer);
+
     context->wrapper = new_object(PyObject, Context_class);
     SLOT(context->wrapper, MGLContext, Context_class_mglo) = context;
     SLOT(context->wrapper, PyObject, Context_class_version_code) = PyLong_FromLong(version_code);
     SLOT(context->wrapper, PyObject, Context_class_limits) = get_limits(gl, version_code);
+    SLOT(context->wrapper, PyObject, Context_class_screen) = NEW_REF(context->default_framebuffer->wrapper);
+    SLOT(context->wrapper, PyObject, Context_class_fbo) = NEW_REF(context->bound_framebuffer->wrapper);
     return NEW_REF(context->wrapper);
 }
 
@@ -143,5 +160,117 @@ MGLObject * _MGLObject_pop_mglo(PyObject * wrapper, int slot) {
     SLOT(wrapper, MGLObject, slot) = 0;
     return mglo;
 }
+
+/*inline*/ void MGLContext::enable_only(int enable_only) {
+    if (int changed_flags = current_enable_only ^ enable_only) {
+        if (changed_flags & MGL_BLEND) {
+            if (enable_only & MGL_BLEND) {
+                gl.Enable(GL_BLEND);
+            } else {
+                gl.Disable(GL_BLEND);
+            }
+        }
+
+        if (changed_flags & MGL_DEPTH_TEST) {
+            if (enable_only & MGL_DEPTH_TEST) {
+                gl.Enable(GL_DEPTH_TEST);
+            } else {
+                gl.Disable(GL_DEPTH_TEST);
+            }
+        }
+
+        if (changed_flags & MGL_CULL_FACE) {
+            if (enable_only & MGL_CULL_FACE) {
+                gl.Enable(GL_CULL_FACE);
+            } else {
+                gl.Disable(GL_CULL_FACE);
+            }
+        }
+
+        if (changed_flags & MGL_RASTERIZER_DISCARD) {
+            if (enable_only & MGL_RASTERIZER_DISCARD) {
+                gl.Enable(GL_RASTERIZER_DISCARD);
+            } else {
+                gl.Disable(GL_RASTERIZER_DISCARD);
+            }
+        }
+
+        current_enable_only = enable_only;
+    }
+}
+
+/*inline*/ void MGLContext::use_program(int program_obj) {
+    if (current_program_obj != program_obj) {
+        current_program_obj = program_obj;
+        gl.UseProgram(program_obj);
+    }
+}
+
+/*inline*/ void MGLContext::bind_array_buffer(int buffer_obj) {
+    if (current_array_buffer_obj != buffer_obj) {
+        current_array_buffer_obj = buffer_obj;
+        gl.BindBuffer(GL_ARRAY_BUFFER, buffer_obj);
+    }
+}
+
+/*inline*/ void MGLContext::bind_vertex_array(int vertex_array_obj) {
+    if (current_vertex_array_obj != vertex_array_obj) {
+        current_vertex_array_obj = vertex_array_obj;
+        gl.BindVertexArray(vertex_array_obj);
+    }
+}
+
+/*inline*/ void MGLContext::bind_framebuffer(int framebuffer_obj) {
+    if (current_framebuffer_obj != framebuffer_obj) {
+        current_framebuffer_obj = framebuffer_obj;
+        gl.BindFramebuffer(GL_FRAMEBUFFER, framebuffer_obj);
+    }
+}
+
+/*inline*/ void MGLContext::bind_temp_texture(int texture_target, int texture_obj) {
+    if (current_temp_texture_obj != texture_obj) {
+        current_temp_texture_obj = texture_obj;
+        gl.ActiveTexture(default_texture_unit);
+        gl.BindTexture(texture_target, texture_obj);
+    }
+}
+
+/*inline*/ void MGLContext::bind_sampler(int location, int texture_target, int texture_obj, int sampler_obj) {
+    int & current = current_sampler_obj[location & 0x1f];
+    if (current != sampler_obj) {
+        current = sampler_obj;
+        gl.ActiveTexture(GL_TEXTURE0 + location);
+        gl.BindTexture(texture_target, texture_obj);
+        gl.BindSampler(location, sampler_obj);
+    }
+}
+
+/*inline*/ void MGLContext::set_alignment(int alignment) {
+    if (current_alignment != alignment) {
+        current_alignment = alignment;
+        gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
+        gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+    }
+}
+
+/*inline*/ void MGLContext::set_write_mask(unsigned long long color_mask, bool depth_mask) {
+    if (unsigned long long mask_diff = (current_color_mask ^ color_mask) & bound_framebuffer->color_mask) {
+        current_color_mask = color_mask;
+
+        for (int i = 0; mask_diff; ++i) {
+            if (mask_diff & 0xF) {
+                gl.ColorMaski(i, color_mask & 1, color_mask & 2, color_mask & 4, color_mask & 8);
+            }
+            color_mask >>= 4;
+            mask_diff >>= 4;
+        }
+    }
+
+    if ((current_depth_mask ^ depth_mask) & bound_framebuffer->depth_mask) {
+        current_depth_mask = depth_mask;
+        gl.DepthMask(depth_mask);
+    }
+}
+
 
 PyTypeObject * MGLContext_class;

@@ -1,12 +1,15 @@
 #include "sampler.hpp"
+#include "context.hpp"
 #include "texture.hpp"
+
 #include "generated/py_classes.hpp"
 #include "generated/cpp_classes.hpp"
+
 #include "internal/modules.hpp"
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
 
-/* MGLContext.sampler(...)
+/* MGLContext.sampler(texture)
  */
 PyObject * MGLContext_meth_sampler(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 1) {
@@ -34,7 +37,7 @@ PyObject * MGLContext_meth_sampler(MGLContext * self, PyObject * const * args, P
     return NEW_REF(sampler->wrapper);
 }
 
-/* MGLSampler.use(...)
+/* MGLSampler.use(location)
  */
 PyObject * MGLSampler_meth_use(MGLSampler * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 1) {
@@ -46,10 +49,6 @@ PyObject * MGLSampler_meth_use(MGLSampler * self, PyObject * const * args, Py_ss
     MGLTexture * texture = SLOT(wrapper, MGLTexture, Texture_class_mglo);
 
     int location = PyLong_AsLong(args[0]);
-
-    const GLMethods & gl = self->context->gl;
-    gl.ActiveTexture(GL_TEXTURE0 + location);
-    gl.BindTexture(texture->texture_target, texture->texture_obj);
-    gl.BindSampler(location, self->sampler_obj);
+    self->context->bind_sampler(location, texture->texture_target, texture->texture_obj, self->sampler_obj);
     Py_RETURN_NONE;
 }

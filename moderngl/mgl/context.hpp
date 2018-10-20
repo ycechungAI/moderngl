@@ -1,8 +1,17 @@
 #pragma once
 #include "mgl.hpp"
+#include "framebuffer.hpp"
+
 #include "internal/opengl/gl_context.hpp"
 #include "internal/opengl/gl_methods.hpp"
-#include "internal/enable.hpp"
+
+enum MGLEnableFlag {
+    MGL_NOTHING = 0,
+    MGL_BLEND = 1,
+    MGL_DEPTH_TEST = 2,
+    MGL_CULL_FACE = 4,
+    MGL_RASTERIZER_DISCARD = 8,
+};
 
 struct MGLContext {
     PyObject_HEAD
@@ -12,10 +21,21 @@ struct MGLContext {
 
     int version_code;
     int default_texture_unit;
-    int enable_only;
-    int active_program;
-    int active_texture;
-    int active_vertex_array;
+
+    int current_enable_only;
+    int current_program_obj;
+    int current_array_buffer_obj;
+    int current_vertex_array_obj;
+    int current_framebuffer_obj;
+    int current_temp_texture_obj;
+    int current_sampler_obj[32];
+    int current_alignment;
+
+    unsigned long long current_color_mask;
+    bool current_depth_mask;
+
+    MGLFramebuffer * bound_framebuffer;
+    MGLFramebuffer * default_framebuffer;
 
     PyTypeObject * MGLBuffer_class;
     PyTypeObject * MGLFramebuffer_class;
@@ -27,75 +47,25 @@ struct MGLContext {
     PyTypeObject * MGLTexture_class;
     PyTypeObject * MGLVertexArray_class;
 
-    PyObject * gc;
     PyObject * glsl_compiler_error;
     PyObject * glsl_linker_error;
+    PyObject * gc;
+
+    void enable_only(int enable_only);
+
+    void use_program(int program_obj);
+
+    void bind_array_buffer(int buffer_obj);
+    void bind_vertex_array(int vertex_array_obj);
+    void bind_framebuffer(int framebuffer_obj);
+    void bind_temp_texture(int texture_target, int texture_obj);
+    void bind_sampler(int location, int texture_target, int texture_obj, int sampler_obj);
+
+    void set_alignment(int alignment);
+    void set_write_mask(unsigned long long color_mask, bool depth_mask);
 };
 
 PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssize_t nargs);
-
-inline void MGLContext_use_program(MGLContext * self, int program) {
-    if (self->active_program != program) {
-        self->active_program = program;
-        self->gl.UseProgram(program);
-    }
-}
-
-inline void MGLContext_active_texture(MGLContext * self, int texture) {
-    if (self->active_texture != texture) {
-        self->active_texture = texture;
-        self->gl.ActiveTexture(texture);
-    }
-}
-
-inline void MGLContext_bind_vertex_array(MGLContext * self, int vertex_array) {
-    if (self->active_vertex_array != vertex_array) {
-        self->active_vertex_array = vertex_array;
-        self->gl.BindVertexArray(vertex_array);
-    }
-}
-
-inline void MGLContext_enable_only(MGLContext * self, int enable_only) {
-    int changed_flags = self->enable_only ^ enable_only;
-
-    const GLMethods & gl = self->gl;
-
-    if (changed_flags) {
-        if (changed_flags & MGL_BLEND) {
-            if (enable_only & MGL_BLEND) {
-                gl.Enable(GL_BLEND);
-            } else {
-                gl.Disable(GL_BLEND);
-            }
-        }
-
-        if (changed_flags & MGL_DEPTH_TEST) {
-            if (enable_only & MGL_DEPTH_TEST) {
-                gl.Enable(GL_DEPTH_TEST);
-            } else {
-                gl.Disable(GL_DEPTH_TEST);
-            }
-        }
-
-        if (changed_flags & MGL_CULL_FACE) {
-            if (enable_only & MGL_CULL_FACE) {
-                gl.Enable(GL_CULL_FACE);
-            } else {
-                gl.Disable(GL_CULL_FACE);
-            }
-        }
-
-        if (changed_flags & MGL_RASTERIZER_DISCARD) {
-            if (enable_only & MGL_RASTERIZER_DISCARD) {
-                gl.Enable(GL_RASTERIZER_DISCARD);
-            } else {
-                gl.Disable(GL_RASTERIZER_DISCARD);
-            }
-        }
-
-        self->enable_only = enable_only;
-    }
-}
 
 /* Every objects derived from a Context must have the following HEAD */
 

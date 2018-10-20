@@ -1,6 +1,7 @@
 #include "cpp_classes.hpp"
 
 #include "../buffer.hpp"
+#include "../configuration.hpp"
 #include "../context.hpp"
 #include "../framebuffer.hpp"
 #include "../program.hpp"
@@ -28,7 +29,9 @@ extern PyObject * MGLContext_meth_scope(MGLContext * self, PyObject * const * ar
 extern PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
 extern PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
 
-extern PyObject * MGLFramebuffer_meth_write(MGLFramebuffer * self, PyObject * const * args, Py_ssize_t nargs);
+extern PyObject * MGLFramebuffer_meth_read(MGLFramebuffer * self, PyObject * const * args, Py_ssize_t nargs);
+extern PyObject * MGLFramebuffer_meth_use(MGLFramebuffer * self);
+extern PyObject * MGLFramebuffer_meth_clear(MGLFramebuffer * self, PyObject * const * args, Py_ssize_t nargs);
 
 extern PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * const * args, Py_ssize_t nargs);
 
@@ -77,7 +80,9 @@ PyMethodDef MGLContext_methods[] = {
 };
 
 PyMethodDef MGLFramebuffer_methods[] = {
-    {"write", (PyCFunction)MGLFramebuffer_meth_write, METH_FASTCALL, 0},
+    {"read", (PyCFunction)MGLFramebuffer_meth_read, METH_FASTCALL, 0},
+    {"use", (PyCFunction)MGLFramebuffer_meth_use, METH_NOARGS, 0},
+    {"clear", (PyCFunction)MGLFramebuffer_meth_clear, METH_FASTCALL, 0},
     {0},
 };
 
@@ -176,8 +181,12 @@ PyObject * MGLContext_meth_vertex_array_va(MGLContext * self, PyObject * args) {
     return MGLContext_meth_vertex_array(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
-PyObject * MGLFramebuffer_meth_write_va(MGLFramebuffer * self, PyObject * args) {
-    return MGLFramebuffer_meth_write(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
+PyObject * MGLFramebuffer_meth_read_va(MGLFramebuffer * self, PyObject * args) {
+    return MGLFramebuffer_meth_read(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
+}
+
+PyObject * MGLFramebuffer_meth_clear_va(MGLFramebuffer * self, PyObject * args) {
+    return MGLFramebuffer_meth_clear(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
 PyObject * MGLProgram_meth_uniform_va(MGLProgram * self, PyObject * args) {
@@ -230,7 +239,9 @@ PyMethodDef MGLContext_methods[] = {
 };
 
 PyMethodDef MGLFramebuffer_methods[] = {
-    {"write", (PyCFunction)MGLFramebuffer_meth_write_va, METH_VARARGS, 0},
+    {"read", (PyCFunction)MGLFramebuffer_meth_read_va, METH_VARARGS, 0},
+    {"use", (PyCFunction)MGLFramebuffer_meth_use, METH_NOARGS, 0},
+    {"clear", (PyCFunction)MGLFramebuffer_meth_clear_va, METH_VARARGS, 0},
     {0},
 };
 

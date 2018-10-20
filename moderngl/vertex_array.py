@@ -15,8 +15,8 @@ class VertexArray:
         self.vertices = None  # type: int
         self.extra = None  # type: Any
 
-    def render(self, mode=None, vertices=-1, first=0, instances=1):
-        self.__mglo.render(mode, vertices, first, instances)
+    def render(self, mode=None, vertices=-1, first=0, instances=1, color_mask=0xffffffffffffffff, depth_mask=1):
+        self.__mglo.render(mode, vertices, first, instances, color_mask, depth_mask)
 
     def transform(self, buffer, mode=None, vertices=-1, first=0, instances=1, flush=True):
         self.__mglo.transform(buffer, mode, vertices, first, instances, flush)

@@ -1,12 +1,14 @@
 #include "vertex_array.hpp"
 #include "buffer.hpp"
+#include "context.hpp"
 #include "program.hpp"
+
 #include "generated/py_classes.hpp"
 #include "generated/cpp_classes.hpp"
-#include "internal/modules.hpp"
-#include "internal/enable.hpp"
 
-/* MGLContext.vertex_array(...)
+#include "internal/modules.hpp"
+
+/* MGLContext.vertex_array(program, content, index_buffer)
  */
 PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 3) {
@@ -39,10 +41,7 @@ PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * ar
         return 0;
     }
 
-    if (self->active_vertex_array != vertex_array->vertex_array_obj) {
-        gl.BindVertexArray(vertex_array->vertex_array_obj);
-        self->active_vertex_array = vertex_array->vertex_array_obj;
-    }
+    self->bind_vertex_array(vertex_array->vertex_array_obj);
 
     int vertices = 0x7fffffff;
     int content_len = (int)PySequence_Fast_GET_SIZE(content);
@@ -72,7 +71,7 @@ PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * ar
         }
 
         MGLBuffer * buffer = SLOT(buffer_wrapper, MGLBuffer, Buffer_class_mglo);
-        gl.BindBuffer(GL_ARRAY_BUFFER, buffer->buffer_obj);
+        self->bind_array_buffer(buffer->buffer_obj);
 
         PyObject * nodes = PyTuple_GET_ITEM(format_split, 0);
         int divisor = PyLong_AsLong(PyTuple_GET_ITEM(format_split, 1));
@@ -197,16 +196,20 @@ PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * ar
     return NEW_REF(vertex_array->wrapper);
 }
 
+/* MGLVertexArray.render(mode, vertices, first, instances, color_mask, depth_mask)
+ */
 PyObject * MGLVertexArray_meth_render(MGLVertexArray * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 4) {
+    if (nargs != 6) {
         // TODO: error
         return 0;
     }
 
     PyObject * mode = args[0];
     int vertices = PyLong_AsLong(args[1]);
-    int first =PyLong_AsLong(args[2]);
+    int first = PyLong_AsLong(args[2]);
     int instances = PyLong_AsLong(args[3]);
+    unsigned long long color_mask = PyLong_AsUnsignedLongLong(args[4]);
+    bool depth_mask = PyObject_IsTrue(args[5]);
 
     if (vertices < 0) {
         vertices = PyLong_AsLong(SLOT(self->wrapper, PyObject, VertexArray_class_vertices));
@@ -227,8 +230,9 @@ PyObject * MGLVertexArray_meth_render(MGLVertexArray * self, PyObject * const * 
     const GLMethods & gl = self->context->gl;
 
     PyObject * program = SLOT(self->wrapper, PyObject, VertexArray_class_program);
-    MGLContext_use_program(self->context, SLOT(program, MGLProgram, Program_class_mglo)->program_obj);
-    MGLContext_bind_vertex_array(self->context, self->vertex_array_obj);
+    self->context->use_program(SLOT(program, MGLProgram, Program_class_mglo)->program_obj);
+    self->context->bind_vertex_array(self->vertex_array_obj);
+    self->context->set_write_mask(color_mask, depth_mask);
 
     if (SLOT(self->wrapper, PyObject, VertexArray_class_ibo) != Py_None) {
         const void * ptr = (const void *)((GLintptr)first * 4);
@@ -237,11 +241,10 @@ PyObject * MGLVertexArray_meth_render(MGLVertexArray * self, PyObject * const * 
         gl.DrawArraysInstanced(render_mode, first, vertices, instances);
     }
 
-    // gl.UseProgram(0); // TODO: check
     Py_RETURN_NONE;
 }
 
-/* MGLVertexArray.transform(...)
+/* MGLVertexArray.render(buffer, mode, vertices, first, instances, flush)
  */
 PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 6) {
@@ -275,8 +278,8 @@ PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const
     const GLMethods & gl = self->context->gl;
 
     PyObject * program = SLOT(self->wrapper, PyObject, VertexArray_class_program);
-    MGLContext_use_program(self->context, SLOT(program, MGLProgram, Program_class_mglo)->program_obj);
-    MGLContext_bind_vertex_array(self->context, self->vertex_array_obj);
+    self->context->use_program(SLOT(program, MGLProgram, Program_class_mglo)->program_obj);
+    self->context->bind_vertex_array(self->vertex_array_obj);
 
     MGLBuffer * output = SLOT(buffer, MGLBuffer, Buffer_class_mglo);
     gl.BindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, output->buffer_obj);
@@ -291,7 +294,7 @@ PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const
     }
 
     gl.EndTransformFeedback();
-    if (~self->context->enable_only & MGL_RASTERIZER_DISCARD) {
+    if (~self->context->current_enable_only & MGL_RASTERIZER_DISCARD) {
         gl.Disable(GL_RASTERIZER_DISCARD);
     }
 
@@ -299,10 +302,11 @@ PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const
         gl.Flush();
     }
 
-    // gl.UseProgram(0); // TODO: check
     Py_RETURN_NONE;
 }
 
+/* MGLVertexArray.ibo
+ */
 int MGLVertexArray_set_ibo(MGLVertexArray * self, PyObject * value) {
     if (value != Py_None && value->ob_type != Buffer_class) {
         PyErr_Format(PyExc_TypeError, "expected Buffer got %s", value->ob_type->tp_name);
@@ -310,12 +314,12 @@ int MGLVertexArray_set_ibo(MGLVertexArray * self, PyObject * value) {
     }
 
     PyObject *& ibo_slot = SLOT(self->wrapper, PyObject, VertexArray_class_ibo);
-    Py_INCREF(value);
-    Py_DECREF(ibo_slot);
-    ibo_slot = value;
+    replace_object(ibo_slot, value);
 
     PyObject *& vertices_slot = SLOT(self->wrapper, PyObject, VertexArray_class_vertices);
     Py_DECREF(vertices_slot);
+
+    self->context->bind_vertex_array(self->vertex_array_obj);
 
     if (value == Py_None) {
         vertices_slot = PyLong_FromLong(self->max_vertices);

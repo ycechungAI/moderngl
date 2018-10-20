@@ -1,7 +1,9 @@
 #include "extensions.hpp"
+#include "context.hpp"
+
 #include "generated/py_classes.hpp"
 
-/* moderngl.core.extensions(...)
+/* moderngl.core.extensions(context)
  * Returns a list of supported extensions.
  */
 PyObject * meth_extensions(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
@@ -40,7 +42,7 @@ PyObject * meth_extensions(PyObject * self, PyObject * const * args, Py_ssize_t 
     }
 }
 
-/* moderngl.core.hwinfo(...)
+/* moderngl.core.hwinfo(context)
  */
 PyObject * meth_hwinfo(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 1) {

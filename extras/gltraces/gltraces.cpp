@@ -5958,7 +5958,7 @@ extern "C" void GLAPI GetTexParameterIuiv(GLenum target, GLenum pname, GLuint * 
 extern "C" void GLAPI ClearBufferiv(GLenum buffer, GLint drawbuffer, const GLint * value) {
     printf("glClearBufferiv(");
     printf("buffer=");
-    print_buffer_target(buffer);
+    print_clear_named_framebuffer_buffer(buffer);
     printf(", ");
     printf("drawbuffer=");
     printf("%d", drawbuffer);
@@ -5975,7 +5975,7 @@ extern "C" void GLAPI ClearBufferiv(GLenum buffer, GLint drawbuffer, const GLint
 extern "C" void GLAPI ClearBufferuiv(GLenum buffer, GLint drawbuffer, const GLuint * value) {
     printf("glClearBufferuiv(");
     printf("buffer=");
-    print_buffer_target(buffer);
+    print_clear_named_framebuffer_buffer(buffer);
     printf(", ");
     printf("drawbuffer=");
     printf("%d", drawbuffer);
@@ -5992,7 +5992,7 @@ extern "C" void GLAPI ClearBufferuiv(GLenum buffer, GLint drawbuffer, const GLui
 extern "C" void GLAPI ClearBufferfv(GLenum buffer, GLint drawbuffer, const GLfloat * value) {
     printf("glClearBufferfv(");
     printf("buffer=");
-    print_buffer_target(buffer);
+    print_clear_named_framebuffer_buffer(buffer);
     printf(", ");
     printf("drawbuffer=");
     printf("%d", drawbuffer);
@@ -6009,7 +6009,7 @@ extern "C" void GLAPI ClearBufferfv(GLenum buffer, GLint drawbuffer, const GLflo
 extern "C" void GLAPI ClearBufferfi(GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil) {
     printf("glClearBufferfi(");
     printf("buffer=");
-    print_buffer_target(buffer);
+    print_clear_named_framebuffer_buffer(buffer);
     printf(", ");
     printf("drawbuffer=");
     printf("%d", drawbuffer);

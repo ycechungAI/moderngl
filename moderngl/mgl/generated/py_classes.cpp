@@ -23,6 +23,8 @@ PyTypeObject * Context_class;
 int Context_class_mglo;
 int Context_class_version_code;
 int Context_class_limits;
+int Context_class_screen;
+int Context_class_fbo;
 int Context_class_extra;
 
 PyTypeObject * Framebuffer_class;
@@ -169,9 +171,9 @@ int Program_class_extra;
 
 PyTypeObject * Query_class;
 int Query_class_mglo;
-int Query_class_samples;
-int Query_class_primitives;
 int Query_class_elapsed;
+int Query_class_primitives;
+int Query_class_samples;
 int Query_class_extra;
 
 PyTypeObject * Renderbuffer_class;
@@ -254,6 +256,8 @@ void init_wrappers() {
     Context_class_mglo = slot_offset(Context_class, "_Context__mglo", Context_slots);
     Context_class_version_code = slot_offset(Context_class, "version_code", Context_slots);
     Context_class_limits = slot_offset(Context_class, "limits", Context_slots);
+    Context_class_screen = slot_offset(Context_class, "screen", Context_slots);
+    Context_class_fbo = slot_offset(Context_class, "fbo", Context_slots);
     Context_class_extra = slot_offset(Context_class, "extra", Context_slots);
     assert_slots_len(Context_class, Context_slots);
 
@@ -408,9 +412,9 @@ void init_wrappers() {
     int Query_slots = 0;
     Query_class = detect_class(moderngl, "Query", Query_slots);
     Query_class_mglo = slot_offset(Query_class, "_Query__mglo", Query_slots);
-    Query_class_samples = slot_offset(Query_class, "samples", Query_slots);
-    Query_class_primitives = slot_offset(Query_class, "primitives", Query_slots);
     Query_class_elapsed = slot_offset(Query_class, "elapsed", Query_slots);
+    Query_class_primitives = slot_offset(Query_class, "primitives", Query_slots);
+    Query_class_samples = slot_offset(Query_class, "samples", Query_slots);
     Query_class_extra = slot_offset(Query_class, "extra", Query_slots);
     assert_slots_len(Query_class, Query_slots);
 

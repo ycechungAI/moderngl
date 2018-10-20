@@ -1,8 +1,9 @@
 #include "configuration.hpp"
+#include "context.hpp"
 
 #include "internal/modules.hpp"
 
-/* MGLContext.configure(...)
+/* MGLContext.configure(configuration)
  */
 PyObject * MGLContext_meth_configure(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 1) {

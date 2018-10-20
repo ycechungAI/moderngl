@@ -1,16 +1,17 @@
 #include "scope.hpp"
+#include "buffer.hpp"
+#include "context.hpp"
+#include "sampler.hpp"
+#include "texture.hpp"
+
 #include "generated/py_classes.hpp"
 #include "generated/cpp_classes.hpp"
+
 #include "internal/modules.hpp"
-#include "internal/enable.hpp"
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
 
-#include "buffer.hpp"
-#include "texture.hpp"
-#include "sampler.hpp"
-
-/* MGLContext.scope(...)
+/* MGLContext.scope(framebuffer, enable_only, samplers, uniform_buffers, storage_buffers)
  */
 PyObject * MGLContext_meth_scope(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 5) {
@@ -144,8 +145,8 @@ PyObject * MGLContext_meth_scope(MGLContext * self, PyObject * const * args, Py_
 PyObject * MGLScope_meth_begin(MGLScope * self) {
     const GLMethods & gl = self->context->gl;
     if (self->enable_only >= 0) {
-        self->old_enable_only = self->context->enable_only;
-        MGLContext_enable_only(self->context, self->enable_only);
+        self->old_enable_only = self->context->current_enable_only;
+        self->context->enable_only(self->enable_only);
     }
     // return MGLFramebuffer_meth_use(self->framebuffer);
 
@@ -178,7 +179,7 @@ PyObject * MGLScope_meth_begin(MGLScope * self) {
 PyObject * MGLScope_meth_end(MGLScope * self) {
     const GLMethods & gl = self->context->gl;
     if (self->enable_only >= 0) {
-        MGLContext_enable_only(self->context, self->enable_only);
+        self->context->enable_only(self->enable_only);
     }
     // return MGLFramebuffer_meth_use(self->old_framebuffer);
     Py_RETURN_NONE;

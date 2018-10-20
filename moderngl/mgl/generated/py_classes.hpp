@@ -25,6 +25,8 @@ extern PyTypeObject * Context_class;
 extern int Context_class_mglo;
 extern int Context_class_version_code;
 extern int Context_class_limits;
+extern int Context_class_screen;
+extern int Context_class_fbo;
 extern int Context_class_extra;
 
 extern PyTypeObject * Framebuffer_class;
@@ -171,9 +173,9 @@ extern int Program_class_extra;
 
 extern PyTypeObject * Query_class;
 extern int Query_class_mglo;
-extern int Query_class_samples;
-extern int Query_class_primitives;
 extern int Query_class_elapsed;
+extern int Query_class_primitives;
+extern int Query_class_samples;
 extern int Query_class_extra;
 
 extern PyTypeObject * Renderbuffer_class;

@@ -1,16 +1,18 @@
 #include "texture.hpp"
 #include "buffer.hpp"
+#include "context.hpp"
+
 #include "generated/py_classes.hpp"
 #include "generated/cpp_classes.hpp"
+
 #include "internal/modules.hpp"
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
 #include "internal/data_type.hpp"
 
-/* MGLContext.texture(...)
+/* MGLContext.texture(size, components, data, levels, samples, aligment, dtype)
  */
 PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
-    // size, components, data, levels, samples, aligment, dtype
     if (nargs != 7) {
         // TODO: error
         return 0;
@@ -115,8 +117,7 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * const * args, P
         return 0;
     }
 
-    gl.ActiveTexture(GL_TEXTURE0 + self->default_texture_unit);
-    gl.BindTexture(texture_target, texture->texture_obj);
+    self->bind_temp_texture(texture_target, texture->texture_obj);
 
     if (data != Py_None) {
         Py_buffer view = {};
@@ -125,8 +126,7 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * const * args, P
         }
         void * buf = view.buf;
         bool contiguos = PyBuffer_IsContiguous(&view, 'C');
-        gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
-        gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+        self->set_alignment(alignment);
         if (!contiguos) {
             buf = malloc(expected_size);
             PyBuffer_ToContiguous(buf, &view, view.len, 'C');
@@ -165,6 +165,8 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * const * args, P
     return NEW_REF(texture->wrapper);
 }
 
+/* MGLTexture.write(data, viewport, alignment, level)
+ */
 PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 4) {
         // TODO: error
@@ -225,10 +227,8 @@ PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * const * args, Py_
 
     const GLMethods & gl = self->context->gl;
 
-    MGLContext_active_texture(self->context, GL_TEXTURE0 + self->context->default_texture_unit);
-    gl.BindTexture(self->texture_target, self->texture_obj);
-    gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
-    gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+    self->context->bind_temp_texture(self->texture_target, self->texture_obj);
+    self->context->set_alignment(alignment);
 
     if (data->ob_type == Buffer_class) {
         MGLBuffer * buffer = SLOT(data, MGLBuffer, Buffer_class_mglo);

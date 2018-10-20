@@ -18,17 +18,14 @@ class Framebuffer:
     def viewport(self, value):
         self.__mglo.viewport = value
 
-    def clear_depth(self, value=1.0):
-        self.__mglo.clear(value, -1)
+    def clear(self, attachment, color, viewport=None, color_mask=0xF):
+        self.__mglo.clear(attachment, color, viewport, color_mask)
 
-    def clear(self, color, attachment=0):
-        self.__mglo.clear(color, attachment)
+    # def read(self, viewport=None, components=3, attachment=0, alignment=1, dtype='f1', np=False):
+    #     return self.__mglo.read(viewport, components, attachment, alignment, dtype, np)
 
-    def read(self, viewport=None, components=3, attachment=0, alignment=1, dtype='f1', np=False):
-        return self.__mglo.read(viewport, components, attachment, alignment, dtype, np)
-
-    def read_into(self, buffer, viewport=None, components=3, attachment=0, alignment=1):
-        return self.__mglo.read_into(buffer, viewport, components, attachment, alignment)
+    # def read_into(self, buffer, viewport=None, components=3, attachment=0, alignment=1):
+    #     return self.__mglo.read_into(buffer, viewport, components, attachment, alignment)
 
     def use(self):
         self.__mglo.use()

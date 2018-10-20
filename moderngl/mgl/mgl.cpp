@@ -52,7 +52,7 @@ PyObject * meth_initialize(PyObject * self) {
     Py_RETURN_NONE;
 }
 
-/* moderngl.core.glprocs(...)
+/* moderngl.core.glprocs(context)
  */
 PyObject * meth_glprocs(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 1) {
@@ -69,7 +69,7 @@ PyObject * meth_glprocs(PyObject * self, PyObject * const * args, Py_ssize_t nar
     return PyMemoryView_FromMemory((char *)&ctx->gl, sizeof(ctx->gl), PyBUF_WRITE);
 }
 
-/* moderngl.core.release(...)
+/* moderngl.core.release(obj)
  */
 PyObject * meth_release(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 1) {

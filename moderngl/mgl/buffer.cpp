@@ -1,6 +1,9 @@
 #include "buffer.hpp"
+#include "context.hpp"
+
 #include "generated/py_classes.hpp"
 #include "generated/cpp_classes.hpp"
+
 #include "internal/modules.hpp"
 #include "internal/tools.hpp"
 
@@ -8,7 +11,7 @@
  */
 int MGLBuffer_core_write(MGLBuffer * self, const Py_ssize_t & offset, Py_buffer * view, bool contiguous) {
     const GLMethods & gl = self->context->gl;
-    gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj);
+    self->context->bind_array_buffer(self->buffer_obj);
 
     if (contiguous) {
         gl.BufferSubData(GL_ARRAY_BUFFER, offset, view->len, view->buf);
@@ -25,7 +28,7 @@ int MGLBuffer_core_write(MGLBuffer * self, const Py_ssize_t & offset, Py_buffer 
     return 0;
 }
 
-/* MGLContext.buffer(...)
+/* MGLContext.buffer(data, reserve, readable, writable, local)
  * Returns a Buffer object.
  */
 PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
@@ -63,7 +66,7 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
         return 0;
     }
 
-    gl.BindBuffer(GL_ARRAY_BUFFER, buffer->buffer_obj);
+    self->bind_array_buffer(buffer->buffer_obj);
 
     unsigned flags;
 
@@ -114,7 +117,7 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
     return NEW_REF(buffer->wrapper);
 }
 
-/* MGLBuffer.write(...)
+/* MGLBuffer.write(data, offset)
  */
 PyObject * MGLBuffer_meth_write(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 2) {
@@ -155,7 +158,7 @@ PyObject * MGLBuffer_meth_write(MGLBuffer * self, PyObject * const * args, Py_ss
     Py_RETURN_NONE;
 }
 
-/* MGLBuffer.read(...)
+/* MGLBuffer.read(size, offset, dtype)
  */
 PyObject * MGLBuffer_meth_read(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 3) {
@@ -193,7 +196,7 @@ PyObject * MGLBuffer_meth_read(MGLBuffer * self, PyObject * const * args, Py_ssi
 
     const GLMethods & gl = self->context->gl;
 
-    gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj);
+    self->context->bind_array_buffer(self->buffer_obj);
     void * map = gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_READ_BIT);
 
     if (!map) {
@@ -214,7 +217,7 @@ PyObject * MGLBuffer_meth_read(MGLBuffer * self, PyObject * const * args, Py_ssi
     return res;
 }
 
-/* MGLBuffer.map(...)
+/* MGLBuffer.map(size, offset, readable, writable, dtype)
  */
 PyObject * MGLBuffer_meth_map(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 5) {
@@ -264,7 +267,7 @@ PyObject * MGLBuffer_meth_map(MGLBuffer * self, PyObject * const * args, Py_ssiz
 
     const GLMethods & gl = self->context->gl;
 
-    gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj);
+    self->context->bind_array_buffer(self->buffer_obj);
     unsigned flags = (readable ? GL_MAP_READ_BIT : 0) | (writable ? GL_MAP_WRITE_BIT : 0);
     void * map = gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, flags);
 
@@ -293,7 +296,7 @@ PyObject * MGLBuffer_meth_unmap(MGLBuffer * self) {
     if (self->flags & MGL_BUFFER_OPEN) {
         self->flags &= ~(MGL_BUFFER_OPEN | MGL_BUFFER_READING | MGL_BUFFER_WRITING);
         const GLMethods & gl = self->context->gl;
-        gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj);
+        self->context->bind_array_buffer(self->buffer_obj);
         gl.UnmapBuffer(GL_ARRAY_BUFFER);
     }
     Py_RETURN_NONE;
@@ -313,7 +316,7 @@ PyObject * MGLBuffer_meth_clear(MGLBuffer * self) {
     }
 
     const GLMethods & gl = self->context->gl;
-    gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj);
+    self->context->bind_array_buffer(self->buffer_obj);
 
     if (gl.ClearBufferData) {
         char zero = 0;

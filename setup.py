@@ -43,7 +43,6 @@ sources = [
     'moderngl/mgl/generated/methods.cpp',
     'moderngl/mgl/internal/data_type.cpp',
     'moderngl/mgl/internal/modules.cpp',
-    'moderngl/mgl/internal/enable.cpp',
     'moderngl/mgl/internal/tools.cpp',
     'moderngl/mgl/internal/glsl.cpp',
     'moderngl/mgl/internal/opengl/gl_methods.cpp',

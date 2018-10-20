@@ -1,7 +1,7 @@
 #pragma once
 #include "mgl.hpp"
-#include "context.hpp"
 
+struct MGLContext;
 struct MGLDataType;
 
 struct MGLFramebuffer {
@@ -15,4 +15,9 @@ struct MGLFramebuffer {
     int components;
     int levels;
     int samples;
+    int viewport[4];
+    int attachments;
+	char * attachment_type;
+    unsigned long long color_mask;
+    bool depth_mask;
 };

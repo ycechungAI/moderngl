@@ -1,6 +1,7 @@
 #pragma once
 #include "mgl.hpp"
-#include "context.hpp"
+
+struct MGLContext;
 
 enum MGLQueryKeys {
     TIME_ELAPSED,

@@ -11,12 +11,14 @@ from .vertex_array import VertexArray
 
 
 class Context:
-    __slots__ = ['__mglo', 'version_code', 'limits', 'extra']
+    __slots__ = ['__mglo', 'version_code', 'limits', 'screen', 'fbo', 'extra']
 
     def __init__(self):
         self.__mglo = None  # type: Any
         self.version_code = None  # type: int
         self.limits = None  # type: Limits
+        self.screen = None  # type: Framebuffer
+        self.fbo = None  # type: Framebuffer
         self.extra = None  # type: Any
 
     def buffer(self, data=None, reserve=0, readable=True, writable=True, local=False) -> Buffer:
@@ -27,6 +29,9 @@ class Context:
 
     def texture(self, size, components=3, data=None, levels=-1, samples=0, aligment=1, dtype='f1') -> Texture:
         return self.__mglo.texture(size, components, data, levels, samples, aligment, dtype)
+
+    def depth_texture(self, size, data=None, levels=-1, samples=0, aligment=1) -> Texture:
+        return self.__mglo.depth_texture(size, data, levels, samples, aligment)
 
     def sampler(self, texture) -> Sampler:
         return self.__mglo.sampler(texture)
@@ -39,6 +44,15 @@ class Context:
 
     def query(self, time=False, primitives=False, samples=False, any_samples=False):
         return self.__mglo.query(time, primitives, samples, any_samples)
+
+    def renderbuffer(self, size, components=4, samples=0, dtype='f1'):
+        return self.__mglo.renderbuffer(size, components, samples, dtype)
+
+    def depth_renderbuffer(self, size, samples=0):
+        return self.__mglo.depth_renderbuffer(size, samples)
+
+    def framebuffer(self, color_attachments=(), depth_attachment=None):
+        return self.__mglo.framebuffer(color_attachments, depth_attachment)
 
     def configure(self, key, **params):
         return self.__mglo.configure(params)

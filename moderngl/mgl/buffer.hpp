@@ -1,6 +1,7 @@
 #pragma once
 #include "mgl.hpp"
-#include "context.hpp"
+
+struct MGLContext;
 
 struct MGLBuffer {
     PyObject_HEAD

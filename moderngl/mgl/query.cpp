@@ -1,11 +1,14 @@
 #include "query.hpp"
+#include "context.hpp"
+
 #include "generated/py_classes.hpp"
 #include "generated/cpp_classes.hpp"
+
 #include "internal/modules.hpp"
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
 
-/* MGLContext.query(...)
+/* MGLContext.query(time_elapsed, primitives_generated, samples_passed, any_samples_passed)
  */
 PyObject * MGLContext_meth_query(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 4) {
@@ -55,6 +58,8 @@ PyObject * MGLContext_meth_query(MGLContext * self, PyObject * const * args, Py_
     return NEW_REF(query->wrapper);
 }
 
+/* MGLQuery.begin()
+ */
 PyObject * MGLQuery_meth_begin(MGLQuery * self) {
     const GLMethods & gl = self->context->gl;
 
@@ -77,6 +82,8 @@ PyObject * MGLQuery_meth_begin(MGLQuery * self) {
     Py_RETURN_NONE;
 }
 
+/* MGLQuery.end()
+ */
 PyObject * MGLQuery_meth_end(MGLQuery * self) {
     const GLMethods & gl = self->context->gl;
 
@@ -114,6 +121,8 @@ PyObject * MGLQuery_meth_end(MGLQuery * self) {
     Py_RETURN_NONE;
 }
 
+/* MGLQuery.begin_render()
+ */
 PyObject * MGLQuery_meth_begin_render(MGLQuery * self) {
     if (self->query_obj[ANY_SAMPLES_PASSED]) {
         self->context->gl.BeginConditionalRender(self->query_obj[ANY_SAMPLES_PASSED], GL_QUERY_NO_WAIT);
@@ -126,6 +135,8 @@ PyObject * MGLQuery_meth_begin_render(MGLQuery * self) {
     Py_RETURN_NONE;
 }
 
+/* MGLQuery.end_render()
+ */
 PyObject * MGLQuery_meth_end_render(MGLQuery * self) {
     self->context->gl.EndConditionalRender();
     Py_RETURN_NONE;
