@@ -17,7 +17,7 @@ struct MGLFramebuffer {
     int samples;
     int viewport[4];
     int attachments;
-	char * attachment_type;
+    char * attachment_type;
     unsigned long long color_mask;
     bool depth_mask;
 };

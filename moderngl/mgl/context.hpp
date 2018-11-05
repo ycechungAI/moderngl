@@ -51,7 +51,7 @@ struct MGLContext {
     PyObject * glsl_linker_error;
     PyObject * gc;
 
-    void enable_only(int enable_only);
+    void enable(int enable_only);
 
     void use_program(int program_obj);
 

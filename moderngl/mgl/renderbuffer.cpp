@@ -29,32 +29,32 @@ PyObject * MGLContext_meth_renderbuffer(MGLContext * self, PyObject * const * ar
 
     int width = PyLong_AsLong(PySequence_Fast_GET_ITEM(size, 0));
     int height = PyLong_AsLong(PySequence_Fast_GET_ITEM(size, 1));
-	int format = dtype->internal_format[components];
+    int format = dtype->internal_format[components];
 
     MGLRenderbuffer * renderbuffer = MGLContext_new_object(self, Renderbuffer);
 
-	const GLMethods & gl = self->gl;
-	gl.GenRenderbuffers(1, (GLuint *)&renderbuffer->renderbuffer_obj);
+    const GLMethods & gl = self->gl;
+    gl.GenRenderbuffers(1, (GLuint *)&renderbuffer->renderbuffer_obj);
 
     if (!renderbuffer->renderbuffer_obj) {
         // TODO: error
         return 0;
     }
 
-	gl.BindRenderbuffer(GL_RENDERBUFFER, renderbuffer->renderbuffer_obj);
+    gl.BindRenderbuffer(GL_RENDERBUFFER, renderbuffer->renderbuffer_obj);
 
-	if (samples == 0) {
-		gl.RenderbufferStorage(GL_RENDERBUFFER, format, width, height);
-	} else {
-		gl.RenderbufferStorageMultisample(GL_RENDERBUFFER, samples, format, width, height);
-	}
+    if (samples == 0) {
+        gl.RenderbufferStorage(GL_RENDERBUFFER, format, width, height);
+    } else {
+        gl.RenderbufferStorageMultisample(GL_RENDERBUFFER, samples, format, width, height);
+    }
 
-	renderbuffer->width = width;
-	renderbuffer->height = height;
-	renderbuffer->components = components;
-	renderbuffer->samples = samples;
-	renderbuffer->data_type = dtype;
-	renderbuffer->depth = false;
+    renderbuffer->width = width;
+    renderbuffer->height = height;
+    renderbuffer->components = components;
+    renderbuffer->samples = samples;
+    renderbuffer->data_type = dtype;
+    renderbuffer->depth = false;
 
     SLOT(renderbuffer->wrapper, PyObject, Renderbuffer_class_size) = int_tuple(width, height);
     return NEW_REF(renderbuffer->wrapper);

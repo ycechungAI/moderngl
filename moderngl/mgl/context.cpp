@@ -161,7 +161,7 @@ MGLObject * _MGLObject_pop_mglo(PyObject * wrapper, int slot) {
     return mglo;
 }
 
-/*inline*/ void MGLContext::enable_only(int enable_only) {
+/*inline*/ void MGLContext::enable(int enable_only) {
     if (int changed_flags = current_enable_only ^ enable_only) {
         if (changed_flags & MGL_BLEND) {
             if (enable_only & MGL_BLEND) {
