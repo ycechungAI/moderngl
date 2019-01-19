@@ -46,6 +46,15 @@ void * LoadMethod(const char * method) {
     return symbol ? NSAddressOfSymbol(symbol) : 0;
 }
 
+#elif defined(__ANDROID__)
+
+#define PREFIX ""
+
+void * LoadMethod(const char * method) {
+    // TODO: android support
+    return 0;
+}
+
 #else
 
 #define PREFIX ""
