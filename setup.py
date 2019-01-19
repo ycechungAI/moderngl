@@ -186,6 +186,6 @@ setup(
     classifiers=classifiers,
     keywords=keywords,
     packages=['moderngl', 'moderngl.experimental', 'moderngl.program_members'],
-    ext_modules=[mgl, experimental_mgl],
+    ext_modules=[experimental_mgl],
     platforms=['any'],
 )
