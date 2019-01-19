@@ -185,7 +185,7 @@ setup(
     license='MIT',
     classifiers=classifiers,
     keywords=keywords,
-    packages=['moderngl', 'moderngl.experimental', 'moderngl.program_members'],
+    packages=['moderngl', 'moderngl.experimental'],
     ext_modules=[experimental_mgl],
     platforms=['any'],
 )
