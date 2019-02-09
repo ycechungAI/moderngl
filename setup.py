@@ -54,7 +54,7 @@ libraries = {
     'linux': ['GL', 'dl', 'X11'],
     'cygwin': ['GL', 'X11'],
     'darwin': [],
-    'android': ['GL', 'EGL'],
+    'android': ['GLES', 'EGL'],
 }
 
 extra_compile_args = {
