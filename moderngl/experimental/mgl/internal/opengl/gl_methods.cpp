@@ -54,7 +54,7 @@ void * LoadMethod(const char * method) {
 
 void * LoadMethod(const char * method) {
     void *proc = (void *) eglGetProcAddress(method);
-    return 0;
+    return proc;
 }
 
 #else
