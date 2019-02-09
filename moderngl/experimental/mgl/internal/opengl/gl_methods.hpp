@@ -664,5 +664,5 @@ struct GLMethods {
 
 private:
     // GLMethods(const GLMethods & copy);
-    void operator = (const GLMethods & rhs);
+    // void operator = (const GLMethods & rhs);
 };

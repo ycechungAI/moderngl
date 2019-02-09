@@ -5,11 +5,10 @@ from .uniform import Uniform
 
 
 class ComputeShader:
-    __slots__ = ['__mglo', 'attributes', 'uniforms', 'extra']
+    __slots__ = ['__mglo', 'uniforms', 'extra']
 
     def __init__(self):
         self.__mglo = None  # type: Any
-        self.attributes = None  # type: Dict[str, Attribute]
         self.uniforms = None  # type: Dict[str, Uniform]
         self.extra = None  # type: Any
 

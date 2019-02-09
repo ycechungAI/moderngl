@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tools.hpp"
+#include "python.hpp"
 
 extern PyTypeObject * Attribute_class;
 extern int Attribute_class_type;
@@ -17,7 +17,6 @@ extern int Buffer_class_extra;
 
 extern PyTypeObject * ComputeShader_class;
 extern int ComputeShader_class_mglo;
-extern int ComputeShader_class_attributes;
 extern int ComputeShader_class_uniforms;
 extern int ComputeShader_class_extra;
 
@@ -27,6 +26,7 @@ extern int Context_class_version_code;
 extern int Context_class_limits;
 extern int Context_class_screen;
 extern int Context_class_fbo;
+extern int Context_class_recorder;
 extern int Context_class_extra;
 
 extern PyTypeObject * Framebuffer_class;
@@ -178,6 +178,7 @@ extern int Query_class_primitives;
 extern int Query_class_samples;
 extern int Query_class_extra;
 
+
 extern PyTypeObject * Renderbuffer_class;
 extern int Renderbuffer_class_mglo;
 extern int Renderbuffer_class_size;
@@ -225,6 +226,7 @@ extern PyTypeObject * VertexArray_class;
 extern int VertexArray_class_mglo;
 extern int VertexArray_class_ibo;
 extern int VertexArray_class_program;
+extern int VertexArray_class_scope;
 extern int VertexArray_class_mode;
 extern int VertexArray_class_vertices;
 extern int VertexArray_class_extra;

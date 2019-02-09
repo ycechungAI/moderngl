@@ -199,3 +199,18 @@ void assert_slots_len(PyTypeObject * type, int slots_len) {
 
     PyErr_Format(PyExc_Exception, "remaining slots in %s", type->tp_name);
 }
+
+/* Clears all slots.
+ */
+void clear_slots(PyObject * obj) {
+    for (int i = 0; obj->ob_type->tp_members[i].name; ++i) {
+        SLOT(obj, PyObject, (int)obj->ob_type->tp_members[i].offset) = 0;
+    }
+}
+
+bool starts_with(const char * str, const char * prefix) {
+    while (*prefix && *prefix == *str++) {
+        ++prefix;
+    }
+    return *prefix == 0;
+}

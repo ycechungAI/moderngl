@@ -10,6 +10,12 @@
 #include "internal/glsl.hpp"
 #include "internal/data_type.hpp"
 
+void MGLFramebuffer_use_core(MGLFramebuffer * self) {
+    const GLMethods & gl = self->context->gl;
+    self->context->bind_framebuffer(self->framebuffer_obj);
+    gl.Viewport(self->viewport[0], self->viewport[1], self->viewport[2], self->viewport[3]);
+}
+
 /* MGLContext.framebuffer(...)
  */
 PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
@@ -29,11 +35,9 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * arg
         color_attachments = PySequence_Fast(color_attachments, "not iterable");
     }
 
-    const GLMethods & gl = self->gl;
-
     MGLFramebuffer * framebuffer = MGLContext_new_object(self, Framebuffer);
 
-    framebuffer->framebuffer_obj = 0;
+    const GLMethods & gl = self->gl;
     gl.GenFramebuffers(1, (GLuint *)&framebuffer->framebuffer_obj);
 
     if (!framebuffer->framebuffer_obj) {
@@ -54,13 +58,14 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * arg
                 renderbuffer->renderbuffer_obj
             );
         } else if (attachment->ob_type == Texture_class) {
+            int level = PyLong_AsLong(SLOT(attachment, PyObject, Texture_class_level));
             MGLTexture * texture = SLOT(attachment, MGLTexture, Texture_class_mglo);
             gl.FramebufferTexture2D(
                 GL_FRAMEBUFFER,
                 GL_COLOR_ATTACHMENT0 + i,
                 texture->samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D,
                 texture->texture_obj,
-                0
+                level
             );
         } else {
             return 0;
@@ -170,11 +175,7 @@ PyObject * MGLFramebuffer_meth_read(MGLFramebuffer * self, PyObject * const * ar
 /* MGLFramebuffer.use()
  */
 PyObject * MGLFramebuffer_meth_use(MGLFramebuffer * self) {
-    const GLMethods & gl = self->context->gl;
-
-    self->context->bind_framebuffer(self->framebuffer_obj);
-    gl.Viewport(self->viewport[0], self->viewport[1], self->viewport[2], self->viewport[3]);
-
+    MGLFramebuffer_use_core(self);
     Py_RETURN_NONE;
 }
 

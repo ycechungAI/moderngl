@@ -1,46 +1,28 @@
-language: generic
-
-sudo: false
-
 notifications:
   email: false
 
 matrix:
-  fast_finish: true
   include:
-    - os: linux
-      language: python
-      python: 3.4
-      env:
-        - CC=gcc-4.9
-        - CXX=g++-4.9
-    - os: linux
-      language: python
-      python: 3.5
-      env:
-        - CC=gcc-4.9
-        - CXX=g++-4.9
-    - os: linux
-      language: python
+    - language: python
       python: 3.6
-      env:
-        - CC=gcc-4.9
-        - CXX=g++-4.9
+      install:
+        - export TRAVIS=True
+        - export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start
+        - python -m pip install pip wheel setuptools numpy -U
+        - python extras/gltraces/setup.py develop
+        - python setup.py develop
+        - python tests/experimental/print_info.py
+      script:
+        - python -m pytest tests/experimental
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - gcc-4.9
-      - g++-4.9
+    - sudo: required
+      services:
+        - docker
+      script:
+        - docker run --rm -v `pwd`:/io quay.io/pypa/manylinux1_i686 linux32 sh /io/extras/build-travis/build.sh
 
-install:
-  - export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start
-  - python -m pip install -r tests/requirements.txt
-  - python setup.py build_ext --inplace
-  - python -m pip install -e .
-
-script:
-  - python -m moderngl
-  - python -m pytest tests/test_local.py tests/test_module_integrity.py tests/test_code_style.py tests/test_documentation.py
+    - sudo: required
+      services:
+        - docker
+      script:
+        - docker run --rm -v `pwd`:/io quay.io/pypa/manylinux1_x86_64 sh /io/extras/build-travis/build.sh

@@ -6,19 +6,14 @@
 /* moderngl.core.extensions(context)
  * Returns a list of supported extensions.
  */
-PyObject * meth_extensions(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 1) {
+PyObject * meth_extensions(PyObject * self, PyObject * context) {
+    if (context->ob_type != Context_class) {
         // TODO: error
         return 0;
     }
 
-    if (args[0]->ob_type != Context_class) {
-        // TODO: error
-        return 0;
-    }
-
-    MGLContext * ctx = SLOT(args[0], MGLContext, Context_class_mglo);
-    int version_code = PyLong_AsLong(SLOT(args[0], PyObject, Context_class_version_code));
+    MGLContext * ctx = SLOT(context, MGLContext, Context_class_mglo);
+    int version_code = PyLong_AsLong(SLOT(context, PyObject, Context_class_version_code));
     const GLMethods & gl = ctx->gl;
 
     if (version_code >= 300) {
@@ -44,18 +39,13 @@ PyObject * meth_extensions(PyObject * self, PyObject * const * args, Py_ssize_t 
 
 /* moderngl.core.hwinfo(context)
  */
-PyObject * meth_hwinfo(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 1) {
+PyObject * meth_hwinfo(PyObject * self, PyObject * context) {
+    if (context->ob_type != Context_class) {
         // TODO: error
         return 0;
     }
 
-    if (args[0]->ob_type != Context_class) {
-        // TODO: error
-        return 0;
-    }
-
-    MGLContext * ctx = SLOT(args[0], MGLContext, Context_class_mglo);
+    MGLContext * ctx = SLOT(context, MGLContext, Context_class_mglo);
     const GLMethods & gl = ctx->gl;
 
     const char * version = (const char *)gl.GetString(GL_VERSION);

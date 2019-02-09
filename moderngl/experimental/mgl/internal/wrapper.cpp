@@ -1,6 +1,7 @@
 #include "wrapper.hpp"
 
 #include "modules.hpp"
+#include "tools.hpp"
 
 PyTypeObject * Attribute_class;
 int Attribute_class_type;
@@ -17,7 +18,6 @@ int Buffer_class_extra;
 
 PyTypeObject * ComputeShader_class;
 int ComputeShader_class_mglo;
-int ComputeShader_class_attributes;
 int ComputeShader_class_uniforms;
 int ComputeShader_class_extra;
 
@@ -27,6 +27,7 @@ int Context_class_version_code;
 int Context_class_limits;
 int Context_class_screen;
 int Context_class_fbo;
+int Context_class_recorder;
 int Context_class_extra;
 
 PyTypeObject * Framebuffer_class;
@@ -225,6 +226,7 @@ PyTypeObject * VertexArray_class;
 int VertexArray_class_mglo;
 int VertexArray_class_ibo;
 int VertexArray_class_program;
+int VertexArray_class_scope;
 int VertexArray_class_mode;
 int VertexArray_class_vertices;
 int VertexArray_class_extra;
@@ -250,7 +252,6 @@ void init_wrappers() {
     int ComputeShader_slots = 0;
     ComputeShader_class = detect_class(moderngl, "ComputeShader", ComputeShader_slots);
     ComputeShader_class_mglo = slot_offset(ComputeShader_class, "_ComputeShader__mglo", ComputeShader_slots);
-    ComputeShader_class_attributes = slot_offset(ComputeShader_class, "attributes", ComputeShader_slots);
     ComputeShader_class_uniforms = slot_offset(ComputeShader_class, "uniforms", ComputeShader_slots);
     ComputeShader_class_extra = slot_offset(ComputeShader_class, "extra", ComputeShader_slots);
     assert_slots_len(ComputeShader_class, ComputeShader_slots);
@@ -262,6 +263,7 @@ void init_wrappers() {
     Context_class_limits = slot_offset(Context_class, "limits", Context_slots);
     Context_class_screen = slot_offset(Context_class, "screen", Context_slots);
     Context_class_fbo = slot_offset(Context_class, "fbo", Context_slots);
+    Context_class_recorder = slot_offset(Context_class, "recorder", Context_slots);
     Context_class_extra = slot_offset(Context_class, "extra", Context_slots);
     assert_slots_len(Context_class, Context_slots);
 
@@ -486,6 +488,7 @@ void init_wrappers() {
     VertexArray_class_mglo = slot_offset(VertexArray_class, "_VertexArray__mglo", VertexArray_slots);
     VertexArray_class_ibo = slot_offset(VertexArray_class, "_VertexArray__ibo", VertexArray_slots);
     VertexArray_class_program = slot_offset(VertexArray_class, "program", VertexArray_slots);
+    VertexArray_class_scope = slot_offset(VertexArray_class, "scope", VertexArray_slots);
     VertexArray_class_mode = slot_offset(VertexArray_class, "mode", VertexArray_slots);
     VertexArray_class_vertices = slot_offset(VertexArray_class, "vertices", VertexArray_slots);
     VertexArray_class_extra = slot_offset(VertexArray_class, "extra", VertexArray_slots);

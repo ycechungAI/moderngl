@@ -26,6 +26,32 @@ int MGLBuffer_core_write(MGLBuffer * self, const Py_ssize_t & offset, Py_buffer 
     return 0;
 }
 
+/* MGLContext.copy_buffer(dst, src, size, read_offset, write_offset)
+ */
+PyObject * MGLContext_meth_copy_buffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
+    if (nargs != 5) {
+        // TODO: error
+        return 0;
+    }
+
+    PyObject * dst = args[0];
+    PyObject * src = args[1];
+    Py_ssize_t size = PyLong_AsSsize_t(args[2]);
+    Py_ssize_t read_offset = PyLong_AsSsize_t(args[3]);
+    Py_ssize_t write_offset = PyLong_AsSsize_t(args[4]);
+
+    MGLBuffer * src_buffer = SLOT(src, MGLBuffer, Buffer_class_mglo);
+    MGLBuffer * dst_buffer = SLOT(dst, MGLBuffer, Buffer_class_mglo);
+
+    // TODO: error checking
+
+	const GLMethods & gl = self->gl;
+	gl.BindBuffer(GL_COPY_READ_BUFFER, src_buffer->buffer_obj);
+	gl.BindBuffer(GL_COPY_WRITE_BUFFER, dst_buffer->buffer_obj);
+	gl.CopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, read_offset, write_offset, size);
+    Py_RETURN_NONE;
+}
+
 /* MGLContext.buffer(data, reserve, readable, writable, local)
  * Returns a Buffer object.
  */
@@ -53,6 +79,7 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
     }
 
     MGLBuffer * buffer = MGLContext_new_object(self, Buffer);
+
     buffer->flags = (readable ? MGL_BUFFER_READABLE : 0) | (writable ? MGL_BUFFER_WRITABLE : 0) | (local ? MGL_BUFFER_LOCAL : 0);
 
     const GLMethods & gl = self->gl;
@@ -331,6 +358,24 @@ PyObject * MGLBuffer_meth_clear(MGLBuffer * self) {
     Py_RETURN_NONE;
 }
 
+/* MGLBuffer.bind(binding, offset, size)
+ */
+PyObject * MGLBuffer_meth_bind(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs) {
+    if (nargs != 4) {
+        // TODO: error
+        return 0;
+    }
+
+	int binding = PyLong_AsLong(args[0]);
+	Py_ssize_t offset = PyLong_AsSsize_t(args[1]);
+	Py_ssize_t size = PyLong_AsSsize_t(args[2]);
+	int ssbo = PyLong_AsLong(args[3]);
+
+    const GLMethods & gl = self->context->gl;
+	gl.BindBufferRange(ssbo ? GL_SHADER_STORAGE_BUFFER : GL_UNIFORM_BUFFER, binding, self->buffer_obj, offset, size);
+    Py_RETURN_NONE;
+}
+
 #if PY_VERSION_HEX >= 0x03070000
 
 PyMethodDef MGLBuffer_methods[] = {
@@ -339,6 +384,7 @@ PyMethodDef MGLBuffer_methods[] = {
     {"map", (PyCFunction)MGLBuffer_meth_map, METH_FASTCALL, 0},
     {"unmap", (PyCFunction)MGLBuffer_meth_unmap, METH_NOARGS, 0},
     {"clear", (PyCFunction)MGLBuffer_meth_clear, METH_NOARGS, 0},
+    {"bind", (PyCFunction)MGLBuffer_meth_bind, METH_FASTCALL, 0},
     {0},
 };
 
@@ -356,12 +402,17 @@ PyObject * MGLBuffer_meth_map_va(MGLBuffer * self, PyObject * args) {
     return MGLBuffer_meth_map(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
+PyObject * MGLBuffer_meth_bind_va(MGLBuffer * self, PyObject * args) {
+    return MGLBuffer_meth_bind(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
+}
+
 PyMethodDef MGLBuffer_methods[] = {
     {"write", (PyCFunction)MGLBuffer_meth_write_va, METH_VARARGS, 0},
     {"read", (PyCFunction)MGLBuffer_meth_read_va, METH_VARARGS, 0},
     {"map", (PyCFunction)MGLBuffer_meth_map_va, METH_VARARGS, 0},
     {"unmap", (PyCFunction)MGLBuffer_meth_unmap, METH_NOARGS, 0},
     {"clear", (PyCFunction)MGLBuffer_meth_clear, METH_NOARGS, 0},
+    {"bind", (PyCFunction)MGLBuffer_meth_bind_va, METH_VARARGS, 0},
     {0},
 };
 

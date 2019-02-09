@@ -30,7 +30,7 @@ class Buffer:
         self.__mglo.clear()
 
     def bind_to_uniform_block(self, binding=0, offset=0, size=-1) -> None:
-        self.__mglo.bind_to_uniform_block(binding, offset, size)
+        self.__mglo.bind(binding, offset, size, 0)
 
     def bind_to_storage_buffer(self, binding=0, offset=0, size=-1) -> None:
-        self.__mglo.bind_to_storage_buffer(binding, offset, size)
+        self.__mglo.bind(binding, offset, size, 1)

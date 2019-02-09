@@ -5,14 +5,7 @@
 
 /* MGLContext.configure(configuration)
  */
-PyObject * MGLContext_meth_configure(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 1) {
-        // TODO: error
-        return 0;
-    }
-
-    PyObject * configuration = args[0];
-
+PyObject * MGLContext_meth_configure(MGLContext * self, PyObject * configuration) {
     if (PyObject * formatter = PyDict_GetItemString(configuration, "glsl_compiler_error")) {
         replace_object(self->glsl_compiler_error, formatter);
     }

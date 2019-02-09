@@ -84,7 +84,7 @@ class ColorsAndTexture(Example):
         width, height = self.wnd.size
         self.ctx.screen.viewport = self.wnd.viewport
         self.ctx.clear(1.0, 1.0, 1.0)
-        with self.ctx.scope(enable_only=mgl.DEPTH_TEST):
+        with self.ctx.scope(mgl.DEPTH_TEST):
 
             proj = Matrix44.perspective_projection(45.0, width / height, 0.1, 1000.0)
             lookat = Matrix44.look_at(

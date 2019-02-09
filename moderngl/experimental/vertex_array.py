@@ -2,15 +2,17 @@ from typing import Any
 
 from .buffer import Buffer
 from .program import Program
+from .scope import Scope
 
 
 class VertexArray:
-    __slots__ = ['__mglo', '__ibo', 'program', 'mode', 'vertices', 'extra']
+    __slots__ = ['__mglo', '__ibo', 'program', 'scope', 'mode', 'vertices', 'extra']
 
     def __init__(self):
         self.__mglo = None  # type: Any
         self.__ibo = None  # type: Buffer
         self.program = None  # type: Program
+        self.scope = None  # type: Scope
         self.mode = None  # type: int
         self.vertices = None  # type: int
         self.extra = None  # type: Any

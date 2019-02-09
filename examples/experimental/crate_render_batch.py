@@ -1,4 +1,5 @@
 import os
+import struct
 
 import moderngl.experimental as mgl
 import numpy as np
@@ -16,6 +17,10 @@ def local(*path):
 class CrateExample(Example):
     def __init__(self):
         self.ctx = mgl.create_context()
+        # import gltraces
+        # mglprocs = mgl.glprocs(self.ctx)
+        # gltraces.glprocs[:] = mglprocs
+        # mglprocs[:] = gltraces.gltraces
 
         self.prog = self.ctx.program(
             vertex_shader='''
@@ -57,19 +62,44 @@ class CrateExample(Example):
             ''',
         )
 
-        obj = Obj.open(local('data', 'crate.obj'))
-        img = Image.open(local('data', 'crate.png')).transpose(Image.FLIP_TOP_BOTTOM).convert('RGB')
-        self.texture = self.ctx.texture(img.size, 3, img.tobytes())
-        self.sampler = self.ctx.sampler(self.texture)
+        obj1 = Obj.open(local('data', 'crate_left.obj'))
+        obj2 = Obj.open(local('data', 'crate.obj'))
+        obj3 = Obj.open(local('data', 'crate_right.obj'))
 
-        self.vbo = self.ctx.buffer(obj.pack('vx vy vz nx ny nz tx ty'))
-        self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'in_vert', 'in_norm', 'in_text')
-        self.vao.scope = self.ctx.scope(mgl.DEPTH_TEST, samplers=[(self.sampler, 0)])
+        img1 = Image.open(local('data', 'crate.png')).transpose(Image.FLIP_TOP_BOTTOM).convert('RGB')
+        img2 = Image.open(local('data', 'rock.jpg')).transpose(Image.FLIP_TOP_BOTTOM).convert('RGB')
+
+        self.texture1 = self.ctx.texture(img1)
+        self.texture2 = self.ctx.texture(img2)
+
+        self.sampler1 = self.ctx.sampler(self.texture1)
+        self.sampler2 = self.ctx.sampler(self.texture2)
+
+        self.vbo1 = self.ctx.buffer(obj1.pack('vx vy vz nx ny nz tx ty'))
+        self.vbo2 = self.ctx.buffer(obj2.pack('vx vy vz nx ny nz tx ty'))
+        self.vbo3 = self.ctx.buffer(obj3.pack('vx vy vz nx ny nz tx ty'))
+
+        self.vao1 = self.ctx.simple_vertex_array(self.prog, self.vbo1, 'in_vert', 'in_norm', 'in_text')
+        self.vao1.scope = self.ctx.scope(mgl.DEPTH_TEST, samplers=[(self.sampler2, 0)])
+
+        self.vao2 = self.ctx.simple_vertex_array(self.prog, self.vbo2, 'in_vert', 'in_norm', 'in_text')
+        self.vao2.scope = self.ctx.scope(mgl.DEPTH_TEST, samplers=[(self.sampler1, 0)])
+
+        self.vao3 = self.ctx.simple_vertex_array(self.prog, self.vbo3, 'in_vert', 'in_norm', 'in_text')
+        self.vao3.scope = self.ctx.scope(mgl.DEPTH_TEST, samplers=[(self.sampler2, 0)])
+
+        with self.ctx.recorder:
+            self.ctx.clear(1.0, 1.0, 1.0)
+            self.vao1.render()
+            self.vao2.render()
+            self.vao3.render()
+
+        self.bytecode = self.ctx.recorder.dump()
+        print(self.bytecode)
 
     def render(self):
         angle = self.wnd.time
         self.ctx.screen.viewport = self.wnd.viewport
-        self.ctx.clear(1.0, 1.0, 1.0)
 
         camera_pos = (np.cos(angle) * 5.0, np.sin(angle) * 5.0, 2.0)
 
@@ -82,7 +112,7 @@ class CrateExample(Example):
 
         self.prog['Mvp'] = (proj * lookat).astype('f4').tobytes()
         self.prog['Light'] = camera_pos
-        self.vao.render()
 
+        self.ctx.replay(self.bytecode)
 
 run_example(CrateExample)

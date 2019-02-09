@@ -99,14 +99,14 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * const * args, P
 
     MGLTexture * texture = MGLContext_new_object(self, Texture);
 
+    texture->data_type = data_type;
+    texture->texture_target = texture_target;
     texture->width = width;
     texture->height = height;
     texture->depth = depth;
     texture->components = components;
     texture->levels = levels;
     texture->samples = samples;
-    texture->data_type = data_type;
-    texture->texture_target = texture_target;
 
     const GLMethods & gl = self->gl;
     gl.GenTextures(1, (GLuint *)&texture->texture_obj);

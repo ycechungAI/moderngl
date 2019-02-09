@@ -3,6 +3,7 @@ from typing import Any
 
 from . import mgl
 from .buffer import Buffer
+from .compute_shader import ComputeShader
 from .framebuffer import Framebuffer
 from .limits import Limits
 from .program import Program
@@ -19,7 +20,7 @@ def _attr_fmt(attr):
 
 
 class Context:
-    __slots__ = ['__mglo', 'version_code', 'limits', 'screen', 'fbo', 'extra']
+    __slots__ = ['__mglo', 'version_code', 'limits', 'screen', 'fbo', 'recorder', 'extra']
 
     def __init__(self):
         self.__mglo = None  # type: Any
@@ -27,10 +28,14 @@ class Context:
         self.limits = None  # type: Limits
         self.screen = None  # type: Framebuffer
         self.fbo = None  # type: Framebuffer
+        self.recorder = None  # type: Any
         self.extra = None  # type: Any
 
     def buffer(self, data=None, reserve=0, readable=True, writable=True, local=False) -> Buffer:
         return self.__mglo.buffer(data, reserve, readable, writable, local)
+
+    def compute_shader(self, source) -> ComputeShader:
+        return self.__mglo.compute_shader(source)
 
     def program(self, vertex_shader, fragment_shader=None, geometry_shader=None, tess_control_shader=None, tess_evaluation_shader=None, varyings=()) -> Program:
         return self.__mglo.program(vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader, varyings)
@@ -51,8 +56,8 @@ class Context:
         content = [(buffer, ' '.join(_attr_fmt(program.attributes[a]) for a in attributes)) + attributes]
         return self.__mglo.vertex_array(program, content, index_buffer)
 
-    def scope(self, framebuffer=None, enable_only=-1, samplers=None, uniform_buffers=None, storage_buffers=None) -> Scope:
-        return self.__mglo.scope(framebuffer, enable_only, samplers, uniform_buffers, storage_buffers)
+    def scope(self, enable_only=-1, framebuffer=None, samplers=None, uniform_buffers=None, storage_buffers=None) -> Scope:
+        return self.__mglo.scope(enable_only, framebuffer, samplers, uniform_buffers, storage_buffers)
 
     def query(self, time=False, primitives=False, samples=False, any_samples=False) -> Query:
         return self.__mglo.query(time, primitives, samples, any_samples)
@@ -73,6 +78,15 @@ class Context:
         self.fbo.clear(0, (red, green, blue, alpha), viewport)
         self.fbo.clear(-1, depth, viewport)
 
+    def copy_buffer(self, dst, src, size=-1, *, read_offset=0, write_offset=0) -> None:
+        self.__mglo.copy_buffer(dst, src, size, read_offset, write_offset)
+
+    def record(self):
+        return self.__mglo.record()
+
+    def replay(self, bytecode):
+        return self.__mglo.replay(bytecode)
+
 
 def create_context(standalone=False, debug=False, glhook=None, gc=None):
     return mgl.create_context(standalone, debug, glhook, gc)
@@ -92,3 +106,7 @@ def glprocs(context):
 
 def release(obj):
     return mgl.release(obj)
+
+
+def inspect(obj):
+    return mgl.inspect(obj)

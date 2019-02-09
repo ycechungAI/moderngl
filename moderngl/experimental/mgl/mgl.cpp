@@ -1,9 +1,11 @@
 #include "mgl.hpp"
 #include "extensions.hpp"
+#include "inspect.hpp"
 #include "internal/modules.hpp"
 
 #include "context.hpp"
 #include "buffer.hpp"
+#include "recorder.hpp"
 #include "framebuffer.hpp"
 #include "limits.hpp"
 #include "program.hpp"
@@ -40,6 +42,7 @@ PyObject * meth_initialize(PyObject * self) {
     /* Detect wrapper classes for internal types */
 
     init_wrappers();
+    init_recording();
 
     /* Errors are not recoverable at this point */
 
@@ -52,30 +55,19 @@ PyObject * meth_initialize(PyObject * self) {
 
 /* moderngl.core.glprocs(context)
  */
-PyObject * meth_glprocs(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 1) {
+PyObject * meth_glprocs(PyObject * self, PyObject * context) {
+    if (context->ob_type != Context_class) {
         // TODO: error
         return 0;
     }
 
-    if (args[0]->ob_type != Context_class) {
-        // TODO: error
-        return 0;
-    }
-
-    MGLContext * ctx = SLOT(args[0], MGLContext, Context_class_mglo);
+    MGLContext * ctx = SLOT(context, MGLContext, Context_class_mglo);
     return PyMemoryView_FromMemory((char *)&ctx->gl, sizeof(ctx->gl), PyBUF_WRITE);
 }
 
 /* moderngl.core.release(obj)
  */
-PyObject * meth_release(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 1) {
-        return 0;
-    }
-
-    PyObject * obj = args[0];
-
+PyObject * meth_release(PyObject * self, PyObject * obj) {
     if (obj->ob_type == Buffer_class) {
         MGLBuffer * buffer = MGLObject_pop_mglo(Buffer, obj);
         const GLMethods & gl = buffer->context->gl;
@@ -149,22 +141,16 @@ PyObject * meth_release(PyObject * self, PyObject * const * args, Py_ssize_t nar
     return 0;
 }
 
-extern PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssize_t nargs);
-extern PyObject * meth_extensions(PyObject * self, PyObject * const * args, Py_ssize_t nargs);
-extern PyObject * meth_hwinfo(PyObject * self, PyObject * const * args, Py_ssize_t nargs);
-extern PyObject * meth_initialize(PyObject * self);
-extern PyObject * meth_glprocs(PyObject * self, PyObject * const * args, Py_ssize_t nargs);
-extern PyObject * meth_release(PyObject * self, PyObject * const * args, Py_ssize_t nargs);
-
 #if PY_VERSION_HEX >= 0x03070000
 
 PyMethodDef module_methods[] = {
     {"create_context", (PyCFunction)meth_create_context, METH_FASTCALL, 0},
-    {"extensions", (PyCFunction)meth_extensions, METH_FASTCALL, 0},
-    {"hwinfo", (PyCFunction)meth_hwinfo, METH_FASTCALL, 0},
+    {"extensions", (PyCFunction)meth_extensions, METH_O, 0},
+    {"hwinfo", (PyCFunction)meth_hwinfo, METH_O, 0},
     {"initialize", (PyCFunction)meth_initialize, METH_NOARGS, 0},
-    {"glprocs", (PyCFunction)meth_glprocs, METH_FASTCALL, 0},
-    {"release", (PyCFunction)meth_release, METH_FASTCALL, 0},
+    {"inspect", (PyCFunction)meth_inspect, METH_O, 0},
+    {"glprocs", (PyCFunction)meth_glprocs, METH_O, 0},
+    {"release", (PyCFunction)meth_release, METH_O, 0},
     {0},
 };
 
@@ -174,29 +160,14 @@ PyObject * meth_create_context_va(PyObject * self, PyObject * args) {
     return meth_create_context(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
 }
 
-PyObject * meth_extensions_va(PyObject * self, PyObject * args) {
-    return meth_extensions(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * meth_hwinfo_va(PyObject * self, PyObject * args) {
-    return meth_hwinfo(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * meth_glprocs_va(PyObject * self, PyObject * args) {
-    return meth_glprocs(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * meth_release_va(PyObject * self, PyObject * args) {
-    return meth_release(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
 PyMethodDef module_methods[] = {
     {"create_context", (PyCFunction)meth_create_context_va, METH_VARARGS, 0},
-    {"extensions", (PyCFunction)meth_extensions_va, METH_VARARGS, 0},
-    {"hwinfo", (PyCFunction)meth_hwinfo_va, METH_VARARGS, 0},
+    {"extensions", (PyCFunction)meth_extensions, METH_O, 0},
+    {"hwinfo", (PyCFunction)meth_hwinfo, METH_O, 0},
     {"initialize", (PyCFunction)meth_initialize, METH_NOARGS, 0},
-    {"glprocs", (PyCFunction)meth_glprocs_va, METH_VARARGS, 0},
-    {"release", (PyCFunction)meth_release_va, METH_VARARGS, 0},
+    {"inspect", (PyCFunction)meth_inspect, METH_O, 0},
+    {"glprocs", (PyCFunction)meth_glprocs, METH_O, 0},
+    {"release", (PyCFunction)meth_release, METH_O, 0},
     {0},
 };
 

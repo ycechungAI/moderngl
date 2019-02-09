@@ -24,3 +24,4 @@ struct MGLFramebuffer {
 
 extern PyType_Spec MGLFramebuffer_spec;
 PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
+void MGLFramebuffer_use_core(MGLFramebuffer * self);

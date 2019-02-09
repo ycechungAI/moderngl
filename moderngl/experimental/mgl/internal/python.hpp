@@ -25,8 +25,6 @@ inline PyObject * _new_object(PyTypeObject * type) {
     } else {
         res = PyObject_New(PyObject, type);
     }
-    // PyObject_GC_Track(wrapper);
-    memset((char *)res + sizeof(PyObject), 0, type->tp_basicsize - sizeof(PyObject));
     return res;
 }
 

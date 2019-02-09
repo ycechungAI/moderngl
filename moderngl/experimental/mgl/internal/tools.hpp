@@ -33,3 +33,5 @@ inline PyObject * int_tuple(int i0, int i1, int i2, int i3) {
 PyTypeObject * detect_class(PyObject * module, const char * name, int & slots_len);
 int slot_offset(PyTypeObject * type, const char * name, int & counter);
 void assert_slots_len(PyTypeObject * type, int slots_len);
+bool starts_with(const char * str, const char * prefix);
+void clear_slots(PyObject * obj);

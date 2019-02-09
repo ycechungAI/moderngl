@@ -3,4 +3,4 @@
 
 struct MGLContext;
 
-PyObject * MGLContext_meth_configure(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
+PyObject * MGLContext_meth_configure(MGLContext * self, PyObject * configuration);

@@ -1,6 +1,7 @@
 #pragma once
 #include "mgl.hpp"
 #include "framebuffer.hpp"
+#include "scope.hpp"
 
 #include "internal/opengl/gl_context.hpp"
 #include "internal/opengl/gl_methods.hpp"
@@ -37,7 +38,12 @@ struct MGLContext {
     MGLFramebuffer * bound_framebuffer;
     MGLFramebuffer * default_framebuffer;
 
+    MGLScope * default_scope;
+    MGLScope * active_scope;
+    MGLScope * bound_scope;
+
     PyTypeObject * MGLBuffer_class;
+    PyTypeObject * MGLComputeShader_class;
     PyTypeObject * MGLFramebuffer_class;
     PyTypeObject * MGLProgram_class;
     PyTypeObject * MGLQuery_class;
@@ -83,11 +89,11 @@ struct MGLObject {
  * The circular reference must be resolved when releasing objects.
  */
 
-MGLObject * _MGLContext_new_object(MGLContext * self, PyTypeObject * type, PyTypeObject * cls, int slot);
+MGLObject * _MGLContext_new_object(MGLContext * self, PyTypeObject * type, PyTypeObject * cls, int slot, int size);
 MGLObject * _MGLObject_pop_mglo(PyObject * wrapper, int slot);
 PyObject * _MGLObject_release(MGLObject * self);
 
-#define MGLContext_new_object(self, name) (MGL ## name *)_MGLContext_new_object(self, self->MGL ## name ## _class, name ## _class, name ## _class_mglo)
+#define MGLContext_new_object(self, name) (MGL ## name *)_MGLContext_new_object(self, self->MGL ## name ## _class, name ## _class, name ## _class_mglo, sizeof(MGL ## name))
 #define MGLObject_pop_mglo(name, obj) (MGL ## name *)_MGLObject_pop_mglo(obj, name ## _class_mglo)
 #define MGLObject_release(obj) _MGLObject_release((MGLObject *)obj);
 

@@ -38,16 +38,11 @@ PyObject * MGLContext_meth_sampler(MGLContext * self, PyObject * const * args, P
 
 /* MGLSampler.use(location)
  */
-PyObject * MGLSampler_meth_use(MGLSampler * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 1) {
-        // TODO: error
-        return 0;
-    }
-
+PyObject * MGLSampler_meth_use(MGLSampler * self, PyObject * arg) {
     PyObject * wrapper = SLOT(self->wrapper, PyObject, Sampler_class_texture);
     MGLTexture * texture = SLOT(wrapper, MGLTexture, Texture_class_mglo);
 
-    int location = PyLong_AsLong(args[0]);
+    int location = PyLong_AsLong(arg);
     self->context->bind_sampler(location, texture->texture_target, texture->texture_obj, self->sampler_obj);
     Py_RETURN_NONE;
 }
@@ -55,18 +50,14 @@ PyObject * MGLSampler_meth_use(MGLSampler * self, PyObject * const * args, Py_ss
 #if PY_VERSION_HEX >= 0x03070000
 
 PyMethodDef MGLSampler_methods[] = {
-    {"use", (PyCFunction)MGLSampler_meth_use, METH_FASTCALL, 0},
+    {"use", (PyCFunction)MGLSampler_meth_use, METH_O, 0},
     {0},
 };
 
 #else
 
-PyObject * MGLSampler_meth_use_va(MGLSampler * self, PyObject * args) {
-    return MGLSampler_meth_use(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
 PyMethodDef MGLSampler_methods[] = {
-    {"use", (PyCFunction)MGLSampler_meth_use_va, METH_VARARGS, 0},
+    {"use", (PyCFunction)MGLSampler_meth_use, METH_O, 0},
     {0},
 };
 

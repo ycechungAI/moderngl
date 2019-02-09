@@ -1,4 +1,4 @@
-from .context import Context, create_context, extensions, hwinfo, glprocs, release
+from .context import Context, create_context, extensions, hwinfo, inspect, glprocs, release
 from .attribute import Attribute
 from .buffer import Buffer
 from .compute_shader import ComputeShader
@@ -17,6 +17,8 @@ from .texture import Texture
 from .uniform import Uniform
 from .vertex_array import VertexArray
 from .mgl import initialize
+
+__version__ = '6.0.0'
 
 NOTHING = 0
 BLEND = 1

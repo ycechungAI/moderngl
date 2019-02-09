@@ -1,6 +1,9 @@
 #include "limits.hpp"
-#include "internal/wrapper.hpp"
+
 #include "context.hpp"
+
+#include "internal/wrapper.hpp"
+#include "internal/tools.hpp"
 
 template <typename T>
 PyObject * to_pyobject(const T & value) {
@@ -59,6 +62,7 @@ PyObject * query_limit(const GLMethods & gl, int param) {
 
 PyObject * get_limits(const GLMethods & gl, int version_code) {
     PyObject * limits = new_object(PyObject, Limits_class);
+    clear_slots(limits);
 
     if (version_code >= 100) {
         SLOT(limits, PyObject, Limits_class_point_size_range) = query_limit<float, 2>(gl, GL_POINT_SIZE_RANGE);

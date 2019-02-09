@@ -14,6 +14,7 @@ struct MGLBuffer {
 
 extern PyType_Spec MGLBuffer_spec;
 PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
+PyObject * MGLContext_meth_copy_buffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
 
 const int MGL_BUFFER_READABLE = 0x0001;
 const int MGL_BUFFER_WRITABLE = 0x0002;
