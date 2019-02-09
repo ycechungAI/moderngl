@@ -50,9 +50,11 @@ void * LoadMethod(const char * method) {
 
 #define PREFIX ""
 
+#include <EGL/egl.h>
+
 void * LoadMethod(const char * method) {
-    // TODO: android support
-    return 0;
+    void *proc = (void *) eglGetProcAddress(method);
+    return proc;
 }
 
 #else
