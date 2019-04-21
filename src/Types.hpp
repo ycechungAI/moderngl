@@ -59,6 +59,7 @@ struct MGLDataType {
 struct MGLBuffer {
 	PyObject_HEAD
 
+	PyObject * wrapper; // weak ref to wrapper class
 	MGLContext * context;
 
 	int buffer_obj;
@@ -70,6 +71,7 @@ struct MGLBuffer {
 struct MGLComputeShader {
 	PyObject_HEAD
 
+	PyObject * wrapper; // weak ref to wrapper class
 	MGLContext * context;
 
 	int program_obj;
@@ -78,6 +80,8 @@ struct MGLComputeShader {
 
 struct MGLContext {
 	PyObject_HEAD
+
+	PyObject * wrapper; // weak ref to wrapper class
 
 	MGLFramebuffer * default_framebuffer;
 	MGLFramebuffer * bound_framebuffer;
@@ -112,6 +116,7 @@ struct MGLContext {
 struct MGLFramebuffer {
 	PyObject_HEAD
 
+	PyObject * wrapper; // weak ref to wrapper class
 	MGLContext * context;
 
 	bool * color_mask;
@@ -140,6 +145,7 @@ struct MGLInvalidObject {
 struct MGLProgram {
 	PyObject_HEAD
 
+	PyObject * wrapper; // weak ref to wrapper class
 	MGLContext * context;
 
 	int geometry_input;
@@ -161,6 +167,7 @@ enum MGLQueryKeys {
 struct MGLQuery {
 	PyObject_HEAD
 
+	PyObject * wrapper; // weak ref to wrapper class
 	MGLContext * context;
 
 	int query_obj[4];
@@ -335,6 +342,7 @@ struct MGLUniformBlock {
 struct MGLVertexArray {
 	PyObject_HEAD
 
+	PyObject * wrapper; // weak ref to wrapper class
 	MGLContext * context;
 
 	MGLProgram * program;
@@ -349,6 +357,7 @@ struct MGLVertexArray {
 struct MGLSampler {
 	PyObject_HEAD
 
+	PyObject * wrapper; // weak ref to wrapper class
 	MGLContext * context;
 	int sampler_obj;
 
