@@ -552,13 +552,13 @@ PyObject * MGLTextureCube_get_anisotropy(MGLTextureCube * self) {
 }
 
 int MGLTextureCube_set_anisotropy(MGLTextureCube * self, PyObject * value) {
-	self->anisotropy = min(max(PyFloat_AsDouble(value), 1.0), self->context->max_anisotropy);
+	self->anisotropy = (float)min(max(PyFloat_AsDouble(value), 1.0), self->context->max_anisotropy);
 
 	const GLMethods & gl = self->context->gl;
 
 	gl.ActiveTexture(GL_TEXTURE0 + self->context->default_texture_unit);
 	gl.BindTexture(GL_TEXTURE_CUBE_MAP, self->texture_obj);
-	gl.TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY, self->anisotropy);
+	gl.TexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY, self->anisotropy);
 
 	return 0;
 }

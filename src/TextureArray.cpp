@@ -633,7 +633,7 @@ PyObject * MGLTextureArray_get_anisotropy(MGLTextureArray * self) {
 }
 
 int MGLTextureArray_set_anisotropy(MGLTextureArray * self, PyObject * value) {
-	self->anisotropy = min(max(PyFloat_AsDouble(value), 1.0), self->context->max_anisotropy);
+	self->anisotropy = (float)min(max(PyFloat_AsDouble(value), 1.0), self->context->max_anisotropy);
 
 	const GLMethods & gl = self->context->gl;
 

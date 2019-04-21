@@ -300,7 +300,7 @@ PyObject * MGLVertexArray_render_indirect(MGLVertexArray * self, PyObject * args
 	}
 
 	if (count < 0) {
-		count = buffer->size / 20 - first;
+		count = (int)(buffer->size / 20 - first);
 	}
 
 	const GLMethods & gl = self->context->gl;

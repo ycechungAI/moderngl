@@ -216,7 +216,7 @@ PyObject * MGLSampler_get_anisotropy(MGLSampler * self) {
 }
 
 int MGLSampler_set_anisotropy(MGLSampler * self, PyObject * value) {
-	self->anisotropy = min(max(PyFloat_AsDouble(value), 1.0), self->context->max_anisotropy);
+	self->anisotropy = (float)min(max(PyFloat_AsDouble(value), 1.0), self->context->max_anisotropy);
 
 	const GLMethods & gl = self->context->gl;
 	gl.SamplerParameterf(self->sampler_obj, GL_TEXTURE_MAX_ANISOTROPY, self->anisotropy);
@@ -238,10 +238,10 @@ int MGLSampler_set_border_color(MGLSampler * self, PyObject * value) {
 		return -1;
 	}
 
-	float r = PyFloat_AsDouble(PyTuple_GET_ITEM(value, 0));
-	float g = PyFloat_AsDouble(PyTuple_GET_ITEM(value, 1));
-	float b = PyFloat_AsDouble(PyTuple_GET_ITEM(value, 2));
-	float a = PyFloat_AsDouble(PyTuple_GET_ITEM(value, 3));
+	float r = (float)PyFloat_AsDouble(PyTuple_GET_ITEM(value, 0));
+	float g = (float)PyFloat_AsDouble(PyTuple_GET_ITEM(value, 1));
+	float b = (float)PyFloat_AsDouble(PyTuple_GET_ITEM(value, 2));
+	float a = (float)PyFloat_AsDouble(PyTuple_GET_ITEM(value, 3));
 
 	if (PyErr_Occurred()) {
 		MGLError_Set("the border_color is invalid");
@@ -267,7 +267,7 @@ PyObject * MGLSampler_get_min_lod(MGLSampler * self) {
 }
 
 int MGLSampler_set_min_lod(MGLSampler * self, PyObject * value) {
-	self->min_lod = PyFloat_AsDouble(value);
+	self->min_lod = (float)PyFloat_AsDouble(value);
 
 	const GLMethods & gl = self->context->gl;
 	gl.SamplerParameterf(self->sampler_obj, GL_TEXTURE_MIN_LOD, self->min_lod);
@@ -280,7 +280,7 @@ PyObject * MGLSampler_get_max_lod(MGLSampler * self) {
 }
 
 int MGLSampler_set_max_lod(MGLSampler * self, PyObject * value) {
-	self->max_lod = PyFloat_AsDouble(value);
+	self->max_lod = (float)PyFloat_AsDouble(value);
 
 	const GLMethods & gl = self->context->gl;
 	gl.SamplerParameterf(self->sampler_obj, GL_TEXTURE_MAX_LOD, self->max_lod);
