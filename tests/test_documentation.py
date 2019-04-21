@@ -70,9 +70,6 @@ class TestCase(unittest.TestCase):
     def test_compute_shader_docs(self):
         self.validate('compute_shader.rst', 'ComputeShader', ['release', 'mglo', 'glo', 'ctx'])
 
-    def test_subroutine_docs(self):
-        self.validate('subroutine.rst', 'Subroutine', ['mglo', 'ctx'])
-
     def test_uniform_docs(self):
         self.validate('uniform.rst', 'Uniform', ['mglo'])
 

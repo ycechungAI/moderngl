@@ -8,8 +8,7 @@ from .compute_shader import ComputeShader
 from .conditional_render import ConditionalRender
 from .framebuffer import Framebuffer
 from .program import Program, detect_format
-from .program_members import (Attribute, Subroutine, Uniform, UniformBlock,
-                              Varying)
+from .program_members import Attribute, Uniform, UniformBlock, Varying
 from .query import Query
 from .renderbuffer import Renderbuffer
 from .scope import Scope
@@ -791,7 +790,7 @@ class Context:
         varyings = tuple(varyings)
 
         res = Program.__new__(Program)
-        res.mglo, ls1, ls2, ls3, ls4, ls5, res._subroutines, res._geom, res._glo = self.mglo.program(
+        res.mglo, ls1, ls2, ls3, ls4, res._geom, res._glo = self.mglo.program(
             vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader,
             varyings
         )
@@ -816,11 +815,6 @@ class Context:
         for item in ls4:
             obj = UniformBlock.__new__(UniformBlock)
             obj.mglo, obj._index, obj._size, obj._name = item
-            members[obj.name] = obj
-
-        for item in ls5:
-            obj = Subroutine.__new__(Subroutine)
-            obj._index, obj._name = item
             members[obj.name] = obj
 
         res._members = members
@@ -991,7 +985,7 @@ class Context:
         '''
 
         res = ComputeShader.__new__(ComputeShader)
-        res.mglo, ls1, ls2, ls3, ls4, res._glo = self.mglo.compute_shader(source)
+        res.mglo, ls1, ls2, res._glo = self.mglo.compute_shader(source)
 
         members = {}
 

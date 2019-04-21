@@ -26,7 +26,7 @@ class VertexArray:
         as well as the Buffer objects providing the vertex data arrays.
 
         In ModernGL, the VertexArray object also stores a reference
-        for a :py:class:`Program` object, and some Subroutine information.
+        for a :py:class:`Program` object.
 
         A VertexArray object cannot be instantiated directly, it requires a context.
         Use :py:meth:`Context.vertex_array` or :py:meth:`Context.simple_vertex_array`
@@ -85,19 +85,6 @@ class VertexArray:
         '''
 
         return self.mglo.vertices
-
-    @property
-    def subroutines(self) -> Tuple[int, ...]:
-        '''
-            tuple: The subroutines assinged to the VertexArray.
-            The subroutines used when rendering or transforming primitives.
-        '''
-
-        return self.mglo.subroutines
-
-    @subroutines.setter
-    def subroutines(self, value):
-        self.mglo.subroutines = tuple(value)
 
     @property
     def glo(self) -> int:

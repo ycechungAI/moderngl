@@ -15,7 +15,7 @@ Create
 Methods
 -------
 
-.. automethod:: Program.get(key, default) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]
+.. automethod:: Program.get(key, default) -> Union[Uniform, UniformBlock, Attribute, Varying]
 
 Attributes
 ----------
@@ -23,7 +23,6 @@ Attributes
 .. autoattribute:: Program.geometry_input
 .. autoattribute:: Program.geometry_output
 .. autoattribute:: Program.geometry_vertices
-.. autoattribute:: Program.subroutines
 .. autoattribute:: Program.glo
 .. autoattribute:: Program.extra
 
@@ -83,6 +82,5 @@ Program Members
 
     uniform.rst
     uniform_block.rst
-    subroutine.rst
     attribute.rst
     varying.rst

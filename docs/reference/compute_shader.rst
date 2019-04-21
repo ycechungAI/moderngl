@@ -16,7 +16,7 @@ Methods
 -------
 
 .. automethod:: ComputeShader.run(group_x=1, group_y=1, group_z=1)
-.. automethod:: ComputeShader.get(key, default) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]
+.. automethod:: ComputeShader.get(key, default) -> Union[Uniform, UniformBlock, Attribute, Varying]
 
 Attributes
 ----------

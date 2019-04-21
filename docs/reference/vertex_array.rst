@@ -6,12 +6,6 @@ VertexArray
 
 .. autoclass:: moderngl.VertexArray
 
-    .. note::
-        Compared to OpenGL, :py:class:`VertexArray` objects have some additional responsibilities:
-
-        - Binding a :py:class:`Program` when :py:meth:`VertexArray.render` or :py:meth:`VertexArray.transform` is called.
-        - Subroutines can be assigned. Please see the example below.
-
 Create
 ------
 
@@ -36,7 +30,6 @@ Attributes
 .. autoattribute:: VertexArray.index_buffer
 .. autoattribute:: VertexArray.index_element_size
 .. autoattribute:: VertexArray.vertices
-.. autoattribute:: VertexArray.subroutines
 .. autoattribute:: VertexArray.glo
 .. autoattribute:: VertexArray.extra
 

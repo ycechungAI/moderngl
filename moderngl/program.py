@@ -1,7 +1,6 @@
 from typing import Tuple, Union
 
-from .program_members import (Attribute, Subroutine, Uniform, UniformBlock,
-                              Varying)
+from .program_members import Attribute, Uniform, UniformBlock, Varying
 
 __all__ = ['Program', 'detect_format']
 
@@ -21,12 +20,11 @@ class Program:
         Use :py:meth:`Context.program` to create one.
     '''
 
-    __slots__ = ['mglo', '_members', '_subroutines', '_geom', '_glo', 'ctx', 'extra']
+    __slots__ = ['mglo', '_members', '_geom', '_glo', 'ctx', 'extra']
 
     def __init__(self):
         self.mglo = None
         self._members = {}
-        self._subroutines = None
         self._geom = (None, None, None)
         self._glo = None
         self.ctx = None
@@ -39,7 +37,7 @@ class Program:
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
 
-    def __getitem__(self, key) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    def __getitem__(self, key) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         return self._members[key]
 
     def __iter__(self):
@@ -74,14 +72,6 @@ class Program:
         return self._geom[2]
 
     @property
-    def subroutines(self) -> Tuple[str, ...]:
-        '''
-            tuple: The subroutine uniforms.
-        '''
-
-        return self._subroutines
-
-    @property
     def glo(self) -> int:
         '''
             int: The internal OpenGL object.
@@ -90,15 +80,15 @@ class Program:
 
         return self._glo
 
-    def get(self, key, default) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    def get(self, key, default) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         '''
-            Returns a Uniform, UniformBlock, Subroutine, Attribute or Varying.
+            Returns a Uniform, UniformBlock, Attribute or Varying.
 
             Args:
                 default: This is the value to be returned in case key does not exist.
 
             Returns:
-                :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Subroutine`,
+                :py:class:`Uniform`, :py:class:`UniformBlock`,
                 :py:class:`Attribute` or :py:class:`Varying`
         '''
 

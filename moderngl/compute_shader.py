@@ -1,7 +1,6 @@
 from typing import Tuple, Union
 
-from .program_members import (Attribute, Subroutine, Uniform, UniformBlock,
-                              Varying)
+from .program_members import Attribute, Uniform, UniformBlock, Varying
 
 __all__ = ['ComputeShader']
 
@@ -28,7 +27,7 @@ class ComputeShader:
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
 
-    def __getitem__(self, key) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    def __getitem__(self, key) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         return self._members[key]
 
     def __iter__(self):
@@ -63,15 +62,15 @@ class ComputeShader:
 
         return self.mglo.run(group_x, group_y, group_z)
 
-    def get(self, key, default) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    def get(self, key, default) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         '''
-            Returns a Uniform, UniformBlock, Subroutine, Attribute or Varying.
+            Returns a Uniform, UniformBlock, Attribute or Varying.
 
             Args:
                 default: This is the value to be returned in case key does not exist.
 
             Returns:
-                :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Subroutine`,
+                :py:class:`Uniform`, :py:class:`UniformBlock`,
                 :py:class:`Attribute` or :py:class:`Varying`
         '''
 

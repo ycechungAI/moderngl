@@ -171,12 +171,6 @@ struct MGLProgram {
 
 	int program_obj;
 
-	int num_vertex_shader_subroutines;
-	int num_fragment_shader_subroutines;
-	int num_geometry_shader_subroutines;
-	int num_tess_evaluation_shader_subroutines;
-	int num_tess_control_shader_subroutines;
-
 	int geometry_vertices;
 	int num_varyings;
 };
@@ -371,9 +365,6 @@ struct MGLVertexArray {
 	MGLBuffer * index_buffer;
 	int index_element_size;
 	int index_element_type;
-
-	unsigned * subroutines;
-	int num_subroutines;
 
 	int vertex_array_obj;
 	int num_vertices;
