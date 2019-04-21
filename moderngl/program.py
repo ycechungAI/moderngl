@@ -29,7 +29,6 @@ class Program:
         self._glo = None
         self.ctx = None
         self.extra = None  #: Any - Attribute for storing user defined objects
-        raise TypeError()
 
     def __repr__(self):
         return '<Program: %d>' % self._glo

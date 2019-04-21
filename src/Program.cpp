@@ -2,6 +2,7 @@
 
 #include "InlineMethods.hpp"
 #include "Attribute.hpp"
+#include "_helper.hpp"
 
 PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 	PyObject * shaders[5];
@@ -21,6 +22,17 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 	if (!args_ok) {
 		return 0;
 	}
+
+	// FROM: Context.program(...)
+	// if type(varyings) is str:
+	//     varyings = (varyings,)
+	if (PyUnicode_Check(outputs)) {
+		outputs = Py_BuildValue("(O)", outputs);
+	}
+
+	// FROM: Context.program(...)
+	// varyings = tuple(varyings)
+	outputs = PySequence_Tuple(outputs);
 
 	int num_outputs = (int)PyTuple_GET_SIZE(outputs);
 
@@ -282,6 +294,8 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 	PyObject * uniforms_lst = PyTuple_New(num_uniforms);
 	PyObject * uniform_blocks_lst = PyTuple_New(num_uniform_blocks);
 
+	PyObject * members = PyDict_New();
+
 	for (int i = 0; i < num_attributes; ++i) {
 		int type = 0;
 		int array_length = 0;
@@ -309,6 +323,19 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 		PyTuple_SET_ITEM(item, 5, PyUnicode_FromStringAndSize(name, name_len));
 
 		PyTuple_SET_ITEM(attributes_lst, i, item);
+
+        // for item in ls1:
+        //     obj = Attribute.__new__(Attribute)
+        //     obj.mglo, obj._location, obj._array_length, obj._dimension, obj._shape, obj._name = item
+        //     members[obj.name] = obj
+		PyObject * attribute = create_wrapper("Attribute");
+		set_slot(attribute, "mglo", PyLong_FromVoidPtr(mglo));
+		set_slot(attribute, "_location", PyLong_FromLong(location));
+		set_slot(attribute, "_array_length", PyLong_FromLong(array_length));
+		set_slot(attribute, "_dimension", PyLong_FromLong(mglo->dimension));
+		set_slot(attribute, "_shape", PyUnicode_FromFormat("%c", mglo->shape));
+		set_slot(attribute, "_name", PyUnicode_FromStringAndSize(name, name_len));
+		PyDict_SetItem(members, PyUnicode_FromStringAndSize(name, name_len), attribute);
 	}
 
 	for (int i = 0; i < num_varyings; ++i) {
@@ -327,6 +354,17 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 		PyTuple_SET_ITEM(item, 3, PyUnicode_FromStringAndSize(name, name_len));
 
 		PyTuple_SET_ITEM(varyings_lst, i, item);
+
+        // for item in ls2:
+        //     obj = Varying.__new__(Varying)
+        //     obj._number, obj._array_length, obj._dimension, obj._name = item
+        //     members[obj.name] = obj
+		PyObject * varying = create_wrapper("Varying");
+		set_slot(varying, "_number", PyLong_FromLong(i));
+		set_slot(varying, "_array_length", PyLong_FromLong(array_length));
+		set_slot(varying, "_dimension", PyLong_FromLong(dimension));
+		set_slot(varying, "_name", PyUnicode_FromStringAndSize(name, name_len));
+		PyDict_SetItem(members, PyUnicode_FromStringAndSize(name, name_len), varying);
 	}
 
 	int uniform_counter = 0;
@@ -361,6 +399,18 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 
 		PyTuple_SET_ITEM(uniforms_lst, uniform_counter, item);
 		++uniform_counter;
+
+        // for item in ls3:
+        //     obj = Uniform.__new__(Uniform)
+        //     obj.mglo, obj._location, obj._array_length, obj._dimension, obj._name = item
+        //     members[obj.name] = obj
+		PyObject * uniform = create_wrapper("Uniform");
+		set_slot(uniform, "mglo", (PyObject *)mglo);
+		set_slot(uniform, "_location", PyLong_FromLong(location));
+		set_slot(uniform, "_array_length", PyLong_FromLong(array_length));
+		set_slot(uniform, "_dimension", PyLong_FromLong(mglo->dimension));
+		set_slot(uniform, "_name", PyUnicode_FromStringAndSize(name, name_len));
+		PyDict_SetItem(members, PyUnicode_FromStringAndSize(name, name_len), uniform);
 	}
 
 	if (uniform_counter != num_uniforms) {
@@ -392,6 +442,17 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 		PyTuple_SET_ITEM(item, 3, PyUnicode_FromStringAndSize(name, name_len));
 
 		PyTuple_SET_ITEM(uniform_blocks_lst, i, item);
+
+        // for item in ls4:
+        //     obj = UniformBlock.__new__(UniformBlock)
+        //     obj.mglo, obj._index, obj._size, obj._name = item
+        //     members[obj.name] = obj
+		PyObject * uniform_block = create_wrapper("UniformBlock");
+		set_slot(uniform_block, "mglo", (PyObject *)mglo);
+		set_slot(uniform_block, "_index", PyLong_FromLong(index));
+		set_slot(uniform_block, "_size", PyLong_FromLong(size));
+		set_slot(uniform_block, "_name", PyUnicode_FromStringAndSize(name, name_len));
+		PyDict_SetItem(members, PyUnicode_FromStringAndSize(name, name_len), uniform_block);
 	}
 
 	PyObject * geom_info = PyTuple_New(3);
@@ -417,7 +478,11 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 	PyTuple_SET_ITEM(result, 4, uniform_blocks_lst);
 	PyTuple_SET_ITEM(result, 5, geom_info);
 	PyTuple_SET_ITEM(result, 6, PyLong_FromLong(program->program_obj));
-	return result;
+
+	PyObject * wrapper = create_wrapper("Program");
+	set_slot(wrapper, "mglo", (PyObject *)program);
+	set_slot(wrapper, "_members", members);
+	return wrapper;
 }
 
 PyObject * MGLProgram_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {

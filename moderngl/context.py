@@ -784,40 +784,10 @@ class Context:
                 :py:class:`Program` object
         '''
 
-        if type(varyings) is str:
-            varyings = (varyings,)
-
-        varyings = tuple(varyings)
-
-        res = Program.__new__(Program)
-        res.mglo, ls1, ls2, ls3, ls4, res._geom, res._glo = self.mglo.program(
+        res = self.mglo.program(
             vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader,
             varyings
         )
-
-        members = {}
-
-        for item in ls1:
-            obj = Attribute.__new__(Attribute)
-            obj.mglo, obj._location, obj._array_length, obj._dimension, obj._shape, obj._name = item
-            members[obj.name] = obj
-
-        for item in ls2:
-            obj = Varying.__new__(Varying)
-            obj._number, obj._array_length, obj._dimension, obj._name = item
-            members[obj.name] = obj
-
-        for item in ls3:
-            obj = Uniform.__new__(Uniform)
-            obj.mglo, obj._location, obj._array_length, obj._dimension, obj._name = item
-            members[obj.name] = obj
-
-        for item in ls4:
-            obj = UniformBlock.__new__(UniformBlock)
-            obj.mglo, obj._index, obj._size, obj._name = item
-            members[obj.name] = obj
-
-        res._members = members
         res.ctx = self
         res.extra = None
         return res
