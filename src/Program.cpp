@@ -1,6 +1,7 @@
 #include "Types.hpp"
 
 #include "InlineMethods.hpp"
+#include "Attribute.hpp"
 
 PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 	PyObject * shaders[5];
@@ -292,15 +293,15 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 
 		clean_glsl_name(name, name_len);
 
-		MGLAttribute * mglo = (MGLAttribute *)MGLAttribute_Type.tp_alloc(&MGLAttribute_Type, 0);
+		ProgramAttributeInfo * mglo = new ProgramAttributeInfo;
 		mglo->type = type;
 		mglo->location = location;
 		mglo->array_length = array_length;
 		mglo->program_obj = program->program_obj;
-		MGLAttribute_Complete(mglo, gl);
+		_fill_attrib_info(mglo, gl);
 
 		PyObject * item = PyTuple_New(6);
-		PyTuple_SET_ITEM(item, 0, (PyObject *)mglo);
+		PyTuple_SET_ITEM(item, 0, PyLong_FromVoidPtr(mglo));
 		PyTuple_SET_ITEM(item, 1, PyLong_FromLong(location));
 		PyTuple_SET_ITEM(item, 2, PyLong_FromLong(array_length));
 		PyTuple_SET_ITEM(item, 3, PyLong_FromLong(mglo->dimension));

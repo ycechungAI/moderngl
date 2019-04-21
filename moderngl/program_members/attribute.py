@@ -16,7 +16,6 @@ class Attribute:
         self._shape = None
         self._name = None
         self.extra = None  #: Any - Attribute for storing user defined objects
-        raise TypeError()
 
     def __repr__(self):
         return '<Attribute: %d>' % self._location

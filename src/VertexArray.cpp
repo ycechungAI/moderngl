@@ -1,6 +1,7 @@
 #include "Types.hpp"
 
 #include "BufferFormat.hpp"
+#include "Attribute.hpp"
 
 PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 	MGLProgram * program;
@@ -93,14 +94,12 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 				node = it.next();
 			}
 
-			MGLAttribute * attribute = (MGLAttribute *)PyTuple_GET_ITEM(tuple, j + 2);
+			ProgramAttributeInfo * attribute = (ProgramAttributeInfo *)PyLong_AsVoidPtr(PyTuple_GET_ITEM(tuple, j + 2));
+			if (PyErr_Occurred()) {
+				return 0;
+			}
 
 			if (!skip_errors) {
-				if (Py_TYPE(attribute) != &MGLAttribute_Type) {
-					MGLError_Set("content[%d][%d] must be an attribute not %s", i, j + 2, Py_TYPE(attribute)->tp_name);
-					return 0;
-				}
-
 				if (node->count % attribute->rows_length) {
 					MGLError_Set("invalid format");
 					return 0;
@@ -180,11 +179,14 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 				node = it.next();
 			}
 
-			MGLAttribute * attribute = (MGLAttribute *)PyTuple_GET_ITEM(tuple, j + 2);
-
-			if (attribute == (MGLAttribute *)Py_None) {
+			if (PyTuple_GET_ITEM(tuple, j + 2) == Py_None) {
 				ptr += node->size;
 				continue;
+			}
+
+			ProgramAttributeInfo * attribute = (ProgramAttributeInfo *)PyLong_AsVoidPtr(PyTuple_GET_ITEM(tuple, j + 2));
+			if (PyErr_Occurred()) {
+				return 0;
 			}
 
 			for (int r = 0; r < attribute->rows_length; ++r) {

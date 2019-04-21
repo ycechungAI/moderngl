@@ -33,7 +33,6 @@ static const int SHADER_TYPE[] = {
 	GL_TESS_EVALUATION_SHADER,
 };
 
-struct MGLAttribute;
 struct MGLBuffer;
 struct MGLComputeShader;
 struct MGLContext;
@@ -55,29 +54,6 @@ struct MGLDataType {
 	int * internal_format;
 	int gl_type;
 	int size;
-};
-
-struct MGLAttribute {
-	PyObject_HEAD
-
-	void * gl_attrib_ptr_proc;
-
-	int program_obj;
-
-	int number;
-	int location;
-	int type;
-
-	int scalar_type;
-
-	int dimension;
-	int array_length;
-
-	int rows_length;
-	int row_length;
-
-	char shape;
-	bool normalizable;
 };
 
 struct MGLBuffer {
@@ -394,7 +370,6 @@ struct MGLSampler {
 
 MGLDataType * from_dtype(const char * dtype);
 
-void MGLAttribute_Invalidate(MGLAttribute * attribute);
 void MGLBuffer_Invalidate(MGLBuffer * buffer);
 void MGLComputeShader_Invalidate(MGLComputeShader * program);
 void MGLContext_Invalidate(MGLContext * context);
@@ -409,14 +384,12 @@ void MGLUniform_Invalidate(MGLUniform * uniform);
 void MGLVertexArray_Invalidate(MGLVertexArray * vertex_array);
 void MGLSampler_Invalidate(MGLSampler * sampler);
 
-void MGLAttribute_Complete(MGLAttribute * attribute, const GLMethods & gl);
 void MGLUniform_Complete(MGLUniform * self, const GLMethods & gl);
 void MGLUniformBlock_Complete(MGLUniformBlock * uniform_block, const GLMethods & gl);
 void MGLVertexArray_Complete(MGLVertexArray * vertex_array);
 
 void MGLContext_Initialize(MGLContext * self);
 
-extern PyTypeObject MGLAttribute_Type;
 extern PyTypeObject MGLBuffer_Type;
 extern PyTypeObject MGLComputeShader_Type;
 extern PyTypeObject MGLContext_Type;
