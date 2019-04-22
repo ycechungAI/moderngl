@@ -399,7 +399,6 @@ void MGLVertexArray_Complete(MGLVertexArray * vertex_array);
 
 void MGLContext_Initialize(MGLContext * self);
 
-extern PyTypeObject MGLComputeShader_Type;
 extern PyTypeObject MGLContext_Type;
 extern PyTypeObject MGLFramebuffer_Type;
 extern PyTypeObject MGLInvalidObject_Type;
@@ -420,3 +419,6 @@ extern PyType_Spec MGLBuffer_spec;
 
 extern PyTypeObject * MGLVertexArray_type;
 extern PyType_Spec MGLVertexArray_spec;
+
+extern PyTypeObject * MGLComputeShader_type;
+extern PyType_Spec MGLComputeShader_spec;

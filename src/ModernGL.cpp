@@ -175,16 +175,8 @@ bool MGL_InitializeModule(PyObject * module) {
 	MGLVertexArray_type = (PyTypeObject *)PyType_FromSpec(&MGLVertexArray_spec);
 	PyModule_AddObject(module, "VertexArray", (PyObject *)new_ref(MGLVertexArray_type));
 
-	{
-		if (PyType_Ready(&MGLComputeShader_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register ComputeShader in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLComputeShader_Type);
-
-		PyModule_AddObject(module, "ComputeShader", (PyObject *)&MGLComputeShader_Type);
-	}
+	MGLComputeShader_type = (PyTypeObject *)PyType_FromSpec(&MGLComputeShader_spec);
+	PyModule_AddObject(module, "ComputeShader", (PyObject *)new_ref(MGLComputeShader_type));
 
 	{
 		if (PyType_Ready(&MGLContext_Type) < 0) {
