@@ -1,4 +1,5 @@
 #include "Types.hpp"
+#include "_helper.hpp"
 
 PyObject * MGLContext_buffer(MGLContext * self, PyObject * args) {
 	PyObject * data;
@@ -80,7 +81,24 @@ PyObject * MGLContext_buffer(MGLContext * self, PyObject * args) {
 	PyTuple_SET_ITEM(result, 0, (PyObject *)buffer);
 	PyTuple_SET_ITEM(result, 1, PyLong_FromSsize_t(buffer->size));
 	PyTuple_SET_ITEM(result, 2, PyLong_FromLong(buffer->buffer_obj));
-	return result;
+
+	PyObject * wrapper = create_wrapper("Buffer");
+	// res.mglo, res._size, res._glo
+	// res._dynamic = dynamic
+	// res.ctx = self
+	// res.extra = None
+	set_slot(wrapper, "mglo", (PyObject *)buffer);
+	set_slot(wrapper, "_size", PyLong_FromSsize_t(buffer->size));
+	set_slot(wrapper, "_glo", PyLong_FromLong(buffer->buffer_obj));
+	set_slot(wrapper, "_dynamic", PyBool_FromLong(dynamic));
+
+	Py_INCREF(self->wrapper);
+	set_slot(wrapper, "ctx", self->wrapper);
+
+	Py_INCREF(Py_None);
+	set_slot(wrapper, "extra", Py_None);
+
+	return wrapper;
 }
 
 PyObject * MGLBuffer_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {

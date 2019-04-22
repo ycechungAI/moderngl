@@ -23,7 +23,6 @@ class Buffer:
         self._glo = None
         self.ctx = None
         self.extra = None  #: Any - Attribute for storing user defined objects
-        raise TypeError()
 
     def __repr__(self):
         return '<Buffer: %d>' % self.glo

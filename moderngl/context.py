@@ -572,12 +572,7 @@ class Context:
         if type(reserve) is str:
             reserve = mgl.strsize(reserve)
 
-        res = Buffer.__new__(Buffer)
-        res.mglo, res._size, res._glo = self.mglo.buffer(data, reserve, dynamic)
-        res._dynamic = dynamic
-        res.ctx = self
-        res.extra = None
-        return res
+        return self.mglo.buffer(data, reserve, dynamic)
 
     def texture(self, size, components, data=None, *, samples=0, alignment=1, dtype='f1') -> 'Texture':
         '''
