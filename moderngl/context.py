@@ -784,13 +784,10 @@ class Context:
                 :py:class:`Program` object
         '''
 
-        res = self.mglo.program(
+        return self.mglo.program(
             vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader,
             varyings
         )
-        res.ctx = self
-        res.extra = None
-        return res
 
     def query(self, *, samples=False, any_samples=False, time=False, primitives=False) -> 'Query':
         '''

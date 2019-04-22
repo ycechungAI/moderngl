@@ -488,6 +488,12 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 	set_slot(wrapper, "mglo", (PyObject *)program);
 	set_slot(wrapper, "_members", members);
 
+	Py_INCREF(Py_None);
+	set_slot(wrapper, "extra", Py_None);
+
+	Py_INCREF(self->wrapper);
+	set_slot(wrapper, "ctx", self->wrapper);
+
 	program->wrapper = wrapper;
 	return wrapper;
 }
