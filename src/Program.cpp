@@ -324,6 +324,8 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 
 		PyTuple_SET_ITEM(attributes_lst, i, item);
 
+		GLTypeInfo info = type_info(type);
+
         // for item in ls1:
         //     obj = Attribute.__new__(Attribute)
         //     obj.mglo, obj._location, obj._array_length, obj._dimension, obj._shape, obj._name = item
@@ -335,6 +337,9 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 		set_slot(attribute, "_dimension", PyLong_FromLong(mglo->dimension));
 		set_slot(attribute, "_shape", PyUnicode_FromFormat("%c", mglo->shape));
 		set_slot(attribute, "_name", PyUnicode_FromStringAndSize(name, name_len));
+		set_slot(attribute, "new_cols", PyLong_FromLong(info.cols));
+		set_slot(attribute, "new_rows", PyLong_FromLong(info.rows));
+		set_slot(attribute, "new_shape", PyUnicode_FromStringAndSize((char *)&info.shape, 1));
 		PyDict_SetItem(members, PyUnicode_FromStringAndSize(name, name_len), attribute);
 	}
 
