@@ -120,7 +120,7 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 
 	const GLMethods & gl = self->gl;
 
-	MGLVertexArray * array = (MGLVertexArray *)MGLVertexArray_Type.tp_alloc(&MGLVertexArray_Type, 0);
+	MGLVertexArray * array = PyObject_New(MGLVertexArray, MGLVertexArray_type);
 
 	Py_INCREF(program);
 	array->program = program;
@@ -219,19 +219,6 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 	PyTuple_SET_ITEM(result, 0, (PyObject *)array);
 	PyTuple_SET_ITEM(result, 1, PyLong_FromLong(array->vertex_array_obj));
 	return result;
-}
-
-PyObject * MGLVertexArray_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLVertexArray * self = (MGLVertexArray *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLVertexArray_tp_dealloc(MGLVertexArray * self) {
-	MGLVertexArray_Type.tp_free((PyObject *)self);
 }
 
 PyObject * MGLVertexArray_render(MGLVertexArray * self, PyObject * args) {
@@ -508,47 +495,6 @@ PyGetSetDef MGLVertexArray_tp_getseters[] = {
 	{0},
 };
 
-PyTypeObject MGLVertexArray_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.VertexArray",                                      // tp_name
-	sizeof(MGLVertexArray),                                 // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLVertexArray_tp_dealloc,                  // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLVertexArray_tp_methods,                              // tp_methods
-	0,                                                      // tp_members
-	MGLVertexArray_tp_getseters,                            // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLVertexArray_tp_new,                                  // tp_new
-};
-
 void MGLVertexArray_Invalidate(MGLVertexArray * array) {
 	if (Py_TYPE(array) == &MGLInvalidObject_Type) {
 		return;
@@ -565,3 +511,13 @@ void MGLVertexArray_Invalidate(MGLVertexArray * array) {
 
 void MGLVertexArray_Complete(MGLVertexArray * vertex_array) {
 }
+
+PyTypeObject * MGLVertexArray_type;
+
+PyType_Slot MGLVertexArray_slots[] = {
+	{Py_tp_methods, MGLVertexArray_tp_methods},
+	{Py_tp_getset, MGLVertexArray_tp_getseters},
+	{0},
+};
+
+PyType_Spec MGLVertexArray_spec = {"MGLVertexArray", sizeof(MGLVertexArray), 0, Py_TPFLAGS_DEFAULT, MGLVertexArray_slots};

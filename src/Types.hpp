@@ -413,8 +413,10 @@ extern PyTypeObject MGLTexture_Type;
 extern PyTypeObject MGLTextureArray_Type;
 extern PyTypeObject MGLUniformBlock_Type;
 extern PyTypeObject MGLUniform_Type;
-extern PyTypeObject MGLVertexArray_Type;
 extern PyTypeObject MGLSampler_Type;
 
 extern PyTypeObject * MGLBuffer_type;
 extern PyType_Spec MGLBuffer_spec;
+
+extern PyTypeObject * MGLVertexArray_type;
+extern PyType_Spec MGLVertexArray_spec;

@@ -14,3 +14,5 @@ struct PyArrayInterface {
 	void * data;            // A pointer to the first element of the array
 	PyObject * descr;       // NULL or data-description (same as descr key of __array_interface__) -- must set ARR_HAS_DESCR flag or this will be ignored.
 };
+
+#define new_ref(obj) (Py_INCREF(obj), obj)
