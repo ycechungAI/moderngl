@@ -1263,7 +1263,15 @@ PyObject * MGLContext_get_info(MGLContext * self, void * closure) {
 	return info;
 }
 
+int MGLContext_set_wrapper(MGLContext * self, PyObject * value) {
+	Py_INCREF(value);
+	self->wrapper = value;
+	return 0;
+}
+
 PyGetSetDef MGLContext_tp_getseters[] = {
+	{(char *)"wrapper", 0, (setter)MGLContext_set_wrapper, 0, 0},
+
 	{(char *)"line_width", (getter)MGLContext_get_line_width, (setter)MGLContext_set_line_width, 0, 0},
 	{(char *)"point_size", (getter)MGLContext_get_point_size, (setter)MGLContext_set_point_size, 0, 0},
 

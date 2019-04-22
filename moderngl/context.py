@@ -1083,6 +1083,7 @@ def create_context(require=None) -> Context:
 
     ctx = Context.__new__(Context)
     ctx.mglo, ctx.version_code = mgl.create_context()
+    ctx.mglo.wrapper = ctx
     ctx._screen = ctx.detect_framebuffer(0)
     ctx.fbo = ctx.detect_framebuffer()
     ctx.mglo.fbo = ctx.fbo.mglo
@@ -1121,6 +1122,7 @@ def create_standalone_context(require=None, **settings) -> 'Context':
 
     ctx = Context.__new__(Context)
     ctx.mglo, ctx.version_code = mgl.create_standalone_context(settings)
+    ctx.mglo.wrapper = ctx
     ctx._screen = None
     ctx.fbo = None
     ctx._info = None
