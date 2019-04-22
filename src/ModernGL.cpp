@@ -169,16 +169,9 @@ PyMethodDef MGL_module_methods[] = {
 };
 
 bool MGL_InitializeModule(PyObject * module) {
-	{
-		if (PyType_Ready(&MGLBuffer_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Buffer in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLBuffer_Type);
-
-		PyModule_AddObject(module, "Buffer", (PyObject *)&MGLBuffer_Type);
-	}
+	MGLBuffer_type = (PyTypeObject *)PyType_FromSpec(&MGLBuffer_spec);
+	Py_INCREF(MGLBuffer_type);
+	PyModule_AddObject(module, "Buffer", (PyObject *)MGLBuffer_type);
 
 	{
 		if (PyType_Ready(&MGLComputeShader_Type) < 0) {

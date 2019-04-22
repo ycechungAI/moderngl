@@ -49,7 +49,7 @@ PyObject * MGLContext_buffer(MGLContext * self, PyObject * args) {
 		return 0;
 	}
 
-	MGLBuffer * buffer = (MGLBuffer *)MGLBuffer_Type.tp_alloc(&MGLBuffer_Type, 0);
+	MGLBuffer * buffer = PyObject_New(MGLBuffer, MGLBuffer_type);
 
 	buffer->size = (int)buffer_view.len;
 	buffer->dynamic = dynamic ? true : false;
@@ -99,19 +99,6 @@ PyObject * MGLContext_buffer(MGLContext * self, PyObject * args) {
 	set_slot(wrapper, "extra", Py_None);
 
 	return wrapper;
-}
-
-PyObject * MGLBuffer_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLBuffer * self = (MGLBuffer *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLBuffer_tp_dealloc(MGLBuffer * self) {
-	MGLBuffer_Type.tp_free((PyObject *)self);
 }
 
 PyObject * MGLBuffer_write(MGLBuffer * self, PyObject * args) {
@@ -577,46 +564,16 @@ PyMethodDef MGLBuffer_tp_methods[] = {
 	{0},
 };
 
-PyTypeObject MGLBuffer_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.Buffer",                                           // tp_name
-	sizeof(MGLBuffer),                                      // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLBuffer_tp_dealloc,                       // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLBuffer_tp_methods,                                   // tp_methods
-	0,                                                      // tp_members
-	0,                                                      // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLBuffer_tp_new,                                       // tp_new
+PyTypeObject * MGLBuffer_type;
+
+PyType_Slot MGLBuffer_slots[] = {
+	{Py_tp_methods, MGLBuffer_tp_methods},
+	// {Py_tp_members, MGLBuffer_members},
+	// {Py_tp_getset, MGLBuffer_getset},
+	{0},
 };
+
+PyType_Spec MGLBuffer_spec = {"MGLBuffer", sizeof(MGLBuffer), 0, Py_TPFLAGS_DEFAULT, MGLBuffer_slots};
 
 void MGLBuffer_Invalidate(MGLBuffer * buffer) {
 	if (Py_TYPE(buffer) == &MGLInvalidObject_Type) {

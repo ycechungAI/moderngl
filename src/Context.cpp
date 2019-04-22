@@ -142,9 +142,9 @@ PyObject * MGLContext_copy_buffer(MGLContext * self, PyObject * args) {
 	int args_ok = PyArg_ParseTuple(
 		args,
 		"O!O!nnn",
-		&MGLBuffer_Type,
+		MGLBuffer_type,
 		&dst,
-		&MGLBuffer_Type,
+		MGLBuffer_type,
 		&src,
 		&size,
 		&read_offset,

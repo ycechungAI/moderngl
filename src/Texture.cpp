@@ -416,7 +416,7 @@ PyObject * MGLTexture_read_into(MGLTexture * self, PyObject * args) {
 	int pixel_type = self->data_type->gl_type;
 	int base_format = self->depth ? GL_DEPTH_COMPONENT : self->data_type->base_format[self->components];
 
-	if (Py_TYPE(data) == &MGLBuffer_Type) {
+	if (Py_TYPE(data) == MGLBuffer_type) {
 
 		MGLBuffer * buffer = (MGLBuffer *)data;
 
@@ -547,7 +547,7 @@ PyObject * MGLTexture_write(MGLTexture * self, PyObject * args) {
 	int pixel_type = self->data_type->gl_type;
 	int format = self->data_type->base_format[self->components];
 
-	if (Py_TYPE(data) == &MGLBuffer_Type) {
+	if (Py_TYPE(data) == MGLBuffer_type) {
 
 		MGLBuffer * buffer = (MGLBuffer *)data;
 

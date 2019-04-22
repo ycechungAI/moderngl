@@ -653,7 +653,7 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
 	int pixel_type = data_type->gl_type;
 	int base_format = read_depth ? GL_DEPTH_COMPONENT : data_type->base_format[components];
 
-	if (Py_TYPE(data) == &MGLBuffer_Type) {
+	if (Py_TYPE(data) == MGLBuffer_type) {
 
 		MGLBuffer * buffer = (MGLBuffer *)data;
 

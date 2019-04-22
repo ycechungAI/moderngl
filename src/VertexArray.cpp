@@ -47,7 +47,7 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 		PyObject * buffer = PyTuple_GET_ITEM(tuple, 0);
 		PyObject * format = PyTuple_GET_ITEM(tuple, 1);
 
-		if (Py_TYPE(buffer) != &MGLBuffer_Type) {
+		if (Py_TYPE(buffer) != MGLBuffer_type) {
 			MGLError_Set("content[%d][0] must be a Buffer not %s", i, Py_TYPE(buffer)->tp_name);
 			return 0;
 		}
@@ -108,7 +108,7 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 		}
 	}
 
-	if (index_buffer != (MGLBuffer *)Py_None && Py_TYPE(index_buffer) != &MGLBuffer_Type) {
+	if (index_buffer != (MGLBuffer *)Py_None && Py_TYPE(index_buffer) != MGLBuffer_type) {
 		MGLError_Set("the index_buffer must be a Buffer not %s", Py_TYPE(index_buffer)->tp_name);
 		return 0;
 	}
@@ -286,7 +286,7 @@ PyObject * MGLVertexArray_render_indirect(MGLVertexArray * self, PyObject * args
 	int args_ok = PyArg_ParseTuple(
 		args,
 		"O!III",
-		&MGLBuffer_Type,
+		MGLBuffer_type,
 		&buffer,
 		&mode,
 		&count,
@@ -328,7 +328,7 @@ PyObject * MGLVertexArray_transform(MGLVertexArray * self, PyObject * args) {
 	int args_ok = PyArg_ParseTuple(
 		args,
 		"O!IIII",
-		&MGLBuffer_Type,
+		MGLBuffer_type,
 		&output,
 		&mode,
 		&vertices,
@@ -395,7 +395,7 @@ PyObject * MGLVertexArray_bind(MGLVertexArray * self, PyObject * args) {
 		"IsO!snIIp",
 		&location,
 		&type,
-		&MGLBuffer_Type,
+		MGLBuffer_type,
 		&buffer,
 		&format,
 		&offset,
@@ -472,7 +472,7 @@ PyMethodDef MGLVertexArray_tp_methods[] = {
 };
 
 int MGLVertexArray_set_index_buffer(MGLVertexArray * self, PyObject * value, void * closure) {
-	if (Py_TYPE(value) != &MGLBuffer_Type) {
+	if (Py_TYPE(value) != MGLBuffer_type) {
 		MGLError_Set("the index_buffer must be a Buffer not %s", Py_TYPE(value)->tp_name);
 		return -1;
 	}

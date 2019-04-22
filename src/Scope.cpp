@@ -89,7 +89,7 @@ PyObject * MGLContext_scope(MGLContext * self, PyObject * args) {
 		PyObject * tup = PyTuple_GET_ITEM(uniform_buffers, i);
 		MGLBuffer * buffer = (MGLBuffer *)PyTuple_GET_ITEM(tup, 0);
 
-		if (Py_TYPE(buffer) == &MGLBuffer_Type) {
+		if (Py_TYPE(buffer) == MGLBuffer_type) {
 			int binding = PyLong_AsLong(PyTuple_GET_ITEM(tup, 1));
 			scope->buffers[i * 3 + 0] = GL_UNIFORM_BUFFER;
 			scope->buffers[i * 3 + 1] = buffer->buffer_obj;
@@ -106,7 +106,7 @@ PyObject * MGLContext_scope(MGLContext * self, PyObject * args) {
 		PyObject * tup = PyTuple_GET_ITEM(shader_storage_buffers, i);
 		MGLBuffer * buffer = (MGLBuffer *)PyTuple_GET_ITEM(tup, 0);
 
-		if (Py_TYPE(buffer) == &MGLBuffer_Type) {
+		if (Py_TYPE(buffer) == MGLBuffer_type) {
 			int binding = PyLong_AsLong(PyTuple_GET_ITEM(tup, 1));
 			scope->buffers[base + i * 3 + 0] = GL_SHADER_STORAGE_BUFFER;
 			scope->buffers[base + i * 3 + 1] = buffer->buffer_obj;
