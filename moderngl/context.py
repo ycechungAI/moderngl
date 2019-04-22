@@ -1049,8 +1049,6 @@ class Context:
             Release the ModernGL object.
         '''
 
-        self.mglo.release()
-
 
 def create_context(require=None) -> Context:
     '''

@@ -218,5 +218,3 @@ class Buffer:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()

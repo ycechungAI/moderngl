@@ -285,5 +285,3 @@ class TextureArray:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()

@@ -216,5 +216,3 @@ class Framebuffer:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()

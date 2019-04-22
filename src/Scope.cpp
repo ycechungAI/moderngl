@@ -238,7 +238,6 @@ PyObject * MGLScope_end(MGLScope * self, PyObject * args) {
 PyMethodDef MGLScope_tp_methods[] = {
 	{"begin", (PyCFunction)MGLScope_begin, METH_VARARGS, 0},
 	{"end", (PyCFunction)MGLScope_end, METH_VARARGS, 0},
-	// {"release", (PyCFunction)MGLScope_release, METH_NOARGS, 0},
 	{0},
 };
 
@@ -286,19 +285,3 @@ PyTypeObject MGLScope_Type = {
 	0,                                                      // tp_alloc
 	MGLScope_tp_new,                                        // tp_new
 };
-
-void MGLScope_Invalidate(MGLScope * scope) {
-	if (Py_TYPE(scope) == &MGLInvalidObject_Type) {
-		return;
-	}
-
-	// TODO: decref
-
-	// const GLMethods & gl = scope->context->gl;
-
-	// TODO: release
-
-	Py_DECREF(scope->context);
-	Py_TYPE(scope) = &MGLInvalidObject_Type;
-	Py_DECREF(scope);
-}

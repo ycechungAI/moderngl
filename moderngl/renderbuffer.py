@@ -104,5 +104,3 @@ class Renderbuffer:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()

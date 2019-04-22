@@ -80,5 +80,3 @@ class ComputeShader:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()

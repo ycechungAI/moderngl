@@ -211,8 +211,6 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 	Py_INCREF(self);
 	array->context = self;
 
-	MGLVertexArray_Complete(array);
-
 	Py_INCREF(array);
 
 	PyObject * result = PyTuple_New(2);
@@ -444,17 +442,11 @@ PyObject * MGLVertexArray_bind(MGLVertexArray * self, PyObject * args) {
 	Py_RETURN_NONE;
 }
 
-PyObject * MGLVertexArray_release(MGLVertexArray * self) {
-	MGLVertexArray_Invalidate(self);
-	Py_RETURN_NONE;
-}
-
 PyMethodDef MGLVertexArray_tp_methods[] = {
 	{"render", (PyCFunction)MGLVertexArray_render, METH_VARARGS, 0},
 	{"render_indirect", (PyCFunction)MGLVertexArray_render_indirect, METH_VARARGS, 0},
 	{"transform", (PyCFunction)MGLVertexArray_transform, METH_VARARGS, 0},
 	{"bind", (PyCFunction)MGLVertexArray_bind, METH_VARARGS, 0},
-	{"release", (PyCFunction)MGLVertexArray_release, METH_NOARGS, 0},
 	{0},
 };
 
@@ -494,23 +486,6 @@ PyGetSetDef MGLVertexArray_tp_getseters[] = {
 	{(char *)"vertices", (getter)MGLVertexArray_get_vertices, (setter)MGLVertexArray_set_vertices, 0, 0},
 	{0},
 };
-
-void MGLVertexArray_Invalidate(MGLVertexArray * array) {
-	if (Py_TYPE(array) == &MGLInvalidObject_Type) {
-		return;
-	}
-
-	// TODO: decref
-
-	const GLMethods & gl = array->context->gl;
-	gl.DeleteVertexArrays(1, (GLuint *)&array->vertex_array_obj);
-
-	Py_TYPE(array) = &MGLInvalidObject_Type;
-	Py_DECREF(array);
-}
-
-void MGLVertexArray_Complete(MGLVertexArray * vertex_array) {
-}
 
 PyTypeObject * MGLVertexArray_type;
 

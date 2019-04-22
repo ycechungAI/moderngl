@@ -298,11 +298,6 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 	return result;
 }
 
-PyObject * MGLFramebuffer_release(MGLFramebuffer * self) {
-	MGLFramebuffer_Invalidate(self);
-	Py_RETURN_NONE;
-}
-
 PyObject * MGLFramebuffer_clear(MGLFramebuffer * self, PyObject * args) {
 	float r, g, b, a, depth;
 	PyObject * viewport;
@@ -693,7 +688,6 @@ PyMethodDef MGLFramebuffer_tp_methods[] = {
 	{"use", (PyCFunction)MGLFramebuffer_use, METH_NOARGS, 0},
 	{"read", (PyCFunction)MGLFramebuffer_read, METH_VARARGS, 0},
 	{"read_into", (PyCFunction)MGLFramebuffer_read_into, METH_VARARGS, 0},
-	{"release", (PyCFunction)MGLFramebuffer_release, METH_NOARGS, 0},
 	{0},
 };
 
@@ -960,22 +954,6 @@ PyGetSetDef MGLFramebuffer_tp_getseters[] = {
 	{(char *)"bits", (getter)MGLFramebuffer_get_bits, 0, 0, 0},
 	{0},
 };
-
-void MGLFramebuffer_Invalidate(MGLFramebuffer * framebuffer) {
-	if (Py_TYPE(framebuffer) == &MGLInvalidObject_Type) {
-		return;
-	}
-
-	// TODO: decref
-
-	if (framebuffer->framebuffer_obj) {
-		framebuffer->context->gl.DeleteFramebuffers(1, (GLuint *)&framebuffer->framebuffer_obj);
-		Py_DECREF(framebuffer->context);
-	}
-
-	Py_TYPE(framebuffer) = &MGLInvalidObject_Type;
-	Py_DECREF(framebuffer);
-}
 
 PyTypeObject * MGLFramebuffer_type;
 

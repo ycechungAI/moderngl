@@ -93,15 +93,9 @@ PyObject * MGLSampler_clear(MGLSampler * self, PyObject * args) {
 	Py_RETURN_NONE;
 }
 
-PyObject * MGLSampler_release(MGLSampler * self) {
-	MGLSampler_Invalidate(self);
-	Py_RETURN_NONE;
-}
-
 PyMethodDef MGLSampler_tp_methods[] = {
 	{"use", (PyCFunction)MGLSampler_use, METH_VARARGS, 0},
 	{"clear", (PyCFunction)MGLSampler_clear, METH_VARARGS, 0},
-	{"release", (PyCFunction)MGLSampler_release, METH_NOARGS, 0},
 	{0},
 };
 
@@ -341,17 +335,3 @@ PyTypeObject MGLSampler_Type = {
 	0,                                                      // tp_alloc
 	MGLSampler_tp_new,                                      // tp_new
 };
-
-void MGLSampler_Invalidate(MGLSampler * sampler) {
-	if (Py_TYPE(sampler) == &MGLInvalidObject_Type) {
-		return;
-	}
-
-	// TODO: decref
-
-	const GLMethods & gl = sampler->context->gl;
-	gl.DeleteSamplers(1, (GLuint *)&sampler->sampler_obj);
-
-	Py_TYPE(sampler) = &MGLInvalidObject_Type;
-	Py_DECREF(sampler);
-}

@@ -164,13 +164,7 @@ void MGLRenderbuffer_tp_dealloc(MGLRenderbuffer * self) {
 	MGLRenderbuffer_Type.tp_free((PyObject *)self);
 }
 
-PyObject * MGLRenderbuffer_release(MGLRenderbuffer * self) {
-	MGLRenderbuffer_Invalidate(self);
-	Py_RETURN_NONE;
-}
-
 PyMethodDef MGLRenderbuffer_tp_methods[] = {
-	{"release", (PyCFunction)MGLRenderbuffer_release, METH_NOARGS, 0},
 	{0},
 };
 
@@ -214,17 +208,3 @@ PyTypeObject MGLRenderbuffer_Type = {
 	0,                                                      // tp_alloc
 	MGLRenderbuffer_tp_new,                                 // tp_new
 };
-
-void MGLRenderbuffer_Invalidate(MGLRenderbuffer * renderbuffer) {
-	if (Py_TYPE(renderbuffer) == &MGLInvalidObject_Type) {
-		return;
-	}
-
-	// TODO: decref
-
-	const GLMethods & gl = renderbuffer->context->gl;
-	gl.DeleteRenderbuffers(1, (GLuint *)&renderbuffer->renderbuffer_obj);
-
-	Py_TYPE(renderbuffer) = &MGLInvalidObject_Type;
-	Py_DECREF(renderbuffer);
-}

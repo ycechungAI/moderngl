@@ -52,7 +52,6 @@ class Sampler:
         '''
             Release/destroy the ModernGL object.
         '''
-        self.mglo.release()
 
     @property
     def repeat_x(self) -> bool:

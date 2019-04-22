@@ -102,17 +102,6 @@ PyTypeObject MGLUniform_Type = {
 	MGLUniform_tp_new,                                      // tp_new
 };
 
-void MGLUniform_Invalidate(MGLUniform * uniform) {
-	if (Py_TYPE(uniform) == &MGLInvalidObject_Type) {
-		return;
-	}
-
-	// TODO: decref
-
-	Py_TYPE(uniform) = &MGLInvalidObject_Type;
-	Py_DECREF(uniform);
-}
-
 void MGLUniform_Complete(MGLUniform * self, const GLMethods & gl) {
 	switch (self->type) {
 		case GL_BOOL:

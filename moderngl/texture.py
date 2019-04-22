@@ -348,5 +348,3 @@ class Texture:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()

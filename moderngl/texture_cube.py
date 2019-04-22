@@ -202,5 +202,3 @@ class TextureCube:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()

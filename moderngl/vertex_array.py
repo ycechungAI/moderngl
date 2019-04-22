@@ -180,5 +180,3 @@ class VertexArray:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()

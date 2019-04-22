@@ -433,12 +433,6 @@ PyObject * MGLContext_query(MGLContext * self, PyObject * args);
 PyObject * MGLContext_scope(MGLContext * self, PyObject * args);
 PyObject * MGLContext_sampler(MGLContext * self, PyObject * args);
 
-PyObject * MGLContext_release(MGLContext * self) {
-	// TODO:
-	// MGLContext_Invalidate(self);
-	Py_RETURN_NONE;
-}
-
 PyMethodDef MGLContext_tp_methods[] = {
 	{"enable_only", (PyCFunction)MGLContext_enable_only, METH_VARARGS, 0},
 	{"enable", (PyCFunction)MGLContext_enable, METH_VARARGS, 0},
@@ -465,8 +459,6 @@ PyMethodDef MGLContext_tp_methods[] = {
 	{"query", (PyCFunction)MGLContext_query, METH_VARARGS, 0},
 	{"scope", (PyCFunction)MGLContext_scope, METH_VARARGS, 0},
 	{"sampler", (PyCFunction)MGLContext_sampler, METH_VARARGS, 0},
-
-	{"release", (PyCFunction)MGLContext_release, METH_NOARGS, 0},
 
 	{0},
 };
@@ -1295,18 +1287,6 @@ PyType_Slot MGLContext_slots[] = {
 };
 
 PyType_Spec MGLContext_spec = {"MGLContext", sizeof(MGLContext), 0, Py_TPFLAGS_DEFAULT, MGLContext_slots};
-
-void MGLContext_Invalidate(MGLContext * context) {
-	if (Py_TYPE(context) == &MGLInvalidObject_Type) {
-		return;
-	}
-
-	// TODO: decref
-
-	DestroyGLContext(context->gl_context);
-	Py_TYPE(context) = &MGLInvalidObject_Type;
-	Py_DECREF(context);
-}
 
 void MGLContext_Initialize(MGLContext * self) {
 	GLMethods & gl = self->gl;

@@ -544,11 +544,6 @@ PyObject * MGLBuffer_bind_to_storage_buffer(MGLBuffer * self, PyObject * args) {
 	Py_RETURN_NONE;
 }
 
-PyObject * MGLBuffer_release(MGLBuffer * self) {
-	MGLBuffer_Invalidate(self);
-	Py_RETURN_NONE;
-}
-
 PyMethodDef MGLBuffer_tp_methods[] = {
 	{"write", (PyCFunction)MGLBuffer_write, METH_VARARGS, 0},
 	{"read", (PyCFunction)MGLBuffer_read, METH_VARARGS, 0},
@@ -560,7 +555,6 @@ PyMethodDef MGLBuffer_tp_methods[] = {
 	{"orphan", (PyCFunction)MGLBuffer_orphan, METH_NOARGS, 0},
 	{"bind_to_uniform_block", (PyCFunction)MGLBuffer_bind_to_uniform_block, METH_VARARGS, 0},
 	{"bind_to_storage_buffer", (PyCFunction)MGLBuffer_bind_to_storage_buffer, METH_VARARGS, 0},
-	{"release", (PyCFunction)MGLBuffer_release, METH_NOARGS, 0},
 	{0},
 };
 
@@ -574,17 +568,3 @@ PyType_Slot MGLBuffer_slots[] = {
 };
 
 PyType_Spec MGLBuffer_spec = {"MGLBuffer", sizeof(MGLBuffer), 0, Py_TPFLAGS_DEFAULT, MGLBuffer_slots};
-
-void MGLBuffer_Invalidate(MGLBuffer * buffer) {
-	if (Py_TYPE(buffer) == &MGLInvalidObject_Type) {
-		return;
-	}
-
-	// TODO: decref
-
-	const GLMethods & gl = buffer->context->gl;
-	gl.DeleteBuffers(1, (GLuint *)&buffer->buffer_obj);
-
-	Py_TYPE(buffer) = &MGLInvalidObject_Type;
-	Py_DECREF(buffer);
-}

@@ -379,23 +379,8 @@ struct MGLSampler {
 
 MGLDataType * from_dtype(const char * dtype);
 
-void MGLBuffer_Invalidate(MGLBuffer * buffer);
-void MGLComputeShader_Invalidate(MGLComputeShader * program);
-void MGLContext_Invalidate(MGLContext * context);
-void MGLFramebuffer_Invalidate(MGLFramebuffer * framebuffer);
-void MGLProgram_Invalidate(MGLProgram * program);
-void MGLRenderbuffer_Invalidate(MGLRenderbuffer * renderbuffer);
-void MGLTexture3D_Invalidate(MGLTexture3D * texture);
-void MGLTextureCube_Invalidate(MGLTextureCube * texture);
-void MGLTexture_Invalidate(MGLTexture * texture);
-void MGLTextureArray_Invalidate(MGLTextureArray * texture);
-void MGLUniform_Invalidate(MGLUniform * uniform);
-void MGLVertexArray_Invalidate(MGLVertexArray * vertex_array);
-void MGLSampler_Invalidate(MGLSampler * sampler);
-
 void MGLUniform_Complete(MGLUniform * self, const GLMethods & gl);
 void MGLUniformBlock_Complete(MGLUniformBlock * uniform_block, const GLMethods & gl);
-void MGLVertexArray_Complete(MGLVertexArray * vertex_array);
 
 void MGLContext_Initialize(MGLContext * self);
 

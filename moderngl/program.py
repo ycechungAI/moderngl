@@ -98,8 +98,6 @@ class Program:
             Release the ModernGL object.
         '''
 
-        self.mglo.release()
-
 
 def detect_format(program, attributes) -> str:
     '''

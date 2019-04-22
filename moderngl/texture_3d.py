@@ -276,5 +276,3 @@ class Texture3D:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()

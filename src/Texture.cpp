@@ -656,18 +656,12 @@ PyObject * MGLTexture_build_mipmaps(MGLTexture * self, PyObject * args) {
 	Py_RETURN_NONE;
 }
 
-PyObject * MGLTexture_release(MGLTexture * self) {
-	MGLTexture_Invalidate(self);
-	Py_RETURN_NONE;
-}
-
 PyMethodDef MGLTexture_tp_methods[] = {
 	{"write", (PyCFunction)MGLTexture_write, METH_VARARGS, 0},
 	{"use", (PyCFunction)MGLTexture_use, METH_VARARGS, 0},
 	{"build_mipmaps", (PyCFunction)MGLTexture_build_mipmaps, METH_VARARGS, 0},
 	{"read", (PyCFunction)MGLTexture_read, METH_VARARGS, 0},
 	{"read_into", (PyCFunction)MGLTexture_read_into, METH_VARARGS, 0},
-	{"release", (PyCFunction)MGLTexture_release, METH_NOARGS, 0},
 	{0},
 };
 
@@ -940,18 +934,3 @@ PyTypeObject MGLTexture_Type = {
 	0,                                                      // tp_alloc
 	MGLTexture_tp_new,                                      // tp_new
 };
-
-void MGLTexture_Invalidate(MGLTexture * texture) {
-	if (Py_TYPE(texture) == &MGLInvalidObject_Type) {
-		return;
-	}
-
-	// TODO: decref
-
-	const GLMethods & gl = texture->context->gl;
-	gl.DeleteTextures(1, (GLuint *)&texture->texture_obj);
-
-	Py_DECREF(texture->context);
-	Py_TYPE(texture) = &MGLInvalidObject_Type;
-	Py_DECREF(texture);
-}

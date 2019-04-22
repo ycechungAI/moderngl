@@ -511,13 +511,7 @@ void MGLProgram_tp_dealloc(MGLProgram * self) {
 	MGLProgram_Type.tp_free((PyObject *)self);
 }
 
-PyObject * MGLProgram_release(MGLProgram * self) {
-	MGLProgram_Invalidate(self);
-	Py_RETURN_NONE;
-}
-
 PyMethodDef MGLProgram_tp_methods[] = {
-	{"release", (PyCFunction)MGLProgram_release, METH_NOARGS, 0},
 	{0},
 };
 
@@ -561,17 +555,3 @@ PyTypeObject MGLProgram_Type = {
 	0,                                                      // tp_alloc
 	MGLProgram_tp_new,                                      // tp_new
 };
-
-void MGLProgram_Invalidate(MGLProgram * program) {
-	if (Py_TYPE(program) == &MGLInvalidObject_Type) {
-		return;
-	}
-
-	// TODO: decref
-
-	const GLMethods & gl = program->context->gl;
-	gl.DeleteProgram(program->program_obj);
-
-	Py_TYPE(program) = &MGLInvalidObject_Type;
-	Py_DECREF(program);
-}

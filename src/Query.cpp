@@ -176,7 +176,6 @@ PyMethodDef MGLQuery_tp_methods[] = {
 	{"end", (PyCFunction)MGLQuery_end, METH_VARARGS, 0},
 	{"begin_render", (PyCFunction)MGLQuery_begin_render, METH_VARARGS, 0},
 	{"end_render", (PyCFunction)MGLQuery_end_render, METH_VARARGS, 0},
-	// {"release", (PyCFunction)MGLQuery_release, METH_NOARGS, 0},
 	{0},
 };
 
@@ -254,19 +253,3 @@ PyTypeObject MGLQuery_Type = {
 	0,                                                      // tp_alloc
 	MGLQuery_tp_new,                                        // tp_new
 };
-
-void MGLQuery_Invalidate(MGLQuery * query) {
-	if (Py_TYPE(query) == &MGLInvalidObject_Type) {
-		return;
-	}
-
-	// TODO: decref
-
-	// const GLMethods & gl = query->context->gl;
-
-	// TODO: release
-
-	Py_DECREF(query->context);
-	Py_TYPE(query) = &MGLInvalidObject_Type;
-	Py_DECREF(query);
-}
