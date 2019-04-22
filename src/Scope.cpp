@@ -33,7 +33,7 @@ PyObject * MGLContext_scope(MGLContext * self, PyObject * args) {
 		}
 	}
 
-	MGLScope * scope = (MGLScope *)MGLScope_Type.tp_alloc(&MGLScope_Type, 0);
+	MGLScope * scope = PyObject_New(MGLScope, MGLScope_type);
 
 	Py_INCREF(self);
 	scope->context = self;
@@ -62,15 +62,15 @@ PyObject * MGLContext_scope(MGLContext * self, PyObject * args) {
 		int texture_type;
 		int texture_obj;
 
-		if (Py_TYPE(item) == &MGLTexture_Type) {
+		if (Py_TYPE(item) == MGLTexture_type) {
 			MGLTexture * texture = (MGLTexture *)item;
 			texture_type = texture->samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 			texture_obj = texture->texture_obj;
-		} else if (Py_TYPE(item) == &MGLTexture3D_Type) {
+		} else if (Py_TYPE(item) == MGLTexture3D_type) {
 			MGLTexture3D * texture = (MGLTexture3D *)item;
 			texture_type = GL_TEXTURE_3D;
 			texture_obj = texture->texture_obj;
-		} else if (Py_TYPE(item) == &MGLTextureCube_Type) {
+		} else if (Py_TYPE(item) == MGLTextureCube_type) {
 			MGLTextureCube * texture = (MGLTextureCube *)item;
 			texture_type = GL_TEXTURE_CUBE_MAP;
 			texture_obj = texture->texture_obj;
@@ -118,21 +118,6 @@ PyObject * MGLContext_scope(MGLContext * self, PyObject * args) {
 	}
 
 	return (PyObject *)scope;
-}
-
-PyObject * MGLScope_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLScope * self = (MGLScope *)type->tp_alloc(type, 0);
-
-	if (self) {
-		self->textures = 0;
-		self->buffers = 0;
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLScope_tp_dealloc(MGLScope * self) {
-	MGLScope_Type.tp_free((PyObject *)self);
 }
 
 extern PyObject * MGLFramebuffer_use(MGLFramebuffer * self);
@@ -241,47 +226,11 @@ PyMethodDef MGLScope_tp_methods[] = {
 	{0},
 };
 
-PyGetSetDef MGLScope_tp_getseters[] = {
+PyTypeObject * MGLScope_type;
+
+PyType_Slot MGLScope_slots[] = {
+	{Py_tp_methods, MGLScope_tp_methods},
 	{0},
 };
 
-PyTypeObject MGLScope_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.Scope",                                            // tp_name
-	sizeof(MGLScope),                                       // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLScope_tp_dealloc,                        // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLScope_tp_methods,                                    // tp_methods
-	0,                                                      // tp_members
-	MGLScope_tp_getseters,                                  // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLScope_tp_new,                                        // tp_new
-};
+PyType_Spec MGLScope_spec = {"MGLScope", sizeof(MGLScope), 0, Py_TPFLAGS_DEFAULT, MGLScope_slots};

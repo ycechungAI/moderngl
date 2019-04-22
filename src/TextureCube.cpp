@@ -84,7 +84,7 @@ PyObject * MGLContext_texture_cube(MGLContext * self, PyObject * args) {
 
 	const GLMethods & gl = self->gl;
 
-	MGLTextureCube * texture = (MGLTextureCube *)MGLTextureCube_Type.tp_alloc(&MGLTextureCube_Type, 0);
+	MGLTextureCube * texture = PyObject_New(MGLTextureCube, MGLTextureCube_type);
 
 	texture->texture_obj = 0;
 	gl.GenTextures(1, (GLuint *)&texture->texture_obj);
@@ -145,19 +145,6 @@ PyObject * MGLContext_texture_cube(MGLContext * self, PyObject * args) {
 	PyTuple_SET_ITEM(result, 0, (PyObject *)texture);
 	PyTuple_SET_ITEM(result, 1, PyLong_FromLong(texture->texture_obj));
 	return result;
-}
-
-PyObject * MGLTextureCube_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLTextureCube * self = (MGLTextureCube *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLTextureCube_tp_dealloc(MGLTextureCube * self) {
-	MGLTextureCube_Type.tp_free((PyObject *)self);
 }
 
 PyObject * MGLTextureCube_read(MGLTextureCube * self, PyObject * args) {
@@ -564,43 +551,12 @@ PyGetSetDef MGLTextureCube_tp_getseters[] = {
 	{0},
 };
 
-PyTypeObject MGLTextureCube_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.TextureCube",                                      // tp_name
-	sizeof(MGLTextureCube),                                 // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLTextureCube_tp_dealloc,                  // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLTextureCube_tp_methods,                              // tp_methods
-	0,                                                      // tp_members
-	MGLTextureCube_tp_getseters,                            // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLTextureCube_tp_new,                                  // tp_new
+PyTypeObject * MGLTextureCube_type;
+
+PyType_Slot MGLTextureCube_slots[] = {
+	{Py_tp_methods, MGLTextureCube_tp_methods},
+	{Py_tp_getset, MGLTextureCube_tp_getseters},
+	{0},
 };
+
+PyType_Spec MGLTextureCube_spec = {"MGLTextureCube", sizeof(MGLTextureCube), 0, Py_TPFLAGS_DEFAULT, MGLTextureCube_slots};

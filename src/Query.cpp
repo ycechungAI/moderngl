@@ -29,7 +29,7 @@ PyObject * MGLContext_query(MGLContext * self, PyObject * args) {
 		primitives_generated = 1;
 	}
 
-	MGLQuery * query = (MGLQuery *)MGLQuery_Type.tp_alloc(&MGLQuery_Type, 0);
+	MGLQuery * query = PyObject_New(MGLQuery, MGLQuery_type);
 
 	Py_INCREF(self);
 	query->context = self;
@@ -55,19 +55,6 @@ PyObject * MGLContext_query(MGLContext * self, PyObject * args) {
 	// return result;
 
 	return (PyObject *)query;
-}
-
-PyObject * MGLQuery_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLQuery * self = (MGLQuery *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLQuery_tp_dealloc(MGLQuery * self) {
-	MGLQuery_Type.tp_free((PyObject *)self);
 }
 
 PyObject * MGLQuery_begin(MGLQuery * self, PyObject * args) {
@@ -213,43 +200,12 @@ PyGetSetDef MGLQuery_tp_getseters[] = {
 	{0},
 };
 
-PyTypeObject MGLQuery_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.Query",                                            // tp_name
-	sizeof(MGLQuery),                                       // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLQuery_tp_dealloc,                        // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLQuery_tp_methods,                                    // tp_methods
-	0,                                                      // tp_members
-	MGLQuery_tp_getseters,                                  // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLQuery_tp_new,                                        // tp_new
+PyTypeObject * MGLQuery_type;
+
+PyType_Slot MGLQuery_slots[] = {
+	{Py_tp_methods, MGLQuery_tp_methods},
+	{Py_tp_getset, MGLQuery_tp_getseters},
+	{0},
 };
+
+PyType_Spec MGLQuery_spec = {"MGLQuery", sizeof(MGLQuery), 0, Py_TPFLAGS_DEFAULT, MGLQuery_slots};

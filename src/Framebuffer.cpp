@@ -39,7 +39,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 	for (int i = 0; i < color_attachments_len; ++i) {
 		PyObject * item = PyTuple_GET_ITEM(color_attachments, i);
 
-		if (Py_TYPE(item) == &MGLTexture_Type) {
+		if (Py_TYPE(item) == MGLTexture_type) {
 			MGLTexture * texture = (MGLTexture *)item;
 
 			if (texture->depth) {
@@ -62,7 +62,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 				MGLError_Set("color_attachments[%d] belongs to a different context", i);
 				return 0;
 			}
-		} else if (Py_TYPE(item) == &MGLRenderbuffer_Type) {
+		} else if (Py_TYPE(item) == MGLRenderbuffer_type) {
 			MGLRenderbuffer * renderbuffer = (MGLRenderbuffer *)item;
 
 			if (renderbuffer->depth) {
@@ -95,7 +95,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 
 	if (depth_attachment != Py_None) {
 
-		if (Py_TYPE(depth_attachment) == &MGLTexture_Type) {
+		if (Py_TYPE(depth_attachment) == MGLTexture_type) {
 			MGLTexture * texture = (MGLTexture *)depth_attachment;
 
 			if (!texture->depth) {
@@ -112,7 +112,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 				MGLError_Set("the depth_attachment have different sizes or samples");
 				return 0;
 			}
-		} else if (Py_TYPE(depth_attachment) == &MGLRenderbuffer_Type) {
+		} else if (Py_TYPE(depth_attachment) == MGLRenderbuffer_type) {
 			MGLRenderbuffer * renderbuffer = (MGLRenderbuffer *)depth_attachment;
 
 			if (!renderbuffer->depth) {
@@ -151,7 +151,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 	for (int i = 0; i < color_attachments_len; ++i) {
 		PyObject * item = PyTuple_GET_ITEM(color_attachments, i);
 
-		if (Py_TYPE(item) == &MGLTexture_Type) {
+		if (Py_TYPE(item) == MGLTexture_type) {
 
 			MGLTexture * texture = (MGLTexture *)item;
 
@@ -163,7 +163,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 				0
 			);
 
-		} else if (Py_TYPE(item) == &MGLRenderbuffer_Type) {
+		} else if (Py_TYPE(item) == MGLRenderbuffer_type) {
 
 			MGLRenderbuffer * renderbuffer = (MGLRenderbuffer *)item;
 
@@ -176,7 +176,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 		}
 	}
 
-	if (Py_TYPE(depth_attachment) == &MGLTexture_Type) {
+	if (Py_TYPE(depth_attachment) == MGLTexture_type) {
 		MGLTexture * texture = (MGLTexture *)depth_attachment;
 
 		gl.FramebufferTexture2D(
@@ -187,7 +187,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 			0
 		);
 
-	} else if (Py_TYPE(depth_attachment) == &MGLRenderbuffer_Type) {
+	} else if (Py_TYPE(depth_attachment) == MGLRenderbuffer_type) {
 		MGLRenderbuffer * renderbuffer = (MGLRenderbuffer *)depth_attachment;
 
 		gl.FramebufferRenderbuffer(
@@ -254,13 +254,13 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 
 	for (int i = 0; i < color_attachments_len; ++i) {
 		PyObject * item = PyTuple_GET_ITEM(color_attachments, i);
-		if (Py_TYPE(item) == &MGLTexture_Type) {
+		if (Py_TYPE(item) == MGLTexture_type) {
 			MGLTexture * texture = (MGLTexture *)item;
 			framebuffer->color_mask[i * 4 + 0] = texture->components >= 1;
 			framebuffer->color_mask[i * 4 + 1] = texture->components >= 2;
 			framebuffer->color_mask[i * 4 + 2] = texture->components >= 3;
 			framebuffer->color_mask[i * 4 + 3] = texture->components >= 4;
-		} else if (Py_TYPE(item) == &MGLRenderbuffer_Type) {
+		} else if (Py_TYPE(item) == MGLRenderbuffer_type) {
 			MGLTexture * renderbuffer = (MGLTexture *)item;
 			framebuffer->color_mask[i * 4 + 0] = renderbuffer->components >= 1;
 			framebuffer->color_mask[i * 4 + 1] = renderbuffer->components >= 2;

@@ -385,17 +385,8 @@ void MGLUniformBlock_Complete(MGLUniformBlock * uniform_block, const GLMethods &
 void MGLContext_Initialize(MGLContext * self);
 
 extern PyTypeObject MGLInvalidObject_Type;
-extern PyTypeObject MGLProgram_Type;
-extern PyTypeObject MGLQuery_Type;
-extern PyTypeObject MGLRenderbuffer_Type;
-extern PyTypeObject MGLScope_Type;
-extern PyTypeObject MGLTexture3D_Type;
-extern PyTypeObject MGLTextureCube_Type;
-extern PyTypeObject MGLTexture_Type;
-extern PyTypeObject MGLTextureArray_Type;
 extern PyTypeObject MGLUniformBlock_Type;
 extern PyTypeObject MGLUniform_Type;
-extern PyTypeObject MGLSampler_Type;
 
 extern PyTypeObject * MGLBuffer_type;
 extern PyType_Spec MGLBuffer_spec;
@@ -411,3 +402,30 @@ extern PyType_Spec MGLContext_spec;
 
 extern PyTypeObject * MGLFramebuffer_type;
 extern PyType_Spec MGLFramebuffer_spec;
+
+extern PyTypeObject * MGLProgram_type;
+extern PyType_Spec MGLProgram_spec;
+
+extern PyTypeObject * MGLQuery_type;
+extern PyType_Spec MGLQuery_spec;
+
+extern PyTypeObject * MGLRenderbuffer_type;
+extern PyType_Spec MGLRenderbuffer_spec;
+
+extern PyTypeObject * MGLScope_type;
+extern PyType_Spec MGLScope_spec;
+
+extern PyTypeObject * MGLTexture_type;
+extern PyType_Spec MGLTexture_spec;
+
+extern PyTypeObject * MGLTextureArray_type;
+extern PyType_Spec MGLTextureArray_spec;
+
+extern PyTypeObject * MGLTextureCube_type;
+extern PyType_Spec MGLTextureCube_spec;
+
+extern PyTypeObject * MGLTexture3D_type;
+extern PyType_Spec MGLTexture3D_spec;
+
+extern PyTypeObject * MGLSampler_type;
+extern PyType_Spec MGLSampler_spec;

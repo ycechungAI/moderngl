@@ -218,7 +218,7 @@ PyObject * MGLContext_copy_framebuffer(MGLContext * self, PyObject * args) {
 		);
 		gl.BindFramebuffer(GL_FRAMEBUFFER, self->bound_framebuffer->framebuffer_obj);
 
-	} else if (Py_TYPE(dst) == &MGLTexture_Type) {
+	} else if (Py_TYPE(dst) == MGLTexture_type) {
 
 		MGLTexture * dst_texture = (MGLTexture *)dst;
 

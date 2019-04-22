@@ -99,7 +99,7 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
 
 	gl.ActiveTexture(GL_TEXTURE0 + self->default_texture_unit);
 
-	MGLTexture * texture = (MGLTexture *)MGLTexture_Type.tp_alloc(&MGLTexture_Type, 0);
+	MGLTexture * texture = PyObject_New(MGLTexture, MGLTexture_type);
 
 	texture->texture_obj = 0;
 	gl.GenTextures(1, (GLuint *)&texture->texture_obj);
@@ -219,7 +219,7 @@ PyObject * MGLContext_depth_texture(MGLContext * self, PyObject * args) {
 
 	gl.ActiveTexture(GL_TEXTURE0 + self->default_texture_unit);
 
-	MGLTexture * texture = (MGLTexture *)MGLTexture_Type.tp_alloc(&MGLTexture_Type, 0);
+	MGLTexture * texture = PyObject_New(MGLTexture, MGLTexture_type);
 
 	texture->texture_obj = 0;
 	gl.GenTextures(1, (GLuint *)&texture->texture_obj);
@@ -275,19 +275,6 @@ PyObject * MGLContext_depth_texture(MGLContext * self, PyObject * args) {
 	PyTuple_SET_ITEM(result, 0, (PyObject *)texture);
 	PyTuple_SET_ITEM(result, 1, PyLong_FromLong(texture->texture_obj));
 	return result;
-}
-
-PyObject * MGLTexture_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLTexture * self = (MGLTexture *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLTexture_tp_dealloc(MGLTexture * self) {
-	MGLTexture_Type.tp_free((PyObject *)self);
 }
 
 PyObject * MGLTexture_read(MGLTexture * self, PyObject * args) {
@@ -894,43 +881,12 @@ PyGetSetDef MGLTexture_tp_getseters[] = {
 	{0},
 };
 
-PyTypeObject MGLTexture_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.Texture",                                          // tp_name
-	sizeof(MGLTexture),                                     // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLTexture_tp_dealloc,                      // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLTexture_tp_methods,                                  // tp_methods
-	0,                                                      // tp_members
-	MGLTexture_tp_getseters,                                // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLTexture_tp_new,                                      // tp_new
+PyTypeObject * MGLTexture_type;
+
+PyType_Slot MGLTexture_slots[] = {
+	{Py_tp_methods, MGLTexture_tp_methods},
+	{Py_tp_getset, MGLTexture_tp_getseters},
+	{0},
 };
+
+PyType_Spec MGLTexture_spec = {"MGLTexture", sizeof(MGLTexture), 0, Py_TPFLAGS_DEFAULT, MGLTexture_slots};

@@ -13,7 +13,7 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 	int args_ok = PyArg_ParseTuple(
 		args,
 		"O!OOIp",
-		&MGLProgram_Type,
+		MGLProgram_type,
 		&program,
 		&content,
 		&index_buffer,

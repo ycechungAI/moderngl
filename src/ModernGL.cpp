@@ -184,6 +184,33 @@ bool MGL_InitializeModule(PyObject * module) {
 	MGLFramebuffer_type = (PyTypeObject *)PyType_FromSpec(&MGLFramebuffer_spec);
 	PyModule_AddObject(module, "Framebuffer", (PyObject *)new_ref(MGLFramebuffer_type));
 
+	MGLProgram_type = (PyTypeObject *)PyType_FromSpec(&MGLProgram_spec);
+	PyModule_AddObject(module, "Program", (PyObject *)new_ref(MGLProgram_type));
+
+	MGLQuery_type = (PyTypeObject *)PyType_FromSpec(&MGLQuery_spec);
+	PyModule_AddObject(module, "Query", (PyObject *)new_ref(MGLQuery_type));
+
+	MGLRenderbuffer_type = (PyTypeObject *)PyType_FromSpec(&MGLRenderbuffer_spec);
+	PyModule_AddObject(module, "Renderbuffer", (PyObject *)new_ref(MGLRenderbuffer_type));
+
+	MGLScope_type = (PyTypeObject *)PyType_FromSpec(&MGLScope_spec);
+	PyModule_AddObject(module, "Scope", (PyObject *)new_ref(MGLScope_type));
+
+	MGLTexture_type = (PyTypeObject *)PyType_FromSpec(&MGLTexture_spec);
+	PyModule_AddObject(module, "Texture", (PyObject *)new_ref(MGLTexture_type));
+
+	MGLTextureArray_type = (PyTypeObject *)PyType_FromSpec(&MGLTextureArray_spec);
+	PyModule_AddObject(module, "TextureArray", (PyObject *)new_ref(MGLTextureArray_type));
+
+	MGLTextureCube_type = (PyTypeObject *)PyType_FromSpec(&MGLTextureCube_spec);
+	PyModule_AddObject(module, "TextureCube", (PyObject *)new_ref(MGLTextureCube_type));
+
+	MGLTexture3D_type = (PyTypeObject *)PyType_FromSpec(&MGLTexture3D_spec);
+	PyModule_AddObject(module, "Texture3D", (PyObject *)new_ref(MGLTexture3D_type));
+
+	MGLSampler_type = (PyTypeObject *)PyType_FromSpec(&MGLSampler_spec);
+	PyModule_AddObject(module, "Sampler", (PyObject *)new_ref(MGLSampler_type));
+
 	{
 		if (PyType_Ready(&MGLInvalidObject_Type) < 0) {
 			PyErr_Format(PyExc_ImportError, "Cannot register InvalidObject in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
@@ -193,94 +220,6 @@ bool MGL_InitializeModule(PyObject * module) {
 		Py_INCREF(&MGLInvalidObject_Type);
 
 		PyModule_AddObject(module, "InvalidObject", (PyObject *)&MGLInvalidObject_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLProgram_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Program in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLProgram_Type);
-
-		PyModule_AddObject(module, "Program", (PyObject *)&MGLProgram_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLQuery_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Query in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLQuery_Type);
-
-		PyModule_AddObject(module, "Query", (PyObject *)&MGLQuery_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLRenderbuffer_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Renderbuffer in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLRenderbuffer_Type);
-
-		PyModule_AddObject(module, "Renderbuffer", (PyObject *)&MGLRenderbuffer_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLScope_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Scope in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLScope_Type);
-
-		PyModule_AddObject(module, "Scope", (PyObject *)&MGLScope_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLTexture_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Texture in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLTexture_Type);
-
-		PyModule_AddObject(module, "Texture", (PyObject *)&MGLTexture_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLTextureArray_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register TextureArray in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLTextureArray_Type);
-
-		PyModule_AddObject(module, "TextureArray", (PyObject *)&MGLTextureArray_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLTextureCube_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register TextureCube in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLTextureCube_Type);
-
-		PyModule_AddObject(module, "TextureCube", (PyObject *)&MGLTextureCube_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLTexture3D_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Texture3D in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLTexture3D_Type);
-
-		PyModule_AddObject(module, "Texture3D", (PyObject *)&MGLTexture3D_Type);
 	}
 
 	{
@@ -303,17 +242,6 @@ bool MGL_InitializeModule(PyObject * module) {
 		Py_INCREF(&MGLUniformBlock_Type);
 
 		PyModule_AddObject(module, "UniformBlock", (PyObject *)&MGLUniformBlock_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLSampler_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Sampler in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLSampler_Type);
-
-		PyModule_AddObject(module, "Sampler", (PyObject *)&MGLSampler_Type);
 	}
 
 	return true;

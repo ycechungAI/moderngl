@@ -13,7 +13,7 @@ PyObject * MGLContext_sampler(MGLContext * self, PyObject * args) {
 
 	const GLMethods & gl = self->gl;
 
-	MGLSampler * sampler = (MGLSampler *)MGLSampler_Type.tp_alloc(&MGLSampler_Type, 0);
+	MGLSampler * sampler = PyObject_New(MGLSampler, MGLSampler_type);
 
 	gl.GenSamplers(1, (GLuint *)&sampler->sampler_obj);
 
@@ -40,19 +40,6 @@ PyObject * MGLContext_sampler(MGLContext * self, PyObject * args) {
 	PyTuple_SET_ITEM(result, 0, (PyObject *)sampler);
 	PyTuple_SET_ITEM(result, 1, PyLong_FromLong(sampler->sampler_obj));
 	return result;
-}
-
-PyObject * MGLSampler_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLSampler * self = (MGLSampler *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLSampler_tp_dealloc(MGLSampler * self) {
-	MGLSampler_Type.tp_free((PyObject *)self);
 }
 
 PyObject * MGLSampler_use(MGLSampler * self, PyObject * args) {
@@ -295,43 +282,12 @@ PyGetSetDef MGLSampler_tp_getseters[] = {
 	{0},
 };
 
-PyTypeObject MGLSampler_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.Sampler",                                          // tp_name
-	sizeof(MGLSampler),                                     // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLSampler_tp_dealloc,                      // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLSampler_tp_methods,                                  // tp_methods
-	0,                                                      // tp_members
-	MGLSampler_tp_getseters,                                // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLSampler_tp_new,                                      // tp_new
+PyTypeObject * MGLSampler_type;
+
+PyType_Slot MGLSampler_slots[] = {
+	{Py_tp_methods, MGLSampler_tp_methods},
+	{Py_tp_getset, MGLSampler_tp_getseters},
+	{0},
 };
+
+PyType_Spec MGLSampler_spec = {"MGLSampler", sizeof(MGLSampler), 0, Py_TPFLAGS_DEFAULT, MGLSampler_slots};
