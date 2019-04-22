@@ -3,19 +3,6 @@
 #include "BufferFormat.hpp"
 #include "InlineMethods.hpp"
 
-PyObject * MGLContext_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLContext * self = (MGLContext *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLContext_tp_dealloc(MGLContext * self) {
-	MGLContext_Type.tp_free((PyObject *)self);
-}
-
 PyObject * MGLContext_enable_only(MGLContext * self, PyObject * args) {
 	int flags;
 
@@ -186,7 +173,7 @@ PyObject * MGLContext_copy_framebuffer(MGLContext * self, PyObject * args) {
 		args,
 		"OO!",
 		&dst,
-		&MGLFramebuffer_Type,
+		MGLFramebuffer_type,
 		&src
 	);
 
@@ -203,7 +190,7 @@ PyObject * MGLContext_copy_framebuffer(MGLContext * self, PyObject * args) {
 	// GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT, no data is transferred and a
 	// GL_INVALID_OPERATION error is generated.
 
-	if (Py_TYPE(dst) == &MGLFramebuffer_Type) {
+	if (Py_TYPE(dst) == MGLFramebuffer_type) {
 
 		MGLFramebuffer * dst_framebuffer = (MGLFramebuffer *)dst;
 
@@ -354,7 +341,7 @@ PyObject * MGLContext_detect_framebuffer(MGLContext * self, PyObject * args) {
 		}
 	}
 
-	MGLFramebuffer * framebuffer = (MGLFramebuffer *)MGLFramebuffer_Type.tp_alloc(&MGLFramebuffer_Type, 0);
+	MGLFramebuffer * framebuffer = PyObject_New(MGLFramebuffer, MGLFramebuffer_type);
 
 	framebuffer->framebuffer_obj = framebuffer_obj;
 
@@ -642,7 +629,7 @@ MGLFramebuffer * MGLContext_get_fbo(MGLContext * self) {
 }
 
 int MGLContext_set_fbo(MGLContext * self, PyObject * value) {
-	if (Py_TYPE(value) != &MGLFramebuffer_Type) {
+	if (Py_TYPE(value) != MGLFramebuffer_type) {
 		return -1;
 	}
 	Py_INCREF(value);
@@ -1299,46 +1286,15 @@ PyGetSetDef MGLContext_tp_getseters[] = {
 	{0},
 };
 
-PyTypeObject MGLContext_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.Context",                                          // tp_name
-	sizeof(MGLContext),                                     // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLContext_tp_dealloc,                      // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLContext_tp_methods,                                  // tp_methods
-	0,                                                      // tp_members
-	MGLContext_tp_getseters,                                // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLContext_tp_new,                                      // tp_new
+PyTypeObject * MGLContext_type;
+
+PyType_Slot MGLContext_slots[] = {
+	{Py_tp_methods, MGLContext_tp_methods},
+	{Py_tp_getset, MGLContext_tp_getseters},
+	{0},
 };
+
+PyType_Spec MGLContext_spec = {"MGLContext", sizeof(MGLContext), 0, Py_TPFLAGS_DEFAULT, MGLContext_slots};
 
 void MGLContext_Invalidate(MGLContext * context) {
 	if (Py_TYPE(context) == &MGLInvalidObject_Type) {
@@ -1394,7 +1350,7 @@ void MGLContext_Initialize(MGLContext * self) {
 	gl.GetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &bound_framebuffer);
 
 	{
-		MGLFramebuffer * framebuffer = (MGLFramebuffer *)MGLFramebuffer_Type.tp_alloc(&MGLFramebuffer_Type, 0);
+		MGLFramebuffer * framebuffer = PyObject_New(MGLFramebuffer, MGLFramebuffer_type);
 
 		framebuffer->framebuffer_obj = 0;
 

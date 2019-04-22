@@ -113,7 +113,7 @@ PyObject * create_standalone_context(PyObject * self, PyObject * args) {
 		return 0;
 	}
 
-	MGLContext * ctx = (MGLContext *)MGLContext_Type.tp_alloc(&MGLContext_Type, 0);
+	MGLContext * ctx = PyObject_New(MGLContext, MGLContext_type);
 
 	ctx->gl_context = CreateGLContext(settings);
 	ctx->wireframe = false;
@@ -137,7 +137,7 @@ PyObject * create_standalone_context(PyObject * self, PyObject * args) {
 }
 
 PyObject * create_context(PyObject * self) {
-	MGLContext * ctx = (MGLContext *)MGLContext_Type.tp_alloc(&MGLContext_Type, 0);
+	MGLContext * ctx = PyObject_New(MGLContext, MGLContext_type);
 
 	ctx->gl_context = LoadCurrentGLContext();
 	ctx->wireframe = false;
@@ -178,27 +178,11 @@ bool MGL_InitializeModule(PyObject * module) {
 	MGLComputeShader_type = (PyTypeObject *)PyType_FromSpec(&MGLComputeShader_spec);
 	PyModule_AddObject(module, "ComputeShader", (PyObject *)new_ref(MGLComputeShader_type));
 
-	{
-		if (PyType_Ready(&MGLContext_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Context in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
+	MGLContext_type = (PyTypeObject *)PyType_FromSpec(&MGLContext_spec);
+	PyModule_AddObject(module, "Context", (PyObject *)new_ref(MGLContext_type));
 
-		Py_INCREF(&MGLContext_Type);
-
-		PyModule_AddObject(module, "Context", (PyObject *)&MGLContext_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLFramebuffer_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Framebuffer in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLFramebuffer_Type);
-
-		PyModule_AddObject(module, "Framebuffer", (PyObject *)&MGLFramebuffer_Type);
-	}
+	MGLFramebuffer_type = (PyTypeObject *)PyType_FromSpec(&MGLFramebuffer_spec);
+	PyModule_AddObject(module, "Framebuffer", (PyObject *)new_ref(MGLFramebuffer_type));
 
 	{
 		if (PyType_Ready(&MGLInvalidObject_Type) < 0) {

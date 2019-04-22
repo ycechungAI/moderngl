@@ -135,7 +135,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 		}
 	}
 
-	MGLFramebuffer * framebuffer = (MGLFramebuffer *)MGLFramebuffer_Type.tp_alloc(&MGLFramebuffer_Type, 0);
+	MGLFramebuffer * framebuffer = PyObject_New(MGLFramebuffer, MGLFramebuffer_type);
 
 	framebuffer->framebuffer_obj = 0;
 	gl.GenFramebuffers(1, (GLuint *)&framebuffer->framebuffer_obj);
@@ -296,19 +296,6 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 	PyTuple_SET_ITEM(result, 2, PyLong_FromLong(framebuffer->samples));
 	PyTuple_SET_ITEM(result, 3, PyLong_FromLong(framebuffer->framebuffer_obj));
 	return result;
-}
-
-PyObject * MGLFramebuffer_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLFramebuffer * self = (MGLFramebuffer *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLFramebuffer_tp_dealloc(MGLFramebuffer * self) {
-	MGLFramebuffer_Type.tp_free((PyObject *)self);
 }
 
 PyObject * MGLFramebuffer_release(MGLFramebuffer * self) {
@@ -974,47 +961,6 @@ PyGetSetDef MGLFramebuffer_tp_getseters[] = {
 	{0},
 };
 
-PyTypeObject MGLFramebuffer_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.Framebuffer",                                      // tp_name
-	sizeof(MGLFramebuffer),                                 // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLFramebuffer_tp_dealloc,                  // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLFramebuffer_tp_methods,                              // tp_methods
-	0,                                                      // tp_members
-	MGLFramebuffer_tp_getseters,                            // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLFramebuffer_tp_new,                                  // tp_new
-};
-
 void MGLFramebuffer_Invalidate(MGLFramebuffer * framebuffer) {
 	if (Py_TYPE(framebuffer) == &MGLInvalidObject_Type) {
 		return;
@@ -1030,3 +976,13 @@ void MGLFramebuffer_Invalidate(MGLFramebuffer * framebuffer) {
 	Py_TYPE(framebuffer) = &MGLInvalidObject_Type;
 	Py_DECREF(framebuffer);
 }
+
+PyTypeObject * MGLFramebuffer_type;
+
+PyType_Slot MGLFramebuffer_slots[] = {
+	{Py_tp_methods, MGLFramebuffer_tp_methods},
+	{Py_tp_getset, MGLFramebuffer_tp_getseters},
+	{0},
+};
+
+PyType_Spec MGLFramebuffer_spec = {"MGLFramebuffer", sizeof(MGLFramebuffer), 0, Py_TPFLAGS_DEFAULT, MGLFramebuffer_slots};

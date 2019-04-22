@@ -12,7 +12,7 @@ PyObject * MGLContext_scope(MGLContext * self, PyObject * args) {
 	int args_ok = PyArg_ParseTuple(
 		args,
 		"O!OOOO",
-		&MGLFramebuffer_Type,
+		MGLFramebuffer_type,
 		&framebuffer,
 		&enable_flags,
 		&textures,
