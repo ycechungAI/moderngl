@@ -562,8 +562,6 @@ PyTypeObject * MGLBuffer_type;
 
 PyType_Slot MGLBuffer_slots[] = {
 	{Py_tp_methods, MGLBuffer_tp_methods},
-	// {Py_tp_members, MGLBuffer_members},
-	// {Py_tp_getset, MGLBuffer_getset},
 	{0},
 };
 
