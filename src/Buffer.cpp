@@ -577,44 +577,6 @@ PyMethodDef MGLBuffer_tp_methods[] = {
 	{0},
 };
 
-int MGLBuffer_tp_as_buffer_get_view(MGLBuffer * self, Py_buffer * view, int flags) {
-	int access = (flags == PyBUF_SIMPLE) ? GL_MAP_READ_BIT : (GL_MAP_READ_BIT | GL_MAP_WRITE_BIT);
-
-	const GLMethods & gl = self->context->gl;
-	gl.BindBuffer(GL_ARRAY_BUFFER, self->buffer_obj);
-	void * map = gl.MapBufferRange(GL_ARRAY_BUFFER, 0, self->size, access);
-
-	if (!map) {
-		PyErr_Format(PyExc_BufferError, "Cannot map buffer");
-		view->obj = 0;
-		return -1;
-	}
-
-	view->buf = map;
-	view->len = self->size;
-	view->itemsize = 1;
-
-	view->format = 0;
-	view->ndim = 0;
-	view->shape = 0;
-	view->strides = 0;
-	view->suboffsets = 0;
-
-	Py_INCREF(self);
-	view->obj = (PyObject *)self;
-	return 0;
-}
-
-void MGLBuffer_tp_as_buffer_release_view(MGLBuffer * self, Py_buffer * view) {
-	const GLMethods & gl = self->context->gl;
-	gl.UnmapBuffer(GL_ARRAY_BUFFER);
-}
-
-PyBufferProcs MGLBuffer_tp_as_buffer = {
-	(getbufferproc)MGLBuffer_tp_as_buffer_get_view,                  // getbufferproc bf_getbuffer
-	(releasebufferproc)MGLBuffer_tp_as_buffer_release_view,          // releasebufferproc bf_releasebuffer
-};
-
 PyTypeObject MGLBuffer_Type = {
 	PyVarObject_HEAD_INIT(0, 0)
 	"mgl.Buffer",                                           // tp_name
@@ -634,7 +596,7 @@ PyTypeObject MGLBuffer_Type = {
 	0,                                                      // tp_str
 	0,                                                      // tp_getattro
 	0,                                                      // tp_setattro
-	&MGLBuffer_tp_as_buffer,                                // tp_as_buffer
+	0,                                                      // tp_as_buffer
 	Py_TPFLAGS_DEFAULT,                                     // tp_flags
 	0,                                                      // tp_doc
 	0,                                                      // tp_traverse
