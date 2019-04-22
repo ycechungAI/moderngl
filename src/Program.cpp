@@ -498,9 +498,28 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 	return wrapper;
 }
 
+PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * args) {
+	PyObject * uniform;
+	PyObject * value = 0;
+
+	if (!PyArg_ParseTuple(args, "O|O", &uniform, &value)) {
+		return 0;
+	}
+
+    const GLMethods & gl = self->context->gl;
+	gl.UseProgram(self->program_obj);
+    return getset_uniform(gl, self->program_obj, uniform, value);
+}
+
 PyTypeObject * MGLProgram_type;
 
+PyMethodDef MGLProgram_tp_methods[] = {
+	{"uniform", (PyCFunction)MGLProgram_meth_uniform, METH_VARARGS, 0},
+	{0},
+};
+
 PyType_Slot MGLProgram_slots[] = {
+	{Py_tp_methods, MGLProgram_tp_methods},
 	{0},
 };
 
