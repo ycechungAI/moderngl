@@ -3,7 +3,6 @@
 
 #include "internal/wrapper.hpp"
 
-#include "internal/modules.hpp"
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
 #include "internal/data_type.hpp"
@@ -11,10 +10,7 @@
 /* MGLContext.renderbuffer(size, components, samples, dtype)
  */
 PyObject * MGLContext_meth_renderbuffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 4) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(4);
 
     PyObject * size = args[0];
     int components = PyLong_AsLong(args[1]);
@@ -30,7 +26,9 @@ PyObject * MGLContext_meth_renderbuffer(MGLContext * self, PyObject * const * ar
     int height = PyLong_AsLong(PySequence_Fast_GET_ITEM(size, 1));
     int format = dtype->internal_format[components];
 
-    MGLRenderbuffer * renderbuffer = MGLContext_new_object(self, Renderbuffer);
+    MGLRenderbuffer * renderbuffer = PyObject_New(MGLRenderbuffer, MGLRenderbuffer_class);
+    chain_objects(self, renderbuffer);
+    renderbuffer->context = self;
 
     const GLMethods & gl = self->gl;
     gl.GenRenderbuffers(1, (GLuint *)&renderbuffer->renderbuffer_obj);
@@ -55,17 +53,14 @@ PyObject * MGLContext_meth_renderbuffer(MGLContext * self, PyObject * const * ar
     renderbuffer->data_type = dtype;
     renderbuffer->depth = false;
 
-    SLOT(renderbuffer->wrapper, PyObject, Renderbuffer_class_size) = int_tuple(width, height);
-    return NEW_REF(renderbuffer->wrapper);
+    renderbuffer->wrapper = Renderbuffer_New("O(ii)", renderbuffer, width, height);
+    return renderbuffer->wrapper;
 }
 
 /* MGLContext.depth_renderbuffer(size, samples)
  */
 PyObject * MGLContext_meth_depth_renderbuffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 3) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(3);
 
     PyObject * size = args[0];
     int samples = PyLong_AsLong(args[1]);
@@ -86,7 +81,9 @@ PyObject * MGLContext_meth_depth_renderbuffer(MGLContext * self, PyObject * cons
         internal_format = GL_DEPTH_COMPONENT16;
     }
 
-    MGLRenderbuffer * renderbuffer = MGLContext_new_object(self, Renderbuffer);
+    MGLRenderbuffer * renderbuffer = PyObject_New(MGLRenderbuffer, MGLRenderbuffer_class);
+    chain_objects(self, renderbuffer);
+    renderbuffer->context = self;
 
     const GLMethods & gl = self->gl;
     gl.GenRenderbuffers(1, (GLuint *)&renderbuffer->renderbuffer_obj);
@@ -111,11 +108,12 @@ PyObject * MGLContext_meth_depth_renderbuffer(MGLContext * self, PyObject * cons
     renderbuffer->data_type = &f4;
     renderbuffer->depth = true;
 
-    SLOT(renderbuffer->wrapper, PyObject, Renderbuffer_class_size) = int_tuple(width, height);
-    return NEW_REF(renderbuffer->wrapper);
+    renderbuffer->wrapper = Renderbuffer_New("O(ii)", renderbuffer, width, height);
+    return renderbuffer->wrapper;
 }
 
 void MGLRenderbuffer_dealloc(MGLRenderbuffer * self) {
+    printf("MGLRenderbuffer_dealloc\n");
     Py_TYPE(self)->tp_free(self);
 }
 
@@ -125,9 +123,11 @@ PyType_Slot MGLRenderbuffer_slots[] = {
 };
 
 PyType_Spec MGLRenderbuffer_spec = {
-    mgl_ext ".Renderbuffer",
+    "moderngl.mgl.new.MGLRenderbuffer",
     sizeof(MGLRenderbuffer),
     0,
     Py_TPFLAGS_DEFAULT,
     MGLRenderbuffer_slots,
 };
+
+PyTypeObject * MGLRenderbuffer_class;

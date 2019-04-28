@@ -5,32 +5,32 @@
 #include "scope.hpp"
 
 #include "internal/wrapper.hpp"
-#include "internal/modules.hpp"
+
+int MGLVertexArray_set_ibo(MGLVertexArray * self, PyObject * value);
 
 /* MGLContext.vertex_array(program, content, index_buffer)
  */
 PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 3) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(3);
 
     PyObject * program = args[0];
     PyObject * content = args[1];
     PyObject * index_buffer = args[2];
 
-    if (index_buffer != Py_None && index_buffer->ob_type != Buffer_class) {
+    if (index_buffer != Py_None && !Buffer_Check(index_buffer)) {
         return 0;
     }
 
-    PyObject * attributes = SLOT(program, PyObject, Program_class_attributes);
+    PyObject * attributes = get_slot(program, "attributes");
 
     content = PySequence_Fast(content, "content is not iterable");
     if (!content) {
         return 0;
     }
 
-    MGLVertexArray * vertex_array = MGLContext_new_object(self, VertexArray);
+    MGLVertexArray * vertex_array = PyObject_New(MGLVertexArray, MGLVertexArray_class);
+    chain_objects(self, vertex_array);
+    vertex_array->context = self;
 
     const GLMethods & gl = self->gl;
     gl.GenVertexArrays(1, (GLuint *)&vertex_array->vertex_array_obj);
@@ -54,7 +54,7 @@ PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * ar
         }
 
         PyObject * buffer_wrapper = PySequence_Fast_GET_ITEM(item, 0);
-        if (buffer_wrapper->ob_type != Buffer_class) {
+        if (!Buffer_Check(buffer_wrapper)) {
             return 0;
         }
 
@@ -69,7 +69,7 @@ PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * ar
             return 0;
         }
 
-        MGLBuffer * buffer = SLOT(buffer_wrapper, MGLBuffer, Buffer_class_mglo);
+        MGLBuffer * buffer = (MGLBuffer *)get_slot(buffer_wrapper, "mglo");
         self->bind_array_buffer(buffer->buffer_obj);
 
         PyObject * nodes = PyTuple_GET_ITEM(format_split, 0);
@@ -105,9 +105,9 @@ PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * ar
                 continue;
             }
 
-            int location = PyLong_AsLong(SLOT(attrib, PyObject, Attribute_class_location));
-            int rows = PyLong_AsLong(SLOT(attrib, PyObject, Attribute_class_rows));
-            int size = PyLong_AsLong(SLOT(attrib, PyObject, Attribute_class_size));
+            int location = PyLong_AsLong(get_slot(attrib, "location"));
+            int rows = PyLong_AsLong(get_slot(attrib, "rows"));
+            int size = PyLong_AsLong(get_slot(attrib, "size"));
 
             int count = 0;
             int shape = 0;
@@ -183,26 +183,18 @@ PyObject * MGLContext_meth_vertex_array(MGLContext * self, PyObject * const * ar
 
     vertex_array->max_vertices = vertices;
 
-    SLOT(vertex_array->wrapper, PyObject, VertexArray_class_ibo) = NEW_REF(Py_None);
-    SLOT(vertex_array->wrapper, PyObject, VertexArray_class_program) = NEW_REF(program);
-    SLOT(vertex_array->wrapper, PyObject, VertexArray_class_scope) = NEW_REF(Py_None);
-    SLOT(vertex_array->wrapper, PyObject, VertexArray_class_mode) = NEW_REF(Py_None);
-    SLOT(vertex_array->wrapper, PyObject, VertexArray_class_vertices) = PyLong_FromLong(vertices);
+    vertex_array->wrapper = VertexArray_New("OOOOI", vertex_array, program, Py_None, Py_None, vertices);
 
-    if (PyObject_SetAttrString(vertex_array->wrapper, "index_buffer", index_buffer)) {
-        return 0;
-    }
+    vertex_array->index_buffer = NULL;
+    MGLVertexArray_set_ibo(vertex_array, index_buffer);
 
-    return NEW_REF(vertex_array->wrapper);
+    return vertex_array->wrapper;
 }
 
 /* MGLVertexArray.render(mode, vertices, first, instances, color_mask, depth_mask)
  */
 PyObject * MGLVertexArray_meth_render(MGLVertexArray * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 6) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(6);
 
     PyObject * mode = args[0];
     int vertices = PyLong_AsLong(args[1]);
@@ -212,34 +204,32 @@ PyObject * MGLVertexArray_meth_render(MGLVertexArray * self, PyObject * const * 
     bool depth_mask = (bool)PyObject_IsTrue(args[5]);
 
     if (vertices < 0) {
-        vertices = PyLong_AsLong(SLOT(self->wrapper, PyObject, VertexArray_class_vertices));
+        vertices = PyLong_AsLong(get_slot(self->wrapper, "vertices"));
     }
 
     if (mode == Py_None) {
-        mode = SLOT(self->wrapper, PyObject, VertexArray_class_mode);
+        mode = get_slot(self->wrapper, "mode");
         if (mode == Py_None) {
             mode = triangles_long;
         }
     }
 
     int render_mode = PyLong_AsLong(mode);
-    if (PyErr_Occurred()) {
-        return 0;
-    }
+    ensure_no_error();
 
     const GLMethods & gl = self->context->gl;
 
-    PyObject * program = SLOT(self->wrapper, PyObject, VertexArray_class_program);
-    self->context->use_program(SLOT(program, MGLProgram, Program_class_mglo)->program_obj);
+    PyObject * program = get_slot(self->wrapper, "program");
+    self->context->use_program(((MGLProgram *)get_slot(program, "mglo"))->program_obj);
     self->context->bind_vertex_array(self->vertex_array_obj);
     self->context->set_write_mask(color_mask, depth_mask);
 
     bool scoped = false;
-    PyObject * scope = SLOT(self->wrapper, PyObject, VertexArray_class_scope);
+    PyObject * scope = get_slot(self->wrapper, "scope");
     MGLScope * scope_mglo = 0;
 
     if (scope != Py_None) {
-        scope_mglo = SLOT(scope, MGLScope, Scope_class_mglo);
+        scope_mglo = (MGLScope *)get_slot(scope, "mglo");
         if (self->context->bound_scope != scope_mglo) {
             MGLScope_begin_core(scope_mglo);
             scoped = true;
@@ -250,7 +240,7 @@ PyObject * MGLVertexArray_meth_render(MGLVertexArray * self, PyObject * const * 
         scoped = true;
     }
 
-    if (SLOT(self->wrapper, PyObject, VertexArray_class_ibo) != Py_None) {
+    if (self->index_buffer) {
         const void * ptr = (const void *)((GLintptr)first * 4);
         gl.DrawElementsInstanced(render_mode, vertices, GL_UNSIGNED_INT, ptr, instances);
     } else {
@@ -267,54 +257,47 @@ PyObject * MGLVertexArray_meth_render(MGLVertexArray * self, PyObject * const * 
 /* MGLVertexArray.render_indirect(buffer, mode, count, first, color_mask, depth_mask)
  */
 PyObject * MGLVertexArray_meth_render_indirect(MGLVertexArray * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 4) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(4);
 
-    if (args[0]->ob_type != Buffer_class) {
+    if (!Buffer_Check(args[0])) {
         // TODO: error
         return 0;
     }
 
-    MGLBuffer * indirect_buffer = SLOT(args[0], MGLBuffer, Buffer_class_mglo);
+    MGLBuffer * indirect_buffer = (MGLBuffer *)get_slot(args[0], "mglo");
     PyObject * mode = args[1];
     int count = PyLong_AsLong(args[2]);
     int first = PyLong_AsLong(args[3]);
     unsigned long long color_mask = PyLong_AsUnsignedLongLong(args[4]);
     bool depth_mask = (bool)PyObject_IsTrue(args[5]);
 
-    MGLBuffer * index_buffer = SLOT(self->wrapper, MGLBuffer, VertexArray_class_ibo);
-
     if (count < 0) {
-        count = (int)((PyObject *)index_buffer != Py_None ? index_buffer->size / 4 : indirect_buffer->size / 20);
+        count = (int)(self->index_buffer ? self->index_buffer->size / 4 : indirect_buffer->size / 20);
     }
 
     if (mode == Py_None) {
-        mode = SLOT(self->wrapper, PyObject, VertexArray_class_mode);
+        mode = get_slot(self->wrapper, "mode");
         if (mode == Py_None) {
             mode = triangles_long;
         }
     }
 
     int render_mode = PyLong_AsLong(mode);
-    if (PyErr_Occurred()) {
-        return 0;
-    }
+    ensure_no_error();
 
     const GLMethods & gl = self->context->gl;
 
-    PyObject * program = SLOT(self->wrapper, PyObject, VertexArray_class_program);
-    self->context->use_program(SLOT(program, MGLProgram, Program_class_mglo)->program_obj);
+    PyObject * program = get_slot(self->wrapper, "program");
+    self->context->use_program(((MGLProgram *)get_slot(program, "mglo"))->program_obj);
     self->context->bind_vertex_array(self->vertex_array_obj);
     self->context->set_write_mask(color_mask, depth_mask);
 
     bool scoped = false;
-    PyObject * scope = SLOT(self->wrapper, PyObject, VertexArray_class_scope);
+    PyObject * scope = get_slot(self->wrapper, "scope");
     MGLScope * scope_mglo = 0;
 
     if (scope != Py_None) {
-        scope_mglo = SLOT(scope, MGLScope, Scope_class_mglo);
+        scope_mglo = (MGLScope *)get_slot(scope, "mglo");
         if (self->context->bound_scope != scope_mglo) {
             MGLScope_begin_core(scope_mglo);
             scoped = true;
@@ -329,7 +312,7 @@ PyObject * MGLVertexArray_meth_render_indirect(MGLVertexArray * self, PyObject *
 
 	const void * ptr = (const void *)((GLintptr)first * 20);
 
-	if ((PyObject *)index_buffer != Py_None) {
+	if (self->index_buffer) {
 		gl.MultiDrawElementsIndirect(render_mode, GL_UNSIGNED_INT, ptr, count, 20);
 	} else {
 		gl.MultiDrawArraysIndirect(render_mode, ptr, count, 20);
@@ -345,17 +328,14 @@ PyObject * MGLVertexArray_meth_render_indirect(MGLVertexArray * self, PyObject *
 /* MGLVertexArray.transform(output, mode, vertices, first, instances, flush)
  */
 PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 6) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(6);
 
-    if (args[0]->ob_type != Buffer_class) {
+    if (!Buffer_Check(args[0])) {
         // TODO: error
         return 0;
     }
 
-    MGLBuffer * output_buffer = SLOT(args[0], MGLBuffer, Buffer_class_mglo);
+    MGLBuffer * output_buffer = (MGLBuffer *)get_slot(args[0], "mglo");
     PyObject * mode = args[1];
     int vertices = PyLong_AsLong(args[2]);
     int first = PyLong_AsLong(args[3]);
@@ -363,33 +343,31 @@ PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const
     int flush = PyObject_IsTrue(args[5]);
 
     if (vertices < 0) {
-        vertices = PyLong_AsLong(SLOT(self->wrapper, PyObject, VertexArray_class_vertices));
+        vertices = PyLong_AsLong(get_slot(self->wrapper, "vertices"));
     }
 
     if (mode == Py_None) {
-        mode = SLOT(self->wrapper, PyObject, VertexArray_class_mode);
+        mode = get_slot(self->wrapper, "mode");
         if (mode == Py_None) {
             mode = points_long;
         }
     }
 
     int render_mode = PyLong_AsLong(mode);
-    if (PyErr_Occurred()) {
-        return 0;
-    }
+    ensure_no_error();
 
     const GLMethods & gl = self->context->gl;
 
-    PyObject * program = SLOT(self->wrapper, PyObject, VertexArray_class_program);
-    self->context->use_program(SLOT(program, MGLProgram, Program_class_mglo)->program_obj);
+    PyObject * program = get_slot(self->wrapper, "program");
+    self->context->use_program(((MGLProgram *)get_slot(program, "mglo"))->program_obj);
     self->context->bind_vertex_array(self->vertex_array_obj);
 
     bool scoped = false;
-    PyObject * scope = SLOT(self->wrapper, PyObject, VertexArray_class_scope);
+    PyObject * scope = get_slot(self->wrapper, "scope");
     MGLScope * scope_mglo = 0;
 
     if (scope != Py_None) {
-        scope_mglo = SLOT(scope, MGLScope, Scope_class_mglo);
+        scope_mglo = (MGLScope *)get_slot(scope, "mglo");
         if (self->context->bound_scope != scope_mglo) {
             MGLScope_begin_core(scope_mglo);
             scoped = true;
@@ -404,7 +382,7 @@ PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const
     gl.Enable(GL_RASTERIZER_DISCARD);
     gl.BeginTransformFeedback(render_mode);
 
-    if (SLOT(self->wrapper, PyObject, VertexArray_class_ibo) != Py_None) {
+    if (self->index_buffer) {
         const void * ptr = (const void *)((GLintptr)first * 4);
         gl.DrawElementsInstanced(render_mode, vertices, GL_UNSIGNED_INT, ptr, instances);
     } else {
@@ -430,64 +408,58 @@ PyObject * MGLVertexArray_meth_transform(MGLVertexArray * self, PyObject * const
 /* MGLVertexArray.transform_indirect(output, buffer, mode, count, first, flush)
  */
 PyObject * MGLVertexArray_meth_transform_indirect(MGLVertexArray * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 6) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(6);
 
-    if (args[0]->ob_type != Buffer_class) {
+    if (!Buffer_Check(args[0])) {
         // TODO: error
         return 0;
     }
 
-    if (args[1]->ob_type != Buffer_class) {
+    if (!Buffer_Check(args[1])) {
         // TODO: error
         return 0;
     }
 
-    MGLBuffer * output_buffer = SLOT(args[0], MGLBuffer, Buffer_class_mglo);
-    MGLBuffer * indirect_buffer = SLOT(args[1], MGLBuffer, Buffer_class_mglo);
+    MGLBuffer * output_buffer = (MGLBuffer *)get_slot(args[0], "mglo");
+    MGLBuffer * indirect_buffer = (MGLBuffer *)get_slot(args[1], "mglo");
 
     PyObject * mode = args[2];
     int count = PyLong_AsLong(args[3]);
     int first = PyLong_AsLong(args[4]);
     int flush = PyObject_IsTrue(args[5]);
 
-    MGLBuffer * index_buffer = SLOT(self->wrapper, MGLBuffer, VertexArray_class_ibo);
-
     if (count < 0) {
-        count = (int)((PyObject *)index_buffer != Py_None ? index_buffer->size / 4 : indirect_buffer->size / 20);
+        count = (int)(self->index_buffer ? self->index_buffer->size / 4 : indirect_buffer->size / 20);
     }
 
     if (mode == Py_None) {
-        mode = SLOT(self->wrapper, PyObject, VertexArray_class_mode);
+        mode = get_slot(self->wrapper, "mode");
         if (mode == Py_None) {
             mode = points_long;
         }
     }
 
     int render_mode = PyLong_AsLong(mode);
-    if (PyErr_Occurred()) {
-        return 0;
-    }
+    ensure_no_error();
 
     const GLMethods & gl = self->context->gl;
 
-    PyObject * program = SLOT(self->wrapper, PyObject, VertexArray_class_program);
-    self->context->use_program(SLOT(program, MGLProgram, Program_class_mglo)->program_obj);
+    PyObject * program = get_slot(self->wrapper, "program");
+    self->context->use_program(((MGLProgram *)get_slot(program, "mglo"))->program_obj);
     self->context->bind_vertex_array(self->vertex_array_obj);
 
-    MGLBuffer * output = SLOT(output_buffer, MGLBuffer, Buffer_class_mglo);
+    // TODO: mglo of mglo??
+    MGLBuffer * output = output_buffer; // (MGLBuffer *)get_slot(output_buffer, "mglo");
     gl.BindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, output->buffer_obj);
     gl.Enable(GL_RASTERIZER_DISCARD);
     gl.BeginTransformFeedback(render_mode);
 
     bool scoped = false;
-    PyObject * scope = SLOT(self->wrapper, PyObject, VertexArray_class_scope);
+    PyObject * scope = get_slot(self->wrapper, "scope");
     MGLScope * scope_mglo = 0;
 
     if (scope != Py_None) {
-        scope_mglo = SLOT(scope, MGLScope, Scope_class_mglo);
+        scope_mglo = (MGLScope *)get_slot(scope, "mglo");
         if (self->context->bound_scope != scope_mglo) {
             MGLScope_begin_core(scope_mglo);
             scoped = true;
@@ -502,7 +474,7 @@ PyObject * MGLVertexArray_meth_transform_indirect(MGLVertexArray * self, PyObjec
 
 	const void * ptr = (const void *)((GLintptr)first * 20);
 
-	if ((PyObject *)index_buffer != Py_None) {
+	if (self->index_buffer) {
 		gl.MultiDrawElementsIndirect(render_mode, GL_UNSIGNED_INT, ptr, count, 20);
 	} else {
 		gl.MultiDrawArraysIndirect(render_mode, ptr, count, 20);
@@ -527,72 +499,45 @@ PyObject * MGLVertexArray_meth_transform_indirect(MGLVertexArray * self, PyObjec
 /* MGLVertexArray.ibo
  */
 int MGLVertexArray_set_ibo(MGLVertexArray * self, PyObject * value) {
-    if (value != Py_None && value->ob_type != Buffer_class) {
+    if (value != Py_None && !Buffer_Check(value)) {
         PyErr_Format(PyExc_TypeError, "expected Buffer got %s", value->ob_type->tp_name);
         return -1;
     }
 
-    PyObject *& ibo_slot = SLOT(self->wrapper, PyObject, VertexArray_class_ibo);
-    replace_object(ibo_slot, value);
-
-    PyObject *& vertices_slot = SLOT(self->wrapper, PyObject, VertexArray_class_vertices);
-    Py_DECREF(vertices_slot);
+    Py_XDECREF(self->index_buffer);
 
     self->context->bind_vertex_array(self->vertex_array_obj);
 
     if (value == Py_None) {
-        vertices_slot = PyLong_FromLong(self->max_vertices);
+        self->index_buffer = NULL;
+        set_slot(self->wrapper, "vertices", PyLong_FromLong(self->max_vertices));
         self->context->gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     } else {
-        MGLBuffer * ibo = SLOT(value, MGLBuffer, Buffer_class_mglo);
-        vertices_slot = PyLong_FromLong((int)(ibo->size / 4));
-        self->context->gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo->buffer_obj);
+        self->index_buffer = (MGLBuffer *)get_slot(value, "mglo");
+        set_slot(self->wrapper, "vertices", PyLong_FromLong((int)(self->index_buffer->size / 4)));
+        self->context->gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, self->index_buffer->buffer_obj);
     }
 
     return 0;
 }
 
 void MGLVertexArray_dealloc(MGLVertexArray * self) {
+    printf("MGLVertexArray_dealloc\n");
     Py_TYPE(self)->tp_free(self);
 }
 
-#if PY_VERSION_HEX >= 0x03070000
+fastcallable(MGLVertexArray_meth_render)
+fastcallable(MGLVertexArray_meth_render_indirect)
+fastcallable(MGLVertexArray_meth_transform)
+fastcallable(MGLVertexArray_meth_transform_indirect)
 
 PyMethodDef MGLVertexArray_methods[] = {
-    {"render", (PyCFunction)MGLVertexArray_meth_render, METH_FASTCALL, 0},
-    {"render_indirect", (PyCFunction)MGLVertexArray_meth_render_indirect, METH_FASTCALL, 0},
-    {"transform", (PyCFunction)MGLVertexArray_meth_transform, METH_FASTCALL, 0},
-    {"transform_indirect", (PyCFunction)MGLVertexArray_meth_transform_indirect, METH_FASTCALL, 0},
+    {"render", fastcall(MGLVertexArray_meth_render), fastcall_flags, NULL},
+    {"render_indirect", fastcall(MGLVertexArray_meth_render_indirect), fastcall_flags, NULL},
+    {"transform", fastcall(MGLVertexArray_meth_transform), fastcall_flags, NULL},
+    {"transform_indirect", fastcall(MGLVertexArray_meth_transform_indirect), fastcall_flags, NULL},
     {0},
 };
-
-#else
-
-PyObject * MGLVertexArray_meth_render_va(MGLVertexArray * self, PyObject * args) {
-    return MGLVertexArray_meth_render(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLVertexArray_meth_render_indirect_va(MGLVertexArray * self, PyObject * args) {
-    return MGLVertexArray_meth_render_indirect(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLVertexArray_meth_transform_va(MGLVertexArray * self, PyObject * args) {
-    return MGLVertexArray_meth_transform(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLVertexArray_meth_transform_indirect_va(MGLVertexArray * self, PyObject * args) {
-    return MGLVertexArray_meth_transform_indirect(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyMethodDef MGLVertexArray_methods[] = {
-    {"render", (PyCFunction)MGLVertexArray_meth_render_va, METH_VARARGS, 0},
-    {"render_indirect", (PyCFunction)MGLVertexArray_meth_render_indirect_va, METH_VARARGS, 0},
-    {"transform", (PyCFunction)MGLVertexArray_meth_transform_va, METH_VARARGS, 0},
-    {"transform_indirect", (PyCFunction)MGLVertexArray_meth_transform_indirect_va, METH_VARARGS, 0},
-    {0},
-};
-
-#endif
 
 PyGetSetDef MGLVertexArray_getset[] = {
     {"ibo", 0, (setter)MGLVertexArray_set_ibo, 0, 0},
@@ -607,9 +552,11 @@ PyType_Slot MGLVertexArray_slots[] = {
 };
 
 PyType_Spec MGLVertexArray_spec = {
-    mgl_ext ".VertexArray",
+    "moderngl.mgl.new.MGLVertexArray",
     sizeof(MGLVertexArray),
     0,
     Py_TPFLAGS_DEFAULT,
     MGLVertexArray_slots,
 };
+
+PyTypeObject * MGLVertexArray_class;

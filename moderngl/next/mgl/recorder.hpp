@@ -1,16 +1,12 @@
 #pragma once
-#include "mgl.hpp"
+#include "context.hpp"
 
 #include "internal/opengl/gl_methods.hpp"
 
-struct MGLContext;
 struct MGLFramebuffer;
 struct MGLScope;
 
-struct MGLRecorder {
-    PyObject_HEAD
-    MGLContext * context;
-
+struct MGLRecorder : public MGLContextObject {
     int old_enable_only;
     int old_program_obj;
     int old_array_buffer_obj;
@@ -28,6 +24,8 @@ struct MGLRecorder {
     MGLScope * old_bound_scope;
 };
 
+extern PyType_Spec MGLRecorder_spec;
 extern PyTypeObject * MGLRecorder_class;
+
 PyObject * MGLContext_meth_replay(MGLContext * self, PyObject * bytecode);
 void init_recording();

@@ -1,5 +1,5 @@
 #include "gl_context.hpp"
-#include "../modules.hpp"
+#include "../intern.hpp"
 
 bool GLContext::load(bool standalone) {
     this->standalone = standalone;

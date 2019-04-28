@@ -4,7 +4,6 @@
 
 #include "internal/wrapper.hpp"
 
-#include "internal/modules.hpp"
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
 #include "internal/data_type.hpp"
@@ -20,10 +19,7 @@ enum MGLTextureTypes {
 /* MGLContext.texture(size, components, data, levels, samples, aligment, dtype)
  */
 PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 8) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(8);
 
     int texture_type = PyLong_AsLong(args[0]);
     PyObject * size = args[1];
@@ -73,7 +69,9 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * const * args, P
         texture_type = MGL_TEXTURE_3D;
     }
 
-    MGLTexture * texture = MGLContext_new_object(self, Texture);
+    MGLTexture * texture = PyObject_New(MGLTexture, MGLTexture_class);
+    chain_objects(self, texture);
+    texture->context = self;
 
     switch (texture_type) {
         case MGL_TEXTURE_2D:
@@ -267,20 +265,15 @@ PyObject * MGLContext_meth_texture(MGLContext * self, PyObject * const * args, P
         free(buf);
     }
 
-    SLOT(texture->wrapper, PyObject, Texture_class_level) = PyLong_FromLong(0);
-    SLOT(texture->wrapper, PyObject, Texture_class_layer) = PyLong_FromLong(-1);
-    SLOT(texture->wrapper, PyObject, Texture_class_swizzle) = PyUnicode_FromStringAndSize("RGBA", components);
-    SLOT(texture->wrapper, PyObject, Texture_class_size) = dims == 3 ? int_tuple(width, height, depth) : int_tuple(width, height);
-    return NEW_REF(texture->wrapper);
+    PyObject * size_arg = dims == 3 ? int_tuple(width, height, depth) : int_tuple(width, height);
+    texture->wrapper = Texture_New("OiiO", texture, 0, -1, size_arg);
+    return texture->wrapper;
 }
 
 /* MGLTexture.write(data, viewport, alignment, level)
  */
 PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 4) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(4);
 
     PyObject * data = args[0];
     PyObject * viewport = args[1];
@@ -339,8 +332,8 @@ PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * const * args, Py_
     self->context->bind_temp_texture(self->texture_target, self->texture_obj);
     self->context->set_alignment(alignment);
 
-    if (data->ob_type == Buffer_class) {
-        MGLBuffer * buffer = SLOT(data, MGLBuffer, Buffer_class_mglo);
+    if (Buffer_Check(data)) {
+        MGLBuffer * buffer = (MGLBuffer *)get_slot(data, "mglo");
         gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer->buffer_obj);
         if (self->texture_target == GL_TEXTURE_3D) {
             gl.TexSubImage3D(self->texture_target, level, x, y, z, width, height, depth, format, pixel_type, 0);
@@ -376,10 +369,7 @@ PyObject * MGLTexture_meth_write(MGLTexture * self, PyObject * const * args, Py_
 /* MGLTexture.bind(...)
  */
 PyObject * MGLTexture_meth_bind(MGLTexture * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 3) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(3);
 
 	int binding = PyLong_AsLong(args[0]);
 	int access = PyLong_AsLong(args[1]);
@@ -401,7 +391,7 @@ int MGLTexture_set_swizzle(MGLTexture * self, PyObject * value) {
 	int tex_swizzle[4] = {GL_ZERO, GL_ZERO, GL_ZERO, GL_ONE};
 
 	for (int i = 0; i < swizzle[i]; ++i) {
-		tex_swizzle[i] = swizzle_from_char(swizzle[i]);
+		tex_swizzle[i] = swizzle_from_chr(swizzle[i]);
 		if (tex_swizzle[i] == -1) {
             PyErr_Format(PyExc_Exception, "error -- %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
 			return -1;
@@ -417,47 +407,31 @@ int MGLTexture_set_swizzle(MGLTexture * self, PyObject * value) {
 	gl.TexParameteriv(texture_target, GL_TEXTURE_SWIZZLE_RGBA, tex_swizzle);
 
 	char swizzle_str[4] = {
-		char_from_swizzle(tex_swizzle[0]),
-		char_from_swizzle(tex_swizzle[1]),
-		char_from_swizzle(tex_swizzle[2]),
-		char_from_swizzle(tex_swizzle[3]),
+		chr_from_swizzle(tex_swizzle[0]),
+		chr_from_swizzle(tex_swizzle[1]),
+		chr_from_swizzle(tex_swizzle[2]),
+		chr_from_swizzle(tex_swizzle[3]),
 	};
 
-    PyObject *& swizzle_slot = SLOT(self->wrapper, PyObject, Texture_class_swizzle);
-    Py_DECREF(swizzle_slot);
-	swizzle_slot = PyUnicode_FromStringAndSize(swizzle_str, 4);
+    // PyObject *& swizzle_slot = get_slot(self->wrapper, "swizzle");
+    // Py_DECREF(swizzle_slot);
+	// swizzle_slot = PyUnicode_FromStringAndSize(swizzle_str, 4);
     return 0;
 }
 
 void MGLTexture_dealloc(MGLTexture * self) {
+    printf("MGLTexture_dealloc\n");
     Py_TYPE(self)->tp_free(self);
 }
 
-#if PY_VERSION_HEX >= 0x03070000
+fastcallable(MGLTexture_meth_write)
+fastcallable(MGLTexture_meth_bind)
 
 PyMethodDef MGLTexture_methods[] = {
-    {"write", (PyCFunction)MGLTexture_meth_write, METH_FASTCALL, 0},
-    {"bind", (PyCFunction)MGLTexture_meth_bind, METH_FASTCALL, 0},
+    {"write", fastcall(MGLTexture_meth_write), fastcall_flags, NULL},
+    {"bind", fastcall(MGLTexture_meth_bind), fastcall_flags, NULL},
     {0},
 };
-
-#else
-
-PyObject * MGLTexture_meth_write_va(MGLTexture * self, PyObject * args) {
-    return MGLTexture_meth_write(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLTexture_meth_bind_va(MGLTexture * self, PyObject * args) {
-    return MGLTexture_meth_bind(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyMethodDef MGLTexture_methods[] = {
-    {"write", (PyCFunction)MGLTexture_meth_write_va, METH_VARARGS, 0},
-    {"bind", (PyCFunction)MGLTexture_meth_bind_va, METH_VARARGS, 0},
-    {0},
-};
-
-#endif
 
 PyGetSetDef MGLTexture_getset[] = {
     {"swizzle", 0, (setter)MGLTexture_set_swizzle, 0, 0},
@@ -472,9 +446,11 @@ PyType_Slot MGLTexture_slots[] = {
 };
 
 PyType_Spec MGLTexture_spec = {
-    mgl_ext ".Texture",
+    "moderngl.mgl.new.MGLTexture",
     sizeof(MGLTexture),
     0,
     Py_TPFLAGS_DEFAULT,
     MGLTexture_slots,
 };
+
+PyTypeObject * MGLTexture_class;

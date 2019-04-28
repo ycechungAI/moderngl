@@ -1,13 +1,9 @@
 #pragma once
-#include "mgl.hpp"
+#include "context.hpp"
 
-struct MGLContext;
 struct MGLDataType;
 
-struct MGLFramebuffer {
-    PyObject_HEAD
-    PyObject * wrapper;
-    MGLContext * context;
+struct MGLFramebuffer : public MGLContextObject {
     int framebuffer_obj;
     int width;
     int height;
@@ -23,5 +19,7 @@ struct MGLFramebuffer {
 };
 
 extern PyType_Spec MGLFramebuffer_spec;
+extern PyTypeObject * MGLFramebuffer_class;
+
 PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
 void MGLFramebuffer_use_core(MGLFramebuffer * self);

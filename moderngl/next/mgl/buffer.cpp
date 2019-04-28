@@ -2,7 +2,6 @@
 #include "context.hpp"
 #include "internal/wrapper.hpp"
 
-#include "internal/modules.hpp"
 #include "internal/tools.hpp"
 
 /* MGLBuffer_core_write(...)
@@ -29,20 +28,20 @@ int MGLBuffer_core_write(MGLBuffer * self, const Py_ssize_t & offset, Py_buffer 
 /* MGLContext.copy_buffer(dst, src, size, read_offset, write_offset)
  */
 PyObject * MGLContext_meth_copy_buffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 5) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(5);
 
     PyObject * dst = args[0];
     PyObject * src = args[1];
 
-    if (dst->ob_type != Buffer_class) {
+    dst = get_new_wrapper(dst);
+    src = get_new_wrapper(src);
+
+    if (!Buffer_Check(dst)) {
         PyErr_Format(moderngl_error, "not a Buffer");
         return 0;
     }
 
-    if (src->ob_type != Buffer_class) {
+    if (!Buffer_Check(src)) {
         PyErr_Format(moderngl_error, "not a Buffer");
         return 0;
     }
@@ -51,8 +50,8 @@ PyObject * MGLContext_meth_copy_buffer(MGLContext * self, PyObject * const * arg
     Py_ssize_t read_offset = PyLong_AsSsize_t(args[3]);
     Py_ssize_t write_offset = PyLong_AsSsize_t(args[4]);
 
-    MGLBuffer * src_buffer = SLOT(src, MGLBuffer, Buffer_class_mglo);
-    MGLBuffer * dst_buffer = SLOT(dst, MGLBuffer, Buffer_class_mglo);
+    MGLBuffer * src_buffer = (MGLBuffer *)get_slot(src, "mglo");
+    MGLBuffer * dst_buffer = (MGLBuffer *)get_slot(dst, "mglo");
 
     if (size < 0) {
         size = src_buffer->size - read_offset;
@@ -79,10 +78,7 @@ PyObject * MGLContext_meth_copy_buffer(MGLContext * self, PyObject * const * arg
  * Returns a Buffer object.
  */
 PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 5) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(5);
 
     PyObject * data = args[0];
     PyObject * reserve = args[1];
@@ -101,7 +97,9 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
         return 0;
     }
 
-    MGLBuffer * buffer = MGLContext_new_object(self, Buffer);
+    MGLBuffer * buffer = PyObject_New(MGLBuffer, MGLBuffer_class);
+    chain_objects(self, buffer);
+    buffer->context = self;
 
     buffer->flags = (readable ? MGL_BUFFER_READABLE : 0) | (writable ? MGL_BUFFER_WRITABLE : 0) | (local ? MGL_BUFFER_LOCAL : 0);
 
@@ -161,17 +159,14 @@ PyObject * MGLContext_meth_buffer(MGLContext * self, PyObject * const * args, Py
         PyBuffer_Release(&view);
     }
 
-    SLOT(buffer->wrapper, PyObject, Buffer_class_size) = PyLong_FromSsize_t(buffer->size);
-    return NEW_REF(buffer->wrapper);
+    buffer->wrapper = Buffer_New("On", buffer, buffer->size);
+    return buffer->wrapper;
 }
 
 /* MGLBuffer.write(data, offset)
  */
 PyObject * MGLBuffer_meth_write(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 2) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(2);
 
     PyObject * data = args[0];
     Py_ssize_t offset = PyLong_AsSsize_t(args[1]);
@@ -209,10 +204,7 @@ PyObject * MGLBuffer_meth_write(MGLBuffer * self, PyObject * const * args, Py_ss
 /* MGLBuffer.read(size, offset, dtype)
  */
 PyObject * MGLBuffer_meth_read(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 3) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(3);
 
     Py_ssize_t size = PyLong_AsSsize_t(args[0]);
     Py_ssize_t offset = PyLong_AsSsize_t(args[1]);
@@ -268,10 +260,7 @@ PyObject * MGLBuffer_meth_read(MGLBuffer * self, PyObject * const * args, Py_ssi
 /* MGLBuffer.map(size, offset, readable, writable, dtype)
  */
 PyObject * MGLBuffer_meth_map(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 5) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(5);
 
     Py_ssize_t size = PyLong_AsSsize_t(args[0]);
     Py_ssize_t offset = PyLong_AsSsize_t(args[1]);
@@ -389,10 +378,7 @@ PyObject * MGLBuffer_meth_clear(MGLBuffer * self) {
 /* MGLBuffer.bind(binding, offset, size)
  */
 PyObject * MGLBuffer_meth_bind(MGLBuffer * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 4) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(4);
 
 	int binding = PyLong_AsLong(args[0]);
 	Py_ssize_t offset = PyLong_AsSsize_t(args[1]);
@@ -405,50 +391,24 @@ PyObject * MGLBuffer_meth_bind(MGLBuffer * self, PyObject * const * args, Py_ssi
 }
 
 void MGLBuffer_dealloc(MGLBuffer * self) {
+    printf("MGLBuffer_dealloc\n");
     Py_TYPE(self)->tp_free(self);
 }
 
-#if PY_VERSION_HEX >= 0x03070000
+fastcallable(MGLBuffer_meth_write)
+fastcallable(MGLBuffer_meth_read)
+fastcallable(MGLBuffer_meth_map)
+fastcallable(MGLBuffer_meth_bind)
 
 PyMethodDef MGLBuffer_methods[] = {
-    {"write", (PyCFunction)MGLBuffer_meth_write, METH_FASTCALL, 0},
-    {"read", (PyCFunction)MGLBuffer_meth_read, METH_FASTCALL, 0},
-    {"map", (PyCFunction)MGLBuffer_meth_map, METH_FASTCALL, 0},
+    {"write", fastcall(MGLBuffer_meth_write), fastcall_flags, NULL},
+    {"read", fastcall(MGLBuffer_meth_read), fastcall_flags, NULL},
+    {"map", fastcall(MGLBuffer_meth_map), fastcall_flags, NULL},
     {"unmap", (PyCFunction)MGLBuffer_meth_unmap, METH_NOARGS, 0},
     {"clear", (PyCFunction)MGLBuffer_meth_clear, METH_NOARGS, 0},
-    {"bind", (PyCFunction)MGLBuffer_meth_bind, METH_FASTCALL, 0},
+    {"bind", fastcall(MGLBuffer_meth_bind), fastcall_flags, NULL},
     {0},
 };
-
-#else
-
-PyObject * MGLBuffer_meth_write_va(MGLBuffer * self, PyObject * args) {
-    return MGLBuffer_meth_write(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLBuffer_meth_read_va(MGLBuffer * self, PyObject * args) {
-    return MGLBuffer_meth_read(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLBuffer_meth_map_va(MGLBuffer * self, PyObject * args) {
-    return MGLBuffer_meth_map(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLBuffer_meth_bind_va(MGLBuffer * self, PyObject * args) {
-    return MGLBuffer_meth_bind(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyMethodDef MGLBuffer_methods[] = {
-    {"write", (PyCFunction)MGLBuffer_meth_write_va, METH_VARARGS, 0},
-    {"read", (PyCFunction)MGLBuffer_meth_read_va, METH_VARARGS, 0},
-    {"map", (PyCFunction)MGLBuffer_meth_map_va, METH_VARARGS, 0},
-    {"unmap", (PyCFunction)MGLBuffer_meth_unmap, METH_NOARGS, 0},
-    {"clear", (PyCFunction)MGLBuffer_meth_clear, METH_NOARGS, 0},
-    {"bind", (PyCFunction)MGLBuffer_meth_bind_va, METH_VARARGS, 0},
-    {0},
-};
-
-#endif
 
 PyType_Slot MGLBuffer_slots[] = {
     {Py_tp_methods, MGLBuffer_methods},
@@ -457,9 +417,11 @@ PyType_Slot MGLBuffer_slots[] = {
 };
 
 PyType_Spec MGLBuffer_spec = {
-    mgl_ext ".Buffer",
+    "moderngl.mgl.new.MGLBuffer",
     sizeof(MGLBuffer),
     0,
     Py_TPFLAGS_DEFAULT,
     MGLBuffer_slots,
 };
+
+PyTypeObject * MGLBuffer_class;

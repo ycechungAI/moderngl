@@ -1,13 +1,9 @@
 #pragma once
-#include "mgl.hpp"
+#include "context.hpp"
 
-struct MGLContext;
 struct MGLDataType;
 
-struct MGLRenderbuffer {
-    PyObject_HEAD
-    PyObject * wrapper;
-    MGLContext * context;
+struct MGLRenderbuffer : public MGLContextObject {
     MGLDataType * data_type;
     int renderbuffer_obj;
     int width;
@@ -19,5 +15,7 @@ struct MGLRenderbuffer {
 };
 
 extern PyType_Spec MGLRenderbuffer_spec;
+extern PyTypeObject * MGLRenderbuffer_class;
+
 PyObject * MGLContext_meth_renderbuffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);
 PyObject * MGLContext_meth_depth_renderbuffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs);

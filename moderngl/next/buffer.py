@@ -2,35 +2,35 @@ from typing import Any
 
 
 class Buffer:
-    __slots__ = ['__mglo', 'size', 'extra']
+    __slots__ = ['mglo', 'size', 'extra', 'old']
 
-    def __init__(self):
-        self.__mglo = None  # type: Any
-        self.size = None  # type: int
+    def __init__(self, mglo, size):
+        self.mglo = mglo  # type: Any
+        self.size = size  # type: int
         self.extra = None  # type: Any
 
-    def write(self, data, offset=0) -> None:
-        self.__mglo.write(data, offset)
+    def write(self, data, offset=0):
+        self.mglo.write(data, offset)
 
     def read(self, size=-1, offset=0, dtype=None) -> bytes:
-        return self.__mglo.read(size, offset, dtype)
+        return self.mglo.read(size, offset, dtype)
 
-    def read_into(self, buffer, size=-1, offset=0, write_offset=0) -> None:
+    def read_into(self, buffer, size=-1, offset=0, write_offset=0):
         write_end = write_offset + (self.size if size < 0 else size)
-        memoryview(buffer)[write_offset:write_end] = self.__mglo.map(size, offset, True, False, None)
-        self.__mglo.unmap()
+        memoryview(buffer)[write_offset:write_end] = self.mglo.map(size, offset, True, False, None)
+        self.mglo.unmap()
 
-    def map(self, size=-1, offset=0, readable=False, writable=False, dtype=None) -> None:
-        return self.__mglo.map(size, offset, readable, writable, dtype)
+    def map(self, size=-1, offset=0, readable=False, writable=False, dtype=None) -> memoryview:
+        return self.mglo.map(size, offset, readable, writable, dtype)
 
-    def unmap(self) -> None:
-        self.__mglo.unmap()
+    def unmap(self):
+        self.mglo.unmap()
 
-    def clear(self) -> None:
-        self.__mglo.clear()
+    def clear(self):
+        self.mglo.clear()
 
-    def bind_to_uniform_block(self, binding=0, offset=0, size=-1) -> None:
-        self.__mglo.bind(binding, offset, size, 0)
+    def bind_to_uniform_block(self, binding=0, offset=0, size=-1):
+        self.mglo.bind(binding, offset, size, 0)
 
-    def bind_to_storage_buffer(self, binding=0, offset=0, size=-1) -> None:
-        self.__mglo.bind(binding, offset, size, 1)
+    def bind_to_storage_buffer(self, binding=0, offset=0, size=-1):
+        self.mglo.bind(binding, offset, size, 1)

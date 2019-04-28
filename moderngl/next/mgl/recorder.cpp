@@ -1,14 +1,12 @@
 #include "recorder.hpp"
 
 #include "context.hpp"
+#include "scope.hpp"
 
 #include "internal/bytecode.hpp"
-#include "internal/modules.hpp"
 #include "internal/wrapper.hpp"
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
-
-PyTypeObject * MGLRecorder_class;
 
 PyObject * MGLContext_meth_replay(MGLContext * self, PyObject * bytecode) {
     if (MGLBytecode::ptr != MGLBytecode::buffer) {
@@ -81,7 +79,7 @@ MGLRecorder * MGLRecorder_meth_enter(MGLRecorder * self) {
             dst[i] = src[i];
         }
     }
-    return NEW_REF(self);
+    return new_ref(self);
 }
 
 PyObject * MGLRecorder_meth_exit(MGLRecorder * self) {
@@ -136,6 +134,7 @@ PyObject * MGLRecorder_meth_resize(MGLContext * self, PyObject * size) {
 }
 
 void MGLRecorder_dealloc(MGLRecorder * self) {
+    printf("MGLRecorder_dealloc\n");
     Py_TYPE(self)->tp_free(self);
 }
 
@@ -154,14 +153,15 @@ PyType_Slot MGLRecorder_slots[] = {
 };
 
 PyType_Spec MGLRecorder_spec = {
-    mgl_ext ".Recorder",
+    "moderngl.mgl.new.MGLRecorder",
     sizeof(MGLRecorder),
     0,
     Py_TPFLAGS_DEFAULT,
     MGLRecorder_slots,
 };
 
+PyTypeObject * MGLRecorder_class;
+
 void init_recording() {
     MGLBytecode::init();
-    MGLRecorder_class = (PyTypeObject *)PyType_FromSpec(&MGLRecorder_spec);
 }

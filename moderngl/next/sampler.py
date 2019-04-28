@@ -4,83 +4,75 @@ from .texture import Texture
 
 
 class Sampler:
-    __slots__ = ['__mglo', '__filter', '__wrap', '__anisotropy', '__compare_func', '__lod_range', '__lod_bias', '__border', '__texture', 'extra']
+    __slots__ = ['mglo', 'extra']
 
-    def __init__(self):
-        self.__mglo = None  # type: Any
-        self.__filter = None  # type: Tuple[int, int]
-        self.__wrap = None  # type: int
-        self.__anisotropy = None  # type: float
-        self.__compare_func = None  # type: str
-        self.__lod_range = None  # type: Tuple[int, int]
-        self.__lod_bias = None  # type: float
-        self.__border = None  # type: Tuple[float, float, float, float]
-        self.__texture = None  # type: Texture
+    def __init__(self, mglo):
+        self.mglo = mglo  # type: Any
         self.extra = None  # type: Any
 
     @property
-    def filter(self):
-        return self.__filter
+    def filter(self) -> Tuple[int, int]:
+        return self.mglo.filter
 
     @filter.setter
     def filter(self, value):
-        self.__mglo.filter = value
+        self.mglo.filter = value
 
     @property
-    def wrap(self):
-        return self.__wrap
+    def wrap(self) -> int:
+        return self.mglo.wrap
 
     @wrap.setter
     def wrap(self, value):
-        self.__mglo.wrap = value
+        self.mglo.wrap = value
 
     @property
-    def anisotropy(self):
-        return self.__anisotropy
+    def anisotropy(self) -> float:
+        return self.mglo.anisotropy
 
     @anisotropy.setter
     def anisotropy(self, value):
-        self.__mglo.anisotropy = value
+        self.mglo.anisotropy = value
 
     @property
-    def compare_func(self):
-        return self.__compare_func
+    def compare_func(self) -> str:
+        return self.mglo.compare_func
 
     @compare_func.setter
     def compare_func(self, value):
-        self.__mglo.compare_func = value
+        self.mglo.compare_func = value
 
     @property
-    def lod_range(self):
-        return self.__lod_range
+    def lod_range(self) -> Tuple[int, int]:
+        return self.mglo.lod_range
 
     @lod_range.setter
     def lod_range(self, value):
-        self.__mglo.lod_range = value
+        self.mglo.lod_range = value
 
     @property
-    def lod_bias(self):
-        return self.__lod_bias
+    def lod_bias(self) -> float:
+        return self.mglo.lod_bias
 
     @lod_bias.setter
     def lod_bias(self, value):
-        self.__mglo.lod_bias = value
+        self.mglo.lod_bias = value
 
     @property
-    def border(self):
-        return self.__border
+    def border(self) -> Tuple[float, float, float, float]:
+        return self.mglo.border
 
     @border.setter
     def border(self, value):
-        self.__mglo.border = value
+        self.mglo.border = value
 
     @property
-    def texture(self):
-        return self.__texture
+    def texture(self) -> Texture:
+        return self.mglo.texture
 
     @texture.setter
     def texture(self, value):
-        self.__mglo.texture = value
+        self.mglo.texture = value
 
     def use(self, location=0) -> None:
-        self.__mglo.use(location)
+        self.mglo.use(location)

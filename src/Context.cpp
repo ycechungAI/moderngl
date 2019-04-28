@@ -1339,7 +1339,6 @@ void MGLContext_Invalidate(MGLContext * context) {
 
 	// TODO: decref
 
-	DestroyGLContext(context->gl_context);
 	Py_TYPE(context) = &MGLInvalidObject_Type;
 	Py_DECREF(context);
 }

@@ -5,7 +5,6 @@
 
 #include "internal/wrapper.hpp"
 
-#include "internal/modules.hpp"
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
 #include "internal/data_type.hpp"
@@ -19,13 +18,12 @@ void MGLFramebuffer_use_core(MGLFramebuffer * self) {
 /* MGLContext.framebuffer(...)
  */
 PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 2) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(2);
 
     PyObject * color_attachments = args[0];
     PyObject * depth_attachment = args[1];
+
+    depth_attachment = get_new_wrapper(depth_attachment);
 
     if (!PySequence_Check(color_attachments)) {
         PyObject * tuple = PyTuple_New(1);
@@ -35,7 +33,9 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * arg
         color_attachments = PySequence_Fast(color_attachments, "not iterable");
     }
 
-    MGLFramebuffer * framebuffer = MGLContext_new_object(self, Framebuffer);
+    MGLFramebuffer * framebuffer = PyObject_New(MGLFramebuffer, MGLFramebuffer_class);
+    chain_objects(self, framebuffer);
+    framebuffer->context = self;
 
     const GLMethods & gl = self->gl;
     gl.GenFramebuffers(1, (GLuint *)&framebuffer->framebuffer_obj);
@@ -52,8 +52,9 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * arg
 
     for (int i = 0; i < color_attachments_len; ++i) {
         PyObject * attachment = PySequence_Fast_GET_ITEM(color_attachments, i);
-        if (attachment->ob_type == Renderbuffer_class) {
-            MGLRenderbuffer * renderbuffer = SLOT(attachment, MGLRenderbuffer, Renderbuffer_class_mglo);
+        attachment = get_new_wrapper(attachment);
+        if (Renderbuffer_Check(attachment)) {
+            MGLRenderbuffer * renderbuffer = (MGLRenderbuffer *)get_slot(attachment, "mglo");
             framebuffer->attachment_type[i] = renderbuffer->data_type->shape;
             width = renderbuffer->width;
             height = renderbuffer->height;
@@ -64,9 +65,9 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * arg
                 GL_RENDERBUFFER,
                 renderbuffer->renderbuffer_obj
             );
-        } else if (attachment->ob_type == Texture_class) {
-            int level = PyLong_AsLong(SLOT(attachment, PyObject, Texture_class_level));
-            MGLTexture * texture = SLOT(attachment, MGLTexture, Texture_class_mglo);
+        } else if (Texture_Check(attachment)) {
+            int level = PyLong_AsLong(get_slot(attachment, "level"));
+            MGLTexture * texture = (MGLTexture *)get_slot(attachment, "mglo");
             framebuffer->attachment_type[i] = texture->data_type->shape;
             width = texture->width;
             height = texture->height;
@@ -100,17 +101,17 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * arg
     Py_DECREF(color_attachments);
 
     if (depth_attachment != Py_None) {
-        if (depth_attachment->ob_type == Renderbuffer_class) {
-            MGLRenderbuffer * renderbuffer = SLOT(depth_attachment, MGLRenderbuffer, Renderbuffer_class_mglo);
+        if (Renderbuffer_Check(depth_attachment)) {
+            MGLRenderbuffer * renderbuffer = (MGLRenderbuffer *)get_slot(depth_attachment, "mglo");
             gl.FramebufferRenderbuffer(
                 GL_FRAMEBUFFER,
                 GL_DEPTH_ATTACHMENT,
                 GL_RENDERBUFFER,
                 renderbuffer->renderbuffer_obj
             );
-        } else if (depth_attachment->ob_type == Texture_class) {
-            int level = PyLong_AsLong(SLOT(depth_attachment, PyObject, Texture_class_level));
-            MGLTexture * texture = SLOT(depth_attachment, MGLTexture, Texture_class_mglo);
+        } else if (Texture_Check(depth_attachment)) {
+            int level = PyLong_AsLong(get_slot(depth_attachment, "level"));
+            MGLTexture * texture = (MGLTexture *)get_slot(depth_attachment, "mglo");
             if (texture->texture_target == GL_TEXTURE_CUBE_MAP) {
                 gl.FramebufferTexture(
                     GL_FRAMEBUFFER,
@@ -136,43 +137,43 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * arg
     self->bind_framebuffer(self->bound_framebuffer->framebuffer_obj);
 
     if (status != GL_FRAMEBUFFER_COMPLETE) {
-        const char * message = "the framebuffer is not complete";
+        switch (status) {
+        	case GL_FRAMEBUFFER_UNDEFINED:
+        		PyErr_Format(moderngl_error, "the framebuffer is not complete (UNDEFINED)");
+        		return 0;
 
-        // switch (status) {
-        // 	case GL_FRAMEBUFFER_UNDEFINED:
-        // 		message = "the framebuffer is not complete (UNDEFINED)";
-        // 		break;
+        	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+        		PyErr_Format(moderngl_error, "the framebuffer is not complete (INCOMPLETE_ATTACHMENT)");
+        		return 0;
 
-        // 	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-        // 		message = "the framebuffer is not complete (INCOMPLETE_ATTACHMENT)";
-        // 		break;
+        	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+        		PyErr_Format(moderngl_error, "the framebuffer is not complete (INCOMPLETE_MISSING_ATTACHMENT)");
+        		return 0;
 
-        // 	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-        // 		message = "the framebuffer is not complete (INCOMPLETE_MISSING_ATTACHMENT)";
-        // 		break;
+        	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+        		PyErr_Format(moderngl_error, "the framebuffer is not complete (INCOMPLETE_DRAW_BUFFER)");
+        		return 0;
 
-        // 	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-        // 		message = "the framebuffer is not complete (INCOMPLETE_DRAW_BUFFER)";
-        // 		break;
+        	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+        		PyErr_Format(moderngl_error, "the framebuffer is not complete (INCOMPLETE_READ_BUFFER)");
+        		return 0;
 
-        // 	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-        // 		message = "the framebuffer is not complete (INCOMPLETE_READ_BUFFER)";
-        // 		break;
+        	case GL_FRAMEBUFFER_UNSUPPORTED:
+        		PyErr_Format(moderngl_error, "the framebuffer is not complete (UNSUPPORTED)");
+        		return 0;
 
-        // 	case GL_FRAMEBUFFER_UNSUPPORTED:
-        // 		message = "the framebuffer is not complete (UNSUPPORTED)";
-        // 		break;
+        	case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+        		PyErr_Format(moderngl_error, "the framebuffer is not complete (INCOMPLETE_MULTISAMPLE)");
+        		return 0;
 
-        // 	case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-        // 		message = "the framebuffer is not complete (INCOMPLETE_MULTISAMPLE)";
-        // 		break;
-
-        // 	case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
-        // 		message = "the framebuffer is not complete (INCOMPLETE_LAYER_TARGETS)";
-        // 		break;
-        // }
-
-        return 0;
+        	case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+        		PyErr_Format(moderngl_error, "the framebuffer is not complete (INCOMPLETE_LAYER_TARGETS)");
+        		return 0;
+            
+            default:
+                PyErr_Format(moderngl_error, "the framebuffer is not complete");
+        		return 0;
+        }
     }
 
     framebuffer->viewport[0] = 0;
@@ -180,17 +181,15 @@ PyObject * MGLContext_meth_framebuffer(MGLContext * self, PyObject * const * arg
     framebuffer->viewport[2] = framebuffer->width;
     framebuffer->viewport[3] = framebuffer->height;
     framebuffer->attachments = color_attachments_len;
-    SLOT(framebuffer->wrapper, PyObject, Framebuffer_class_viewport) = int_tuple(0, 0, framebuffer->width, framebuffer->height);
-    return NEW_REF(framebuffer->wrapper);
+
+    framebuffer->wrapper = Framebuffer_New("O(ii)", framebuffer, framebuffer->width, framebuffer->height);
+    return framebuffer->wrapper;
 }
 
 /* MGLFramebuffer.read(viewport, components, alignment, attachment, data_type, np)
  */
 PyObject * MGLFramebuffer_meth_read(MGLFramebuffer * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 4) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(4);
 
     PyObject * viewport = args[0];
     int components = PyLong_AsLong(args[1]);
@@ -241,10 +240,7 @@ PyObject * MGLFramebuffer_meth_use(MGLFramebuffer * self) {
 /* MGLFramebuffer.clear(attachment, value, viewport, color_mask)
  */
 PyObject * MGLFramebuffer_meth_clear(MGLFramebuffer * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 4) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(4);
 
     int attachment = PyLong_AsLong(args[0]);
     PyObject * value = args[1];
@@ -342,11 +338,11 @@ int MGLFramebuffer_set_viewport(MGLFramebuffer * self, PyObject * value) {
         return -1;
     }
 
-    PyObject *& viewport_slot = SLOT(self->wrapper, PyObject, Framebuffer_class_viewport);
-    // PyObject * viewport =
-    // replace_object(viewport_slot, viewport);
-    Py_XDECREF(viewport_slot);
-    viewport_slot = int_tuple(x, y, width, height);
+    // PyObject *& viewport_slot = SLOT(self->wrapper, PyObject, Framebuffer_class_viewport);
+    // // PyObject * viewport =
+    // // replace_object(viewport_slot, viewport);
+    // Py_XDECREF(viewport_slot);
+    // viewport_slot = int_tuple(x, y, width, height);
     self->viewport[0] = x;
     self->viewport[1] = y;
     self->viewport[2] = width;
@@ -358,36 +354,19 @@ int MGLFramebuffer_set_viewport(MGLFramebuffer * self, PyObject * value) {
 }
 
 void MGLFramebuffer_dealloc(MGLFramebuffer * self) {
+    printf("MGLFramebuffer_dealloc\n");
     Py_TYPE(self)->tp_free(self);
 }
 
-#if PY_VERSION_HEX >= 0x03070000
+fastcallable(MGLFramebuffer_meth_read)
+fastcallable(MGLFramebuffer_meth_clear)
 
 PyMethodDef MGLFramebuffer_methods[] = {
-    {"read", (PyCFunction)MGLFramebuffer_meth_read, METH_FASTCALL, 0},
+    {"read", fastcall(MGLFramebuffer_meth_read), fastcall_flags, NULL},
     {"use", (PyCFunction)MGLFramebuffer_meth_use, METH_NOARGS, 0},
-    {"clear", (PyCFunction)MGLFramebuffer_meth_clear, METH_FASTCALL, 0},
+    {"clear", fastcall(MGLFramebuffer_meth_clear), fastcall_flags, NULL},
     {0},
 };
-
-#else
-
-PyObject * MGLFramebuffer_meth_read_va(MGLFramebuffer * self, PyObject * args) {
-    return MGLFramebuffer_meth_read(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLFramebuffer_meth_clear_va(MGLFramebuffer * self, PyObject * args) {
-    return MGLFramebuffer_meth_clear(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyMethodDef MGLFramebuffer_methods[] = {
-    {"read", (PyCFunction)MGLFramebuffer_meth_read_va, METH_VARARGS, 0},
-    {"use", (PyCFunction)MGLFramebuffer_meth_use, METH_NOARGS, 0},
-    {"clear", (PyCFunction)MGLFramebuffer_meth_clear_va, METH_VARARGS, 0},
-    {0},
-};
-
-#endif
 
 PyGetSetDef MGLFramebuffer_getset[] = {
     {"viewport", 0, (setter)MGLFramebuffer_set_viewport, 0, 0},
@@ -402,9 +381,11 @@ PyType_Slot MGLFramebuffer_slots[] = {
 };
 
 PyType_Spec MGLFramebuffer_spec = {
-    mgl_ext ".Framebuffer",
+    "moderngl.mgl.new.MGLFramebuffer",
     sizeof(MGLFramebuffer),
     0,
     Py_TPFLAGS_DEFAULT,
     MGLFramebuffer_slots,
 };
+
+PyTypeObject * MGLFramebuffer_class;

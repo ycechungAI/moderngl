@@ -3,10 +3,10 @@
 #include "context.hpp"
 #include "sampler.hpp"
 #include "texture.hpp"
+#include "framebuffer.hpp"
 
 #include "internal/wrapper.hpp"
 
-#include "internal/modules.hpp"
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
 
@@ -51,32 +51,29 @@ void MGLScope_end_core(MGLScope * self) {
 /* MGLContext.scope(enable_only, framebuffer, samplers, uniform_buffers, storage_buffers)
  */
 PyObject * MGLContext_meth_scope(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 5) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(5);
 
-    MGLScope * scope = MGLContext_new_object(self, Scope);
+    MGLScope * scope = PyObject_New(MGLScope, MGLScope_class);
+    chain_objects(self, scope);
+    scope->context = self;
+
     scope->framebuffer = 0;
     scope->samplers = 0;
     scope->buffers = 0;
 
     int enable_only = PyLong_AsLong(args[0]);
-
-    if (PyErr_Occurred()) {
-        return 0;
-    }
+    ensure_no_error();
 
     scope->enable_only = enable_only;
 
-    if (args[1] != Py_None && Py_TYPE(args[1]) != Framebuffer_class) {
+    if (args[1] != Py_None && !Framebuffer_Check(args[1])) {
         return 0;
     }
 
     if (args[1] == Py_None) {
         scope->framebuffer = 0;
     } else {
-        scope->framebuffer = NEW_REF(SLOT(args[1], MGLFramebuffer, Framebuffer_class_mglo));
+        scope->framebuffer = (MGLFramebuffer *)get_slot(args[1], "mglo");
     }
 
     PyObject * samplers = 0;
@@ -121,10 +118,10 @@ PyObject * MGLContext_meth_scope(MGLContext * self, PyObject * const * args, Py_
             PyObject * wrapper = PySequence_Fast_GET_ITEM(tuple, 0);
             int binding = PyLong_AsLong(PySequence_Fast_GET_ITEM(tuple, 1));
             Py_DECREF(tuple);
-            if (wrapper->ob_type != Sampler_class) {
+            if (!Sampler_Check(wrapper)) {
                 return 0;
             }
-            scope->samplers[i].sampler = SLOT(wrapper, MGLSampler, Sampler_class_mglo);
+            scope->samplers[i].sampler = (MGLSampler *)get_slot(wrapper, "mglo");
             scope->samplers[i].binding = binding;
         }
     }
@@ -144,10 +141,10 @@ PyObject * MGLContext_meth_scope(MGLContext * self, PyObject * const * args, Py_
             PyObject * wrapper = PySequence_Fast_GET_ITEM(tuple, 0);
             int binding = PyLong_AsLong(PySequence_Fast_GET_ITEM(tuple, 1));
             Py_DECREF(tuple);
-            if (wrapper->ob_type != Buffer_class) {
+            if (!Buffer_Check(wrapper)) {
                 return 0;
             }
-            scope->buffers[i].buffer = SLOT(wrapper, MGLBuffer, Buffer_class_mglo);
+            scope->buffers[i].buffer = (MGLBuffer *)get_slot(wrapper, "mglo");
             scope->buffers[i].binding = binding;
         }
     }
@@ -155,7 +152,8 @@ PyObject * MGLContext_meth_scope(MGLContext * self, PyObject * const * args, Py_
     Py_XDECREF(samplers);
     Py_XDECREF(buffers);
 
-    return NEW_REF(scope->wrapper);
+    scope->wrapper = Scope_New("O", scope);
+    return scope->wrapper;
 }
 
 /* MGLScope.begin()
@@ -173,26 +171,15 @@ PyObject * MGLScope_meth_end(MGLScope * self) {
 }
 
 void MGLScope_dealloc(MGLScope * self) {
+    printf("MGLScope_dealloc\n");
     Py_TYPE(self)->tp_free(self);
 }
 
-#if PY_VERSION_HEX >= 0x03070000
-
 PyMethodDef MGLScope_methods[] = {
     {"begin", (PyCFunction)MGLScope_meth_begin, METH_NOARGS, 0},
     {"end", (PyCFunction)MGLScope_meth_end, METH_NOARGS, 0},
     {0},
 };
-
-#else
-
-PyMethodDef MGLScope_methods[] = {
-    {"begin", (PyCFunction)MGLScope_meth_begin, METH_NOARGS, 0},
-    {"end", (PyCFunction)MGLScope_meth_end, METH_NOARGS, 0},
-    {0},
-};
-
-#endif
 
 PyType_Slot MGLScope_slots[] = {
     {Py_tp_methods, MGLScope_methods},
@@ -201,9 +188,11 @@ PyType_Slot MGLScope_slots[] = {
 };
 
 PyType_Spec MGLScope_spec = {
-    mgl_ext ".Scope",
+    "moderngl.mgl.new.MGLScope",
     sizeof(MGLScope),
     0,
     Py_TPFLAGS_DEFAULT,
     MGLScope_slots,
 };
+
+PyTypeObject * MGLScope_class;

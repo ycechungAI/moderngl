@@ -3,7 +3,7 @@
 
 /* Remove the rightmost leading brackets.
  */
-void clean_glsl_name(char * name, int & name_len) {
+void clean_glsl_name2(char * name, int & name_len) {
     if (name_len && name[name_len - 1] == ']') {
         name_len -= 1;
         while (name_len && name[name_len] != '[') {
@@ -13,7 +13,7 @@ void clean_glsl_name(char * name, int & name_len) {
     name[name_len] = 0;
 }
 
-int swizzle_from_char(char c) {
+int swizzle_from_chr(char c) {
 	switch (c) {
 		case 'R':
 		case 'r':
@@ -41,7 +41,7 @@ int swizzle_from_char(char c) {
 	return -1;
 }
 
-char char_from_swizzle(int c) {
+char chr_from_swizzle(int c) {
 	switch (c) {
 		case GL_RED:
 			return 'R';
@@ -183,24 +183,4 @@ GLTypeInfo type_info(int type) {
     }
 
     return info;
-}
-
-void read_float(float *& ptr, PyObject * value) {
-    *ptr++ = (float)PyFloat_AsDouble(value);
-}
-
-void read_int(int *& ptr, PyObject * value) {
-    *ptr++ = PyLong_AsLong(value);
-}
-
-void read_unsigned(unsigned *& ptr, PyObject * value) {
-    *ptr++ = PyLong_AsUnsignedLong(value);
-}
-
-void read_double(double *& ptr, PyObject * value) {
-    *ptr++ = PyFloat_AsDouble(value);
-}
-
-void read_bool(int *& ptr, PyObject * value) {
-    *ptr++ = PyObject_IsTrue(value);
 }

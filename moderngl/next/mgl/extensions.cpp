@@ -2,18 +2,21 @@
 #include "context.hpp"
 
 #include "internal/wrapper.hpp"
+#include "adaptor/adaptor.hpp"
 
 /* moderngl.core.extensions(context)
  * Returns a list of supported extensions.
  */
 PyObject * meth_extensions(PyObject * self, PyObject * context) {
-    if (context->ob_type != Context_class) {
+    context = get_new_wrapper(context);
+
+    if (!Context_Check(context)) {
         // TODO: error
         return 0;
     }
 
-    MGLContext * ctx = SLOT(context, MGLContext, Context_class_mglo);
-    int version_code = PyLong_AsLong(SLOT(context, PyObject, Context_class_version_code));
+    MGLContext * ctx = (MGLContext *)get_slot(context, "mglo");
+    int version_code = PyLong_AsLong(get_slot(context, "version_code"));
     const GLMethods & gl = ctx->gl;
 
     if (version_code >= 300) {
@@ -40,12 +43,14 @@ PyObject * meth_extensions(PyObject * self, PyObject * context) {
 /* moderngl.core.hwinfo(context)
  */
 PyObject * meth_hwinfo(PyObject * self, PyObject * context) {
-    if (context->ob_type != Context_class) {
+    context = get_new_wrapper(context);
+
+    if (!Context_Check(context)) {
         // TODO: error
         return 0;
     }
 
-    MGLContext * ctx = SLOT(context, MGLContext, Context_class_mglo);
+    MGLContext * ctx = (MGLContext *)get_slot(context, "mglo");
     const GLMethods & gl = ctx->gl;
 
     const char * version = (const char *)gl.GetString(GL_VERSION);

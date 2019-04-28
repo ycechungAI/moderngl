@@ -76,12 +76,14 @@ extra_linker_args = {
 
 mgl = Extension(
     name='moderngl.mgl',
-    include_dirs=['src'],
+    include_dirs=['src', 'moderngl/next', 'moderngl/next/mgl'],
     define_macros=[],
     libraries=libraries[target],
     extra_compile_args=extra_compile_args[target],
     extra_link_args=extra_linker_args[target],
     sources=[
+        'moderngl/next/mgl/adaptor/adaptor.cpp',
+
         'src/Sampler.cpp',
         'src/Attribute.cpp',
         'src/Buffer.cpp',
@@ -91,8 +93,6 @@ mgl = Extension(
         'src/DataType.cpp',
         'src/Error.cpp',
         'src/Framebuffer.cpp',
-        'src/GLContext.cpp',
-        'src/GLMethods.cpp',
         'src/InvalidObject.cpp',
         'src/ModernGL.cpp',
         'src/Program.cpp',
@@ -108,26 +108,13 @@ mgl = Extension(
         'src/UniformGetters.cpp',
         'src/UniformSetters.cpp',
         'src/VertexArray.cpp',
-    ],
-)
 
-next_mgl = Extension(
-    name='moderngl.next.mgl',
-    include_dirs=['moderngl/next'],
-    define_macros=[
-        ('MODERNGL_MODULE', 'moderngl.next'),
-    ],
-    libraries=libraries[target],
-    extra_compile_args=extra_compile_args[target],
-    extra_link_args=extra_linker_args[target],
-    sources=[
         'moderngl/next/mgl/buffer.cpp',
         'moderngl/next/mgl/compute_shader.cpp',
         'moderngl/next/mgl/configuration.cpp',
         'moderngl/next/mgl/context.cpp',
         'moderngl/next/mgl/extensions.cpp',
         'moderngl/next/mgl/framebuffer.cpp',
-        'moderngl/next/mgl/inspect.cpp',
         'moderngl/next/mgl/limits.cpp',
         'moderngl/next/mgl/mgl.cpp',
         'moderngl/next/mgl/program.cpp',
@@ -142,7 +129,8 @@ next_mgl = Extension(
         'moderngl/next/mgl/internal/compare_func.cpp',
         'moderngl/next/mgl/internal/data_type.cpp',
         'moderngl/next/mgl/internal/glsl.cpp',
-        'moderngl/next/mgl/internal/modules.cpp',
+        'moderngl/next/mgl/internal/intern.cpp',
+        'moderngl/next/mgl/internal/python.cpp',
         'moderngl/next/mgl/internal/tools.cpp',
         'moderngl/next/mgl/internal/uniform.cpp',
         'moderngl/next/mgl/internal/wrapper.cpp',
@@ -151,13 +139,13 @@ next_mgl = Extension(
     ],
     depends=[
         'setup.py',
+        'moderngl/next/mgl/adaptor/adaptor.hpp',
         'moderngl/next/mgl/buffer.hpp',
         'moderngl/next/mgl/compute_shader.hpp',
         'moderngl/next/mgl/configuration.hpp',
         'moderngl/next/mgl/context.hpp',
         'moderngl/next/mgl/extensions.hpp',
         'moderngl/next/mgl/framebuffer.hpp',
-        'moderngl/next/mgl/inspect.hpp',
         'moderngl/next/mgl/limits.hpp',
         'moderngl/next/mgl/mgl.hpp',
         'moderngl/next/mgl/program.hpp',
@@ -172,7 +160,7 @@ next_mgl = Extension(
         'moderngl/next/mgl/internal/compare_func.hpp',
         'moderngl/next/mgl/internal/data_type.hpp',
         'moderngl/next/mgl/internal/glsl.hpp',
-        'moderngl/next/mgl/internal/modules.hpp',
+        'moderngl/next/mgl/internal/intern.hpp',
         'moderngl/next/mgl/internal/python.hpp',
         'moderngl/next/mgl/internal/tools.hpp',
         'moderngl/next/mgl/internal/wrapper.hpp',
@@ -225,6 +213,6 @@ setup(
     classifiers=classifiers,
     keywords=keywords,
     packages=['moderngl', 'moderngl.next', 'moderngl.program_members'],
-    ext_modules=[mgl, next_mgl],
+    ext_modules=[mgl],
     platforms=['any'],
 )

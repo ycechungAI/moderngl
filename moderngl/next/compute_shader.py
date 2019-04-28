@@ -5,15 +5,15 @@ from .uniform import Uniform
 
 
 class ComputeShader:
-    __slots__ = ['__mglo', 'uniforms', 'extra']
+    __slots__ = ['mglo', 'uniforms', 'extra']
 
-    def __init__(self):
-        self.__mglo = None  # type: Any
-        self.uniforms = None  # type: Dict[str, Uniform]
+    def __init__(self, mglo, uniforms):
+        self.mglo = mglo  # type: Any
+        self.uniforms = uniforms  # type: Dict[str, Uniform]
         self.extra = None  # type: Any
 
     def __setitem__(self, key, value):
-        self.__mglo.uniform(self.uniforms.get(key), value)
+        self.mglo.uniform(self.uniforms.get(key), value)
 
-    def run(self, group_x=1, group_y=1, group_z=1) -> None:
-        self.__mglo.run(group_x, group_y, group_z)
+    def run(self, group_x=1, group_y=1, group_z=1):
+        self.mglo.run(group_x, group_y, group_z)

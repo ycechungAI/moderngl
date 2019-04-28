@@ -91,13 +91,13 @@ void write_uni(const GLMethods & gl, int location, int type, int size, void * pt
 
 PyObject * getset_uniform(const GLMethods & gl, int program_obj, PyObject * uniform, PyObject * value) {
     if (!value) {
-        int location = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_location));
-        int shape = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_shape));
+        int location = PyLong_AsLong(get_slot(uniform, "location"));
+        int shape = PyLong_AsLong(get_slot(uniform, "shape"));
 
         if (shape) {
-            int cols = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_cols));
-            int rows = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_rows));
-            int size = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_size));
+            int cols = PyLong_AsLong(get_slot(uniform, "cols"));
+            int rows = PyLong_AsLong(get_slot(uniform, "rows"));
+            int size = PyLong_AsLong(get_slot(uniform, "size"));
 
             PyObject * result = PyBytes_FromStringAndSize(0, cols * rows * size * (shape == 'd' ? 8 : 4));
             char * data = PyBytes_AS_STRING(result);
@@ -124,14 +124,14 @@ PyObject * getset_uniform(const GLMethods & gl, int program_obj, PyObject * unif
         Py_RETURN_NONE;
     }
 
-    int location = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_location));
-    int shape = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_shape));
-    int type = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_type));
+    int location = PyLong_AsLong(get_slot(uniform, "location"));
+    int shape = PyLong_AsLong(get_slot(uniform, "shape"));
+    int type = PyLong_AsLong(get_slot(uniform, "_type"));
 
     if (shape) {
-        int cols = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_cols));
-        int rows = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_rows));
-        int size = PyLong_AsLong(SLOT(uniform, PyObject, Uniform_class_size));
+        int cols = PyLong_AsLong(get_slot(uniform, "cols"));
+        int rows = PyLong_AsLong(get_slot(uniform, "rows"));
+        int size = PyLong_AsLong(get_slot(uniform, "size"));
 
         if (value->ob_type->tp_as_buffer && value->ob_type->tp_as_buffer->bf_getbuffer) {
             Py_buffer view = {};
@@ -162,9 +162,7 @@ PyObject * getset_uniform(const GLMethods & gl, int program_obj, PyObject * unif
                 char cache[8];
                 void * ptr = cache;
                 func(ptr, value);
-                if (PyErr_Occurred()) {
-                    return 0;
-                }
+                ensure_no_error();
                 write_uni(gl, location, type, size, cache);
             } else {
                 PyObject * seq = PySequence_Fast(value, "fail");
@@ -189,11 +187,7 @@ PyObject * getset_uniform(const GLMethods & gl, int program_obj, PyObject * unif
         }
     } else {
         int binding = PyLong_AsLong(value);
-
-        if (PyErr_Occurred()) {
-            return 0;
-        }
-
+        ensure_no_error();
         gl.UniformBlockBinding(program_obj, location, binding);
     }
 

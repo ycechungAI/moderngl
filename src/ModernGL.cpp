@@ -3,8 +3,6 @@
 
 #include "BufferFormat.hpp"
 
-#include "GLContext.hpp"
-
 PyObject * strsize(PyObject * self, PyObject * args) {
 	const char * str;
 
@@ -115,7 +113,7 @@ PyObject * create_standalone_context(PyObject * self, PyObject * args) {
 
 	MGLContext * ctx = (MGLContext *)MGLContext_Type.tp_alloc(&MGLContext_Type, 0);
 
-	ctx->gl_context = CreateGLContext(settings);
+	ctx->gl_context.load(true);
 	ctx->wireframe = false;
 
 	if (PyErr_Occurred()) {
@@ -139,7 +137,7 @@ PyObject * create_standalone_context(PyObject * self, PyObject * args) {
 PyObject * create_context(PyObject * self) {
 	MGLContext * ctx = (MGLContext *)MGLContext_Type.tp_alloc(&MGLContext_Type, 0);
 
-	ctx->gl_context = LoadCurrentGLContext();
+	ctx->gl_context.load(false);
 	ctx->wireframe = false;
 
 	if (PyErr_Occurred()) {
@@ -382,8 +380,11 @@ PyModuleDef MGL_moduledef = {
 	0,
 };
 
+PyObject * PyInit_mgl_new();
+
 extern "C" PyObject * PyInit_mgl() {
 	PyObject * module = PyModule_Create(&MGL_moduledef);
+	PyModule_AddObject(module, "new", PyInit_mgl_new());
 
 	if (!MGL_InitializeModule(module)) {
 		return 0;

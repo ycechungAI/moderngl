@@ -1,6 +1,6 @@
 #include "opengl/opengl.hpp"
 
-int compare_func_from_string(const char * str) {
+int compare_func_from_str(const char * str) {
 	if (!str || !str[0] || (str[1] && str[2])) {
 		return 0;
 	}

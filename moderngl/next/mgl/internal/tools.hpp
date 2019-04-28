@@ -1,6 +1,8 @@
 #pragma once
 #include "python.hpp"
 
+#include "adaptor/adaptor.hpp"
+
 Py_ssize_t unpack_size(PyObject * size);
 int prepare_buffer(PyObject * data, Py_buffer * view);
 bool unpack_viewport(PyObject * viewport, int & x, int & y, int & width, int & height);

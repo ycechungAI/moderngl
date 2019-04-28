@@ -1,10 +1,10 @@
 class Attribute:
-    __slots__ = ['__type', 'location', 'cols', 'rows', 'size', 'shape']
+    __slots__ = ['_type', 'location', 'cols', 'rows', 'size', 'shape']
 
-    def __init__(self):
-        self.__type = None  # type: int
-        self.location = None  # type: int
-        self.cols = None  # type: int
-        self.rows = None  # type: int
-        self.size = None  # type: int
-        self.shape = None  # type: int
+    def __init__(self, _type, location, cols, rows, size, shape):
+        self._type = _type  # type: int
+        self.location = location  # type: int
+        self.cols = cols  # type: int
+        self.rows = rows  # type: int
+        self.size = size  # type: int
+        self.shape = shape  # type: int

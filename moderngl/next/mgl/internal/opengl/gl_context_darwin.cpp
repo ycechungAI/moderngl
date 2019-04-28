@@ -1,5 +1,5 @@
 #include "gl_context.hpp"
-#include "../modules.hpp"
+#include "../intern.hpp"
 
 #include <OpenGL/OpenGL.h>
 #include <ApplicationServices/ApplicationServices.h>

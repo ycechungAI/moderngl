@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Python.hpp"
-#include "GLContext.hpp"
-#include "GLMethods.hpp"
+#include "internal/opengl/gl_context.hpp"
+#include "internal/opengl/gl_methods.hpp"
 #include "Error.hpp"
 
 typedef void (* MGLProc)();

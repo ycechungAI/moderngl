@@ -7,17 +7,9 @@ struct GLTypeInfo {
     int shape;
 };
 
-void clean_glsl_name(char * name, int & name_len);
+void clean_glsl_name2(char * name, int & name_len);
 
-int swizzle_from_char(char c);
-char char_from_swizzle(int c);
+int swizzle_from_chr(char c);
+char chr_from_swizzle(int c);
 
 GLTypeInfo type_info(int type);
-
-void read_float(float *& ptr, PyObject * value);
-void read_int(int *& ptr, PyObject * value);
-void read_unsigned(unsigned *& ptr, PyObject * value);
-void read_double(double *& ptr, PyObject * value);
-void read_bool(int *& ptr, PyObject * value);
-
-typedef void (* read_value)(void *& ptr, PyObject * value);

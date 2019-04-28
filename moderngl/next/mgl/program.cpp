@@ -3,7 +3,6 @@
 
 #include "internal/wrapper.hpp"
 
-#include "internal/modules.hpp"
 #include "internal/tools.hpp"
 #include "internal/glsl.hpp"
 #include "internal/uniform.hpp"
@@ -27,12 +26,11 @@ const int SHADER_TYPE[] = {
 /* MGLContext.program(vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader, varyings)
  */
 PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 6) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(6);
 
-    MGLProgram * program = MGLContext_new_object(self, Program);
+    MGLProgram * program = PyObject_New(MGLProgram, MGLProgram_class);
+    chain_objects(self, program);
+    program->context = self;
 
     const GLMethods & gl = self->gl;
 
@@ -77,11 +75,7 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
 
             char * log_text = (char *)malloc(log_len + 1);
             gl.GetShaderInfoLog(shader_obj, log_len, 0, log_text);
-            PyObject * name = PyUnicode_FromString(SHADER_NAME[i]);
-            PyObject * info = PyUnicode_FromStringAndSize(log_text, log_len);
-            call_function(self->glsl_compiler_error, name, args[i], info);
-            Py_DECREF(name);
-            Py_DECREF(info);
+            PyObject_CallFunction(self->glsl_compiler_error, "sOs#", SHADER_NAME[i], args[i], log_text, log_len);
             // Py_DECREF(program);
             free(log_text);
             return 0;
@@ -130,9 +124,7 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
         gl.GetProgramiv(program_obj, GL_INFO_LOG_LENGTH, &log_len);
         char * log_text = (char *)malloc(log_len + 1);
         gl.GetProgramInfoLog(program_obj, log_len, 0, log_text);
-        PyObject * info = PyUnicode_FromStringAndSize(log_text, log_len);
-        call_function(self->glsl_linker_error, info);
-        Py_DECREF(info);
+        PyObject_CallFunction(self->glsl_linker_error, "s#", log_text, log_len);
         // Py_DECREF(program);
         free(log_text);
         return 0;
@@ -165,17 +157,11 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
 
         gl.GetActiveAttrib(program_obj, i, 256, &name_len, &size, (GLenum *)&type, name);
         int location = gl.GetAttribLocation(program_obj, name);
-        clean_glsl_name(name, name_len);
+        clean_glsl_name2(name, name_len);
 
         GLTypeInfo info = type_info(type);
 
-        PyObject * attrib = new_object(PyObject, Attribute_class);
-        SLOT(attrib, PyObject, Attribute_class_type) = PyLong_FromLong(type);
-        SLOT(attrib, PyObject, Attribute_class_location) = PyLong_FromLong(location);
-        SLOT(attrib, PyObject, Attribute_class_cols) = PyLong_FromLong(info.cols);
-        SLOT(attrib, PyObject, Attribute_class_rows) = PyLong_FromLong(info.rows);
-        SLOT(attrib, PyObject, Attribute_class_size) = PyLong_FromLong(size);
-        SLOT(attrib, PyObject, Attribute_class_shape) = PyLong_FromLong(info.shape);
+        PyObject * attrib = Attribute_New("iiiiii", type, location, info.cols, info.rows, size, info.shape);
         PyDict_SetItemString(attributes, name, attrib);
     }
 
@@ -187,7 +173,7 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
 
         gl.GetActiveUniform(program->program_obj, i, 256, &name_len, &size, (GLenum *)&type, name);
         int location = gl.GetUniformLocation(program->program_obj, name);
-        clean_glsl_name(name, name_len);
+        clean_glsl_name2(name, name_len);
 
         if (location < 0) {
             continue;
@@ -195,13 +181,7 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
 
         GLTypeInfo info = type_info(type);
 
-        PyObject * uniform = new_object(PyObject, Uniform_class);
-        SLOT(uniform, PyObject, Uniform_class_type) = PyLong_FromLong(type);
-        SLOT(uniform, PyObject, Uniform_class_location) = PyLong_FromLong(location);
-        SLOT(uniform, PyObject, Uniform_class_cols) = PyLong_FromLong(info.cols);
-        SLOT(uniform, PyObject, Uniform_class_rows) = PyLong_FromLong(info.rows);
-        SLOT(uniform, PyObject, Uniform_class_size) = PyLong_FromLong(size);
-        SLOT(uniform, PyObject, Uniform_class_shape) = PyLong_FromLong(info.shape);
+        PyObject * uniform = Uniform_New("iiiiii", type, location, info.cols, info.rows, size, info.shape);
         PyDict_SetItemString(uniforms, name, uniform);
     }
 
@@ -213,58 +193,39 @@ PyObject * MGLContext_meth_program(MGLContext * self, PyObject * const * args, P
         gl.GetActiveUniformBlockName(program->program_obj, i, 256, &name_len, name);
         int index = gl.GetUniformBlockIndex(program->program_obj, name);
         gl.GetActiveUniformBlockiv(program->program_obj, index, GL_UNIFORM_BLOCK_DATA_SIZE, &size);
-        clean_glsl_name(name, name_len);
+        clean_glsl_name2(name, name_len);
 
-        PyObject * uniform = new_object(PyObject, Uniform_class);
-        SLOT(uniform, PyObject, Uniform_class_type) = 0;
-        SLOT(uniform, PyObject, Uniform_class_location) = PyLong_FromLong(index);
-        SLOT(uniform, PyObject, Uniform_class_cols) = 0;
-        SLOT(uniform, PyObject, Uniform_class_rows) = 0;
-        SLOT(uniform, PyObject, Uniform_class_size) = PyLong_FromLong(size);
-        SLOT(uniform, PyObject, Uniform_class_shape) = PyLong_FromLong(0);
+        PyObject * uniform = Uniform_New("OiOOii", Py_None, index, Py_None, Py_None, size, 0);
         PyDict_SetItemString(uniforms, name, uniform);
     }
 
-    SLOT(program->wrapper, PyObject, Program_class_attributes) = attributes;
-    SLOT(program->wrapper, PyObject, Program_class_uniforms) = uniforms;
-    return NEW_REF(program->wrapper);
+    program->wrapper = Program_New("OOO", program, attributes, uniforms);
+    return program->wrapper;
 }
 
 /* MGLProgram.uniform(uniform, value)
  */
 PyObject * MGLProgram_meth_uniform(MGLProgram * self, PyObject * const * args, Py_ssize_t nargs) {
     if (nargs != 1 && nargs != 2) {
-        PyErr_Format(moderngl_error, "num args");
+        PyErr_BadInternalCall();
         return 0;
     }
     const GLMethods & gl = self->context->gl;
     self->context->use_program(self->program_obj);
-    return getset_uniform(gl, self->program_obj, args[0], nargs == 2 ? args[1] : 0);
+    return getset_uniform(gl, self->program_obj, args[0], nargs == 2 ? args[1] : NULL);
 }
 
 void MGLProgram_dealloc(MGLProgram * self) {
+    printf("MGLProgram_dealloc\n");
     Py_TYPE(self)->tp_free(self);
 }
 
-#if PY_VERSION_HEX >= 0x03070000
+fastcallable(MGLProgram_meth_uniform)
 
 PyMethodDef MGLProgram_methods[] = {
-    {"uniform", (PyCFunction)MGLProgram_meth_uniform, METH_FASTCALL, 0},
+    {"uniform", fastcall(MGLProgram_meth_uniform), fastcall_flags, NULL},
     {0},
 };
-
-#else
-
-PyObject * MGLProgram_meth_uniform_va(MGLProgram * self, PyObject * args) {
-    return MGLProgram_meth_uniform(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyMethodDef MGLProgram_methods[] = {
-    {"uniform", (PyCFunction)MGLProgram_meth_uniform_va, METH_VARARGS, 0},
-    {0},
-};
-
-#endif
 
 PyType_Slot MGLProgram_slots[] = {
     {Py_tp_methods, MGLProgram_methods},
@@ -273,9 +234,11 @@ PyType_Slot MGLProgram_slots[] = {
 };
 
 PyType_Spec MGLProgram_spec = {
-    mgl_ext ".Program",
+    "moderngl.mgl.new.MGLProgram",
     sizeof(MGLProgram),
     0,
     Py_TPFLAGS_DEFAULT,
     MGLProgram_slots,
 };
+
+PyTypeObject * MGLProgram_class;

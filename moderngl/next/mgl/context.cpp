@@ -16,54 +16,82 @@
 
 #include "internal/wrapper.hpp"
 #include "internal/tools.hpp"
-#include "internal/modules.hpp"
 
 /* moderngl.core.create_context(standalone, debug, require, glhook, gc)
  * Returns a Context object.
  */
 PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssize_t nargs) {
-    if (nargs != 5) {
-        PyErr_Format(moderngl_error, "num args");
-        return 0;
-    }
+    ensure_num_args(3);
 
     bool standalone = (bool)PyObject_IsTrue(args[0]);
-    bool debug = (bool)PyObject_IsTrue(args[1]);
-    PyObject * require = args[2];
-    PyObject * glhook = args[3];
-    PyObject * gc = args[4];
+    PyObject * require = args[1];
+    PyObject * glhook = args[2];
 
     static bool first_run = true;
 
     if (first_run) {
-        /* Load extenal modules */
-        if (!load_modules()) {
-            return 0;
+        PyObject * sys = must_have(PyImport_ImportModule("sys"));
+        PyObject * sys_modules = must_have(PyObject_GetAttrString(sys, "modules"));
+        PyObject * moderngl = must_have(PyDict_GetItemString(sys_modules, "moderngl"));
+        moderngl = must_have(PyObject_GetAttrString(moderngl, "new"));
+
+        Attribute_class = intern(PyObject_GetAttrString(moderngl, "Attribute"));
+        Buffer_class = intern(PyObject_GetAttrString(moderngl, "Buffer"));
+        ComputeShader_class = intern(PyObject_GetAttrString(moderngl, "ComputeShader"));
+        Context_class = intern(PyObject_GetAttrString(moderngl, "Context"));
+        Framebuffer_class = intern(PyObject_GetAttrString(moderngl, "Framebuffer"));
+        Limits_class = intern(PyObject_GetAttrString(moderngl, "Limits"));
+        Program_class = intern(PyObject_GetAttrString(moderngl, "Program"));
+        Query_class = intern(PyObject_GetAttrString(moderngl, "Query"));
+        Renderbuffer_class = intern(PyObject_GetAttrString(moderngl, "Renderbuffer"));
+        Sampler_class = intern(PyObject_GetAttrString(moderngl, "Sampler"));
+        Scope_class = intern(PyObject_GetAttrString(moderngl, "Scope"));
+        Texture_class = intern(PyObject_GetAttrString(moderngl, "Texture"));
+        Uniform_class = intern(PyObject_GetAttrString(moderngl, "Uniform"));
+        VertexArray_class = intern(PyObject_GetAttrString(moderngl, "VertexArray"));
+
+        moderngl_error = intern(PyObject_GetAttrString(moderngl, "Error"));
+        moderngl_compiler_error = intern(PyObject_GetAttrString(moderngl, "compiler_error"));
+        moderngl_linker_error = intern(PyObject_GetAttrString(moderngl, "linker_error"));
+        moderngl_split_format = intern(PyObject_GetAttrString(moderngl, "split_format"));
+
+        numpy = xintern(PyImport_ImportModule("numpy"));
+        if (!numpy) {
+            PyErr_Clear();
         }
 
-        /* Define MGLContext only */
+        if (numpy) {
+            numpy_frombuffer = xintern(PyObject_GetAttrString(numpy, "frombuffer"));
+        }
 
-        MGLContext_class = (PyTypeObject *)PyType_FromSpec(&MGLContext_spec);
+        pillow = xintern(PyImport_ImportModule("PIL.Image"));
+        if (!pillow) {
+            PyErr_Clear();
+        }
 
-        /* Detect wrapper classes for internal types */
+        if (pillow) {
+            pillow_image = xintern(PyObject_GetAttrString(pillow, "Image"));
+        }
 
-        init_wrappers();
-        init_recording();
+        tobytes_str = intern(PyUnicode_FromString("tobytes"));
+        size_str = intern(PyUnicode_FromString("size"));
+        mode_str = intern(PyUnicode_FromString("mode"));
+        points_long = intern(PyLong_FromLong(GL_POINTS));
+        triangles_long = intern(PyLong_FromLong(GL_TRIANGLES));
 
         /* Errors are not recoverable at this point */
 
-        if (PyErr_Occurred()) {
-            return 0;
-        }
+        ensure_no_error();
 
         first_run = false;
     }
 
-    MGLContext * context = new_object(MGLContext, MGLContext_class);
-    memset((char *)context + sizeof(PyObject), 0, sizeof(MGLContext) - sizeof(PyObject));
+    MGLContext * context = PyObject_New(MGLContext, MGLContext_class);
+    context->chain.prev = context;
+    context->chain.next = context;
 
-    context->glsl_compiler_error = moderngl_compiler_error;
-    context->glsl_linker_error = moderngl_linker_error;
+    context->glsl_compiler_error = new_ref(moderngl_compiler_error);
+    context->glsl_linker_error = new_ref(moderngl_linker_error);
 
     if (!context->gl_context.load(standalone)) {
         return 0;
@@ -73,16 +101,12 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
         return 0;
     }
 
-    if (gc != Py_None) {
-        context->gc = NEW_REF(gc);
-    }
-
     const GLMethods & gl = context->gl;
 
     if (glhook != Py_None) {
         PyObject * dtype = PyUnicode_FromFormat("u%d", sizeof(void *));
         PyObject * glprocs = PyMemoryView_FromMemory((char *)&context->gl, sizeof(context->gl), PyBUF_WRITE);
-        PyObject * result = call_function(glhook, glprocs, dtype);
+        PyObject * result = PyObject_CallFunction(glhook, "OO", glprocs, dtype);
         if (!result) {
             return 0;
         }
@@ -119,18 +143,9 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
     gl.Enable(GL_PRIMITIVE_RESTART);
     gl.PrimitiveRestartIndex(-1);
 
-    context->MGLBuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLBuffer_spec);
-    context->MGLComputeShader_class = (PyTypeObject *)PyType_FromSpec(&MGLComputeShader_spec);
-    context->MGLFramebuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLFramebuffer_spec);
-    context->MGLProgram_class = (PyTypeObject *)PyType_FromSpec(&MGLProgram_spec);
-    context->MGLQuery_class = (PyTypeObject *)PyType_FromSpec(&MGLQuery_spec);
-    context->MGLRenderbuffer_class = (PyTypeObject *)PyType_FromSpec(&MGLRenderbuffer_spec);
-    context->MGLSampler_class = (PyTypeObject *)PyType_FromSpec(&MGLSampler_spec);
-    context->MGLScope_class = (PyTypeObject *)PyType_FromSpec(&MGLScope_spec);
-    context->MGLTexture_class = (PyTypeObject *)PyType_FromSpec(&MGLTexture_spec);
-    context->MGLVertexArray_class = (PyTypeObject *)PyType_FromSpec(&MGLVertexArray_spec);
-
-    MGLFramebuffer * default_framebuffer = MGLContext_new_object(context, Framebuffer);
+    MGLFramebuffer * default_framebuffer = PyObject_New(MGLFramebuffer, MGLFramebuffer_class);
+    chain_objects(context, default_framebuffer);
+    default_framebuffer->context = context;
 
     default_framebuffer->framebuffer_obj = 0;
     default_framebuffer->components = 4;
@@ -148,90 +163,39 @@ PyObject * meth_create_context(PyObject * self, PyObject * const * args, Py_ssiz
     default_framebuffer->viewport[1] = 0;
     default_framebuffer->viewport[2] = default_framebuffer->width;
     default_framebuffer->viewport[3] = default_framebuffer->height;
-    SLOT(default_framebuffer->wrapper, PyObject, Framebuffer_class_viewport) = int_tuple(0, 0, default_framebuffer->width, default_framebuffer->height);
+
+    default_framebuffer->wrapper = Framebuffer_New("O(ii)", default_framebuffer, default_framebuffer->width, default_framebuffer->height);
 
     context->default_framebuffer = default_framebuffer;
-    context->bound_framebuffer = NEW_REF(default_framebuffer);
+    context->bound_framebuffer = default_framebuffer;
 
-    MGLScope * default_scope = MGLContext_new_object(context, Scope);
+    MGLScope * default_scope = PyObject_New(MGLScope, MGLScope_class);
+    chain_objects(context, default_scope);
+    default_scope->context = context;
 
-    default_scope->framebuffer = NEW_REF(default_framebuffer);
+    default_scope->framebuffer = default_framebuffer;
     default_scope->old_scope = default_scope;
     default_scope->enable_only = 0;
 
     context->default_scope = default_scope;
-    context->active_scope = NEW_REF(default_scope);
-    context->bound_scope = NEW_REF(default_scope);
+    context->active_scope = default_scope;
+    context->bound_scope = default_scope;
+
+    default_scope->wrapper = Scope_New("O", default_scope);
 
     MGLRecorder * recorder = PyObject_New(MGLRecorder, MGLRecorder_class);
-    // memset((char *)recorder + sizeof(PyObject), 0, sizeof(MGLRecorder) - sizeof(PyObject));
+    chain_objects(context, recorder);
     recorder->context = context;
 
-    context->wrapper = new_object(PyObject, Context_class);
-    clear_slots(context->wrapper);
+    PyObject * limits = get_limits(gl, version_code);
 
-    SLOT(context->wrapper, MGLContext, Context_class_mglo) = context;
-    SLOT(context->wrapper, PyObject, Context_class_version_code) = PyLong_FromLong(version_code);
-    SLOT(context->wrapper, PyObject, Context_class_limits) = get_limits(gl, version_code);
-    SLOT(context->wrapper, PyObject, Context_class_screen) = NEW_REF(context->default_framebuffer->wrapper);
-    SLOT(context->wrapper, PyObject, Context_class_fbo) = NEW_REF(context->bound_framebuffer->wrapper);
-    SLOT(context->wrapper, MGLRecorder, Context_class_recorder) = recorder;
-
-    return NEW_REF(context->wrapper);
+    context->wrapper = Context_New("OiOOOO", context, version_code, limits, context->default_framebuffer->wrapper, context->bound_framebuffer->wrapper, recorder);
+    return new_ref(context->wrapper);
 }
 
 PyObject * MGLContext_meth_make_current(MGLContext * self) {
     self->gl_context.enter();
     Py_RETURN_NONE;
-}
-
-/* _MGLContext_new_object(...)
- */
-MGLObject * _MGLContext_new_object(MGLContext * self, PyTypeObject * type, PyTypeObject * cls, int slot, int size) {
-    MGLObject * res = new_object(MGLObject, type);
-    memset((char *)res + sizeof(PyObject), 0, size - sizeof(PyObject));
-    res->wrapper = new_object(PyObject, cls);
-    clear_slots(res->wrapper);
-    SLOT(res->wrapper, MGLObject, slot) = NEW_REF(res);
-    res->context = NEW_REF(self);
-    if (self->gc) {
-        PyObject * track = PyObject_GetAttrString(self->gc, "append");
-        if (track) {
-            PyObject * result = call_function(track, res->wrapper);
-            if (!result) {
-                return 0;
-            }
-            Py_DECREF(result);
-        }
-    }
-    return res;
-}
-
-/* _MGLObject_release(...)
- */
-PyObject * _MGLObject_release(MGLObject * self) {
-    if (self->context->gc) {
-        PyObject * untrack = PyObject_GetAttrString(self->context->gc, "remove");
-        if (untrack) {
-            PyObject * result = call_function(untrack, self->wrapper);
-            if (!result) {
-                return 0;
-            }
-            Py_DECREF(result);
-        }
-    }
-    Py_DECREF(self->wrapper);
-    Py_DECREF(self->context);
-    Py_DECREF(self);
-    Py_RETURN_NONE;
-}
-
-/* _MGLObject_pop_mglo(...)
- */
-MGLObject * _MGLObject_pop_mglo(PyObject * wrapper, int slot) {
-    MGLObject * mglo = SLOT(wrapper, MGLObject, slot);
-    SLOT(wrapper, MGLObject, slot) = 0;
-    return mglo;
 }
 
 /*inline*/ void MGLContext::enable(int enable_only) {
@@ -346,93 +310,40 @@ MGLObject * _MGLObject_pop_mglo(PyObject * wrapper, int slot) {
 }
 
 void MGLContext_dealloc(MGLContext * self) {
+    printf("MGLContext_dealloc\n");
     Py_TYPE(self)->tp_free(self);
 }
 
-PyTypeObject * MGLContext_class;
-
-#if PY_VERSION_HEX >= 0x03070000
+fastcallable(MGLContext_meth_copy_buffer)
+fastcallable(MGLContext_meth_buffer)
+fastcallable(MGLContext_meth_framebuffer)
+fastcallable(MGLContext_meth_program)
+fastcallable(MGLContext_meth_query)
+fastcallable(MGLContext_meth_renderbuffer)
+fastcallable(MGLContext_meth_depth_renderbuffer)
+fastcallable(MGLContext_meth_sampler)
+fastcallable(MGLContext_meth_scope)
+fastcallable(MGLContext_meth_texture)
+fastcallable(MGLContext_meth_vertex_array)
 
 PyMethodDef MGLContext_methods[] = {
-    {"copy_buffer", (PyCFunction)MGLContext_meth_copy_buffer, METH_FASTCALL, 0},
-    {"buffer", (PyCFunction)MGLContext_meth_buffer, METH_FASTCALL, 0},
+    {"copy_buffer", fastcall(MGLContext_meth_copy_buffer), fastcall_flags, NULL},
+    {"buffer", fastcall(MGLContext_meth_buffer), fastcall_flags, NULL},
     {"compute_shader", (PyCFunction)MGLContext_meth_compute_shader, METH_O, 0},
     {"configure", (PyCFunction)MGLContext_meth_configure, METH_O, 0},
-    {"framebuffer", (PyCFunction)MGLContext_meth_framebuffer, METH_FASTCALL, 0},
-    {"program", (PyCFunction)MGLContext_meth_program, METH_FASTCALL, 0},
-    {"query", (PyCFunction)MGLContext_meth_query, METH_FASTCALL, 0},
-    {"renderbuffer", (PyCFunction)MGLContext_meth_renderbuffer, METH_FASTCALL, 0},
-    {"depth_renderbuffer", (PyCFunction)MGLContext_meth_depth_renderbuffer, METH_FASTCALL, 0},
-    {"sampler", (PyCFunction)MGLContext_meth_sampler, METH_FASTCALL, 0},
-    {"scope", (PyCFunction)MGLContext_meth_scope, METH_FASTCALL, 0},
-    {"texture", (PyCFunction)MGLContext_meth_texture, METH_FASTCALL, 0},
-    {"vertex_array", (PyCFunction)MGLContext_meth_vertex_array, METH_FASTCALL, 0},
+    {"framebuffer", fastcall(MGLContext_meth_framebuffer), fastcall_flags, NULL},
+    {"program", fastcall(MGLContext_meth_program), fastcall_flags, NULL},
+    {"query", fastcall(MGLContext_meth_query), fastcall_flags, NULL},
+    {"renderbuffer", fastcall(MGLContext_meth_renderbuffer), fastcall_flags, NULL},
+    {"depth_renderbuffer", fastcall(MGLContext_meth_depth_renderbuffer), fastcall_flags, NULL},
+    {"sampler", fastcall(MGLContext_meth_sampler), fastcall_flags, NULL},
+    {"scope", fastcall(MGLContext_meth_scope), fastcall_flags, NULL},
+    {"texture", fastcall(MGLContext_meth_texture), fastcall_flags, NULL},
+    {"vertex_array", fastcall(MGLContext_meth_vertex_array), fastcall_flags, NULL},
     {"replay", (PyCFunction)MGLContext_meth_replay, METH_O, 0},
     {"make_current", (PyCFunction)MGLContext_meth_make_current, METH_NOARGS, 0},
     {0},
 };
-
-#else
-
-PyObject * MGLContext_meth_copy_buffer_va(MGLContext * self, PyObject * args) {
-    return MGLContext_meth_copy_buffer(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLContext_meth_buffer_va(MGLContext * self, PyObject * args) {
-    return MGLContext_meth_buffer(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLContext_meth_framebuffer_va(MGLContext * self, PyObject * args) {
-    return MGLContext_meth_framebuffer(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLContext_meth_program_va(MGLContext * self, PyObject * args) {
-    return MGLContext_meth_program(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLContext_meth_query_va(MGLContext * self, PyObject * args) {
-    return MGLContext_meth_query(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLContext_meth_renderbuffer_va(MGLContext * self, PyObject * args) {
-    return MGLContext_meth_renderbuffer(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLContext_meth_sampler_va(MGLContext * self, PyObject * args) {
-    return MGLContext_meth_sampler(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLContext_meth_scope_va(MGLContext * self, PyObject * args) {
-    return MGLContext_meth_scope(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLContext_meth_texture_va(MGLContext * self, PyObject * args) {
-    return MGLContext_meth_texture(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyObject * MGLContext_meth_vertex_array_va(MGLContext * self, PyObject * args) {
-    return MGLContext_meth_vertex_array(self, ((PyTupleObject *)args)->ob_item, ((PyVarObject *)args)->ob_size);
-}
-
-PyMethodDef MGLContext_methods[] = {
-    {"copy_buffer", (PyCFunction)MGLContext_meth_copy_buffer_va, METH_VARARGS, 0},
-    {"buffer", (PyCFunction)MGLContext_meth_buffer_va, METH_VARARGS, 0},
-    {"compute_shader", (PyCFunction)MGLContext_meth_compute_shader, METH_O, 0},
-    {"configure", (PyCFunction)MGLContext_meth_configure, METH_O, 0},
-    {"framebuffer", (PyCFunction)MGLContext_meth_framebuffer_va, METH_VARARGS, 0},
-    {"program", (PyCFunction)MGLContext_meth_program_va, METH_VARARGS, 0},
-    {"query", (PyCFunction)MGLContext_meth_query_va, METH_VARARGS, 0},
-    {"renderbuffer", (PyCFunction)MGLContext_meth_renderbuffer_va, METH_VARARGS, 0},
-    {"sampler", (PyCFunction)MGLContext_meth_sampler_va, METH_VARARGS, 0},
-    {"scope", (PyCFunction)MGLContext_meth_scope_va, METH_VARARGS, 0},
-    {"texture", (PyCFunction)MGLContext_meth_texture_va, METH_VARARGS, 0},
-    {"vertex_array", (PyCFunction)MGLContext_meth_vertex_array_va, METH_VARARGS, 0},
-    {"replay", (PyCFunction)MGLContext_meth_replay, METH_O, 0},
-    {"make_current", (PyCFunction)MGLContext_meth_make_current, METH_NOARGS, 0},
-    {0},
-};
-
-#endif
 
 PyType_Slot MGLContext_slots[] = {
     {Py_tp_methods, MGLContext_methods},
@@ -441,9 +352,11 @@ PyType_Slot MGLContext_slots[] = {
 };
 
 PyType_Spec MGLContext_spec = {
-    mgl_ext ".Context",
+    "moderngl.mgl.new.MGLContext",
     sizeof(MGLContext),
     0,
     Py_TPFLAGS_DEFAULT,
     MGLContext_slots,
 };
+
+PyTypeObject * MGLContext_class;
