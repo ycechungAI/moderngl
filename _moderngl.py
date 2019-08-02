@@ -517,6 +517,8 @@ GLTYPE_INFO = {
     0x8B59: (4, 1, 0x18B56), # 'p'),
 }
 
+FLOAT_TYPES = {0x1406, 0x8B50, 0x8B51, 0x8B52, 0x8B5A, 0x8B5B, 0x8B5C, 0x8B65, 0x8B66, 0x8B67, 0x8B68, 0x8B69, 0x8B6A}
+
 
 def texture_from(ctx, image):
     width, height = image.size
@@ -601,14 +603,17 @@ def bind_attributes(vao, bindings):
         for location, typ, cols, offset in binds:
             vao.bind(buffer, location, typ, cols, offset, stride, divisor)
 
-        vao.vertices = max_vertices
-        if max_instances is not None:
-            vao.instances = max_instances
+    vao.vertices = max_vertices
+    if max_instances is not None:
+        vao.instances = max_instances
 
 
 def serialize_uniform(prog, uniform, value):
     import numpy as np
-    prog[uniform] = np.array([value], 'f4').tobytes()
+    if prog.uniforms[uniform][1] in FLOAT_TYPES:
+        prog[uniform] = np.array([value], 'f4').tobytes()
+    else:
+        prog[uniform] = np.array([value], 'i4').tobytes()
 
 
 def strsize(reserve):
