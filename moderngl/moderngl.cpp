@@ -56,6 +56,10 @@ struct Context : public BaseObject {
     struct Framebuffer * screen;
     struct Scope * default_scope;
 
+    // backward compatibility
+    PyObject * info;
+    PyObject * version_code;
+
     struct ContextConstants {
         PyObject * blend;
         PyObject * depth_test;
@@ -653,9 +657,17 @@ PyObject * Framebuffer_get_size(Framebuffer * self) {
     return Py_BuildValue("ii", self->width, self->height);
 }
 
+// backward compatibility
+PyObject * Framebuffer_meth_use(Framebuffer * self) {
+    Py_RETURN_NONE;
+}
+
 PyMethodDef Framebuffer_methods[] = {
     {"clear", (PyCFunction)Framebuffer_meth_clear, METH_VARARGS | METH_KEYWORDS, NULL},
     {"read", (PyCFunction)Framebuffer_meth_read, METH_VARARGS | METH_KEYWORDS, NULL},
+
+    // backward compatibility
+    {"use", (PyCFunction)Framebuffer_meth_use, METH_VARARGS | METH_KEYWORDS, NULL},
     {},
 };
 
@@ -2054,6 +2066,13 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->gl.Enable(GL_PRIMITIVE_RESTART);
     res->gl.PrimitiveRestartIndex(-1);
 
+    // backward compatibility
+    res->info = PyDict_New();
+    PyDict_SetItemString(res->info, "GL_VENDOR", PyUnicode_FromString("GL_VENDOR"));
+    PyDict_SetItemString(res->info, "GL_RENDERER", PyUnicode_FromString("GL_RENDERER"));
+    PyDict_SetItemString(res->info, "GL_VERSION", PyUnicode_FromString("GL_VERSION"));
+    res->version_code = PyLong_FromLong(glversion);
+
     res->screen = PyObject_NewVar(Framebuffer, Framebuffer_type, 1);
     res->screen->prev = res;
     res->screen->next = res->next;
@@ -2186,6 +2205,10 @@ PyMemberDef Context_members[] = {
     {"limits", T_OBJECT_EX, offsetof(Context, limits), READONLY, NULL},
     {"screen", T_OBJECT_EX, offsetof(Context, screen), READONLY, NULL},
 
+    // backward compatibility
+    {"info", T_OBJECT_EX, offsetof(Context, info), READONLY, NULL},
+    {"version_code", T_OBJECT_EX, offsetof(Context, version_code), READONLY, NULL},
+
     {"BLEND", T_OBJECT_EX, offsetof(Context, consts.blend), READONLY, NULL},
     {"DEPTH_TEST", T_OBJECT_EX, offsetof(Context, consts.depth_test), READONLY, NULL},
     {"CULL_FACE", T_OBJECT_EX, offsetof(Context, consts.cull_face), READONLY, NULL},
@@ -2267,9 +2290,22 @@ PyDoc_STRVAR(moderngl_meth_context_doc,
 PyDoc_STRVAR(moderngl_doc,
 "High Performance Rendering for Python.");
 
+// backward compatibility
+PyObject * moderngl_meth_create_context(PyObject * self, PyObject * args, PyObject * kwa) {
+    static char * kw[] = {"require", NULL};
+    PyObject * require = Py_None;
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|O", kw, &require)) {
+        return NULL;
+    }
+    return PyObject_CallMethod(self, "context", "OO", Py_False, require);
+}
+
 PyMethodDef module_methods[] = {
     {"context", (PyCFunction)moderngl_meth_context, METH_VARARGS | METH_KEYWORDS, moderngl_meth_context_doc},
     {"pack", (PyCFunction)moderngl_meth_pack, METH_VARARGS | METH_KEYWORDS, NULL},
+
+    // backward compatibility
+    {"create_context", (PyCFunction)moderngl_meth_create_context, METH_VARARGS | METH_KEYWORDS, NULL},
     {},
 };
 
@@ -2277,12 +2313,14 @@ PyModuleDef module_def = {PyModuleDef_HEAD_INIT, "moderngl", moderngl_doc, -1, m
 
 extern "C" PyObject * PyInit_moderngl() {
     PyObject * module = PyModule_Create(&module_def);
+    PyModule_AddStringConstant(module, "__version__", "6.0.0");
 
     for (int i = 0; i < 64; ++i) {
         default_draw_buffers[i] = GL_COLOR_ATTACHMENT0 + i;
     }
 
     PyObject * tools = PyImport_ImportModule("_moderngl");
+    printf("%s\n", PyUnicode_AsUTF8(PyObject_GetAttrString(tools, "__file__")));
     limits = PyObject_GetAttrString(tools, "Limits");
     strsize = PyObject_GetAttrString(tools, "strsize");
     texture_from = PyObject_GetAttrString(tools, "texture_from");
@@ -2320,6 +2358,25 @@ extern "C" PyObject * PyInit_moderngl() {
     PyModule_AddObject(module, "Scope", (PyObject *)Scope_type);
     PyModule_AddObject(module, "Texture", (PyObject *)Texture_type);
     PyModule_AddObject(module, "VertexArray", (PyObject *)VertexArray_type);
+
+    // backward compatibility
+    PyModule_AddObject(module, "Texture3D", (PyObject *)Texture_type);
+    PyModule_AddObject(module, "TextureArray", (PyObject *)Texture_type);
+    PyModule_AddObject(module, "TextureCube", (PyObject *)Texture_type);
+
+    // backward compatibility
+    PyModule_AddIntConstant(module, "POINTS", 0x0000);
+    PyModule_AddIntConstant(module, "LINES", 0x0001);
+    PyModule_AddIntConstant(module, "LINE_LOOP", 0x0002);
+    PyModule_AddIntConstant(module, "LINE_STRIP", 0x0003);
+    PyModule_AddIntConstant(module, "TRIANGLES", 0x0004);
+    PyModule_AddIntConstant(module, "TRIANGLE_STRIP", 0x0005);
+    PyModule_AddIntConstant(module, "TRIANGLE_FAN", 0x0006);
+    PyModule_AddIntConstant(module, "LINES_ADJACENCY", 0x000A);
+    PyModule_AddIntConstant(module, "LINE_STRIP_ADJACENCY", 0x000B);
+    PyModule_AddIntConstant(module, "TRIANGLES_ADJACENCY", 0x000C);
+    PyModule_AddIntConstant(module, "TRIANGLE_STRIP_ADJACENCY", 0x000D);
+    PyModule_AddIntConstant(module, "PATCHES", 0x000E);
 
     PyObject * math_module = PyInit_moderngl_math();
     PyModule_AddObject(module, "math", math_module);
