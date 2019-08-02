@@ -558,12 +558,12 @@ def texture3d_from(ctx, images):
 
 
 def bind_attributes(vao, bindings):
-    binds = []
-    attr_info = vao.program.attributes
     max_vertices = None
     max_instances = None
+    attr_info = vao.program.attributes
     for buffer, attribs, layout, offset, stride, divisor in bindings:
         total_size = 0
+        binds = []
 
         if layout:
             assert re.match(r'^\d*n?[fiu][124]?( \d*n?[fiu][124]?)*$', layout)
