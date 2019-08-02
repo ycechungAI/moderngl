@@ -1363,15 +1363,13 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) {
 }
 
 PyObject * Scope_get_viewport(Scope * self) {
-    Py_RETURN_NONE;
+    return Py_BuildValue("iiii", self->viewport[0], self->viewport[1], self->viewport[2], self->viewport[3]);
 }
 
 int Scope_set_viewport(Scope * self, PyObject * value) {
-    PyObject * viewport = PySequence_Fast(value, "not iterable");
-    self->viewport[0] = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 0));
-    self->viewport[1] = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 1));
-    self->viewport[2] = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 2));
-    self->viewport[3] = PyLong_AsLong(PySequence_Fast_GET_ITEM(viewport, 3));
+    if (py_ints(self->viewport, 4, 4, value) < 0) {
+        return -1;
+    }
     return 0;
 }
 
@@ -2177,6 +2175,17 @@ PyObject * Context_meth_release(Context * self, BaseObject * obj) {
     Py_RETURN_NONE;
 }
 
+// backward compatibility
+PyObject * Context_meth_clear(Context * self, PyObject * args, PyObject * kwa) {
+    static char * kw[] = {"red", "green", "blue", "alpha", "depth", "viewport", NULL};
+    float red = 0.0f, green = 0.0f, blue = 0.0f, alpha = 0.0f, depth = 1.0f;
+    PyObject * viewport = NULL;
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|fffffO", kw, &red, &green, &blue, &alpha, &depth, &viewport)) {
+        return NULL;
+    }
+    return PyObject_CallMethod((PyObject *)self->screen, "clear", "(ffff)f", red, green, blue, alpha, depth);
+}
+
 PyMethodDef Context_methods[] = {
     {"buffer", (PyCFunction)Context_meth_buffer, METH_VARARGS | METH_KEYWORDS, NULL},
     {"framebuffer", (PyCFunction)Context_meth_framebuffer, METH_VARARGS | METH_KEYWORDS, NULL},
@@ -2198,6 +2207,25 @@ PyMethodDef Context_methods[] = {
     {"vertex_array", (PyCFunction)Context_meth_vertex_array, METH_VARARGS | METH_KEYWORDS, NULL},
     {"objects", (PyCFunction)Context_meth_objects, METH_NOARGS, NULL},
     {"release", (PyCFunction)Context_meth_release, METH_O, NULL},
+
+    // backward compatibility
+    {"clear", (PyCFunction)Context_meth_clear, METH_VARARGS | METH_KEYWORDS, NULL},
+    {},
+};
+
+// backward compatibility
+PyObject * Context_get_viewport(Context * self) {
+    return PyObject_GetAttrString((PyObject *)self->default_scope, "viewport");
+}
+
+// backward compatibility
+int Context_set_viewport(Context * self, PyObject * value) {
+    return PyObject_SetAttrString((PyObject *)self->default_scope, "viewport", value);
+}
+
+PyGetSetDef Context_getset[] = {
+    // backward compatibility
+    {"viewport", (getter)Context_get_viewport, (setter)Context_set_viewport, NULL, NULL},
     {},
 };
 
@@ -2267,6 +2295,7 @@ PyMemberDef Context_members[] = {
 
 PyType_Slot Context_slots[] = {
     {Py_tp_methods, Context_methods},
+    {Py_tp_getset, Context_getset},
     {Py_tp_members, Context_members},
     {Py_tp_dealloc, BaseObject_dealloc},
     {},
