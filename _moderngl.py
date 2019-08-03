@@ -458,6 +458,23 @@ class Context:
         '''release objects'''
 
 
+class Uniform:
+    def __init__(self, prog, name):
+        self.prog = prog
+        self.name = name
+
+    @property
+    def value(self):
+        raise NotImplementedError()
+
+    @value.setter
+    def value(self, val):
+        self.prog[self.name] = val
+
+    def write(self, val):
+        self.prog[self.name] = val
+
+
 class GLSLError(Exception):
     pass
 

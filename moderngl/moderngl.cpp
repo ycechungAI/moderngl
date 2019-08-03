@@ -17,20 +17,7 @@ PyTypeObject * Scope_type;
 PyTypeObject * Texture_type;
 PyTypeObject * VertexArray_type;
 
-PyObject * limits;
-PyObject * strsize;
-
-PyObject * texture_from;
-PyObject * texture_array_from;
-PyObject * texture_cube_from;
-PyObject * texture_cube_array_from;
-PyObject * texture3d_from;
-
-PyObject * bind_attributes;
-PyObject * serialize_uniform;
-PyObject * compiler_error;
-PyObject * linker_error;
-
+PyObject * empty_dict;
 PyObject * empty_tuple;
 PyObject * default_wrap;
 PyObject * default_border;
@@ -52,13 +39,14 @@ void BaseObject_dealloc(BaseObject * self) {
 struct Context : public BaseObject {
     GLContext ctx;
     GLMethods gl;
+    int glversion;
+
     PyObject * limits;
+    PyObject * module;
+    PyObject * tools;
+
     struct Framebuffer * screen;
     struct Scope * default_scope;
-
-    // backward compatibility
-    PyObject * info;
-    PyObject * version_code;
 
     struct ContextConstants {
         PyObject * blend;
@@ -248,7 +236,7 @@ Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) {
 
     if (reserve) {
         if (PyUnicode_Check(reserve)) {
-            PyObject * size = PyObject_CallFunction(strsize, "O", reserve);
+            PyObject * size = PyObject_CallMethod(self->tools, "strsize", "O", reserve);
             if (!size) {
                 return NULL;
             }
@@ -659,6 +647,7 @@ PyObject * Framebuffer_get_size(Framebuffer * self) {
 
 // backward compatibility
 PyObject * Framebuffer_meth_use(Framebuffer * self) {
+    self->ctx->default_scope->framebuffer = new_ref(self);
     Py_RETURN_NONE;
 }
 
@@ -766,7 +755,7 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
             if (!compiled) {
                 char log[16384] = {};
                 self->gl.GetShaderInfoLog(shader_obj, 16384, 0, log);
-                PyObject_CallFunction(compiler_error, "sss", SHADER_NAME[i], src[i], log);
+                PyObject_CallMethod(self->tools, "compiler_error", "sss", SHADER_NAME[i], src[i], log);
                 return NULL;
             }
 
@@ -791,7 +780,7 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
     if (!linked) {
         char log[16384] = {};
         self->gl.GetProgramInfoLog(res->glo, 16384, 0, log);
-        PyObject_CallFunction(linker_error, "s", log);
+        PyObject_CallMethod(self->tools, "linker_error", "s", log);
         return NULL;
     }
 
@@ -865,6 +854,10 @@ PyObject * Program_meth_run(Program * self, PyObject * args, PyObject * kwa) {
     Py_RETURN_NONE;
 }
 
+PyObject * Program_get_item(Program * self, Program * key) {
+    return PyObject_CallMethod(self->ctx->tools, "Uniform", "OO", self, key);
+}
+
 int Program_set_item(Program * self, PyObject * key, PyObject * value) {
     PyObject * uniform = PyDict_GetItem(self->uniforms, key);
     int location = PyLong_AsLong(PyTuple_GET_ITEM(uniform, 0));
@@ -877,7 +870,7 @@ int Program_set_item(Program * self, PyObject * key, PyObject * value) {
         return 0;
     }
     if (!is_buffer(value)) {
-        PyObject * call = PyObject_CallFunction(serialize_uniform, "OOO", self, key, value);
+        PyObject * call = PyObject_CallMethod(self->ctx->tools, "serialize_uniform", "OOO", self, key, value);
         Py_XDECREF(call);
         if (!call) {
             return -1;
@@ -908,6 +901,7 @@ PyMemberDef Program_members[] = {
 PyType_Slot Program_slots[] = {
     {Py_tp_methods, Program_methods},
     {Py_tp_members, Program_members},
+    {Py_mp_subscript, Program_get_item},
     {Py_mp_ass_subscript, Program_set_item},
     {Py_tp_dealloc, BaseObject_dealloc},
     {},
@@ -1641,23 +1635,23 @@ Texture * Context_meth_texture_cube(Context * self, PyObject * args, PyObject * 
 }
 
 PyObject * Context_meth_texture_from(Context * self, PyObject * img) {
-    return PyObject_CallFunction(texture_from, "OO", self, img);
+    return PyObject_CallMethod(self->tools, "texture_from", "OO", self, img);
 }
 
 PyObject * Context_meth_texture_array_from(Context * self, PyObject * images) {
-    return PyObject_CallFunction(texture_array_from, "OO", self, images);
+    return PyObject_CallMethod(self->tools, "texture_array_from", "OO", self, images);
 }
 
 PyObject * Context_meth_texture_cube_from(Context * self, PyObject * images) {
-    return PyObject_CallFunction(texture_cube_from, "OO", self, images);
+    return PyObject_CallMethod(self->tools, "texture_cube_from", "OO", self, images);
 }
 
 PyObject * Context_meth_texture_cube_array_from(Context * self, PyObject * images) {
-    return PyObject_CallFunction(texture_cube_array_from, "OO", self, images);
+    return PyObject_CallMethod(self->tools, "texture_cube_array_from", "OO", self, images);
 }
 
 PyObject * Context_meth_texture3d_from(Context * self, PyObject * images) {
-    return PyObject_CallFunction(texture3d_from, "OO", self, images);
+    return PyObject_CallMethod(self->tools, "texture3d_from", "OO", self, images);
 }
 
 PyObject * Texture_meth_read(Texture * self, PyObject * args, PyObject * kwa) {
@@ -1754,6 +1748,13 @@ PyType_Spec Texture_spec = {
 #pragma region VertexArray
 
 VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObject * kwa) {
+    if (PyTuple_Size(args) > 2 && Py_TYPE(PyTuple_GET_ITEM(args, 1)) == Buffer_type) {
+        PyObject * attribs = PyTuple_GetSlice(args, 2, PY_SSIZE_T_MAX);
+        PyObject * bindings = Py_BuildValue("ONOiii", PyTuple_GET_ITEM(args, 1), attribs, Py_None, 0, 0, 0);
+        PyObject * call_args = Py_BuildValue("O[N]", PyTuple_GET_ITEM(args, 0), bindings);
+        return Context_meth_vertex_array(self, call_args, kwa);
+    }
+
     static char * kw[] = {"program", "bindings", "mode", NULL};
 
     Program * program;
@@ -1782,7 +1783,7 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
 
 	self->gl.GenVertexArrays(1, (GLuint *)&res->glo);
 
-    PyObject * call = PyObject_CallFunction(bind_attributes, "OO", res, bindings);
+    PyObject * call = PyObject_CallMethod(self->tools, "bind_attributes", "OO", res, bindings);
     Py_XDECREF(call);
     if (!call) {
         return NULL;
@@ -2040,6 +2041,8 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->next = res;
     res->prev = res;
 
+    res->glversion = glversion;
+
     if (!res->ctx.load(standalone, glversion)) {
         PyErr_Format(PyExc_Exception, "%s", res->ctx.error);
         return NULL;
@@ -2059,17 +2062,13 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
         }
     }
 
+    res->module = self;
+    res->tools = PyObject_GetAttrString(self, "mgl");
+
     res->gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     res->gl.Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     res->gl.Enable(GL_PRIMITIVE_RESTART);
     res->gl.PrimitiveRestartIndex(-1);
-
-    // backward compatibility
-    res->info = PyDict_New();
-    PyDict_SetItemString(res->info, "GL_VENDOR", PyUnicode_FromString("GL_VENDOR"));
-    PyDict_SetItemString(res->info, "GL_RENDERER", PyUnicode_FromString("GL_RENDERER"));
-    PyDict_SetItemString(res->info, "GL_VERSION", PyUnicode_FromString("GL_VERSION"));
-    res->version_code = PyLong_FromLong(glversion);
 
     res->screen = PyObject_NewVar(Framebuffer, Framebuffer_type, 1);
     res->screen->prev = res;
@@ -2154,7 +2153,7 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->consts.triangle_strip_adjacency = PyLong_FromLong(GL_TRIANGLE_STRIP_ADJACENCY);
     res->consts.patches = PyLong_FromLong(GL_PATCHES);
 
-    res->limits = PyObject_CallFunction(limits, "N", get_limits(res->gl, glversion));
+    res->limits = PyObject_CallMethod(res->tools, "Limits", "N", get_limits(res->gl, glversion));
 
     return new_ref(res);
 }
@@ -2186,6 +2185,17 @@ PyObject * Context_meth_clear(Context * self, PyObject * args, PyObject * kwa) {
     return PyObject_CallMethod((PyObject *)self->screen, "clear", "(ffff)f", red, green, blue, alpha, depth);
 }
 
+// backward compatibility
+PyObject * Context_meth_enable_only(Context * self, PyObject * args, PyObject * kwa) {
+    static char * kw[] = {"enable", NULL};
+    int flags;
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|fffffO", kw, &flags)) {
+        return NULL;
+    }
+    self->default_scope->enable = flags;
+    Py_RETURN_NONE;
+}
+
 PyMethodDef Context_methods[] = {
     {"buffer", (PyCFunction)Context_meth_buffer, METH_VARARGS | METH_KEYWORDS, NULL},
     {"framebuffer", (PyCFunction)Context_meth_framebuffer, METH_VARARGS | METH_KEYWORDS, NULL},
@@ -2210,8 +2220,24 @@ PyMethodDef Context_methods[] = {
 
     // backward compatibility
     {"clear", (PyCFunction)Context_meth_clear, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"enable_only", (PyCFunction)Context_meth_enable_only, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"simple_vertex_array", (PyCFunction)Context_meth_vertex_array, METH_VARARGS | METH_KEYWORDS, NULL},
     {},
 };
+
+// backward compatibility
+PyObject * Context_get_info(Context * self) {
+    PyObject * res = PyDict_New();
+    PyDict_SetItemString(res, "GL_VENDOR", PyUnicode_FromString("GL_VENDOR"));
+    PyDict_SetItemString(res, "GL_RENDERER", PyUnicode_FromString("GL_RENDERER"));
+    PyDict_SetItemString(res, "GL_VERSION", PyUnicode_FromString("GL_VERSION"));
+    return res;
+}
+
+// backward compatibility
+PyObject * Context_get_version_code(Context * self) {
+    return PyLong_FromLong(self->glversion);
+}
 
 // backward compatibility
 PyObject * Context_get_viewport(Context * self) {
@@ -2225,6 +2251,8 @@ int Context_set_viewport(Context * self, PyObject * value) {
 
 PyGetSetDef Context_getset[] = {
     // backward compatibility
+    {"info", (getter)Context_get_info, NULL, NULL, NULL},
+    {"version_code", (getter)Context_get_version_code, NULL, NULL, NULL},
     {"viewport", (getter)Context_get_viewport, (setter)Context_set_viewport, NULL, NULL},
     {},
 };
@@ -2232,10 +2260,6 @@ PyGetSetDef Context_getset[] = {
 PyMemberDef Context_members[] = {
     {"limits", T_OBJECT_EX, offsetof(Context, limits), READONLY, NULL},
     {"screen", T_OBJECT_EX, offsetof(Context, screen), READONLY, NULL},
-
-    // backward compatibility
-    {"info", T_OBJECT_EX, offsetof(Context, info), READONLY, NULL},
-    {"version_code", T_OBJECT_EX, offsetof(Context, version_code), READONLY, NULL},
 
     {"BLEND", T_OBJECT_EX, offsetof(Context, consts.blend), READONLY, NULL},
     {"DEPTH_TEST", T_OBJECT_EX, offsetof(Context, consts.depth_test), READONLY, NULL},
@@ -2348,20 +2372,11 @@ extern "C" PyObject * PyInit_moderngl() {
         default_draw_buffers[i] = GL_COLOR_ATTACHMENT0 + i;
     }
 
-    PyObject * tools = PyImport_ImportModule("_moderngl");
-    printf("%s\n", PyUnicode_AsUTF8(PyObject_GetAttrString(tools, "__file__")));
-    limits = PyObject_GetAttrString(tools, "Limits");
-    strsize = PyObject_GetAttrString(tools, "strsize");
-    texture_from = PyObject_GetAttrString(tools, "texture_from");
-    texture_array_from = PyObject_GetAttrString(tools, "texture_array_from");
-    texture_cube_from = PyObject_GetAttrString(tools, "texture_cube_from");
-    texture_cube_array_from = PyObject_GetAttrString(tools, "texture_cube_array_from");
-    texture3d_from = PyObject_GetAttrString(tools, "texture3d_from");
-    bind_attributes = PyObject_GetAttrString(tools, "bind_attributes");
-    serialize_uniform = PyObject_GetAttrString(tools, "serialize_uniform");
-    compiler_error = PyObject_GetAttrString(tools, "compiler_error");
-    linker_error = PyObject_GetAttrString(tools, "linker_error");
+    PyObject * mgl = PyImport_ImportModule("_moderngl");
+    PyModule_AddObject(module, "mgl", mgl);
+    Py_DECREF(mgl);
 
+    empty_dict = PyDict_New();
     empty_tuple = PyTuple_New(0);
     default_wrap = PyLong_FromLong(0);
     default_border = Py_BuildValue("ffff", 0.0f, 0.0f, 0.0f, 0.0f);
