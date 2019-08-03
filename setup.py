@@ -37,8 +37,8 @@ libraries = {
 extra_compile_args = {
     'windows': [],
     'linux': ['-fpermissive'],
-    'cygwin': [],
-    'darwin': ['-Wno-deprecated-declarations'],
+    'cygwin': ['-fpermissive'],
+    'darwin': ['-fpermissive', '-Wno-deprecated-declarations'],
 }
 
 extra_linker_args = {
