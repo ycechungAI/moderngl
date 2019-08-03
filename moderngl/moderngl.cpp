@@ -1755,13 +1755,13 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
         return Context_meth_vertex_array(self, call_args, kwa);
     }
 
-    static char * kw[] = {"program", "bindings", "mode", NULL};
+    static char * kw[] = {"program", "bindings", "mode", "index_buffer", "output_buffer", "indirect_buffer", NULL};
 
     Program * program;
     PyObject * bindings;
-    int mode;
+    PyObject * index_buffer = NULL;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "O!O|i", kw, Program_type, &program, &bindings, &mode)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "O!O|O", kw, Program_type, &program, &bindings, &index_buffer)) {
         return NULL;
     }
 
@@ -1787,6 +1787,12 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
     Py_XDECREF(call);
     if (!call) {
         return NULL;
+    }
+
+    if (index_buffer) {
+        if (PyObject_SetAttrString((PyObject *)res, "index_buffer", index_buffer) < 0) {
+            return NULL;
+        }
     }
 
     return new_ref(res);
