@@ -14,5 +14,11 @@ __pycache__
 *.pbd
 *.lib
 *.txt
+*.so
 
 temp_*
+
+# virualenv
+.venv
+venv
+env
