@@ -372,7 +372,7 @@ PyMemberDef Buffer_members[] = {
 PyType_Slot Buffer_slots[] = {
     {Py_tp_methods, Buffer_methods},
     {Py_tp_members, Buffer_members},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
@@ -673,7 +673,7 @@ PyType_Slot Framebuffer_slots[] = {
     {Py_tp_methods, Framebuffer_methods},
     {Py_tp_getset, Framebuffer_getset},
     {Py_tp_members, Framebuffer_members},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
@@ -900,9 +900,9 @@ PyMemberDef Program_members[] = {
 PyType_Slot Program_slots[] = {
     {Py_tp_methods, Program_methods},
     {Py_tp_members, Program_members},
-    {Py_mp_subscript, Program_get_item},
-    {Py_mp_ass_subscript, Program_set_item},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_mp_subscript, (void *)Program_get_item},
+    {Py_mp_ass_subscript, (void *)Program_set_item},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
@@ -1022,7 +1022,7 @@ PyMemberDef Query_members[] = {
 PyType_Slot Query_slots[] = {
     {Py_tp_methods, Query_methods},
     {Py_tp_members, Query_members},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
@@ -1095,7 +1095,7 @@ PyMemberDef Renderbuffer_members[] = {
 PyType_Slot Renderbuffer_slots[] = {
     {Py_tp_getset, Renderbuffer_getset},
     {Py_tp_members, Renderbuffer_members},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
@@ -1262,7 +1262,7 @@ PyGetSetDef Sampler_getset[] = {
 PyType_Slot Sampler_slots[] = {
     {Py_tp_methods, Sampler_methods},
     {Py_tp_getset, Sampler_getset},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
@@ -1386,7 +1386,7 @@ PyGetSetDef Scope_getset[] = {
 
 PyType_Slot Scope_slots[] = {
     {Py_tp_getset, Scope_getset},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
@@ -1731,7 +1731,7 @@ PyType_Slot Texture_slots[] = {
     {Py_tp_methods, Texture_methods},
     // {Py_tp_methods, Texture_getset},
     // {Py_tp_methods, Texture_members},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
@@ -2019,7 +2019,7 @@ PyType_Slot VertexArray_slots[] = {
     {Py_tp_methods, VertexArray_methods},
     {Py_tp_getset, VertexArray_getset},
     {Py_tp_members, VertexArray_members},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
@@ -2324,7 +2324,7 @@ PyType_Slot Context_slots[] = {
     {Py_tp_methods, Context_methods},
     {Py_tp_getset, Context_getset},
     {Py_tp_members, Context_members},
-    {Py_tp_dealloc, BaseObject_dealloc},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
 
