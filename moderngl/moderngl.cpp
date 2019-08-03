@@ -39,7 +39,6 @@ void BaseObject_dealloc(BaseObject * self) {
 struct Context : public BaseObject {
     GLContext ctx;
     GLMethods gl;
-    int glversion;
 
     PyObject * limits;
     PyObject * module;
@@ -2047,8 +2046,6 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->next = res;
     res->prev = res;
 
-    res->glversion = glversion;
-
     if (!res->ctx.load(standalone, glversion)) {
         PyErr_Format(PyExc_Exception, "%s", res->ctx.error);
         return NULL;
@@ -2242,7 +2239,7 @@ PyObject * Context_get_info(Context * self) {
 
 // backward compatibility
 PyObject * Context_get_version_code(Context * self) {
-    return PyLong_FromLong(self->glversion);
+    return PyLong_FromLong(self->ctx.glversion);
 }
 
 // backward compatibility

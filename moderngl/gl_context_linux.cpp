@@ -14,8 +14,9 @@ int SilentXErrorHandler(Display * d, XErrorEvent * e) {
     return 0;
 }
 
-bool GLContext::load(bool standalone) {
+bool GLContext::load(bool standalone, int glversion) {
     this->standalone = standalone;
+    this->glversion = glversion;
 
     if (standalone) {
         int width = 1;
@@ -84,20 +85,14 @@ bool GLContext::load(bool standalone) {
         XSetErrorHandler(SilentXErrorHandler);
 
         if (glXCreateContextAttribsARB) {
-            for (int i = 0; i < versions; ++i) {
-                int attribs[] = {
-                    GLX_CONTEXT_PROFILE_MASK, GLX_CONTEXT_CORE_PROFILE_BIT,
-                    GLX_CONTEXT_MAJOR_VERSION, version[i].major,
-                    GLX_CONTEXT_MINOR_VERSION, version[i].minor,
-                    0, 0,
-                };
+            int attribs[] = {
+                GLX_CONTEXT_PROFILE_MASK, GLX_CONTEXT_CORE_PROFILE_BIT,
+                GLX_CONTEXT_MAJOR_VERSION, glversion / 100 % 10,
+                GLX_CONTEXT_MINOR_VERSION, glversion / 10 % 10,
+                0, 0,
+            };
 
-                ctx = glXCreateContextAttribsARB(dpy, *fbc, 0, true, attribs);
-
-                if (ctx) {
-                    break;
-                }
-            }
+            ctx = glXCreateContextAttribsARB(dpy, *fbc, 0, true, attribs);
         }
 
         if (!ctx) {

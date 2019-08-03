@@ -6,8 +6,9 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
 
-bool GLContext::load(bool standalone) {
+bool GLContext::load(bool standalone, int glversion) {
     this->standalone = standalone;
+    this->glversion = glversion;
 
     if (standalone) {
         // CGDirectDisplayID display = CGMainDisplayID();
