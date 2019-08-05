@@ -589,6 +589,14 @@ def bind_attributes(vao, bindings):
         binds = []
 
         if layout:
+            if layout.endswith('/i'):
+                layout = layout[:-2]
+                divisor = 1
+
+            if layout.endswith('/r'):
+                layout = layout[:-2]
+                divisor = 0x7fffffff
+
             assert re.match(r'^\d*n?[fiux][124]?( \d*n?[fiux][124]?)*$', layout)
             layout = [(int(x), y) for x, y in re.findall(r'(\d*)(n?[fiux][124]?)', layout)]
             # assert len(layout) == len(attribs)
