@@ -647,7 +647,9 @@ PyObject * Framebuffer_get_size(Framebuffer * self) {
 
 // backward compatibility
 PyObject * Framebuffer_meth_use(Framebuffer * self) {
+    Framebuffer * old = self->ctx->default_scope->framebuffer;
     self->ctx->default_scope->framebuffer = new_ref(self);
+    Py_XDECREF(old);
     Py_RETURN_NONE;
 }
 
@@ -1151,6 +1153,8 @@ Sampler * Context_meth_sampler(Context * self, PyObject * args, PyObject * kwa) 
     self->next = res;
     res->ctx = self;
 
+    res->texture = NULL;
+
     self->gl.GenSamplers(1, (GLuint *)&res->glo);
     PyObject_SetAttrString((PyObject *)res, "texture", (PyObject *)texture);
     PyObject_SetAttrString((PyObject *)res, "filter", filter);
@@ -1175,7 +1179,9 @@ int Sampler_set_texture(Sampler * self, Texture * value) {
     if (Py_TYPE(value) != Texture_type) {
         return -1;
     }
+    Texture * old = self->texture;
     self->texture = new_ref(value);
+    Py_XDECREF(old);
     return 0;
 }
 
@@ -1375,7 +1381,9 @@ int Scope_set_framebuffer(Scope * self, Framebuffer * value) {
     if (Py_TYPE(value) != Framebuffer_type) {
         return -1;
     }
-    self->framebuffer = value;
+    Framebuffer * old = self->framebuffer;
+    self->framebuffer = new_ref(value);
+    Py_XDECREF(old);
     return 0;
 }
 
@@ -1919,7 +1927,9 @@ int VertexArray_set_scope(VertexArray * self, Scope * value) {
     if (Py_TYPE(value) != Scope_type) {
         return -1;
     }
+    Scope * old = self->scope;
     self->scope = new_ref(value);
+    Py_XDECREF(old);
     return 0;
 }
 
@@ -1948,6 +1958,7 @@ PyObject * VertexArray_get_index_buffer(VertexArray * self) {
 
 int VertexArray_set_index_buffer(VertexArray * self, PyObject * value) {
     self->ctx->gl.BindVertexArray(self->glo);
+    Buffer * old = self->index_buffer;
     if (value == Py_None) {
         self->index_buffer = NULL;
         self->ctx->gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -1958,6 +1969,7 @@ int VertexArray_set_index_buffer(VertexArray * self, PyObject * value) {
         self->index_buffer = cast(Buffer, new_ref(value));
         self->ctx->gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, self->index_buffer->glo);
     }
+    Py_XDECREF(old);
     return 0;
 }
 
@@ -1966,6 +1978,7 @@ PyObject * VertexArray_get_output_buffer(VertexArray * self) {
 }
 
 int VertexArray_set_output_buffer(VertexArray * self, PyObject * value) {
+    Buffer * old = self->output_buffer;
     if (value == Py_None) {
         self->output_buffer = NULL;
     } else {
@@ -1974,6 +1987,7 @@ int VertexArray_set_output_buffer(VertexArray * self, PyObject * value) {
         }
         self->output_buffer = cast(Buffer, new_ref(value));
     }
+    Py_XDECREF(old);
     return 0;
 }
 
@@ -1982,6 +1996,7 @@ PyObject * VertexArray_get_indirect_buffer(VertexArray * self) {
 }
 
 int VertexArray_set_indirect_buffer(VertexArray * self, PyObject * value) {
+    Buffer * old = self->indirect_buffer;
     if (value == Py_None) {
         self->indirect_buffer = NULL;
     } else {
@@ -1990,6 +2005,7 @@ int VertexArray_set_indirect_buffer(VertexArray * self, PyObject * value) {
         }
         self->indirect_buffer = cast(Buffer, new_ref(value));
     }
+    Py_XDECREF(old);
     return 0;
 }
 
