@@ -28,6 +28,7 @@ struct BaseObject {
     PyObject_HEAD
     BaseObject * next;
     BaseObject * prev;
+    PyObject * extra;
 };
 
 void BaseObject_dealloc(BaseObject * self) {
@@ -236,6 +237,8 @@ Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) {
     self->next = res;
     res->ctx = self;
 
+    res->extra = NULL;
+
     if (reserve) {
         if (PyUnicode_Check(reserve)) {
             PyObject * size = PyObject_CallMethod(self->tools, "strsize", "O", reserve);
@@ -369,6 +372,7 @@ PyMethodDef Buffer_methods[] = {
 
 PyMemberDef Buffer_members[] = {
     {"size", T_INT, offsetof(Buffer, size), READONLY, NULL},
+    {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
 
@@ -413,6 +417,7 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
     self->next = res;
     res->ctx = self;
 
+    res->extra = NULL;
     res->attachments_lst = PyList_New(0);
 
     self->gl.GenFramebuffers(1, (GLuint *)&res->glo);
@@ -676,6 +681,7 @@ PyGetSetDef Framebuffer_getset[] = {
 PyMemberDef Framebuffer_members[] = {
     {"attachments", T_OBJECT_EX, offsetof(Framebuffer, attachments_lst), READONLY, NULL},
     {"samples", T_INT, offsetof(Framebuffer, samples), READONLY, NULL},
+    {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
 
@@ -731,6 +737,8 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
     res->next = self->next;
     self->next = res;
     res->ctx = self;
+
+    res->extra = NULL;
 
     res->glo = self->gl.CreateProgram();
     res->compute = !!src[5];
@@ -904,6 +912,7 @@ PyMethodDef Program_methods[] = {
 PyMemberDef Program_members[] = {
     {"uniforms", T_OBJECT_EX, offsetof(Program, uniforms), READONLY, NULL},
     {"attributes", T_OBJECT_EX, offsetof(Program, attributes), READONLY, NULL},
+    {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
 
@@ -961,6 +970,8 @@ Query * Context_meth_query(Context * self, PyObject * args, PyObject * kwa) {
     res->next = self->next;
     self->next = res;
     res->ctx = self;
+
+    res->extra = NULL;
 
     if (time_elapsed) {
         self->gl.GenQueries(1, (GLuint *)&res->glo[MGL_TIME_ELAPSED]);
@@ -1026,6 +1037,7 @@ PyMemberDef Query_members[] = {
     {"elapsed", T_INT, offsetof(Query, elapsed), READONLY, NULL},
     {"primitives", T_INT, offsetof(Query, primitives), READONLY, NULL},
     {"samples", T_INT, offsetof(Query, samples), READONLY, NULL},
+    {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
 
@@ -1073,6 +1085,8 @@ Renderbuffer * Context_meth_renderbuffer(Context * self, PyObject * args, PyObje
     self->next = res;
     res->ctx = self;
 
+    res->extra = NULL;
+
     res->width = width;
     res->height = height;
     res->components = components;
@@ -1099,6 +1113,7 @@ PyMemberDef Renderbuffer_members[] = {
     {"components", T_INT, offsetof(Renderbuffer, components), 0, NULL},
     {"width", T_INT, offsetof(Renderbuffer, width), 0, NULL},
     {"height", T_INT, offsetof(Renderbuffer, height), 0, NULL},
+    {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
 
@@ -1160,6 +1175,7 @@ Sampler * Context_meth_sampler(Context * self, PyObject * args, PyObject * kwa) 
     self->next = res;
     res->ctx = self;
 
+    res->extra = NULL;
     res->texture = NULL;
 
     self->gl.GenSamplers(1, (GLuint *)&res->glo);
@@ -1273,9 +1289,15 @@ PyGetSetDef Sampler_getset[] = {
     {},
 };
 
+PyMemberDef Sampler_members[] = {
+    {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
+    {},
+};
+
 PyType_Slot Sampler_slots[] = {
     {Py_tp_methods, Sampler_methods},
     {Py_tp_getset, Sampler_getset},
+    {Py_tp_members, Sampler_members},
     {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
@@ -1344,6 +1366,7 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) {
     self->next = res;
     res->ctx = self;
 
+    res->extra = NULL;
     res->bindings_lst = PyList_New(0);
 
     res->line_width = line_width;
@@ -1405,6 +1428,7 @@ PyGetSetDef Scope_getset[] = {
 
 PyMemberDef Scope_members[] = {
     {"bindings", T_OBJECT_EX, offsetof(Scope, bindings_lst), READONLY, NULL},
+    {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
 
@@ -1458,6 +1482,8 @@ Texture * Context_meth_texture(Context * self, PyObject * args, PyObject * kwa) 
     res->next = self->next;
     self->next = res;
     res->ctx = self;
+
+    res->extra = NULL;
 
     res->width = width;
     res->height = height;
@@ -1533,6 +1559,8 @@ Texture * Context_meth_texture_array(Context * self, PyObject * args, PyObject *
     self->next = res;
     res->ctx = self;
 
+    res->extra = NULL;
+
     res->width = width;
     res->height = height;
     res->length = length;
@@ -1588,6 +1616,8 @@ Texture * Context_meth_texture3d(Context * self, PyObject * args, PyObject * kwa
     self->next = res;
     res->ctx = self;
 
+    res->extra = NULL;
+
     if (self->gl.TexStorage3D) {
         self->gl.TexStorage3D(res->texture_target, levels, internal_format, width, height, length);
     } else {
@@ -1628,6 +1658,8 @@ Texture * Context_meth_texture_cube(Context * self, PyObject * args, PyObject * 
     res->next = self->next;
     self->next = res;
     res->ctx = self;
+
+    res->extra = NULL;
 
     if (samples) {
         if (self->gl.TexStorage2DMultisample) {
@@ -1749,6 +1781,7 @@ PyMemberDef Texture_members[] = {
     {"width", T_INT, offsetof(Texture, width), 0, NULL},
     {"height", T_INT, offsetof(Texture, height), 0, NULL},
     {"length", T_INT, offsetof(Texture, length), 0, NULL},
+    {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
 
@@ -1794,6 +1827,8 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
     res->next = self->next;
     self->next = res;
     res->ctx = self;
+
+    res->extra = NULL;
 
     res->program = new_ref(program);
     res->scope = new_ref(self->default_scope);
@@ -2060,6 +2095,7 @@ PyMemberDef VertexArray_members[] = {
     {"mode", T_INT, offsetof(VertexArray, mode), 0, NULL},
     {"vertices", T_INT, offsetof(VertexArray, vertices), 0, NULL},
     {"instances", T_INT, offsetof(VertexArray, instances), 0, NULL},
+    {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
 
@@ -2094,6 +2130,8 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->next = res;
     res->prev = res;
 
+    res->extra = NULL;
+
     if (!res->ctx.load(standalone, glversion)) {
         PyErr_Format(PyExc_Exception, "%s", res->ctx.error);
         return NULL;
@@ -2126,14 +2164,16 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->screen->next = res->next;
     res->next = res->screen;
     res->screen->ctx = res;
+    res->screen->extra = NULL;
 
     res->default_scope = PyObject_New(Scope, Scope_type);
     res->default_scope->prev = res;
     res->default_scope->next = res->next;
     res->next = res->default_scope;
     res->default_scope->ctx = res;
-
+    res->default_scope->extra = NULL;
     res->default_scope->bindings_lst = PyList_New(0);
+
     res->default_scope->point_size = 1.0f;
     res->default_scope->line_width = 1.0f;
     res->default_scope->enable = MGL_NOTHING;
@@ -2374,6 +2414,7 @@ PyGetSetDef Context_getset[] = {
 PyMemberDef Context_members[] = {
     {"limits", T_OBJECT_EX, offsetof(Context, limits), READONLY, NULL},
     {"screen", T_OBJECT_EX, offsetof(Context, screen), READONLY, NULL},
+    {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
 
     {"BLEND", T_OBJECT_EX, offsetof(Context, consts.blend), READONLY, NULL},
     {"DEPTH_TEST", T_OBJECT_EX, offsetof(Context, consts.depth_test), READONLY, NULL},
