@@ -122,6 +122,7 @@ struct Attachment {
 
 struct Framebuffer : public BaseObject {
     struct Context * ctx;
+    PyObject * attachments_lst;
     int glo;
     int width;
     int height;
@@ -173,6 +174,7 @@ struct ScopeBinding {
 struct Scope : public BaseObject {
     struct Context * ctx;
     struct Framebuffer * framebuffer;
+    PyObject * bindings_lst;
     int num_samplers;
     int num_uniform_buffers;
     int num_storage_buffers;
@@ -411,11 +413,14 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
     self->next = res;
     res->ctx = self;
 
+    res->attachments_lst = PyList_New(0);
+
     self->gl.GenFramebuffers(1, (GLuint *)&res->glo);
     self->gl.BindFramebuffer(GL_FRAMEBUFFER, res->glo);
 
     for (int i = 0; i < num_attachments; ++i) {
         PyObject * item = PySequence_Fast_GET_ITEM(color_attachments, i);
+        PyList_Append(res->attachments_lst, item);
         if (Py_TYPE(item) == Renderbuffer_type) {
             Renderbuffer * renderbuffer = cast(Renderbuffer, item);
             self->gl.FramebufferRenderbuffer(
@@ -454,6 +459,7 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
     }
 
     if (depth_attachment) {
+        PyList_Append(res->attachments_lst, depth_attachment);
         if (Py_TYPE(depth_attachment) == Renderbuffer_type) {
             Renderbuffer * renderbuffer = cast(Renderbuffer, depth_attachment);
             self->gl.FramebufferRenderbuffer(
@@ -668,6 +674,7 @@ PyGetSetDef Framebuffer_getset[] = {
 };
 
 PyMemberDef Framebuffer_members[] = {
+    {"attachments", T_OBJECT_EX, offsetof(Framebuffer, attachments_lst), READONLY, NULL},
     {"samples", T_INT, offsetof(Framebuffer, samples), READONLY, NULL},
     {},
 };
@@ -1337,6 +1344,8 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) {
     self->next = res;
     res->ctx = self;
 
+    res->bindings_lst = PyList_New(0);
+
     res->line_width = line_width;
     res->point_size = point_size;
 
@@ -1353,6 +1362,7 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) {
     int binding = 0;
     for (int i = 0; i < num_samplers; ++i) {
         Sampler * sampler = cast(Sampler, PyTuple_GetItem(PySequence_Fast_GET_ITEM(samplers, i), 0));
+        PyList_Append(res->bindings_lst, (PyObject *)sampler);
         int bind = PyLong_AsLong(PyTuple_GetItem(PySequence_Fast_GET_ITEM(samplers, i), 1));
         res->bindings[binding].sampler = new_ref(sampler);
         res->bindings[binding].bind = bind;
@@ -1393,8 +1403,14 @@ PyGetSetDef Scope_getset[] = {
     {},
 };
 
+PyMemberDef Scope_members[] = {
+    {"bindings", T_OBJECT_EX, offsetof(Scope, bindings_lst), READONLY, NULL},
+    {},
+};
+
 PyType_Slot Scope_slots[] = {
     {Py_tp_getset, Scope_getset},
+    {Py_tp_members, Scope_members},
     {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
@@ -2117,6 +2133,7 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->next = res->default_scope;
     res->default_scope->ctx = res;
 
+    res->default_scope->bindings_lst = PyList_New(0);
     res->default_scope->point_size = 1.0f;
     res->default_scope->line_width = 1.0f;
     res->default_scope->enable = MGL_NOTHING;
