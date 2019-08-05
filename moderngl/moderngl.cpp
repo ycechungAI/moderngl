@@ -108,6 +108,8 @@ struct Context : public BaseObject {
 
 struct Buffer : public BaseObject {
     struct Context * ctx;
+    PyObject * mem;
+    int flags;
     int glo;
     int size;
 };
@@ -219,15 +221,18 @@ struct VertexArray : public BaseObject {
 #pragma region Buffer
 
 Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) {
-    static char * kw[] = {"data", "reserve", "readable", "writable", "local", NULL};
+    static char * kw[] = {"data", "reserve", "dynamic", "readable", "writable", "persistent", "coherent", "local", NULL};
 
     PyObject * data = Py_None;
     PyObject * reserve = NULL;
+    int dynamic = true;
     int readable = true;
     int writable = true;
-    int local = true;
+    int persistent = false;
+    int coherent = false;
+    int local = false;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|OOppp", kw, &data, &reserve, &readable, &writable, &local)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|OOpppppp", kw, &data, &reserve, &dynamic, &readable, &writable, &persistent, &coherent, &local)) {
         return NULL;
     }
 
@@ -238,6 +243,8 @@ Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) {
     res->ctx = self;
 
     res->extra = NULL;
+    res->mem = NULL;
+    res->flags = 0;
 
     if (reserve) {
         if (PyUnicode_Check(reserve)) {
@@ -261,13 +268,10 @@ Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) {
     self->gl.BindBuffer(GL_ARRAY_BUFFER, res->glo);
 
     if (self->gl.BufferStorage) {
-        unsigned flags = 0;
-        flags |= readable ? GL_MAP_READ_BIT : 0;
-        flags |= writable ? GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT : 0;
-        flags |= local ? GL_CLIENT_STORAGE_BIT : 0;
-        self->gl.BufferStorage(GL_ARRAY_BUFFER, res->size, 0, flags);
+        res->flags = local << 12 | dynamic << 8 | coherent << 7 | persistent << 6 | writable << 1 | readable;
+        self->gl.BufferStorage(GL_ARRAY_BUFFER, res->size, 0, res->flags);
     } else {
-        self->gl.BufferData(GL_ARRAY_BUFFER, res->size, 0, writable ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+        self->gl.BufferData(GL_ARRAY_BUFFER, res->size, 0, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
     }
 
     if (data != Py_None) {
@@ -279,6 +283,25 @@ Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) {
     }
 
     return new_ref(res);
+}
+
+PyObject * Buffer_meth_clear(Buffer * self, PyObject * args, PyObject * kwa) {
+    static char * kw[] = {"size", "offset", NULL};
+
+    int size = -1;
+    int offset = 0;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|ii", kw, &size, &offset, &size, &offset)) {
+        return NULL;
+    }
+
+    if (size < 0) {
+        size = self->size - offset;
+    }
+
+    self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
+    self->ctx->gl.ClearBufferSubData(GL_ARRAY_BUFFER, GL_R8, offset, size, GL_RED, GL_UNSIGNED_BYTE, NULL);
+    Py_RETURN_NONE;
 }
 
 PyObject * Buffer_meth_read(Buffer * self, PyObject * args, PyObject * kwa) {
@@ -321,7 +344,7 @@ PyObject * Buffer_meth_read(Buffer * self, PyObject * args, PyObject * kwa) {
 
 	self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
     void * map = self->ctx->gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_READ_BIT);
-    PyObject * res = PyByteArray_FromStringAndSize((const char *)map, size);
+    PyObject * res = PyBytes_FromStringAndSize((const char *)map, size);
     self->ctx->gl.UnmapBuffer(GL_ARRAY_BUFFER);
     return res;
 }
@@ -339,6 +362,48 @@ PyObject * Buffer_meth_write(Buffer * self, PyObject * args, PyObject * kwa) {
 	self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
     self->ctx->gl.BufferSubData(GL_ARRAY_BUFFER, offset, view.len, view.buf);
     PyBuffer_Release(&view);
+    Py_RETURN_NONE;
+}
+
+PyObject * Buffer_meth_map(Buffer * self, PyObject * args, PyObject * kwa) {
+    static char * kw[] = {"size", "offset", "readable", "writable", "persistent", "coherent", NULL};
+
+    int size = -1;
+    int offset = 0;
+    int readable = self->flags & 1;
+    int writable = self->flags >> 1 & 1;
+    int persistent = self->flags >> 6 & 1;
+    int coherent = self->flags >> 7 & 1;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|iipppp", kw, &size, &offset, &readable, &writable, &persistent, &coherent)) {
+        return NULL;
+    }
+
+    if (size < 0) {
+        size = self->size - offset;
+    }
+
+    if (self->mem) {
+        return NULL;
+    }
+
+	self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
+    int access = coherent << 7 | persistent << 6 | writable << 1 | readable;
+    void * ptr = self->ctx->gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, access);
+    if (!ptr) {
+        return NULL;
+    }
+    self->mem = PyMemoryView_FromMemory((char *)ptr, size, writable ? PyBUF_WRITE : PyBUF_READ);
+    return new_ref(self->mem);
+}
+
+PyObject * Buffer_meth_unmap(Buffer * self) {
+    if (self->mem) {
+        self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
+        self->ctx->gl.UnmapBuffer(GL_ARRAY_BUFFER);
+        Py_XDECREF(self->mem);
+        self->mem = NULL;
+    }
     Py_RETURN_NONE;
 }
 
@@ -363,15 +428,19 @@ PyObject * Buffer_meth_assign(Buffer * self, PyObject * arg) {
 }
 
 PyMethodDef Buffer_methods[] = {
-    {"bind", (PyCFunction)Buffer_meth_bind, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"clear", (PyCFunction)Buffer_meth_clear, METH_VARARGS | METH_KEYWORDS, NULL},
     {"read", (PyCFunction)Buffer_meth_read, METH_VARARGS | METH_KEYWORDS, NULL},
     {"write", (PyCFunction)Buffer_meth_write, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"map", (PyCFunction)Buffer_meth_map, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"unmap", (PyCFunction)Buffer_meth_unmap, METH_NOARGS, NULL},
+    {"bind", (PyCFunction)Buffer_meth_bind, METH_VARARGS | METH_KEYWORDS, NULL},
     {"assign", (PyCFunction)Buffer_meth_assign, METH_O, NULL},
     {},
 };
 
 PyMemberDef Buffer_members[] = {
     {"size", T_INT, offsetof(Buffer, size), READONLY, NULL},
+    {"mem", T_OBJECT_EX, offsetof(Buffer, mem), READONLY, NULL},
     {"glo", T_INT, offsetof(Buffer, glo), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
