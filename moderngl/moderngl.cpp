@@ -339,6 +339,18 @@ PyObject * Buffer_meth_read(Buffer * self, PyObject * args, PyObject * kwa) {
         //     gl.TexSubImage2D(dst->texture_target, 0, x, y, width, height, format, pixel_type, 0);
         // }
         // gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+        PyErr_Format(PyExc_NotImplementedError, "");
+        return NULL;
+    }
+
+    if (is_buffer(into)) {
+        self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
+        Py_buffer view = {};
+        PyObject_GetBuffer(into, &view, PyBUF_WRITABLE);
+        void * map = self->ctx->gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_READ_BIT);
+        memcpy((char *)view.buf + write_offset, map, size);
+        PyBuffer_Release(&view);
+        self->ctx->gl.UnmapBuffer(GL_ARRAY_BUFFER);
         Py_RETURN_NONE;
     }
 
@@ -601,26 +613,23 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
     int height = self->height;
     int components = 3;
     int attachment = 0;
-    int src_x = 0;
-    int src_y = 0;
-    int dst_x = 0;
-    int dst_y = 0;
+    int src_xy[2] = {};
+    PyObject * write_offset = NULL;
     PyObject * into = Py_None;
     int alignment = 1;
 
     int args_ok = PyArg_ParseTupleAndKeywords(
         args,
         kwa,
-        "|(ii)ii(ii)(ii)Oi",
+        "|(ii)ii(ii)OOi",
         kw,
         &width,
         &height,
         &components,
         &attachment,
-        &src_x,
-        &src_y,
-        &dst_x,
-        &dst_y,
+        &src_xy[0],
+        &src_xy[1],
+        &write_offset,
         &into,
         &alignment
     );
@@ -630,13 +639,17 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
     }
 
     if (Py_TYPE(into) == Framebuffer_type) {
+        int dst_xy[2] = {};
+        if (write_offset && py_ints(dst_xy, 2, 2, write_offset) < 0) {
+            return NULL;
+        }
         Framebuffer * dst = cast(Framebuffer, into);
         self->ctx->gl.BindFramebuffer(GL_READ_FRAMEBUFFER, self->glo);
         self->ctx->gl.BindFramebuffer(GL_DRAW_FRAMEBUFFER, dst->glo);
         self->ctx->gl.ReadBuffer(GL_COLOR_ATTACHMENT0 + attachment);
         self->ctx->gl.BlitFramebuffer(
-            src_x, src_y, width, height,
-            dst_x, dst_y, width, height,
+            src_xy[0], src_xy[1], width, height,
+            dst_xy[0], dst_xy[1], width, height,
             GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
             GL_NEAREST
         );
@@ -652,9 +665,21 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
         Buffer * dst = cast(Buffer, into);
         int base_format = GL_RGB;
         int pixel_type = GL_UNSIGNED_BYTE;
+        int offset = write_offset ? PyLong_AsLong(write_offset) : 0;
 		self->ctx->gl.BindBuffer(GL_PIXEL_PACK_BUFFER, dst->glo);
-		self->ctx->gl.ReadPixels(src_x, src_y, width, height, base_format, pixel_type, NULL);
+		self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, (char *)NULL + offset);
 		self->ctx->gl.BindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+        Py_RETURN_NONE;
+    }
+
+    if (is_buffer(into)) {
+        int offset = write_offset ? PyLong_AsLong(write_offset) : 0;
+        self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
+        Py_buffer view = {};
+        PyObject_GetBuffer(into, &view, PyBUF_WRITABLE);
+        self->ctx->gl.ReadBuffer(GL_COLOR_ATTACHMENT0 + attachment);
+        self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, GL_RGB, GL_UNSIGNED_BYTE, (char *)view.buf + offset);
+        PyBuffer_Release(&view);
         Py_RETURN_NONE;
     }
 
@@ -662,7 +687,7 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
         PyObject * res = PyBytes_FromStringAndSize(NULL, width * height * components);
         char * data = PyBytes_AS_STRING(res);
         self->ctx->gl.ReadBuffer(GL_COLOR_ATTACHMENT0 + attachment);
-        self->ctx->gl.ReadPixels(src_x, src_y, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+        self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
         return res;
     }
 
@@ -1789,15 +1814,32 @@ PyObject * Context_meth_texture3d_from(Context * self, PyObject * images) {
 }
 
 PyObject * Texture_meth_read(Texture * self, PyObject * args, PyObject * kwa) {
-    static char * kw[] = {"into", NULL};
+    static char * kw[] = {"into", "write_offset", NULL};
 
     PyObject * into = Py_None;
+    PyObject * write_offset = NULL;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwa, "|O", kw, &into)) {
         return NULL;
     }
 
     self->ctx->gl.BindTexture(self->texture_target, self->glo);
+
+    if (Py_TYPE(into) == Texture_type) {
+        PyErr_Format(PyExc_NotImplementedError, "");
+        return NULL;
+    }
+
+    if (is_buffer(into)) {
+        int offset = write_offset ? PyLong_AsLong(write_offset) : 0;
+        self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
+        Py_buffer view = {};
+        PyObject_GetBuffer(into, &view, PyBUF_WRITABLE);
+        self->ctx->gl.GetTexImage(self->texture_target, 0, GL_RGB, GL_UNSIGNED_BYTE, (char *)view.buf + offset);
+        PyBuffer_Release(&view);
+        Py_RETURN_NONE;
+    }
+
     if (into == Py_None) {
         PyObject * res = PyBytes_FromStringAndSize(NULL, self->width * self->height * self->components);
         self->ctx->gl.GetTexImage(self->texture_target, 0, GL_RGB, GL_UNSIGNED_BYTE, PyBytes_AS_STRING(res));
