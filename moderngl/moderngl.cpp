@@ -1970,17 +1970,17 @@ PyObject * VertexArray_get_index_buffer(VertexArray * self) {
     return new_ref_or_none(self->index_buffer);
 }
 
-int VertexArray_set_index_buffer(VertexArray * self, PyObject * value) {
+int VertexArray_set_index_buffer(VertexArray * self, Buffer * value) {
     self->ctx->gl.BindVertexArray(self->glo);
     Buffer * old = self->index_buffer;
-    if (value == Py_None) {
+    if (value == (Buffer *)Py_None) {
         self->index_buffer = NULL;
         self->ctx->gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     } else {
         if (Py_TYPE(value) != Buffer_type) {
             return -1;
         }
-        self->index_buffer = cast(Buffer, new_ref(value));
+        self->index_buffer = new_ref(value);
         self->ctx->gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, self->index_buffer->glo);
     }
     Py_XDECREF(old);
@@ -1991,15 +1991,15 @@ PyObject * VertexArray_get_output_buffer(VertexArray * self) {
     return new_ref_or_none(self->output_buffer);
 }
 
-int VertexArray_set_output_buffer(VertexArray * self, PyObject * value) {
+int VertexArray_set_output_buffer(VertexArray * self, Buffer * value) {
     Buffer * old = self->output_buffer;
-    if (value == Py_None) {
+    if (value == (Buffer *)Py_None) {
         self->output_buffer = NULL;
     } else {
         if (Py_TYPE(value) != Buffer_type) {
             return -1;
         }
-        self->output_buffer = cast(Buffer, new_ref(value));
+        self->output_buffer = new_ref(value);
     }
     Py_XDECREF(old);
     return 0;
@@ -2009,15 +2009,15 @@ PyObject * VertexArray_get_indirect_buffer(VertexArray * self) {
     return new_ref_or_none(self->indirect_buffer);
 }
 
-int VertexArray_set_indirect_buffer(VertexArray * self, PyObject * value) {
+int VertexArray_set_indirect_buffer(VertexArray * self, Buffer * value) {
     Buffer * old = self->indirect_buffer;
-    if (value == Py_None) {
+    if (value == (Buffer *)Py_None) {
         self->indirect_buffer = NULL;
     } else {
         if (Py_TYPE(value) != Buffer_type) {
             return -1;
         }
-        self->indirect_buffer = cast(Buffer, new_ref(value));
+        self->indirect_buffer = new_ref(value);
     }
     Py_XDECREF(old);
     return 0;
