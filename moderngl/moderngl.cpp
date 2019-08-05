@@ -342,11 +342,15 @@ PyObject * Buffer_meth_read(Buffer * self, PyObject * args, PyObject * kwa) {
         Py_RETURN_NONE;
     }
 
-	self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
-    void * map = self->ctx->gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_READ_BIT);
-    PyObject * res = PyBytes_FromStringAndSize((const char *)map, size);
-    self->ctx->gl.UnmapBuffer(GL_ARRAY_BUFFER);
-    return res;
+    if (into == Py_None) {
+        self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
+        void * map = self->ctx->gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_READ_BIT);
+        PyObject * res = PyBytes_FromStringAndSize((const char *)map, size);
+        self->ctx->gl.UnmapBuffer(GL_ARRAY_BUFFER);
+        return res;
+    }
+
+    return NULL;
 }
 
 PyObject * Buffer_meth_write(Buffer * self, PyObject * args, PyObject * kwa) {
@@ -1799,7 +1803,8 @@ PyObject * Texture_meth_read(Texture * self, PyObject * args, PyObject * kwa) {
         self->ctx->gl.GetTexImage(self->texture_target, 0, GL_RGB, GL_UNSIGNED_BYTE, PyBytes_AS_STRING(res));
         return res;
     }
-    Py_RETURN_NONE;
+
+    return NULL;
 }
 
 PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) {
