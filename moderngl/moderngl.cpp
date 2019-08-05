@@ -2691,6 +2691,9 @@ PyObject * moderngl_meth_create_context(PyObject * self, PyObject * args, PyObje
     if (!PyArg_ParseTupleAndKeywords(args, kwa, "|O", kw, &require)) {
         return NULL;
     }
+    if (require == Py_None) {
+        require = PyLong_FromLong(330);
+    }
     return PyObject_CallMethod(self, "context", "OO", Py_False, require);
 }
 
