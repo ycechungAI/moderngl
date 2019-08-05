@@ -1933,6 +1933,20 @@ int VertexArray_set_scope(VertexArray * self, Scope * value) {
     return 0;
 }
 
+Program * VertexArray_get_program(VertexArray * self) {
+    return new_ref(self->program);
+}
+
+int VertexArray_set_program(VertexArray * self, Program * value) {
+    if (Py_TYPE(value) != Program_type) {
+        return -1;
+    }
+    Program * old = self->program;
+    self->program = new_ref(value);
+    Py_XDECREF(old);
+    return 0;
+}
+
 PyObject * VertexArray_get_index_element_size(VertexArray * self) {
     switch (self->index_format) {
         case GL_UNSIGNED_BYTE: return PyLong_FromLong(1);
@@ -2017,6 +2031,7 @@ PyMethodDef VertexArray_methods[] = {
 
 PyGetSetDef VertexArray_getset[] = {
     {"scope", (getter)VertexArray_get_scope, (setter)VertexArray_set_scope, NULL, NULL},
+    {"program", (getter)VertexArray_get_program, (setter)VertexArray_set_program, NULL, NULL},
     {"index_element_size", (getter)VertexArray_get_index_element_size, (setter)VertexArray_set_index_element_size, NULL, NULL},
     {"index_buffer", (getter)VertexArray_get_index_buffer, (setter)VertexArray_set_index_buffer, "ibo", NULL},
     {"output_buffer", (getter)VertexArray_get_output_buffer, (setter)VertexArray_set_output_buffer, NULL, NULL},
