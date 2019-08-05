@@ -1926,7 +1926,37 @@ PyMethodDef Texture_methods[] = {
     {},
 };
 
+PyObject * Texture_get_swizzle(Texture * self) {
+    int tex_swizzle[4] = {GL_ZERO, GL_ZERO, GL_ZERO, GL_ONE};
+    self->ctx->gl.ActiveTexture(GL_TEXTURE0);
+    self->ctx->gl.BindTexture(self->texture_target, self->glo);
+    self->ctx->gl.GetTexParameteriv(self->texture_target, GL_TEXTURE_SWIZZLE_RGBA, tex_swizzle);
+	char swizzle[4] = {
+		chr_from_swizzle(tex_swizzle[0]),
+		chr_from_swizzle(tex_swizzle[1]),
+		chr_from_swizzle(tex_swizzle[2]),
+		chr_from_swizzle(tex_swizzle[3]),
+	};
+	return PyUnicode_FromStringAndSize(swizzle, 4);
+}
+
+int Texture_set_swizzle(Texture * self, PyObject * value) {
+    const char * swizzle = PyUnicode_AsUTF8(value);
+    if (PyUnicode_GetLength(value) > 4) {
+        return -1;
+    }
+    int tex_swizzle[4] = {GL_ZERO, GL_ZERO, GL_ZERO, GL_ONE};
+    for (int i = 0; swizzle[i]; ++i) {
+        tex_swizzle[i] = swizzle_from_chr(swizzle[i]);
+    }
+    self->ctx->gl.ActiveTexture(GL_TEXTURE0);
+    self->ctx->gl.BindTexture(self->texture_target, self->glo);
+    self->ctx->gl.TexParameteriv(self->texture_target, GL_TEXTURE_SWIZZLE_RGBA, tex_swizzle);
+    return 0;
+}
+
 PyGetSetDef Texture_getset[] = {
+    {"swizzle", (getter)Texture_get_swizzle, (setter)Texture_set_swizzle, NULL, NULL},
     {"size", (getter)Texture_get_size, NULL, NULL, NULL},
     {},
 };

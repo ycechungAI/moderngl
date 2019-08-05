@@ -110,6 +110,58 @@ inline void clean_glsl_name(char * name, int & name_len) {
     name[name_len] = 0;
 }
 
+inline int swizzle_from_chr(char c) {
+	switch (c) {
+		case 'R':
+		case 'r':
+			return GL_RED;
+
+		case 'G':
+		case 'g':
+			return GL_GREEN;
+
+		case 'B':
+		case 'b':
+			return GL_BLUE;
+
+		case 'A':
+		case 'a':
+			return GL_ALPHA;
+
+		case '0':
+			return GL_ZERO;
+
+		case '1':
+			return GL_ONE;
+	}
+
+	return -1;
+}
+
+inline char chr_from_swizzle(int c) {
+	switch (c) {
+		case GL_RED:
+			return 'R';
+
+		case GL_GREEN:
+			return 'G';
+
+		case GL_BLUE:
+			return 'B';
+
+		case GL_ALPHA:
+			return 'A';
+
+		case GL_ZERO:
+			return '0';
+
+		case GL_ONE:
+			return '1';
+	}
+
+	return '?';
+}
+
 inline void set_uniform(const GLMethods & gl, int gltype, int location, int size, void * buffer) {
     switch (gltype) {
         case GL_BOOL: gl.Uniform1iv(location, size, (int *)buffer); break;
