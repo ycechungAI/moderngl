@@ -1867,6 +1867,7 @@ PyObject * Texture_meth_read(Texture * self, PyObject * args, PyObject * kwa) {
 PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"data", "viewport", NULL};
 
+    PyObject * data;
     int offset_x = 0;
     int offset_y = 0;
     int offset_z = 0;
@@ -1874,16 +1875,24 @@ PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) {
     int height = self->height;
     int length = self->length;
 
-    Py_buffer view;
-
     if (self->texture_target == GL_TEXTURE_2D_ARRAY) {
-        if (!PyArg_ParseTupleAndKeywords(args, kwa, "y*|(iiiiii)", kw, &view, &offset_x, &offset_y, &offset_z, &width, &height, &length)) {
+        if (!PyArg_ParseTupleAndKeywords(args, kwa, "O|(iiiiii)", kw, &data, &offset_x, &offset_y, &offset_z, &width, &height, &length)) {
             return NULL;
         }
     } else {
-        if (!PyArg_ParseTupleAndKeywords(args, kwa, "y*|(iiii)", kw, &view, &offset_x, &offset_y, &width, &height)) {
+        if (!PyArg_ParseTupleAndKeywords(args, kwa, "O|(iiii)", kw, &data, &offset_x, &offset_y, &width, &height)) {
             return NULL;
         }
+    }
+
+    Py_buffer view = {};
+
+    if (Py_TYPE(data) == Buffer_type) {
+        Buffer * buffer = cast(Buffer, data);
+        self->ctx->gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer->glo);
+    } else {
+        Py_buffer view = {};
+        PyObject_GetBuffer(data, &view, PyBUF_STRIDED_RO);
     }
 
     self->ctx->gl.BindTexture(self->texture_target, self->glo);
@@ -1892,7 +1901,15 @@ PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) {
     } else {
         self->ctx->gl.TexSubImage2D(self->texture_target, 0, offset_x, offset_y, width, height, self->base_format, self->pixel_type, view.buf);
     }
-    PyBuffer_Release(&view);
+    if (Py_TYPE(data) != Buffer_type) {
+        self->ctx->gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    } else {
+        PyBuffer_Release(&view);
+    }
+    Py_RETURN_NONE;
+}
+
+PyObject * Texture_meth_build_mipmaps(Texture * self, PyObject * args, PyObject * kwa) {
     Py_RETURN_NONE;
 }
 
@@ -1903,6 +1920,9 @@ PyObject * Texture_get_size(Texture * self) {
 PyMethodDef Texture_methods[] = {
     {"read", (PyCFunction)Texture_meth_read, METH_VARARGS | METH_KEYWORDS, NULL},
     {"write", (PyCFunction)Texture_meth_write, METH_VARARGS | METH_KEYWORDS, NULL},
+
+    // backward compatibility
+    {"build_mipmaps", (PyCFunction)Texture_meth_build_mipmaps, METH_VARARGS | METH_KEYWORDS, NULL},
     {},
 };
 
