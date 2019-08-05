@@ -372,6 +372,7 @@ PyMethodDef Buffer_methods[] = {
 
 PyMemberDef Buffer_members[] = {
     {"size", T_INT, offsetof(Buffer, size), READONLY, NULL},
+    {"glo", T_INT, offsetof(Buffer, glo), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
@@ -681,6 +682,7 @@ PyGetSetDef Framebuffer_getset[] = {
 PyMemberDef Framebuffer_members[] = {
     {"attachments", T_OBJECT_EX, offsetof(Framebuffer, attachments_lst), READONLY, NULL},
     {"samples", T_INT, offsetof(Framebuffer, samples), READONLY, NULL},
+    {"glo", T_INT, offsetof(Framebuffer, glo), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
@@ -912,6 +914,7 @@ PyMethodDef Program_methods[] = {
 PyMemberDef Program_members[] = {
     {"uniforms", T_OBJECT_EX, offsetof(Program, uniforms), READONLY, NULL},
     {"attributes", T_OBJECT_EX, offsetof(Program, attributes), READONLY, NULL},
+    {"glo", T_INT, offsetof(Program, glo), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
@@ -1113,6 +1116,7 @@ PyMemberDef Renderbuffer_members[] = {
     {"components", T_INT, offsetof(Renderbuffer, components), 0, NULL},
     {"width", T_INT, offsetof(Renderbuffer, width), 0, NULL},
     {"height", T_INT, offsetof(Renderbuffer, height), 0, NULL},
+    {"glo", T_INT, offsetof(Renderbuffer, glo), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
@@ -1290,6 +1294,7 @@ PyGetSetDef Sampler_getset[] = {
 };
 
 PyMemberDef Sampler_members[] = {
+    {"glo", T_INT, offsetof(Sampler, glo), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
@@ -1781,6 +1786,7 @@ PyMemberDef Texture_members[] = {
     {"width", T_INT, offsetof(Texture, width), 0, NULL},
     {"height", T_INT, offsetof(Texture, height), 0, NULL},
     {"length", T_INT, offsetof(Texture, length), 0, NULL},
+    {"glo", T_INT, offsetof(Texture, glo), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
@@ -2095,6 +2101,7 @@ PyMemberDef VertexArray_members[] = {
     {"mode", T_INT, offsetof(VertexArray, mode), 0, NULL},
     {"vertices", T_INT, offsetof(VertexArray, vertices), 0, NULL},
     {"instances", T_INT, offsetof(VertexArray, instances), 0, NULL},
+    {"glo", T_INT, offsetof(VertexArray, glo), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
 };
