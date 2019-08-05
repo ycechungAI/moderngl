@@ -1971,6 +1971,7 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
     res->mode = mode;
     res->vertices = 0;
     res->instances = 1;
+    res->index_format = GL_UNSIGNED_INT;
 
     res->indirect_buffer = NULL;
     res->index_buffer = NULL;
@@ -1988,6 +1989,9 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
         if (PyObject_SetAttrString((PyObject *)res, "index_buffer", index_buffer) < 0) {
             return NULL;
         }
+        // backward compatibility
+        Buffer * ibo = cast(Buffer, index_buffer);
+        res->vertices = ibo->size / 4;
     }
 
     return new_ref(res);
