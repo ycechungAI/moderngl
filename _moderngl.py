@@ -504,6 +504,10 @@ FORMAT = {
     'nu2': (2, 0x101403),
     'nu4': (4, 0x101405),
     'nu': (4, 0x101405),
+    'x1': (1, 0),
+    'x2': (2, 0),
+    'x4': (4, 0),
+    'x': (1, 0),
 }
 
 GLTYPE_INFO = {
@@ -585,9 +589,9 @@ def bind_attributes(vao, bindings):
         binds = []
 
         if layout:
-            assert re.match(r'^\d*n?[fiu][124]?( \d*n?[fiu][124]?)*$', layout)
-            layout = [(int(x), y) for x, y in re.findall(r'(\d*)(n?[fiu][124]?)', layout)]
-            assert len(layout) == len(attribs)
+            assert re.match(r'^\d*n?[fiux][124]?( \d*n?[fiux][124]?)*$', layout)
+            layout = [(int(x), y) for x, y in re.findall(r'(\d*)(n?[fiux][124]?)', layout)]
+            # assert len(layout) == len(attribs)
 
             for attr, (items, fmt) in zip(attribs, layout):
                 location, attrib_type, alen = attr_info[attr]
@@ -596,7 +600,8 @@ def bind_attributes(vao, bindings):
                 size, bind_type = FORMAT[fmt]
                 total_size += alen * rows * cols * size
                 for i in range(alen * rows):
-                    binds.append((location + i, bind_type, cols, offset))
+                    if bind_type:
+                        binds.append((location + i, bind_type, cols, offset))
                     offset += cols * size
 
         else:

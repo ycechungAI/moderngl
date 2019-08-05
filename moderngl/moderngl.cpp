@@ -1543,6 +1543,8 @@ PyGetSetDef Scope_getset[] = {
 };
 
 PyMemberDef Scope_members[] = {
+    {"point_size", T_FLOAT, offsetof(Scope, point_size), 0, NULL},
+    {"line_width", T_FLOAT, offsetof(Scope, line_width), 0, NULL},
     {"bindings", T_OBJECT_EX, offsetof(Scope, bindings_lst), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
@@ -2131,6 +2133,26 @@ PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject
     Py_RETURN_NONE;
 }
 
+// backward compatibility
+PyObject * VertexArray_meth_transform(VertexArray * self, PyObject * args, PyObject * kwa) {
+    static char * kw[] = {"into", "mode", "vertices", "instances", NULL};
+
+    Buffer * into;
+    int mode = -1;
+    int vertices = -1;
+    int instances = -1;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "O!|iii", kw, Buffer_type, &into, &mode, &vertices, &instances)) {
+        return NULL;
+    }
+
+    Buffer * old = self->output_buffer;
+    self->output_buffer = into;
+    PyObject * res = PyObject_CallMethod((PyObject *)self, "render", "iii", mode, vertices, instances);
+    self->output_buffer = old;
+    return res;
+}
+
 Scope * VertexArray_get_scope(VertexArray * self) {
     return new_ref(self->scope);
 }
@@ -2238,6 +2260,7 @@ int VertexArray_set_indirect_buffer(VertexArray * self, Buffer * value) {
 PyMethodDef VertexArray_methods[] = {
     {"bind", (PyCFunction)VertexArray_meth_bind, METH_VARARGS | METH_KEYWORDS, NULL},
     {"render", (PyCFunction)VertexArray_meth_render, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"transform", (PyCFunction)VertexArray_meth_transform, METH_VARARGS | METH_KEYWORDS, NULL},
     {},
 };
 
@@ -2534,6 +2557,17 @@ PyObject * Context_meth_enable_only(Context * self, PyObject * args, PyObject * 
     Py_RETURN_NONE;
 }
 
+// backward compatibility
+PyObject * Context_meth_copy_buffer(Context * self, PyObject * args, PyObject * kwa) {
+    static char * kw[] = {"dst", "src", NULL};
+    PyObject * dst;
+    PyObject * src;
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "OO", kw, &dst, &src)) {
+        return NULL;
+    }
+    return PyObject_CallMethod(src, "read", "iiO", -1, 0, dst);
+}
+
 PyMethodDef Context_methods[] = {
     {"buffer", (PyCFunction)Context_meth_buffer, METH_VARARGS | METH_KEYWORDS, NULL},
     {"framebuffer", (PyCFunction)Context_meth_framebuffer, METH_VARARGS | METH_KEYWORDS, NULL},
@@ -2562,6 +2596,7 @@ PyMethodDef Context_methods[] = {
     {"disable", (PyCFunction)Context_meth_disable, METH_VARARGS | METH_KEYWORDS, NULL},
     {"enable_only", (PyCFunction)Context_meth_enable_only, METH_VARARGS | METH_KEYWORDS, NULL},
     {"simple_vertex_array", (PyCFunction)Context_meth_vertex_array, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"copy_buffer", (PyCFunction)Context_meth_copy_buffer, METH_VARARGS | METH_KEYWORDS, NULL},
     {},
 };
 
@@ -2589,11 +2624,33 @@ int Context_set_viewport(Context * self, PyObject * value) {
     return PyObject_SetAttrString((PyObject *)self->default_scope, "viewport", value);
 }
 
+// backward compatibility
+PyObject * Context_get_point_size(Context * self) {
+    return PyObject_GetAttrString((PyObject *)self->default_scope, "point_size");
+}
+
+// backward compatibility
+int Context_set_point_size(Context * self, PyObject * value) {
+    return PyObject_SetAttrString((PyObject *)self->default_scope, "point_size", value);
+}
+
+// backward compatibility
+PyObject * Context_get_line_width(Context * self) {
+    return PyObject_GetAttrString((PyObject *)self->default_scope, "line_width");
+}
+
+// backward compatibility
+int Context_set_line_width(Context * self, PyObject * value) {
+    return PyObject_SetAttrString((PyObject *)self->default_scope, "line_width", value);
+}
+
 PyGetSetDef Context_getset[] = {
     // backward compatibility
     {"info", (getter)Context_get_info, NULL, NULL, NULL},
     {"version_code", (getter)Context_get_version_code, NULL, NULL, NULL},
     {"viewport", (getter)Context_get_viewport, (setter)Context_set_viewport, NULL, NULL},
+    {"point_size", (getter)Context_get_line_width, (setter)Context_set_point_size, NULL, NULL},
+    {"line_width", (getter)Context_get_point_size, (setter)Context_set_line_width, NULL, NULL},
     {},
 };
 
