@@ -31,6 +31,7 @@ struct BaseObject {
 };
 
 void BaseObject_dealloc(BaseObject * self) {
+    // fprintf(stderr, "dealloc %p (%s)", self, Py_TYPE(self)->tp_name);
     Py_TYPE(self)->tp_free(self);
 }
 
@@ -2170,10 +2171,72 @@ PyObject * Context_meth_objects(Context * self) {
     return res;
 }
 
-PyObject * Context_meth_release(Context * self, BaseObject * obj) {
-    obj->next->prev = obj->prev;
-    obj->prev->next = obj->next;
-    Py_DECREF(obj);
+PyObject * Context_meth_release(Context * self, BaseObject * arg) {
+    PyTypeObject * t = Py_TYPE(arg);
+    if (t != Buffer_type && t != Context_type && t != Framebuffer_type && t != Program_type && t != Query_type &&
+        t != Renderbuffer_type && t != Sampler_type && t != Scope_type && t != Texture_type && t != VertexArray_type) {
+        PyErr_BadInternalCall();
+        return NULL;
+    }
+    if (!arg->next->prev && !arg->next->next) {
+        PyErr_BadInternalCall();
+        return NULL;
+    }
+    arg->next->prev = arg->prev;
+    arg->prev->next = arg->next;
+    arg->prev = NULL;
+    arg->next = NULL;
+    if (t == Buffer_type) {
+        Buffer * obj = cast(Buffer, arg);
+        self->gl.DeleteBuffers(1, (GLuint *)&obj->glo);
+        obj->glo = 0;
+    }
+    if (t == Context_type) {
+        Context * obj = cast(Context, arg);
+    }
+    if (t == Framebuffer_type) {
+        Framebuffer * obj = cast(Framebuffer, arg);
+        self->gl.DeleteFramebuffers(1, (GLuint *)&obj->glo);
+        obj->glo = 0;
+    }
+    if (t == Program_type) {
+        Program * obj = cast(Program, arg);
+        self->gl.DeleteProgram(obj->glo);
+        obj->glo = 0;
+    }
+    if (t == Query_type) {
+        Query * obj = cast(Query, arg);
+        for (int i = 0; i < 4; ++i) {
+            if (obj->glo[i]) {
+                self->gl.DeleteQueries(1, (GLuint *)&obj->glo[i]);
+                obj->glo[i] = 0;
+            }
+        }
+    }
+    if (t == Renderbuffer_type) {
+        Renderbuffer * obj = cast(Renderbuffer, arg);
+        self->gl.DeleteRenderbuffers(1, (GLuint *)&obj->glo);
+        obj->glo = 0;
+    }
+    if (t == Sampler_type) {
+        Sampler * obj = cast(Sampler, arg);
+        self->gl.DeleteSamplers(1, (GLuint *)&obj->glo);
+        obj->glo = 0;
+    }
+    if (t == Scope_type) {
+        Scope * obj = cast(Scope, arg);
+    }
+    if (t == Texture_type) {
+        Texture * obj = cast(Texture, arg);
+        self->gl.DeleteTextures(1, (GLuint *)&obj->glo);
+        obj->glo = 0;
+    }
+    if (t == VertexArray_type) {
+        VertexArray * obj = cast(VertexArray, arg);
+        self->gl.DeleteVertexArrays(1, (GLuint *)&obj->glo);
+        obj->glo = 0;
+    }
+    Py_DECREF(arg);
     Py_RETURN_NONE;
 }
 

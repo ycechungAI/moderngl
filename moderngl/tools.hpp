@@ -17,7 +17,7 @@ inline PyObject * _type_check(PyObject * obj, PyTypeObject * typ, const char * f
     return obj;
 }
 
-#define cast(T, o) (T *)_type_check(o, T ## _type, __FILE__, __LINE__)
+#define cast(T, o) (T *)_type_check((PyObject *)o, T ## _type, __FILE__, __LINE__)
 
 template <typename T>
 inline T * _new_ref(T * x, const char * file, int line) {
