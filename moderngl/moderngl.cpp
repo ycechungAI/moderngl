@@ -2056,28 +2056,25 @@ PyObject * VertexArray_meth_bind(VertexArray * self, PyObject * args, PyObject *
     int location;
     int gltype;
     int size;
-    int offset;
+    void * offset;
     int stride;
     int divisor;
 
     int args_ok = PyArg_ParseTupleAndKeywords(
-        args, kwa, "O!iiiiii", kw, Buffer_type, &buffer, &location, &gltype, &size, &offset, &stride, &divisor
+        args, kwa, "O!iiinii", kw, Buffer_type, &buffer, &location, &gltype, &size, &offset, &stride, &divisor
     );
 
     if (!args_ok) {
         return NULL;
     }
 
-    int format = gltype & 0xffff;
-    char * base = NULL;
-
 	self->ctx->gl.BindVertexArray(self->glo);
 	self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, buffer->glo);
 
     if (gltype >> 16 & 1) {
-        self->ctx->gl.VertexAttribIPointer(location, size, format, stride, base + offset);
+        self->ctx->gl.VertexAttribIPointer(location, size, gltype & 0xffff, stride, offset);
     } else {
-        self->ctx->gl.VertexAttribPointer(location, size, format, gltype >> 20 & 1, stride, base + offset);
+        self->ctx->gl.VertexAttribPointer(location, size, gltype & 0xffff, gltype >> 20 & 1, stride, offset);
     }
 
 	self->ctx->gl.VertexAttribDivisor(location, divisor);
