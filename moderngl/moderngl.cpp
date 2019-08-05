@@ -1909,8 +1909,8 @@ PyMemberDef Texture_members[] = {
 
 PyType_Slot Texture_slots[] = {
     {Py_tp_methods, Texture_methods},
-    // {Py_tp_methods, Texture_getset},
-    // {Py_tp_methods, Texture_members},
+    {Py_tp_methods, Texture_getset},
+    {Py_tp_methods, Texture_members},
     {Py_tp_dealloc, (void *)BaseObject_dealloc},
     {},
 };
