@@ -819,9 +819,22 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
     const char * src[6] = {};
     PyObject * varyings = NULL;
 
+    // int args_ok = PyArg_ParseTupleAndKeywords(
+    //     args, kwa, "|ssssssO", kw, &src[0], &src[1], &src[2], &src[3], &src[4], &src[5], &varyings
+    // );
+
+    // backward compatibility
+    PyObject * asrc[6] = {Py_None, Py_None, Py_None, Py_None, Py_None, Py_None};
     int args_ok = PyArg_ParseTupleAndKeywords(
-        args, kwa, "|ssssssO", kw, &src[0], &src[1], &src[2], &src[3], &src[4], &src[5], &varyings
+        args, kwa, "|OOOOOOO", kw, &asrc[0], &asrc[1], &asrc[2], &asrc[3], &asrc[4], &asrc[5], &varyings
     );
+
+    // backward compatibility
+    for (int i = 0; i < 6; ++i) {
+        if (asrc[i] != Py_None) {
+            src[i] = PyUnicode_AsUTF8(asrc[i]);
+        }
+    }
 
     if (!args_ok) {
         return NULL;
@@ -1934,13 +1947,14 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
         return Context_meth_vertex_array(self, call_args, kwa);
     }
 
-    static char * kw[] = {"program", "bindings", "mode", "index_buffer", "output_buffer", "indirect_buffer", NULL};
+    static char * kw[] = {"program", "bindings", "index_buffer", "mode", NULL};
 
     Program * program;
     PyObject * bindings;
     PyObject * index_buffer = NULL;
+    int mode = GL_TRIANGLES;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "O!O|O", kw, Program_type, &program, &bindings, &index_buffer)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "O!O|Oi", kw, Program_type, &program, &bindings, &index_buffer, &mode)) {
         return NULL;
     }
 
@@ -1954,7 +1968,7 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
 
     res->program = new_ref(program);
     res->scope = new_ref(self->default_scope);
-    res->mode = GL_TRIANGLES;
+    res->mode = mode;
     res->vertices = 0;
     res->instances = 1;
 
@@ -2016,12 +2030,32 @@ PyObject * VertexArray_meth_bind(VertexArray * self, PyObject * args, PyObject *
 }
 
 PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject * kwa) {
-    static char * kw[] = {"condition", NULL};
+    static char * kw[] = {"mode", "vertices", "instances", "condition", NULL};
+
+    // backward compatibility
+    int mode = -1;
+    int vertices = -1;
+    int instances = -1;
 
     Query * condition = NULL;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|O!", kw, Query_type, &condition)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|iiiO!", kw, &mode, &vertices, &instances, Query_type, &condition)) {
         return NULL;
+    }
+
+    // backward compatibility
+    if (mode == -1) {
+        mode = self->mode;
+    }
+
+    // backward compatibility
+    if (instances == -1) {
+        instances = self->instances;
+    }
+
+    // backward compatibility
+    if (vertices == -1) {
+        vertices = self->vertices;
     }
 
     self->ctx->gl.BindVertexArray(self->glo);
@@ -2061,22 +2095,23 @@ PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject
     if (self->output_buffer) {
         self->ctx->gl.BindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, self->output_buffer->glo);
         self->ctx->gl.Enable(GL_RASTERIZER_DISCARD);
-        self->ctx->gl.BeginTransformFeedback(self->mode);
+        self->ctx->gl.BeginTransformFeedback(mode);
     }
 
+    // backward compatibility
     if (self->indirect_buffer) {
         self->ctx->gl.BindBuffer(GL_DRAW_INDIRECT_BUFFER, self->indirect_buffer->glo);
         if (self->index_buffer) {
-            self->ctx->gl.MultiDrawElementsIndirect(self->mode, self->index_format, 0, self->instances, 20);
+            self->ctx->gl.MultiDrawElementsIndirect(mode, self->index_format, 0, instances, 20);
         } else {
-            self->ctx->gl.MultiDrawArraysIndirect(self->mode, 0, self->instances, 16);
+            self->ctx->gl.MultiDrawArraysIndirect(mode, 0, instances, 16);
         }
         self->ctx->gl.BindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
     } else {
         if (self->index_buffer) {
-            self->ctx->gl.DrawElementsInstanced(self->mode, self->vertices, self->index_format, 0, self->instances);
+            self->ctx->gl.DrawElementsInstanced(mode, vertices, self->index_format, 0, instances);
         } else {
-            self->ctx->gl.DrawArraysInstanced(self->mode, 0, self->vertices, self->instances);
+            self->ctx->gl.DrawArraysInstanced(mode, 0, vertices, instances);
         }
     }
 
@@ -2463,10 +2498,32 @@ PyObject * Context_meth_clear(Context * self, PyObject * args, PyObject * kwa) {
 }
 
 // backward compatibility
+PyObject * Context_meth_enable(Context * self, PyObject * args, PyObject * kwa) {
+    static char * kw[] = {"enable", NULL};
+    int flags;
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "i", kw, &flags)) {
+        return NULL;
+    }
+    self->default_scope->enable |= flags;
+    Py_RETURN_NONE;
+}
+
+// backward compatibility
+PyObject * Context_meth_disable(Context * self, PyObject * args, PyObject * kwa) {
+    static char * kw[] = {"enable", NULL};
+    int flags;
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "i", kw, &flags)) {
+        return NULL;
+    }
+    self->default_scope->enable &= ~flags;
+    Py_RETURN_NONE;
+}
+
+// backward compatibility
 PyObject * Context_meth_enable_only(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"enable", NULL};
     int flags;
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|fffffO", kw, &flags)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "i", kw, &flags)) {
         return NULL;
     }
     self->default_scope->enable = flags;
@@ -2497,6 +2554,8 @@ PyMethodDef Context_methods[] = {
 
     // backward compatibility
     {"clear", (PyCFunction)Context_meth_clear, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"enable", (PyCFunction)Context_meth_enable, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"disable", (PyCFunction)Context_meth_disable, METH_VARARGS | METH_KEYWORDS, NULL},
     {"enable_only", (PyCFunction)Context_meth_enable_only, METH_VARARGS | METH_KEYWORDS, NULL},
     {"simple_vertex_array", (PyCFunction)Context_meth_vertex_array, METH_VARARGS | METH_KEYWORDS, NULL},
     {},
@@ -2687,18 +2746,64 @@ extern "C" PyObject * PyInit_moderngl() {
     PyModule_AddObject(module, "TextureCube", (PyObject *)Texture_type);
 
     // backward compatibility
-    PyModule_AddIntConstant(module, "POINTS", 0x0000);
-    PyModule_AddIntConstant(module, "LINES", 0x0001);
-    PyModule_AddIntConstant(module, "LINE_LOOP", 0x0002);
-    PyModule_AddIntConstant(module, "LINE_STRIP", 0x0003);
-    PyModule_AddIntConstant(module, "TRIANGLES", 0x0004);
-    PyModule_AddIntConstant(module, "TRIANGLE_STRIP", 0x0005);
-    PyModule_AddIntConstant(module, "TRIANGLE_FAN", 0x0006);
-    PyModule_AddIntConstant(module, "LINES_ADJACENCY", 0x000A);
-    PyModule_AddIntConstant(module, "LINE_STRIP_ADJACENCY", 0x000B);
-    PyModule_AddIntConstant(module, "TRIANGLES_ADJACENCY", 0x000C);
-    PyModule_AddIntConstant(module, "TRIANGLE_STRIP_ADJACENCY", 0x000D);
-    PyModule_AddIntConstant(module, "PATCHES", 0x000E);
+    PyModule_AddIntConstant(module, "BLEND", MGL_BLEND);
+    PyModule_AddIntConstant(module, "DEPTH_TEST", MGL_DEPTH_TEST);
+    PyModule_AddIntConstant(module, "CULL_FACE", MGL_CULL_FACE);
+
+    // backward compatibility
+    PyModule_AddIntConstant(module, "CLAMP_TO_EDGE_X", MGL_CLAMP_TO_EDGE_X);
+    PyModule_AddIntConstant(module, "CLAMP_TO_EDGE_Y", MGL_CLAMP_TO_EDGE_Y);
+    PyModule_AddIntConstant(module, "CLAMP_TO_EDGE_Z", MGL_CLAMP_TO_EDGE_Z);
+    PyModule_AddIntConstant(module, "REPEAT_X", MGL_REPEAT_X);
+    PyModule_AddIntConstant(module, "REPEAT_Y", MGL_REPEAT_Y);
+    PyModule_AddIntConstant(module, "REPEAT_Z", MGL_REPEAT_Z);
+    PyModule_AddIntConstant(module, "MIRRORED_REPEAT_X", MGL_MIRRORED_REPEAT_X);
+    PyModule_AddIntConstant(module, "MIRRORED_REPEAT_Y", MGL_MIRRORED_REPEAT_Y);
+    PyModule_AddIntConstant(module, "MIRRORED_REPEAT_Z", MGL_MIRRORED_REPEAT_Z);
+    PyModule_AddIntConstant(module, "MIRROR_CLAMP_TO_EDGE_X", MGL_MIRROR_CLAMP_TO_EDGE_X);
+    PyModule_AddIntConstant(module, "MIRROR_CLAMP_TO_EDGE_Y", MGL_MIRROR_CLAMP_TO_EDGE_Y);
+    PyModule_AddIntConstant(module, "MIRROR_CLAMP_TO_EDGE_Z", MGL_MIRROR_CLAMP_TO_EDGE_Z);
+    PyModule_AddIntConstant(module, "CLAMP_TO_BORDER_X", MGL_CLAMP_TO_BORDER_X);
+    PyModule_AddIntConstant(module, "CLAMP_TO_BORDER_Y", MGL_CLAMP_TO_BORDER_Y);
+    PyModule_AddIntConstant(module, "CLAMP_TO_BORDER_Z", MGL_CLAMP_TO_BORDER_Z);
+
+    // backward compatibility
+    PyModule_AddIntConstant(module, "ZERO", GL_ZERO);
+    PyModule_AddIntConstant(module, "ONE", GL_ONE);
+    PyModule_AddIntConstant(module, "SRC_COLOR", GL_SRC_COLOR);
+    PyModule_AddIntConstant(module, "SRC_ALPHA", GL_SRC_ALPHA);
+    PyModule_AddIntConstant(module, "DST_COLOR", GL_DST_COLOR);
+    PyModule_AddIntConstant(module, "DST_ALPHA", GL_DST_ALPHA);
+    PyModule_AddIntConstant(module, "ONE_MINUS_SRC_COLOR", GL_ONE_MINUS_SRC_COLOR);
+    PyModule_AddIntConstant(module, "ONE_MINUS_SRC_ALPHA", GL_ONE_MINUS_SRC_ALPHA);
+    PyModule_AddIntConstant(module, "ONE_MINUS_DST_COLOR", GL_ONE_MINUS_DST_COLOR);
+    PyModule_AddIntConstant(module, "ONE_MINUS_DST_ALPHA", GL_ONE_MINUS_DST_ALPHA);
+
+    // backward compatibility
+    PyModule_AddIntConstant(module, "FIRST_VERTEX_CONVENTION", GL_FIRST_VERTEX_CONVENTION);
+    PyModule_AddIntConstant(module, "LAST_VERTEX_CONVENTION", GL_LAST_VERTEX_CONVENTION);
+
+    // backward compatibility
+    PyModule_AddIntConstant(module, "NEAREST", GL_NEAREST);
+    PyModule_AddIntConstant(module, "LINEAR", GL_LINEAR);
+    PyModule_AddIntConstant(module, "NEAREST_MIPMAP_NEAREST", GL_NEAREST_MIPMAP_NEAREST);
+    PyModule_AddIntConstant(module, "LINEAR_MIPMAP_NEAREST", GL_LINEAR_MIPMAP_NEAREST);
+    PyModule_AddIntConstant(module, "NEAREST_MIPMAP_LINEAR", GL_NEAREST_MIPMAP_LINEAR);
+    PyModule_AddIntConstant(module, "LINEAR_MIPMAP_LINEAR", GL_LINEAR_MIPMAP_LINEAR);
+
+    // backward compatibility
+    PyModule_AddIntConstant(module, "POINTS", GL_POINTS);
+    PyModule_AddIntConstant(module, "LINES", GL_LINES);
+    PyModule_AddIntConstant(module, "LINE_LOOP", GL_LINE_LOOP);
+    PyModule_AddIntConstant(module, "LINE_STRIP", GL_LINE_STRIP);
+    PyModule_AddIntConstant(module, "TRIANGLES", GL_TRIANGLES);
+    PyModule_AddIntConstant(module, "TRIANGLE_STRIP", GL_TRIANGLE_STRIP);
+    PyModule_AddIntConstant(module, "TRIANGLE_FAN", GL_TRIANGLE_FAN);
+    PyModule_AddIntConstant(module, "LINES_ADJACENCY", GL_LINES_ADJACENCY);
+    PyModule_AddIntConstant(module, "LINE_STRIP_ADJACENCY", GL_LINE_STRIP_ADJACENCY);
+    PyModule_AddIntConstant(module, "TRIANGLES_ADJACENCY", GL_TRIANGLES_ADJACENCY);
+    PyModule_AddIntConstant(module, "TRIANGLE_STRIP_ADJACENCY", GL_TRIANGLE_STRIP_ADJACENCY);
+    PyModule_AddIntConstant(module, "PATCHES", GL_PATCHES);
 
     PyObject * math_module = PyInit_moderngl_math();
     PyModule_AddObject(module, "math", math_module);
