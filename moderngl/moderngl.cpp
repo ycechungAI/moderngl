@@ -1112,10 +1112,10 @@ PyGetSetDef Renderbuffer_getset[] = {
 };
 
 PyMemberDef Renderbuffer_members[] = {
-    {"samples", T_INT, offsetof(Renderbuffer, samples), 0, NULL},
-    {"components", T_INT, offsetof(Renderbuffer, components), 0, NULL},
-    {"width", T_INT, offsetof(Renderbuffer, width), 0, NULL},
-    {"height", T_INT, offsetof(Renderbuffer, height), 0, NULL},
+    {"samples", T_INT, offsetof(Renderbuffer, samples), READONLY, NULL},
+    {"components", T_INT, offsetof(Renderbuffer, components), READONLY, NULL},
+    {"width", T_INT, offsetof(Renderbuffer, width), READONLY, NULL},
+    {"height", T_INT, offsetof(Renderbuffer, height), READONLY, NULL},
     {"glo", T_INT, offsetof(Renderbuffer, glo), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
@@ -1781,11 +1781,11 @@ PyGetSetDef Texture_getset[] = {
 };
 
 PyMemberDef Texture_members[] = {
-    {"samples", T_INT, offsetof(Texture, samples), 0, NULL},
-    {"components", T_INT, offsetof(Texture, components), 0, NULL},
-    {"width", T_INT, offsetof(Texture, width), 0, NULL},
-    {"height", T_INT, offsetof(Texture, height), 0, NULL},
-    {"length", T_INT, offsetof(Texture, length), 0, NULL},
+    {"samples", T_INT, offsetof(Texture, samples), READONLY, NULL},
+    {"components", T_INT, offsetof(Texture, components), READONLY, NULL},
+    {"width", T_INT, offsetof(Texture, width), READONLY, NULL},
+    {"height", T_INT, offsetof(Texture, height), READONLY, NULL},
+    {"length", T_INT, offsetof(Texture, length), READONLY, NULL},
     {"glo", T_INT, offsetof(Texture, glo), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
