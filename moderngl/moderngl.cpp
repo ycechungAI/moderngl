@@ -617,11 +617,12 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
     PyObject * write_offset = NULL;
     PyObject * into = Py_None;
     int alignment = 1;
+    PyObject * dtype = NULL;
 
     int args_ok = PyArg_ParseTupleAndKeywords(
         args,
         kwa,
-        "|(ii)ii(ii)OOi",
+        "|(ii)ii(ii)OOiO",
         kw,
         &width,
         &height,
@@ -631,12 +632,24 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
         &src_xy[1],
         &write_offset,
         &into,
-        &alignment
+        &alignment,
+        &dtype
     );
 
     if (!args_ok) {
         return NULL;
     }
+
+    DataType * typ = &f1;
+    if (dtype) {
+        typ = from_dtype(dtype);
+        if (typ->shape == 'd') {
+            components = 1;
+        }
+    }
+
+    int base_format = typ->base_format[components];
+    int pixel_type = typ->gl_type;
 
     if (Py_TYPE(into) == Framebuffer_type) {
         int dst_xy[2] = {};
@@ -663,8 +676,6 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
 
     if (Py_TYPE(into) == Buffer_type) {
         Buffer * dst = cast(Buffer, into);
-        int base_format = GL_RGB;
-        int pixel_type = GL_UNSIGNED_BYTE;
         int offset = write_offset ? PyLong_AsLong(write_offset) : 0;
 		self->ctx->gl.BindBuffer(GL_PIXEL_PACK_BUFFER, dst->glo);
 		self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, (char *)NULL + offset);
@@ -678,7 +689,7 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
         Py_buffer view = {};
         PyObject_GetBuffer(into, &view, PyBUF_WRITABLE);
         self->ctx->gl.ReadBuffer(GL_COLOR_ATTACHMENT0 + attachment);
-        self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, GL_RGB, GL_UNSIGNED_BYTE, (char *)view.buf + offset);
+        self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, (char *)view.buf + offset);
         PyBuffer_Release(&view);
         Py_RETURN_NONE;
     }
@@ -687,7 +698,7 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
         PyObject * res = PyBytes_FromStringAndSize(NULL, width * height * components);
         char * data = PyBytes_AS_STRING(res);
         self->ctx->gl.ReadBuffer(GL_COLOR_ATTACHMENT0 + attachment);
-        self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+        self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, data);
         return res;
     }
 
