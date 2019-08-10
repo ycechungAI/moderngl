@@ -599,13 +599,18 @@ def bind_attributes(vao, bindings):
 
             assert re.match(r'^\d*n?[fiux][124]?( \d*n?[fiux][124]?)*$', layout)
             layout = [(int(x), y) for x, y in re.findall(r'(\d*)(n?[fiux][124]?)', layout)]
-            # assert len(layout) == len(attribs)
+            attribs = iter(attribs)
 
-            for attr, (items, fmt) in zip(attribs, layout):
+            for items, fmt in layout:
+                size, bind_type = FORMAT[fmt]
+                if not bind_type:
+                    total_size += items * size
+                    offset += items * size
+                    continue
+                attr = next(attribs)
                 location, attrib_type, alen = attr_info[attr]
                 _, rows, _ = GLTYPE_INFO.get(attrib_type, (1, 1, 0x11405))
                 cols = items // rows
-                size, bind_type = FORMAT[fmt]
                 total_size += alen * rows * cols * size
                 for i in range(alen * rows):
                     if bind_type:
