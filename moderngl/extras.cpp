@@ -94,13 +94,13 @@ PyObject * moderngl_meth_pack(PyObject * self, PyObject * args, PyObject * kwa) 
             idx += 1;
         }
         const pack_t * proc = pack_f;
+        int size = 4;
         switch (layout[idx]) {
             case 'f': proc = pack_f; idx += 1; break;
             case 'i': proc = pack_i; idx += 1; break;
             case 'u': proc = pack_u; idx += 1; break;
-            case 'x': proc = pack_x; idx += 1; break;
+            case 'x': proc = pack_x; idx += 1; size = 1; break;
         }
-        int size = 4;
         if (layout[idx] == '1' || layout[idx] == '2' || layout[idx] == '4') {
             size = layout[idx] - '0';
             idx += 1;
