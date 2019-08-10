@@ -6,8 +6,11 @@ void pack_f4(void ** ptr, PyObject *** it) {
 }
 
 void pack_f2(void ** ptr, PyObject *** it) {
-    float f = (float)PyFloat_AsDouble(*((*it)++));
+    if (float f = (float)PyFloat_AsDouble(*((*it)++))) {
     *(short *)(*ptr) = (((*(int *)&f & 0x7fffffff) >> 13) - 0x1c000) | ((*(int *)&f & 0x80000000) >> 16);
+    } else {
+        *(short *)(*ptr) = 0;
+    }
     *ptr = (short *)(*ptr) + 1;
 }
 
