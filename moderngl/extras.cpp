@@ -104,8 +104,8 @@ PyObject * moderngl_meth_pack(PyObject * self, PyObject * args, PyObject * kwa) 
             size = layout[idx] - '0';
             idx += 1;
         }
-        total_size += size;
         count = count ? count : 1;
+        total_size += size * count;
         for (int i = 0; i < count; ++i) {
             if (packers == 1024) {
                 return NULL;
