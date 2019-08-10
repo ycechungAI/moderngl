@@ -71,12 +71,13 @@ const pack_t pack_u[5] = {NULL, pack_u1, pack_u2, NULL, pack_u4};
 const pack_t pack_x[5] = {NULL, pack_x1, pack_x2, NULL, pack_x4};
 
 PyObject * moderngl_meth_pack(PyObject * self, PyObject * args, PyObject * kwa) {
-    static char * kw[] = {"array", "layout", NULL};
+    static char * kw[] = {"array", "layout", "stride", NULL};
 
     PyObject * array;
     const char * layout = "f4";
+    int stride = 0;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "O|s", kw, &array, &layout)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "O|si", kw, &array, &layout, &stride)) {
         return NULL;
     }
 
@@ -123,6 +124,11 @@ PyObject * moderngl_meth_pack(PyObject * self, PyObject * args, PyObject * kwa) 
         }
     }
 
+    const int skip = total_size < stride ? stride - total_size : 0;
+    if (total_size < stride) {
+        total_size = stride;
+    }
+
     array = PySequence_Fast(array, "not iterable");
     PyObject ** it = PySequence_Fast_ITEMS(array);
     int count = (int)PySequence_Fast_GET_SIZE(array);
@@ -133,10 +139,12 @@ PyObject * moderngl_meth_pack(PyObject * self, PyObject * args, PyObject * kwa) 
     int rows = count / readers;
     PyObject * res = PyBytes_FromStringAndSize(NULL, rows * total_size);
     void * ptr = PyBytes_AS_STRING(res);
+    memset(ptr, 0, rows * total_size);
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < packers; ++j) {
             packer[j](&ptr, &it);
         }
+        ptr = (char *)ptr + skip;
     }
     return res;
 }
