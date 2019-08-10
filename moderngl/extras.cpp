@@ -109,6 +109,7 @@ PyObject * moderngl_meth_pack(PyObject * self, PyObject * args, PyObject * kwa) 
         total_size += size * count;
         for (int i = 0; i < count; ++i) {
             if (packers == 1024) {
+                PyErr_BadInternalCall();
                 return NULL;
             }
             packer[packers++] = proc[size];
@@ -117,6 +118,7 @@ PyObject * moderngl_meth_pack(PyObject * self, PyObject * args, PyObject * kwa) 
             }
         }
         if (layout[idx] && layout[idx] != ' ') {
+            PyErr_BadInternalCall();
             return NULL;
         }
         if (layout[idx] == ' ') {
