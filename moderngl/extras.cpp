@@ -49,10 +49,26 @@ void pack_u1(void ** ptr, PyObject *** it) {
     *ptr = (unsigned char *)(*ptr) + 1;
 }
 
+void pack_x4(void ** ptr, PyObject *** it) {
+    *(int *)(*ptr) = 0;
+    *ptr = (int *)(*ptr) + 1;
+}
+
+void pack_x2(void ** ptr, PyObject *** it) {
+    *(short *)(*ptr) = 0;
+    *ptr = (short *)(*ptr) + 1;
+}
+
+void pack_x1(void ** ptr, PyObject *** it) {
+    *(char *)(*ptr) = 0;
+    *ptr = (char *)(*ptr) + 1;
+}
+
 typedef void (* pack_t)(void ** ptr, PyObject *** it);
 const pack_t pack_f[5] = {NULL, pack_f1, pack_f2, NULL, pack_f4};
 const pack_t pack_i[5] = {NULL, pack_i1, pack_i2, NULL, pack_i4};
 const pack_t pack_u[5] = {NULL, pack_u1, pack_u2, NULL, pack_u4};
+const pack_t pack_x[5] = {NULL, pack_x1, pack_x2, NULL, pack_x4};
 
 PyObject * moderngl_meth_pack(PyObject * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"array", "layout", NULL};
@@ -67,6 +83,7 @@ PyObject * moderngl_meth_pack(PyObject * self, PyObject * args, PyObject * kwa) 
     int total_size = 0;
     pack_t packer[1024];
     int packers = 0;
+    int readers = 0;
     int idx = 0;
 
     while (layout[idx]) {
@@ -80,6 +97,7 @@ PyObject * moderngl_meth_pack(PyObject * self, PyObject * args, PyObject * kwa) 
             case 'f': proc = pack_f; idx += 1; break;
             case 'i': proc = pack_i; idx += 1; break;
             case 'u': proc = pack_u; idx += 1; break;
+            case 'x': proc = pack_x; idx += 1; break;
         }
         int size = 4;
         if (layout[idx] == '1' || layout[idx] == '2' || layout[idx] == '4') {
@@ -93,6 +111,9 @@ PyObject * moderngl_meth_pack(PyObject * self, PyObject * args, PyObject * kwa) 
                 return NULL;
             }
             packer[packers++] = proc[size];
+            if (proc != pack_x) {
+                readers += 1;
+            }
         }
         if (layout[idx] && layout[idx] != ' ') {
             return NULL;
@@ -105,10 +126,11 @@ PyObject * moderngl_meth_pack(PyObject * self, PyObject * args, PyObject * kwa) 
     array = PySequence_Fast(array, "not iterable");
     PyObject ** it = PySequence_Fast_ITEMS(array);
     int count = (int)PySequence_Fast_GET_SIZE(array);
-    if (count % packers) {
+    if (count % readers) {
+        PyErr_BadInternalCall();
         return NULL;
     }
-    int rows = count / packers;
+    int rows = count / readers;
     PyObject * res = PyBytes_FromStringAndSize(NULL, rows * total_size);
     void * ptr = PyBytes_AS_STRING(res);
     for (int i = 0; i < rows; ++i) {
