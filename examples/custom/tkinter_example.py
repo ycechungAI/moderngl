@@ -5,6 +5,10 @@ from PIL import Image, ImageTk
 import moderngl
 
 ctx = moderngl.context(standalone=True)
+
+size = (1280, 720)
+fbo = ctx.framebuffer(ctx.renderbuffer(size, 3))
+
 prog = ctx.program(
     vertex_shader='''
         #version 330
@@ -37,10 +41,9 @@ vao = ctx.vertex_array(prog, [
     vbo.bind('in_vert'),
 ])
 
-size = (1280, 720)
-fbo = ctx.framebuffer(ctx.renderbuffer(size, 3))
-fbo.clear((1.0, 1.0, 1.0))
 vao.scope = ctx.scope(framebuffer=fbo)
+
+fbo.clear((1.0, 1.0, 1.0))
 vao.render()
 
 class Window(Frame):
