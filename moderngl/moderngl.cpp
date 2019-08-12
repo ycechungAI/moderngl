@@ -2394,6 +2394,21 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
         }
     }
 
+    if (!glversion) {
+        int major = 0;
+        int minor = 0;
+        res->gl.GetIntegerv(GL_MAJOR_VERSION, &major);
+        res->gl.GetIntegerv(GL_MINOR_VERSION, &minor);
+        glversion = major * 100 + minor * 10;
+        if (!glversion) {
+            res->gl.GetError();
+            const char * ver = (const char *)res->gl.GetString(GL_VERSION);
+            if (ver && '0' <= ver[0] && ver[0] <= '9' && ver[1] == '.' && '0' <= ver[2] && ver[2] <= '9') {
+                glversion = (ver[0] - '0') * 100 + (ver[2] - '0') * 10;
+            }
+        }
+    }
+
     res->module = self;
     res->tools = PyObject_GetAttrString(self, "mgl");
 
