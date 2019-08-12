@@ -1504,10 +1504,8 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TR
     res->enable = enable;
     res->framebuffer = new_ref(framebuffer);
     res->num_samplers = num_samplers;
-    res->num_uniform_buffers = 0; // res->num_uniform_buffers = uniform_buffers ? (int)PySequence_Fast_GET_SIZE(uniform_buffers) : 0;
-    res->num_storage_buffers = 0; // res->num_storage_buffers = storage_buffers ? (int)PySequence_Fast_GET_SIZE(storage_buffers) : 0;
-    // int num_bindings = res->num_samplers + res->num_uniform_buffers + res->num_storage_buffers;
-    // res->bindings = (ScopeBinding *)PyMem_Malloc(sizeof(ScopeBinding) * res->num_samplers);
+    res->num_uniform_buffers = num_uniform_buffers;
+    res->num_storage_buffers = num_storage_buffers;
 
     int binding = 0;
     for (int i = 0; i < num_samplers; ++i) {
@@ -1515,6 +1513,24 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TR
         PyList_Append(res->bindings_lst, (PyObject *)sampler);
         int bind = PyLong_AsLong(PyTuple_GetItem(PySequence_Fast_GET_ITEM(samplers, i), 1));
         res->bindings[binding].sampler = new_ref(sampler);
+        res->bindings[binding].bind = bind;
+        binding += 1;
+    }
+
+    for (int i = 0; i < num_uniform_buffers; ++i) {
+        Buffer * buffer = cast(Buffer, PyTuple_GetItem(PySequence_Fast_GET_ITEM(uniform_buffers, i), 0));
+        PyList_Append(res->bindings_lst, (PyObject *)buffer);
+        int bind = PyLong_AsLong(PyTuple_GetItem(PySequence_Fast_GET_ITEM(uniform_buffers, i), 1));
+        res->bindings[binding].buffer = new_ref(buffer);
+        res->bindings[binding].bind = bind;
+        binding += 1;
+    }
+
+    for (int i = 0; i < num_storage_buffers; ++i) {
+        Buffer * buffer = cast(Buffer, PyTuple_GetItem(PySequence_Fast_GET_ITEM(storage_buffers, i), 0));
+        PyList_Append(res->bindings_lst, (PyObject *)buffer);
+        int bind = PyLong_AsLong(PyTuple_GetItem(PySequence_Fast_GET_ITEM(storage_buffers, i), 1));
+        res->bindings[binding].buffer = new_ref(buffer);
         res->bindings[binding].bind = bind;
         binding += 1;
     }
@@ -2133,7 +2149,7 @@ PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject
         ((self->scope->enable & MGL_BLEND) ? self->ctx->gl.Enable : self->ctx->gl.Disable)(GL_BLEND);
         ((self->scope->enable & MGL_DEPTH_TEST) ? self->ctx->gl.Enable : self->ctx->gl.Disable)(GL_DEPTH_TEST);
         ((self->scope->enable & MGL_CULL_FACE) ? self->ctx->gl.Enable : self->ctx->gl.Disable)(GL_CULL_FACE);
-        if (self->scope->num_samplers) {
+        if (self->scope->bindings) {
             for (int i = 0; i < self->scope->num_samplers; ++i) {
                 int location = self->scope->bindings[i].bind;
                 int texture_target = self->scope->bindings[i].sampler->texture->texture_target;
@@ -2142,6 +2158,18 @@ PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject
                 self->ctx->gl.ActiveTexture(GL_TEXTURE0 + location);
                 self->ctx->gl.BindTexture(texture_target, texture_glo);
                 self->ctx->gl.BindSampler(location, sampler_glo);
+            }
+            for (int i = 0; i < self->scope->num_uniform_buffers; ++i) {
+                int index = self->scope->bindings[i].bind;
+                int buffer_glo = self->scope->bindings[i].buffer->glo;
+                int size = self->scope->bindings[i].buffer->size;
+                self->ctx->gl.BindBufferRange(GL_UNIFORM_BUFFER, index, buffer_glo, 0, size);
+            }
+            for (int i = 0; i < self->scope->num_storage_buffers; ++i) {
+                int index = self->scope->bindings[i].bind;
+                int buffer_glo = self->scope->bindings[i].buffer->glo;
+                int size = self->scope->bindings[i].buffer->size;
+                self->ctx->gl.BindBufferRange(GL_SHADER_STORAGE_BUFFER, index, buffer_glo, 0, size);
             }
         }
         if (self->scope->framebuffer) {
