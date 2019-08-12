@@ -1902,8 +1902,9 @@ PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) {
         Buffer * buffer = cast(Buffer, data);
         self->ctx->gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer->glo);
     } else {
-        Py_buffer view = {};
-        PyObject_GetBuffer(data, &view, PyBUF_STRIDED_RO);
+        if (PyObject_GetBuffer(data, &view, PyBUF_STRIDED_RO) < 0) {
+            return NULL;
+        }
     }
 
     self->ctx->gl.BindTexture(self->texture_target, self->glo);
