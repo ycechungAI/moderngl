@@ -6,10 +6,20 @@ void pack_f4(void ** ptr, PyObject *** it) {
 }
 
 void pack_f2(void ** ptr, PyObject *** it) {
-    if (float f = (float)PyFloat_AsDouble(*((*it)++))) {
-        *(short *)(*ptr) = (((*(int *)&f & 0x7fffffff) >> 13) - 0x1c000) | ((*(int *)&f & 0x80000000) >> 16);
+    float f = (float)PyFloat_AsDouble(*((*it)++));
+    const unsigned x = *(unsigned *)&f;
+    if (-65500.0 < f && f < 65500.0) {
+        if ((x & 0x7fffffff) && (f < -0.000000059605 || 0.000000059605 < f)) {
+            *(short *)(*ptr) = ((x >> 13 & 0x3ffff) + (x >> 12 & 1) - 0x1c000) | (x >> 16 & 0x8000);
+        } else {
+            *(short *)(*ptr) = x >> 16 & 0x8000;
+        }
     } else {
-        *(short *)(*ptr) = 0;
+        if (x & 0x7fffff) {
+            *(short *)(*ptr) = (x >> 16 & 0x8000) | (x >> 13 & 1) | 0x7c01;
+        } else {
+            *(short *)(*ptr) = (x >> 16 & 0x8000) | 0x7c00;
+        }
     }
     *ptr = (short *)(*ptr) + 1;
 }
