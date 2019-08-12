@@ -17,7 +17,8 @@ struct _Trace {
     }
 };
 
-#define TRACE _Trace(__FUNCTION__, __FILE__, __LINE__);
+// #define TRACE _Trace(__FUNCTION__, __FILE__, __LINE__);
+#define TRACE
 
 inline PyObject * _type_check(PyObject * obj, PyTypeObject * typ, const char * file, int line) {
     if (!obj) {
