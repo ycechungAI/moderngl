@@ -5,6 +5,20 @@
 extern "C" unsigned glGetError();
 #define ERR printf("%s:%d %s (error=%x, before=%x)\n", __FILE__, __LINE__, __FUNCTION__, glGetError(), glGetError())
 
+struct _Trace {
+    const char * f;
+    const char * fn;
+    int ln;
+    _Trace(const char * f, const char * fn, int ln): fn(fn), f(f), ln(ln) {
+        printf("entering %s (%s:%d)\n", f, fn, ln);
+    }
+    ~_Trace() {
+        printf("leaving %s\n", f);
+    }
+};
+
+#define TRACE _Trace(__FUNCTION__, __FILE__, __LINE__);
+
 inline PyObject * _type_check(PyObject * obj, PyTypeObject * typ, const char * file, int line) {
     if (!obj) {
         fprintf(stderr, "null object %s:%d", file, line);
