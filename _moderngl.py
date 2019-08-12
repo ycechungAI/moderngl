@@ -1,5 +1,7 @@
 import re
 
+__version__ = '6.0.0'
+
 
 class Limits:
     POINT_SIZE_RANGE: tuple
