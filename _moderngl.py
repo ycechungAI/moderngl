@@ -582,7 +582,7 @@ def texture3d_from(ctx, images):
     return ctx.texture3d((width, height, length), components, data)
 
 
-def bind_attributes(vao, bindings):
+def bind_attributes(vao, bindings, setmax=True):
     max_vertices = None
     max_instances = None
     attr_info = vao.program.attributes
@@ -640,11 +640,12 @@ def bind_attributes(vao, bindings):
         for location, typ, cols, offset in binds:
             vao.bind(buffer, location, typ, cols, offset, stride, divisor)
 
-    if max_vertices is not None:
-        vao.vertices = max_vertices
+    if setmax:
+        if max_vertices is not None:
+            vao.vertices = max_vertices
 
-    if max_instances is not None:
-        vao.instances = max_instances
+        if max_instances is not None:
+            vao.instances = max_instances
 
 
 def serialize_uniform(prog, uniform, value):

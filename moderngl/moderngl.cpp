@@ -2034,12 +2034,12 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
 
     static char * kw[] = {"program", "bindings", "index_buffer", "mode", NULL};
 
-    Program * program;
-    PyObject * bindings = empty_tuple;
+    Program * program = NULL;
+    PyObject * bindings = Py_None;
     PyObject * index_buffer = NULL;
     int mode = GL_TRIANGLES;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "O!|OOi", kw, Program_type, &program, &bindings, &index_buffer, &mode)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|O!OOi", kw, Program_type, &program, &bindings, &index_buffer, &mode)) {
         return NULL;
     }
 
@@ -2051,7 +2051,7 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
 
     res->extra = NULL;
 
-    res->program = new_ref(program);
+    res->program = program ? new_ref(program) : NULL;
     res->scope = new_ref(self->default_scope);
     res->mode = mode;
     res->vertices = 0;
@@ -2064,10 +2064,12 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
 
 	self->gl.GenVertexArrays(1, (GLuint *)&res->glo);
 
-    PyObject * call = PyObject_CallMethod(self->tools, "bind_attributes", "OO", res, bindings);
-    Py_XDECREF(call);
-    if (!call) {
-        return NULL;
+    if (bindings != Py_None) {
+        PyObject * call = PyObject_CallMethod(self->tools, "bind_attributes", "OO", res, bindings);
+        Py_XDECREF(call);
+        if (!call) {
+            return NULL;
+        }
     }
 
     if (index_buffer) {
@@ -2082,8 +2084,10 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
     return new_ref(res);
 }
 
-PyObject * VertexArray_meth_bind(VertexArray * self, PyObject * args, PyObject * kwa) { TRACE
-    static char * kw[] = {"buffer", "location", "gltype", "size", "offset", "stride", "divisor", NULL};
+PyObject * VertexArray_meth_bind(VertexArray * self, PyObject * args) { TRACE
+    if (PyTuple_Size(args) == 1) {
+        return PyObject_CallMethod(self->ctx->tools, "bind_attributes", "OOO", self, args, Py_False);
+    }
 
     Buffer * buffer;
     int location;
@@ -2093,8 +2097,8 @@ PyObject * VertexArray_meth_bind(VertexArray * self, PyObject * args, PyObject *
     int stride;
     int divisor;
 
-    int args_ok = PyArg_ParseTupleAndKeywords(
-        args, kwa, "O!iiinii", kw, Buffer_type, &buffer, &location, &gltype, &size, &offset, &stride, &divisor
+    int args_ok = PyArg_ParseTuple(
+        args, "O!iiinii", Buffer_type, &buffer, &location, &gltype, &size, &offset, &stride, &divisor
     );
 
     if (!args_ok) {
@@ -2142,6 +2146,11 @@ PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject
     // backward compatibility
     if (vertices == -1) {
         vertices = self->vertices;
+    }
+
+    if (!self->program) {
+        PyErr_Format(PyExc_AttributeError, "program");
+        return NULL;
     }
 
     self->ctx->gl.BindVertexArray(self->glo);
@@ -2260,6 +2269,10 @@ int VertexArray_set_scope(VertexArray * self, Scope * value) { TRACE
 }
 
 Program * VertexArray_get_program(VertexArray * self) { TRACE
+    if (!self->program) {
+        PyErr_Format(PyExc_AttributeError, "program");
+        return NULL;
+    }
     return new_ref(self->program);
 }
 
@@ -2350,7 +2363,7 @@ int VertexArray_set_indirect_buffer(VertexArray * self, Buffer * value) { TRACE
 }
 
 PyMethodDef VertexArray_methods[] = {
-    {"bind", (PyCFunction)VertexArray_meth_bind, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"bind", (PyCFunction)VertexArray_meth_bind, METH_VARARGS, NULL},
     {"render", (PyCFunction)VertexArray_meth_render, METH_VARARGS | METH_KEYWORDS, NULL},
     {"transform", (PyCFunction)VertexArray_meth_transform, METH_VARARGS | METH_KEYWORDS, NULL},
     {},
@@ -2367,7 +2380,6 @@ PyGetSetDef VertexArray_getset[] = {
 };
 
 PyMemberDef VertexArray_members[] = {
-    {"program", T_OBJECT_EX, offsetof(VertexArray, program), READONLY, NULL},
     {"mode", T_INT, offsetof(VertexArray, mode), 0, NULL},
     {"vertices", T_INT, offsetof(VertexArray, vertices), 0, NULL},
     {"instances", T_INT, offsetof(VertexArray, instances), 0, NULL},
