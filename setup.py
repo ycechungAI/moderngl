@@ -112,7 +112,7 @@ mgl = Extension(
     depends=[
         'moderngl/old/gl_context.hpp',
         'moderngl/old/gl_methods.hpp',
-        'moderngl/old/opengl.hpp',
+        'moderngl/old/OpenGL.hpp',
 
         'moderngl/old/BufferFormat.hpp',
         'moderngl/old/Error.hpp',
