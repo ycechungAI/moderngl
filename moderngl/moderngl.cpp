@@ -1556,8 +1556,8 @@ int Scope_set_viewport(Scope * self, PyObject * value) { TRACE
     return 0;
 }
 
-PyObject * Scope_get_framebuffer(Scope * self) { TRACE
-    Py_RETURN_NONE;
+Framebuffer * Scope_get_framebuffer(Scope * self) { TRACE
+    return self->framebuffer;
 }
 
 int Scope_set_framebuffer(Scope * self, Framebuffer * value) { TRACE
