@@ -2678,6 +2678,16 @@ PyObject * Context_meth_copy_buffer(Context * self, PyObject * args, PyObject * 
     return PyObject_CallMethod(src, "read", "iiO", -1, 0, dst);
 }
 
+PyObject * Context_meth_enter(Context * self) { TRACE
+    self->ctx.enter();
+    Py_RETURN_NONE;
+}
+
+PyObject * Context_meth_exit(Context * self, PyObject * args) { TRACE
+    self->ctx.exit();
+    Py_RETURN_NONE;
+}
+
 PyMethodDef Context_methods[] = {
     {"buffer", (PyCFunction)Context_meth_buffer, METH_VARARGS | METH_KEYWORDS, NULL},
     {"framebuffer", (PyCFunction)Context_meth_framebuffer, METH_VARARGS | METH_KEYWORDS, NULL},
@@ -2707,6 +2717,9 @@ PyMethodDef Context_methods[] = {
     {"enable_only", (PyCFunction)Context_meth_enable_only, METH_VARARGS | METH_KEYWORDS, NULL},
     {"simple_vertex_array", (PyCFunction)Context_meth_vertex_array, METH_VARARGS | METH_KEYWORDS, NULL},
     {"copy_buffer", (PyCFunction)Context_meth_copy_buffer, METH_VARARGS | METH_KEYWORDS, NULL},
+
+    {"__enter__", (PyCFunction)Context_meth_enter, METH_NOARGS, NULL},
+    {"__exit__", (PyCFunction)Context_meth_exit, METH_VARARGS, NULL},
     {},
 };
 
