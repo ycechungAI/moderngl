@@ -5,6 +5,10 @@ import pyprojector
 
 wnd = pyprojector.window((1280, 720))
 ctx = moderngl.context()
+wnd.detach()
+
+rbo = ctx.renderbuffer(wnd.size, 3)
+fbo = ctx.framebuffer(rbo)
 
 prog = ctx.program(
     vertex_shader='''
@@ -14,7 +18,6 @@ prog = ctx.program(
 
         void main() {
             gl_Position = vec4(in_vert, 0.0, 1.0);
-            gl_Position.y *= -1.0;
         }
     ''',
     fragment_shader='''
@@ -39,12 +42,10 @@ vao = ctx.vertex_array(prog, [
     vbo.bind('in_vert'),
 ])
 
-size = (1280, 720)
-fbo = ctx.framebuffer(ctx.renderbuffer(size, 3))
 vao.scope = ctx.scope(framebuffer=fbo)
 
 while True:
-    fbo.clear((1.0, 1.0, 1.0))
+    fbo.clear(color=(1.0, 1.0, 1.0))
     vao.render()
-    wnd.update(fbo.glo)
+    wnd.update(rbo)
     time.sleep(1.0)
