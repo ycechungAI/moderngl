@@ -1468,6 +1468,8 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TR
         &samplers,
         &uniform_buffers,
         &storage_buffers,
+        &line_width,
+        &point_size,
         &viewport[0],
         &viewport[1],
         &viewport[2],
