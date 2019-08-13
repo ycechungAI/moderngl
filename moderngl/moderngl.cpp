@@ -2034,11 +2034,11 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
     static char * kw[] = {"program", "bindings", "index_buffer", "mode", NULL};
 
     Program * program;
-    PyObject * bindings;
+    PyObject * bindings = empty_tuple;
     PyObject * index_buffer = NULL;
     int mode = GL_TRIANGLES;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "O!O|Oi", kw, Program_type, &program, &bindings, &index_buffer, &mode)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "O!|OOi", kw, Program_type, &program, &bindings, &index_buffer, &mode)) {
         return NULL;
     }
 

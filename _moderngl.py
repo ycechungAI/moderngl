@@ -640,7 +640,9 @@ def bind_attributes(vao, bindings):
         for location, typ, cols, offset in binds:
             vao.bind(buffer, location, typ, cols, offset, stride, divisor)
 
-    vao.vertices = max_vertices
+    if max_vertices is not None:
+        vao.vertices = max_vertices
+
     if max_instances is not None:
         vao.instances = max_instances
 
