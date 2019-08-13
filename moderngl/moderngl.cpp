@@ -50,6 +50,10 @@ struct Context : public BaseObject {
     struct Scope * default_scope;
 
     struct ContextConstants {
+        PyObject * version;
+        PyObject * renderer;
+        PyObject * vendor;
+
         PyObject * blend;
         PyObject * depth_test;
         PyObject * cull_face;
@@ -2478,6 +2482,10 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->screen->height = res->default_scope->viewport[3];
     res->screen->samples = 0;
 
+    res->consts.version = Py_BuildValue("s", res->gl.GetString(GL_VERSION));
+    res->consts.renderer = Py_BuildValue("s", res->gl.GetString(GL_RENDERER));
+    res->consts.vendor = Py_BuildValue("s", res->gl.GetString(GL_VENDOR));
+
     res->consts.blend = PyLong_FromLong(MGL_BLEND);
     res->consts.depth_test = PyLong_FromLong(MGL_DEPTH_TEST);
     res->consts.cull_face = PyLong_FromLong(MGL_CULL_FACE);
@@ -2760,6 +2768,10 @@ PyMemberDef Context_members[] = {
     {"limits", T_OBJECT_EX, offsetof(Context, limits), READONLY, NULL},
     {"screen", T_OBJECT_EX, offsetof(Context, screen), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
+
+    {"VERSION", T_OBJECT_EX, offsetof(Context, consts.version), READONLY, NULL},
+    {"RENDERER", T_OBJECT_EX, offsetof(Context, consts.renderer), READONLY, NULL},
+    {"VENDOR", T_OBJECT_EX, offsetof(Context, consts.vendor), READONLY, NULL},
 
     {"BLEND", T_OBJECT_EX, offsetof(Context, consts.blend), READONLY, NULL},
     {"DEPTH_TEST", T_OBJECT_EX, offsetof(Context, consts.depth_test), READONLY, NULL},

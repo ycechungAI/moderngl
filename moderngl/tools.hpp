@@ -283,10 +283,6 @@ PyObject * get_limits(const GLMethods & gl, int glversion) {
     #define store_float_limit(name) PyList_Append(res, Py_BuildValue("sf", #name, get_float(gl, GL_ ## name)))
 
     if (glversion >= 100) {
-        store("VERSION", Py_BuildValue("s", gl.GetString(GL_VERSION)));
-        store("RENDERER", Py_BuildValue("s", gl.GetString(GL_RENDERER)));
-        store("VENDOR", Py_BuildValue("s", gl.GetString(GL_VENDOR)));
-
         float point_size[2] = {};
         gl.GetFloatv(GL_POINT_SIZE_RANGE, point_size);
         store("POINT_SIZE_RANGE", Py_BuildValue("ff", point_size[0], point_size[1]));
