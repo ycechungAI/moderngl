@@ -6,6 +6,7 @@
 #include "data_types.hpp"
 #include "tools.hpp"
 
+PyTypeObject * Blending_type;
 PyTypeObject * Buffer_type;
 PyTypeObject * Context_type;
 PyTypeObject * Framebuffer_type;
@@ -48,6 +49,7 @@ struct Context : public BaseObject {
 
     struct Framebuffer * screen;
     struct Scope * default_scope;
+    struct Blending * default_blending;
 
     struct ContextConstants {
         PyObject * version;
@@ -108,6 +110,13 @@ struct Context : public BaseObject {
         PyObject * triangle_strip_adjacency;
         PyObject * patches;
     } consts;
+};
+
+struct Blending : public BaseObject {
+    struct Context * ctx;
+    int blend_functions;
+    int blend_equations;
+    int params[1];
 };
 
 struct Buffer : public BaseObject {
@@ -181,6 +190,7 @@ struct ScopeBinding {
 struct Scope : public BaseObject {
     struct Context * ctx;
     struct Framebuffer * framebuffer;
+    struct Blending * blending;
     PyObject * bindings_lst;
     int num_samplers;
     int num_uniform_buffers;
@@ -219,6 +229,60 @@ struct VertexArray : public BaseObject {
     int vertices;
     int instances;
     int index_format;
+};
+
+#pragma endregion
+#pragma region Blending
+
+Blending * Context_meth_blending(Context * self, PyObject * args, PyObject * kwa) { TRACE
+    static char * kw[] = {"blend_function", "blend_equation", NULL};
+
+    PyObject * blend_function = NULL;
+    PyObject * blend_equation = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|OO", kw, &blend_function, &blend_equation)) {
+        return NULL;
+    }
+
+    int num_parameters = 2;
+
+    Blending * res = PyObject_NewVar(Blending, Blending_type, num_parameters);
+    res->prev = self;
+    res->next = self->next;
+    self->next = res;
+    res->ctx = self;
+
+    res->extra = NULL;
+    res->blend_functions = -1;
+    res->blend_equations = -1;
+
+    res->params[0] = GL_SRC_ALPHA;
+    res->params[1] = GL_ONE_MINUS_SRC_ALPHA;
+    res->params[2] = GL_SRC_ALPHA;
+    res->params[3] = GL_ONE_MINUS_SRC_ALPHA;
+    res->params[4] = GL_FUNC_SUBTRACT;
+    res->params[5] = GL_FUNC_SUBTRACT;
+
+    return new_ref(res);
+}
+
+PyMemberDef Blending_members[] = {
+    {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
+    {},
+};
+
+PyType_Slot Blending_slots[] = {
+    {Py_tp_members, Blending_members},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
+    {},
+};
+
+PyType_Spec Blending_spec = {
+    "moderngl.Blending",
+    sizeof(Blending) - sizeof(int),
+    sizeof(int),
+    Py_TPFLAGS_DEFAULT,
+    Blending_slots
 };
 
 #pragma endregion
@@ -1446,13 +1510,14 @@ PyType_Spec Sampler_spec = {
 #pragma region Scope
 
 Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TRACE
-    static char * kw[] = {"enable", "framebuffer", "samplers", "uniform_buffers", "storage_buffers", "line_width", "point_size", "viewport", NULL};
+    static char * kw[] = {"enable", "framebuffer", "samplers", "uniform_buffers", "storage_buffers", "blending", "line_width", "point_size", "viewport", NULL};
 
     int enable = MGL_NOTHING;
     Framebuffer * framebuffer = self->screen;
     PyObject * samplers = NULL;
     PyObject * uniform_buffers = NULL;
     PyObject * storage_buffers = NULL;
+    Blending * blending = self->default_blending;
     float line_width = 1.0f;
     float point_size = 1.0f;
     int viewport[4] = {};
@@ -1460,7 +1525,7 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TR
     int args_ok = PyArg_ParseTupleAndKeywords(
         args,
         kwa,
-        "|iO!OOOff(iiii)",
+        "|iO!OOOOOff(iiii)",
         kw,
         &enable,
         Framebuffer_type,
@@ -1468,6 +1533,7 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TR
         &samplers,
         &uniform_buffers,
         &storage_buffers,
+        &blending,
         &line_width,
         &point_size,
         &viewport[0],
@@ -1510,6 +1576,7 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TR
 
     res->enable = enable;
     res->framebuffer = new_ref(framebuffer);
+    res->blending = new_ref(blending);
     res->num_samplers = num_samplers;
     res->num_uniform_buffers = num_uniform_buffers;
     res->num_storage_buffers = num_storage_buffers;
@@ -1570,9 +1637,24 @@ int Scope_set_framebuffer(Scope * self, Framebuffer * value) { TRACE
     return 0;
 }
 
+Blending * Scope_get_blending(Scope * self) { TRACE
+    return self->blending;
+}
+
+int Scope_set_blending(Scope * self, Blending * value) { TRACE
+    if (Py_TYPE(value) != Blending_type) {
+        return -1;
+    }
+    Blending * old = self->blending;
+    self->blending = new_ref(value);
+    Py_XDECREF(old);
+    return 0;
+}
+
 PyGetSetDef Scope_getset[] = {
     {"viewport", (getter)Scope_get_viewport, (setter)Scope_set_viewport, NULL, NULL},
     {"framebuffer", (getter)Scope_get_framebuffer, (setter)Scope_set_framebuffer, NULL, NULL},
+    {"blending", (getter)Scope_get_blending, (setter)Scope_set_blending, NULL, NULL},
     {},
 };
 
@@ -2191,6 +2273,27 @@ PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject
         if (self->scope->framebuffer) {
             self->ctx->gl.BindFramebuffer(GL_FRAMEBUFFER, self->scope->framebuffer->glo);
         }
+        if (self->scope->blending) {
+            int * ptr = self->scope->blending->params;
+            if (self->scope->blending->blend_functions == -1) {
+                self->ctx->gl.BlendFuncSeparate(ptr[0], ptr[1], ptr[2], ptr[3]);
+                ptr += 4;
+            } else {
+                for (int i = 0; i < self->scope->blending->blend_functions; ++i) {
+                    self->ctx->gl.BlendFuncSeparatei(GL_DRAW_BUFFER0 + i, ptr[0], ptr[1], ptr[2], ptr[3]);
+                    ptr += 4;
+                }
+            }
+            if (self->scope->blending->blend_equations == -1) {
+                self->ctx->gl.BlendEquationSeparate(ptr[0], ptr[1]);
+                ptr += 2;
+            } else {
+                for (int i = 0; i < self->scope->blending->blend_equations; ++i) {
+                    self->ctx->gl.BlendEquationSeparatei(GL_DRAW_BUFFER0 + i, ptr[0], ptr[1]);
+                    ptr += 4;
+                }
+            }
+        }
     }
 
     if (condition) {
@@ -2460,7 +2563,7 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->module = self;
     res->tools = PyObject_GetAttrString(self, "mgl");
 
-    res->gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // res->gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     res->gl.Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     res->gl.Enable(GL_PRIMITIVE_RESTART);
     res->gl.PrimitiveRestartIndex(-1);
@@ -2471,6 +2574,21 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->next = res->screen;
     res->screen->ctx = res;
     res->screen->extra = NULL;
+
+    res->default_blending = PyObject_NewVar(Blending, Blending_type, 4);
+    res->default_blending->prev = res;
+    res->default_blending->next = res->next;
+    res->next = res->default_blending;
+    res->default_blending->ctx = res;
+    res->default_blending->extra = NULL;
+
+    res->default_blending->blend_functions = -1;
+    res->default_blending->blend_equations = 0;
+
+    res->default_blending->params[0] = GL_SRC_ALPHA;
+    res->default_blending->params[1] = GL_ONE_MINUS_SRC_ALPHA;
+    res->default_blending->params[2] = GL_SRC_ALPHA;
+    res->default_blending->params[3] = GL_ONE_MINUS_SRC_ALPHA;
 
     res->default_scope = PyObject_New(Scope, Scope_type);
     res->default_scope->prev = res;
@@ -2704,6 +2822,7 @@ PyObject * Context_meth_exit(Context * self, PyObject * args) { TRACE
 }
 
 PyMethodDef Context_methods[] = {
+    {"blending", (PyCFunction)Context_meth_blending, METH_VARARGS | METH_KEYWORDS, NULL},
     {"buffer", (PyCFunction)Context_meth_buffer, METH_VARARGS | METH_KEYWORDS, NULL},
     {"framebuffer", (PyCFunction)Context_meth_framebuffer, METH_VARARGS | METH_KEYWORDS, NULL},
     {"program", (PyCFunction)Context_meth_program, METH_VARARGS | METH_KEYWORDS, NULL},
@@ -2925,6 +3044,7 @@ extern "C" PyObject * PyInit_moderngl() {
     default_border = Py_BuildValue("ffff", 0.0f, 0.0f, 0.0f, 0.0f);
 
     Context_type = (PyTypeObject *)PyType_FromSpec(&Context_spec);
+    Blending_type = (PyTypeObject *)PyType_FromSpec(&Blending_spec);
     Buffer_type = (PyTypeObject *)PyType_FromSpec(&Buffer_spec);
     Framebuffer_type = (PyTypeObject *)PyType_FromSpec(&Framebuffer_spec);
     Program_type = (PyTypeObject *)PyType_FromSpec(&Program_spec);
@@ -2936,6 +3056,7 @@ extern "C" PyObject * PyInit_moderngl() {
     VertexArray_type = (PyTypeObject *)PyType_FromSpec(&VertexArray_spec);
 
     PyModule_AddObject(module, "Context", (PyObject *)Context_type);
+    PyModule_AddObject(module, "Blending", (PyObject *)Blending_type);
     PyModule_AddObject(module, "Buffer", (PyObject *)Buffer_type);
     PyModule_AddObject(module, "Framebuffer", (PyObject *)Framebuffer_type);
     PyModule_AddObject(module, "Program", (PyObject *)Program_type);
