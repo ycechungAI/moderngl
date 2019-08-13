@@ -1,25 +1,7 @@
-matrix:
-  include:
-    - language: python
-      python: 3.6
-      install:
-        - export TRAVIS=True
-        # - export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start
-        - python -m pip install pip wheel setuptools numpy -U
-      script:
-        - python setup.py develop
-
-    - language: python
-      python: pypy3.5
-      script:
-        - export TRAVIS=True
-        - python setup.py develop
-
-    - language: python
-      python: 3.6
-      sudo: required
-      services:
-        - docker
-      script:
-        - python3 setup.py sdist -d extras/docker-build
-        - cd extras/docker-build && docker build .
+language: python
+python: 3.6
+services:
+  - docker
+script:
+  - python3 setup.py sdist -d extras/docker-build
+  - cd extras/docker-build && docker build .
