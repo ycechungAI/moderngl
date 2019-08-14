@@ -718,6 +718,15 @@ def serialize_blending(functions, equations):
     return params
 
 
+def serialize_enable(enable):
+    if enable is None:
+        return 0
+    res = 0
+    for x in enable.split():
+        res |= CONSTANTS[x]
+    return res
+
+
 def serialize_uniform(prog, uniform, value):
     import numpy as np
     if prog.uniforms[uniform][1] in FLOAT_TYPES:
