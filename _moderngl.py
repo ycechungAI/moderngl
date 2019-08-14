@@ -197,6 +197,10 @@ CONSTANTS = {
 }
 
 
+class Blending:
+    ctx: 'Context'
+
+
 class Buffer:
     ctx: 'Context'
     glo: int
@@ -352,6 +356,11 @@ class Context:
     screen: 'Framebuffer'
     limits: 'Limits'
 
+    def blending(self, blend_functions, blend_equations, blend_color) -> 'Blending':
+        '''```py
+        blending = ctx.blending(blend_functions=['SRC_ALPHA ONE_MINUS_SRC_ALPHA'])
+        ```'''
+        return Blending()
 
     def buffer(self, data, reserve, readable, writable, local) -> 'Buffer':
         '''```py
