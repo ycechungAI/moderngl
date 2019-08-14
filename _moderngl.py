@@ -701,6 +701,23 @@ def bind_attributes(vao, bindings, setmax=True):
             vao.instances = max_instances
 
 
+def serialize_blending(functions, equations):
+    params = []
+    for func in functions:
+        func = [CONSTANTS[x] for x in func.replace(',', '').split()]
+        if len(func) == 2:
+            func *= 2
+        assert len(func) == 4
+        params.extend(func)
+    for equation in equations:
+        equation = [CONSTANTS[x] for x in equation.replace(',', '').split()]
+        if len(equation) == 1:
+            equation *= 2
+        assert len(equation) == 2
+        params.extend(equation)
+    return params
+
+
 def serialize_uniform(prog, uniform, value):
     import numpy as np
     if prog.uniforms[uniform][1] in FLOAT_TYPES:
