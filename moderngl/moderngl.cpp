@@ -3035,6 +3035,10 @@ extern "C" PyObject * PyInit_moderngl() {
     }
 
     PyObject * mgl = PyImport_ImportModule("_moderngl");
+    if (!mgl) {
+        return NULL;
+    }
+
     PyModule_AddObject(module, "mgl", mgl);
     Py_DECREF(mgl);
 
