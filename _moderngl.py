@@ -352,59 +352,6 @@ class Context:
     screen: 'Framebuffer'
     limits: 'Limits'
 
-    BLEND: int
-    DEPTH_TEST: int
-    CULL_FACE: int
-
-    CLAMP_TO_EDGE_X: int
-    CLAMP_TO_EDGE_Y: int
-    CLAMP_TO_EDGE_Z: int
-    REPEAT_X: int
-    REPEAT_Y: int
-    REPEAT_Z: int
-    MIRRORED_REPEAT_X: int
-    MIRRORED_REPEAT_Y: int
-    MIRRORED_REPEAT_Z: int
-    MIRROR_CLAMP_TO_EDGE_X: int
-    MIRROR_CLAMP_TO_EDGE_Y: int
-    MIRROR_CLAMP_TO_EDGE_Z: int
-    CLAMP_TO_BORDER_X: int
-    CLAMP_TO_BORDER_Y: int
-    CLAMP_TO_BORDER_Z: int
-
-    ZERO: int
-    ONE: int
-    SRC_COLOR: int
-    SRC_ALPHA: int
-    DST_COLOR: int
-    DST_ALPHA: int
-    ONE_MINUS_SRC_COLOR: int
-    ONE_MINUS_SRC_ALPHA: int
-    ONE_MINUS_DST_COLOR: int
-    ONE_MINUS_DST_ALPHA: int
-
-    FIRST_VERTEX_CONVENTION: int
-    LAST_VERTEX_CONVENTION: int
-
-    NEAREST: int
-    LINEAR: int
-    NEAREST_MIPMAP_NEAREST: int
-    LINEAR_MIPMAP_NEAREST: int
-    NEAREST_MIPMAP_LINEAR: int
-    LINEAR_MIPMAP_LINEAR: int
-
-    POINTS: int
-    LINES: int
-    LINE_LOOP: int
-    LINE_STRIP: int
-    TRIANGLES: int
-    TRIANGLE_STRIP: int
-    TRIANGLE_FAN: int
-    LINES_ADJACENCY: int
-    LINE_STRIP_ADJACENCY: int
-    TRIANGLES_ADJACENCY: int
-    TRIANGLE_STRIP_ADJACENCY: int
-    PATCHES: int
 
     def buffer(self, data, reserve, readable, writable, local) -> 'Buffer':
         '''```py
