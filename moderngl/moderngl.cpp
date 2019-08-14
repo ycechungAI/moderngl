@@ -59,6 +59,7 @@ struct Context : public BaseObject {
 
 struct Blending : public BaseObject {
     struct Context * ctx;
+    float blend_color[4];
     int blend_functions;
     int blend_equations;
     int params[1];
@@ -180,33 +181,37 @@ struct VertexArray : public BaseObject {
 #pragma region Blending
 
 Blending * Context_meth_blending(Context * self, PyObject * args, PyObject * kwa) { TRACE
-    static char * kw[] = {"blend_function", "blend_equation", NULL};
+    static char * kw[] = {"blend_functions", "blend_equations", "blend_color", NULL};
 
-    PyObject * blend_function = NULL;
-    PyObject * blend_equation = NULL;
+    PyObject * blend_functions = empty_tuple;
+    PyObject * blend_equations = empty_tuple;
+    float color[4] = {};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|OO", kw, &blend_function, &blend_equation)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|OO(ffff)", kw, &blend_functions, &blend_equations, &color[0], &color[1], &color[2], &color[3])) {
         return NULL;
     }
 
-    int num_parameters = 2;
+    PyObject * params = PyObject_CallMethod(self->tools, "serialize_blending", "OO", blend_functions, blend_equations);
+    if (!params) {
+        return NULL;
+    }
 
-    Blending * res = PyObject_NewVar(Blending, Blending_type, num_parameters);
+    int num_params = (int)PySequence_Fast_GET_SIZE(params);
+    Blending * res = PyObject_NewVar(Blending, Blending_type, num_params);
     res->prev = self;
     res->next = self->next;
     self->next = res;
     res->ctx = self;
 
     res->extra = NULL;
-    res->blend_functions = -1;
-    res->blend_equations = -1;
+    memcpy(res->blend_color, color, sizeof(color));
+    res->blend_functions = (int)PySequence_Size(blend_functions);
+    res->blend_equations = (int)PySequence_Size(blend_equations);
 
-    res->params[0] = GL_SRC_ALPHA;
-    res->params[1] = GL_ONE_MINUS_SRC_ALPHA;
-    res->params[2] = GL_SRC_ALPHA;
-    res->params[3] = GL_ONE_MINUS_SRC_ALPHA;
-    res->params[4] = GL_FUNC_SUBTRACT;
-    res->params[5] = GL_FUNC_SUBTRACT;
+    for (int i = 0; i < num_params; ++i) {
+        res->params[i] = PyLong_AsLong(PySequence_Fast_GET_ITEM(params, i));
+    }
+    Py_DECREF(params);
 
     return new_ref(res);
 }
@@ -2220,7 +2225,7 @@ PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject
         }
         if (self->scope->blending) {
             int * ptr = self->scope->blending->params;
-            if (self->scope->blending->blend_functions == -1) {
+            if (self->scope->blending->blend_functions == 1) {
                 self->ctx->gl.BlendFuncSeparate(ptr[0], ptr[1], ptr[2], ptr[3]);
                 ptr += 4;
             } else {
@@ -2229,7 +2234,7 @@ PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject
                     ptr += 4;
                 }
             }
-            if (self->scope->blending->blend_equations == -1) {
+            if (self->scope->blending->blend_equations == 1) {
                 self->ctx->gl.BlendEquationSeparate(ptr[0], ptr[1]);
                 ptr += 2;
             } else {
