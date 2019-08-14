@@ -43,9 +43,11 @@ class Example(_example.Example):
         self.vbo = self.ctx.buffer(vertex_data)
         self.vao = self.ctx.vertex_array()
 
-        self.vao.mode = self.ctx.TRIANGLES
+        self.vao.mode = 'TRIANGLES'
         self.vao.program = self.prog
         self.vao.bind(self.vbo.bind('in_vert', 'in_color'))
+        # self.vao.bind(self.vbo.bind(0, 1, layout='2f 3f'))
+        # self.vao.program = self.prog
         self.vao.vertices = 3
         self.vao.instances = 1
 

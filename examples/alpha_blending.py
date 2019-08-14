@@ -45,9 +45,9 @@ class Example(_example.Example):
             self.vbo.bind('in_vert', 'in_color'),
         ])
 
-        self.vao.scope = self.ctx.scope(self.ctx.BLEND)
+        self.vao.scope = self.ctx.scope('BLEND')
         self.vao.scope.blending = self.ctx.blending()
-        self.vao.instances = 2
+        self.vao.instances = 1
 
     def render(self, time, frame_time):
         self.ctx.screen.clear((1.0, 1.0, 1.0))

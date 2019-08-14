@@ -44,7 +44,7 @@ class Example(_example.Example):
         )
 
         self.vao = self.ctx.vertex_array(self.prog)
-        self.vao.mode = self.ctx.POINTS
+        self.vao.mode = 'POINTS'
         self.vao.vertices = 100
         self.vao.instances = 1
 
