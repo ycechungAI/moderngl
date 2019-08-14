@@ -46,15 +46,70 @@ struct Context : public BaseObject {
     PyObject * limits;
     PyObject * module;
     PyObject * tools;
-    PyObject * consts;
 
     struct Framebuffer * screen;
     struct Scope * default_scope;
     struct Blending * default_blending;
 
-    PyObject * version;
-    PyObject * renderer;
-    PyObject * vendor;
+    struct ContextConstants {
+        PyObject * version;
+        PyObject * renderer;
+        PyObject * vendor;
+
+        PyObject * blend;
+        PyObject * depth_test;
+        PyObject * cull_face;
+
+        PyObject * zero;
+        PyObject * one;
+        PyObject * src_color;
+        PyObject * src_alpha;
+        PyObject * dst_color;
+        PyObject * dst_alpha;
+        PyObject * one_minus_src_color;
+        PyObject * one_minus_src_alpha;
+        PyObject * one_minus_dst_color;
+        PyObject * one_minus_dst_alpha;
+
+        PyObject * first_vertex_convention;
+        PyObject * last_vertex_convention;
+
+        PyObject * nearest;
+        PyObject * linear;
+        PyObject * nearest_mipmap_nearest;
+        PyObject * linear_mipmap_nearest;
+        PyObject * nearest_mipmap_linear;
+        PyObject * linear_mipmap_linear;
+
+        PyObject * clamp_to_edge_x;
+        PyObject * clamp_to_edge_y;
+        PyObject * clamp_to_edge_z;
+        PyObject * repeat_x;
+        PyObject * repeat_y;
+        PyObject * repeat_z;
+        PyObject * mirrored_repeat_x;
+        PyObject * mirrored_repeat_y;
+        PyObject * mirrored_repeat_z;
+        PyObject * mirror_clamp_to_edge_x;
+        PyObject * mirror_clamp_to_edge_y;
+        PyObject * mirror_clamp_to_edge_z;
+        PyObject * clamp_to_border_x;
+        PyObject * clamp_to_border_y;
+        PyObject * clamp_to_border_z;
+
+        PyObject * points;
+        PyObject * lines;
+        PyObject * line_loop;
+        PyObject * line_strip;
+        PyObject * triangles;
+        PyObject * triangle_strip;
+        PyObject * triangle_fan;
+        PyObject * lines_adjacency;
+        PyObject * line_strip_adjacency;
+        PyObject * triangles_adjacency;
+        PyObject * triangle_strip_adjacency;
+        PyObject * patches;
+    } consts;
 };
 
 struct Blending : public BaseObject {
@@ -1286,7 +1341,7 @@ Sampler * Context_meth_sampler(Context * self, PyObject * args, PyObject * kwa) 
     };
 
     Texture * texture;
-    PyObject * filter = PyUnicode_FromString("NEAREST"); // TODO: remove
+    PyObject * filter = self->consts.nearest;
     PyObject * wrap = default_wrap;
     PyObject * compare_func = Py_None;
     PyObject * anisotropy = Py_None;
@@ -1462,7 +1517,7 @@ PyType_Spec Sampler_spec = {
 Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TRACE
     static char * kw[] = {"enable", "framebuffer", "samplers", "uniform_buffers", "storage_buffers", "blending", "line_width", "point_size", "viewport", NULL};
 
-    PyObject * enable = Py_None;
+    int enable = MGL_NOTHING;
     Framebuffer * framebuffer = self->screen;
     PyObject * samplers = NULL;
     PyObject * uniform_buffers = NULL;
@@ -1475,7 +1530,7 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TR
     int args_ok = PyArg_ParseTupleAndKeywords(
         args,
         kwa,
-        "|OO!OOOOOff(iiii)",
+        "|iO!OOOOOff(iiii)",
         kw,
         &enable,
         Framebuffer_type,
@@ -1524,14 +1579,7 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TR
 
     memcpy(res->viewport, viewport, sizeof(viewport));
 
-    enable = PyObject_CallMethod(self->tools, "serialize_enable", "O", enable);
-    if (!enable) {
-        return NULL;
-    }
-
-    res->enable = PyLong_AsLong(enable);
-    Py_DECREF(enable);
-
+    res->enable = enable;
     res->framebuffer = new_ref(framebuffer);
     res->blending = new_ref(blending);
     res->num_samplers = num_samplers;
@@ -2316,21 +2364,6 @@ PyObject * VertexArray_meth_transform(VertexArray * self, PyObject * args, PyObj
     return res;
 }
 
-PyObject * VertexArray_get_mode(VertexArray * self) { TRACE
-    return PyLong_FromLong(self->mode);
-}
-
-int VertexArray_set_mode(VertexArray * self, PyObject * value) { TRACE
-    if (!PyUnicode_Check(value)) {
-        return -1;
-    }
-    if (PyObject * mode = PyObject_GetItem(self->ctx->consts, value)) {
-        self->mode = PyLong_AsLong(mode);
-        return 0;
-    }
-    return -1;
-}
-
 Scope * VertexArray_get_scope(VertexArray * self) { TRACE
     return new_ref(self->scope);
 }
@@ -2446,7 +2479,6 @@ PyMethodDef VertexArray_methods[] = {
 };
 
 PyGetSetDef VertexArray_getset[] = {
-    {"mode", (getter)VertexArray_get_mode, (setter)VertexArray_set_mode, NULL, NULL},
     {"scope", (getter)VertexArray_get_scope, (setter)VertexArray_set_scope, NULL, NULL},
     {"program", (getter)VertexArray_get_program, (setter)VertexArray_set_program, NULL, NULL},
     {"index_element_size", (getter)VertexArray_get_index_element_size, (setter)VertexArray_set_index_element_size, NULL, NULL},
@@ -2457,6 +2489,7 @@ PyGetSetDef VertexArray_getset[] = {
 };
 
 PyMemberDef VertexArray_members[] = {
+    {"mode", T_INT, offsetof(VertexArray, mode), 0, NULL},
     {"vertices", T_INT, offsetof(VertexArray, vertices), 0, NULL},
     {"instances", T_INT, offsetof(VertexArray, instances), 0, NULL},
     {"glo", T_INT, offsetof(VertexArray, glo), READONLY, NULL},
@@ -2533,7 +2566,6 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
 
     res->module = self;
     res->tools = PyObject_GetAttrString(self, "mgl");
-    res->consts = PyObject_GetAttrString(res->tools, "CONSTANTS");
 
     // res->gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     res->gl.Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -2587,9 +2619,63 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->screen->height = res->default_scope->viewport[3];
     res->screen->samples = 0;
 
-    res->version = Py_BuildValue("s", res->gl.GetString(GL_VERSION));
-    res->renderer = Py_BuildValue("s", res->gl.GetString(GL_RENDERER));
-    res->vendor = Py_BuildValue("s", res->gl.GetString(GL_VENDOR));
+    res->consts.version = Py_BuildValue("s", res->gl.GetString(GL_VERSION));
+    res->consts.renderer = Py_BuildValue("s", res->gl.GetString(GL_RENDERER));
+    res->consts.vendor = Py_BuildValue("s", res->gl.GetString(GL_VENDOR));
+
+    res->consts.blend = PyLong_FromLong(MGL_BLEND);
+    res->consts.depth_test = PyLong_FromLong(MGL_DEPTH_TEST);
+    res->consts.cull_face = PyLong_FromLong(MGL_CULL_FACE);
+
+    res->consts.clamp_to_edge_x = PyLong_FromLong(MGL_CLAMP_TO_EDGE_X);
+    res->consts.clamp_to_edge_y = PyLong_FromLong(MGL_CLAMP_TO_EDGE_Y);
+    res->consts.clamp_to_edge_z = PyLong_FromLong(MGL_CLAMP_TO_EDGE_Z);
+    res->consts.repeat_x = PyLong_FromLong(MGL_REPEAT_X);
+    res->consts.repeat_y = PyLong_FromLong(MGL_REPEAT_Y);
+    res->consts.repeat_z = PyLong_FromLong(MGL_REPEAT_Z);
+    res->consts.mirrored_repeat_x = PyLong_FromLong(MGL_MIRRORED_REPEAT_X);
+    res->consts.mirrored_repeat_y = PyLong_FromLong(MGL_MIRRORED_REPEAT_Y);
+    res->consts.mirrored_repeat_z = PyLong_FromLong(MGL_MIRRORED_REPEAT_Z);
+    res->consts.mirror_clamp_to_edge_x = PyLong_FromLong(MGL_MIRROR_CLAMP_TO_EDGE_X);
+    res->consts.mirror_clamp_to_edge_y = PyLong_FromLong(MGL_MIRROR_CLAMP_TO_EDGE_Y);
+    res->consts.mirror_clamp_to_edge_z = PyLong_FromLong(MGL_MIRROR_CLAMP_TO_EDGE_Z);
+    res->consts.clamp_to_border_x = PyLong_FromLong(MGL_CLAMP_TO_BORDER_X);
+    res->consts.clamp_to_border_y = PyLong_FromLong(MGL_CLAMP_TO_BORDER_Y);
+    res->consts.clamp_to_border_z = PyLong_FromLong(MGL_CLAMP_TO_BORDER_Z);
+
+    res->consts.zero = PyLong_FromLong(GL_ZERO);
+    res->consts.one = PyLong_FromLong(GL_ONE);
+    res->consts.src_color = PyLong_FromLong(GL_SRC_COLOR);
+    res->consts.src_alpha = PyLong_FromLong(GL_SRC_ALPHA);
+    res->consts.dst_color = PyLong_FromLong(GL_DST_COLOR);
+    res->consts.dst_alpha = PyLong_FromLong(GL_DST_ALPHA);
+    res->consts.one_minus_src_color = PyLong_FromLong(GL_ONE_MINUS_SRC_COLOR);
+    res->consts.one_minus_src_alpha = PyLong_FromLong(GL_ONE_MINUS_SRC_ALPHA);
+    res->consts.one_minus_dst_color = PyLong_FromLong(GL_ONE_MINUS_DST_COLOR);
+    res->consts.one_minus_dst_alpha = PyLong_FromLong(GL_ONE_MINUS_DST_ALPHA);
+
+    res->consts.first_vertex_convention = PyLong_FromLong(GL_FIRST_VERTEX_CONVENTION);
+    res->consts.last_vertex_convention = PyLong_FromLong(GL_LAST_VERTEX_CONVENTION);
+
+    res->consts.nearest = PyLong_FromLong(GL_NEAREST);
+    res->consts.linear = PyLong_FromLong(GL_LINEAR);
+    res->consts.nearest_mipmap_nearest = PyLong_FromLong(GL_NEAREST_MIPMAP_NEAREST);
+    res->consts.linear_mipmap_nearest = PyLong_FromLong(GL_LINEAR_MIPMAP_NEAREST);
+    res->consts.nearest_mipmap_linear = PyLong_FromLong(GL_NEAREST_MIPMAP_LINEAR);
+    res->consts.linear_mipmap_linear = PyLong_FromLong(GL_LINEAR_MIPMAP_LINEAR);
+
+    res->consts.points = PyLong_FromLong(GL_POINTS);
+    res->consts.lines = PyLong_FromLong(GL_LINES);
+    res->consts.line_loop = PyLong_FromLong(GL_LINE_LOOP);
+    res->consts.line_strip = PyLong_FromLong(GL_LINE_STRIP);
+    res->consts.triangles = PyLong_FromLong(GL_TRIANGLES);
+    res->consts.triangle_strip = PyLong_FromLong(GL_TRIANGLE_STRIP);
+    res->consts.triangle_fan = PyLong_FromLong(GL_TRIANGLE_FAN);
+    res->consts.lines_adjacency = PyLong_FromLong(GL_LINES_ADJACENCY);
+    res->consts.line_strip_adjacency = PyLong_FromLong(GL_LINE_STRIP_ADJACENCY);
+    res->consts.triangles_adjacency = PyLong_FromLong(GL_TRIANGLES_ADJACENCY);
+    res->consts.triangle_strip_adjacency = PyLong_FromLong(GL_TRIANGLE_STRIP_ADJACENCY);
+    res->consts.patches = PyLong_FromLong(GL_PATCHES);
 
     res->limits = PyObject_CallMethod(res->tools, "Limits", "N", get_limits(res->gl, glversion));
 
@@ -2778,9 +2864,9 @@ PyMethodDef Context_methods[] = {
 // backward compatibility
 PyObject * Context_get_info(Context * self) { TRACE
     PyObject * res = PyDict_New();
-    PyDict_SetItemString(res, "GL_VENDOR", self->vendor);
-    PyDict_SetItemString(res, "GL_RENDERER", self->renderer);
-    PyDict_SetItemString(res, "GL_VERSION", self->version);
+    PyDict_SetItemString(res, "GL_VENDOR", self->consts.vendor);
+    PyDict_SetItemString(res, "GL_RENDERER", self->consts.renderer);
+    PyDict_SetItemString(res, "GL_VERSION", self->consts.version);
     return res;
 }
 
@@ -2834,9 +2920,63 @@ PyMemberDef Context_members[] = {
     {"screen", T_OBJECT_EX, offsetof(Context, screen), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
 
-    {"VERSION", T_OBJECT_EX, offsetof(Context, version), READONLY, NULL},
-    {"RENDERER", T_OBJECT_EX, offsetof(Context, renderer), READONLY, NULL},
-    {"VENDOR", T_OBJECT_EX, offsetof(Context, vendor), READONLY, NULL},
+    {"VERSION", T_OBJECT_EX, offsetof(Context, consts.version), READONLY, NULL},
+    {"RENDERER", T_OBJECT_EX, offsetof(Context, consts.renderer), READONLY, NULL},
+    {"VENDOR", T_OBJECT_EX, offsetof(Context, consts.vendor), READONLY, NULL},
+
+    {"BLEND", T_OBJECT_EX, offsetof(Context, consts.blend), READONLY, NULL},
+    {"DEPTH_TEST", T_OBJECT_EX, offsetof(Context, consts.depth_test), READONLY, NULL},
+    {"CULL_FACE", T_OBJECT_EX, offsetof(Context, consts.cull_face), READONLY, NULL},
+
+    {"CLAMP_TO_EDGE_X", T_OBJECT_EX, offsetof(Context, consts.clamp_to_edge_x), READONLY, NULL},
+    {"CLAMP_TO_EDGE_Y", T_OBJECT_EX, offsetof(Context, consts.clamp_to_edge_y), READONLY, NULL},
+    {"CLAMP_TO_EDGE_Z", T_OBJECT_EX, offsetof(Context, consts.clamp_to_edge_z), READONLY, NULL},
+    {"REPEAT_X", T_OBJECT_EX, offsetof(Context, consts.repeat_x), READONLY, NULL},
+    {"REPEAT_Y", T_OBJECT_EX, offsetof(Context, consts.repeat_y), READONLY, NULL},
+    {"REPEAT_Z", T_OBJECT_EX, offsetof(Context, consts.repeat_z), READONLY, NULL},
+    {"MIRRORED_REPEAT_X", T_OBJECT_EX, offsetof(Context, consts.mirrored_repeat_x), READONLY, NULL},
+    {"MIRRORED_REPEAT_Y", T_OBJECT_EX, offsetof(Context, consts.mirrored_repeat_y), READONLY, NULL},
+    {"MIRRORED_REPEAT_Z", T_OBJECT_EX, offsetof(Context, consts.mirrored_repeat_z), READONLY, NULL},
+    {"MIRROR_CLAMP_TO_EDGE_X", T_OBJECT_EX, offsetof(Context, consts.mirror_clamp_to_edge_x), READONLY, NULL},
+    {"MIRROR_CLAMP_TO_EDGE_Y", T_OBJECT_EX, offsetof(Context, consts.mirror_clamp_to_edge_y), READONLY, NULL},
+    {"MIRROR_CLAMP_TO_EDGE_Z", T_OBJECT_EX, offsetof(Context, consts.mirror_clamp_to_edge_z), READONLY, NULL},
+    {"CLAMP_TO_BORDER_X", T_OBJECT_EX, offsetof(Context, consts.clamp_to_border_x), READONLY, NULL},
+    {"CLAMP_TO_BORDER_Y", T_OBJECT_EX, offsetof(Context, consts.clamp_to_border_y), READONLY, NULL},
+    {"CLAMP_TO_BORDER_Z", T_OBJECT_EX, offsetof(Context, consts.clamp_to_border_z), READONLY, NULL},
+
+    {"ZERO", T_OBJECT_EX, offsetof(Context, consts.zero), READONLY, NULL},
+    {"ONE", T_OBJECT_EX, offsetof(Context, consts.one), READONLY, NULL},
+    {"SRC_COLOR", T_OBJECT_EX, offsetof(Context, consts.src_color), READONLY, NULL},
+    {"SRC_ALPHA", T_OBJECT_EX, offsetof(Context, consts.src_alpha), READONLY, NULL},
+    {"DST_COLOR", T_OBJECT_EX, offsetof(Context, consts.dst_color), READONLY, NULL},
+    {"DST_ALPHA", T_OBJECT_EX, offsetof(Context, consts.dst_alpha), READONLY, NULL},
+    {"ONE_MINUS_SRC_COLOR", T_OBJECT_EX, offsetof(Context, consts.one_minus_src_color), READONLY, NULL},
+    {"ONE_MINUS_SRC_ALPHA", T_OBJECT_EX, offsetof(Context, consts.one_minus_src_alpha), READONLY, NULL},
+    {"ONE_MINUS_DST_COLOR", T_OBJECT_EX, offsetof(Context, consts.one_minus_dst_color), READONLY, NULL},
+    {"ONE_MINUS_DST_ALPHA", T_OBJECT_EX, offsetof(Context, consts.one_minus_dst_alpha), READONLY, NULL},
+
+    {"FIRST_VERTEX_CONVENTION", T_OBJECT_EX, offsetof(Context, consts.first_vertex_convention), READONLY, NULL},
+    {"LAST_VERTEX_CONVENTION", T_OBJECT_EX, offsetof(Context, consts.last_vertex_convention), READONLY, NULL},
+
+    {"NEAREST", T_OBJECT_EX, offsetof(Context, consts.nearest), READONLY, NULL},
+    {"LINEAR", T_OBJECT_EX, offsetof(Context, consts.linear), READONLY, NULL},
+    {"NEAREST_MIPMAP_NEAREST", T_OBJECT_EX, offsetof(Context, consts.nearest_mipmap_nearest), READONLY, NULL},
+    {"LINEAR_MIPMAP_NEAREST", T_OBJECT_EX, offsetof(Context, consts.linear_mipmap_nearest), READONLY, NULL},
+    {"NEAREST_MIPMAP_LINEAR", T_OBJECT_EX, offsetof(Context, consts.nearest_mipmap_linear), READONLY, NULL},
+    {"LINEAR_MIPMAP_LINEAR", T_OBJECT_EX, offsetof(Context, consts.linear_mipmap_linear), READONLY, NULL},
+
+    {"POINTS", T_OBJECT_EX, offsetof(Context, consts.points), READONLY, NULL},
+    {"LINES", T_OBJECT_EX, offsetof(Context, consts.lines), READONLY, NULL},
+    {"LINE_LOOP", T_OBJECT_EX, offsetof(Context, consts.line_loop), READONLY, NULL},
+    {"LINE_STRIP", T_OBJECT_EX, offsetof(Context, consts.line_strip), READONLY, NULL},
+    {"TRIANGLES", T_OBJECT_EX, offsetof(Context, consts.triangles), READONLY, NULL},
+    {"TRIANGLE_STRIP", T_OBJECT_EX, offsetof(Context, consts.triangle_strip), READONLY, NULL},
+    {"TRIANGLE_FAN", T_OBJECT_EX, offsetof(Context, consts.triangle_fan), READONLY, NULL},
+    {"LINES_ADJACENCY", T_OBJECT_EX, offsetof(Context, consts.lines_adjacency), READONLY, NULL},
+    {"LINE_STRIP_ADJACENCY", T_OBJECT_EX, offsetof(Context, consts.line_strip_adjacency), READONLY, NULL},
+    {"TRIANGLES_ADJACENCY", T_OBJECT_EX, offsetof(Context, consts.triangles_adjacency), READONLY, NULL},
+    {"TRIANGLE_STRIP_ADJACENCY", T_OBJECT_EX, offsetof(Context, consts.triangle_strip_adjacency), READONLY, NULL},
+    {"PATCHES", T_OBJECT_EX, offsetof(Context, consts.patches), READONLY, NULL},
     {},
 };
 

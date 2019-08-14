@@ -59,13 +59,13 @@ class Example(_example.Example):
         self.vao.scope = self.ctx.scope('BLEND')
         self.vao.scope.blending = self.ctx.blending(
             blend_functions=[
-                'SRC_ALPHA, ONE_MINUS_SRC_ALPHA',
+                (self.ctx.SRC_ALPHA, self.ctx.ONE_MINUS_SRC_ALPHA),
             ],
             blend_equations=[
-                'FUNC_REVERSE_SUBTRACT',
+                self.ctx.FUNC_REVERSE_SUBTRACT,
             ],
         )
-        self.vao.mode = 'TRIANGLE_FAN'
+        self.vao.mode = self.ctx.TRIANGLE_FAN
         self.vao.instances = 3
 
     def render(self, time, frame_time):

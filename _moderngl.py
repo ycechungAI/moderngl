@@ -144,59 +144,6 @@ class Limits:
         return self.__dict__.copy()
 
 
-CONSTANTS = {
-    'NOTHING': 0,
-    'BLEND': 1,
-    'DEPTH_TEST': 2,
-    'CULL_FACE': 4,
-
-    'ZERO': 0x0000,
-    'ONE': 0x0001,
-    'SRC_COLOR': 0x0300,
-    'SRC_ALPHA': 0x0302,
-    'DST_COLOR': 0x0306,
-    'DST_ALPHA': 0x0304,
-    'CONSTANT_COLOR': 0x8001,
-    'CONSTANT_ALPHA': 0x8003,
-    'ONE_MINUS_SRC_COLOR': 0x0301,
-    'ONE_MINUS_SRC_ALPHA': 0x0303,
-    'ONE_MINUS_DST_COLOR': 0x0307,
-    'ONE_MINUS_DST_ALPHA': 0x0305,
-    'ONE_MINUS_CONSTANT_COLOR': 0x8002,
-    'ONE_MINUS_CONSTANT_ALPHA': 0x8004,
-    'SRC_ALPHA_SATURATE': 0x0308,
-
-    'FUNC_ADD': 0x8006,
-    'FUNC_REVERSE_SUBTRACT': 0x800B,
-    'FUNC_SUBTRACT': 0x800A,
-    'MIN': 0x8007,
-    'MAX': 0x8008,
-
-    'FIRST_VERTEX_CONVENTION': 0x8E4D,
-    'LAST_VERTEX_CONVENTION': 0x8E4E,
-
-    'NEAREST': 0x2600,
-    'LINEAR': 0x2601,
-    'NEAREST_MIPMAP_NEAREST': 0x2700,
-    'LINEAR_MIPMAP_NEAREST': 0x2701,
-    'NEAREST_MIPMAP_LINEAR': 0x2702,
-    'LINEAR_MIPMAP_LINEAR': 0x2703,
-
-    'POINTS': 0x0000,
-    'LINES': 0x0001,
-    'LINE_LOOP': 0x0002,
-    'LINE_STRIP': 0x0003,
-    'TRIANGLES': 0x0004,
-    'TRIANGLE_STRIP': 0x0005,
-    'TRIANGLE_FAN': 0x0006,
-    'LINES_ADJACENCY': 0x000A,
-    'LINE_STRIP_ADJACENCY': 0x000B,
-    'TRIANGLES_ADJACENCY': 0x000C,
-    'TRIANGLE_STRIP_ADJACENCY': 0x000D,
-    'PATCHES': 0x000E,
-}
-
-
 class Blending:
     ctx: 'Context'
 
@@ -361,6 +308,60 @@ class Context:
         blending = ctx.blending(blend_functions=['SRC_ALPHA ONE_MINUS_SRC_ALPHA'])
         ```'''
         return Blending()
+
+    BLEND: int
+    DEPTH_TEST: int
+    CULL_FACE: int
+
+    CLAMP_TO_EDGE_X: int
+    CLAMP_TO_EDGE_Y: int
+    CLAMP_TO_EDGE_Z: int
+    REPEAT_X: int
+    REPEAT_Y: int
+    REPEAT_Z: int
+    MIRRORED_REPEAT_X: int
+    MIRRORED_REPEAT_Y: int
+    MIRRORED_REPEAT_Z: int
+    MIRROR_CLAMP_TO_EDGE_X: int
+    MIRROR_CLAMP_TO_EDGE_Y: int
+    MIRROR_CLAMP_TO_EDGE_Z: int
+    CLAMP_TO_BORDER_X: int
+    CLAMP_TO_BORDER_Y: int
+    CLAMP_TO_BORDER_Z: int
+
+    ZERO: int
+    ONE: int
+    SRC_COLOR: int
+    SRC_ALPHA: int
+    DST_COLOR: int
+    DST_ALPHA: int
+    ONE_MINUS_SRC_COLOR: int
+    ONE_MINUS_SRC_ALPHA: int
+    ONE_MINUS_DST_COLOR: int
+    ONE_MINUS_DST_ALPHA: int
+
+    FIRST_VERTEX_CONVENTION: int
+    LAST_VERTEX_CONVENTION: int
+
+    NEAREST: int
+    LINEAR: int
+    NEAREST_MIPMAP_NEAREST: int
+    LINEAR_MIPMAP_NEAREST: int
+    NEAREST_MIPMAP_LINEAR: int
+    LINEAR_MIPMAP_LINEAR: int
+
+    POINTS: int
+    LINES: int
+    LINE_LOOP: int
+    LINE_STRIP: int
+    TRIANGLES: int
+    TRIANGLE_STRIP: int
+    TRIANGLE_FAN: int
+    LINES_ADJACENCY: int
+    LINE_STRIP_ADJACENCY: int
+    TRIANGLES_ADJACENCY: int
+    TRIANGLE_STRIP_ADJACENCY: int
+    PATCHES: int
 
     def buffer(self, data, reserve, readable, writable, local) -> 'Buffer':
         '''```py
@@ -658,32 +659,6 @@ def bind_attributes(vao, bindings, setmax=True):
 
         if max_instances is not None:
             vao.instances = max_instances
-
-
-def serialize_blending(functions, equations):
-    params = []
-    for func in functions:
-        func = [CONSTANTS[x] for x in func.replace(',', '').split()]
-        if len(func) == 2:
-            func *= 2
-        assert len(func) == 4
-        params.extend(func)
-    for equation in equations:
-        equation = [CONSTANTS[x] for x in equation.replace(',', '').split()]
-        if len(equation) == 1:
-            equation *= 2
-        assert len(equation) == 2
-        params.extend(equation)
-    return params
-
-
-def serialize_enable(enable):
-    if enable is None:
-        return 0
-    res = 0
-    for x in enable.split():
-        res |= CONSTANTS[x]
-    return res
 
 
 def serialize_uniform(prog, uniform, value):
