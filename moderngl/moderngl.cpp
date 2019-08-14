@@ -52,9 +52,9 @@ struct Context : public BaseObject {
     struct Scope * default_scope;
     struct Blending * default_blending;
 
-        PyObject * version;
-        PyObject * renderer;
-        PyObject * vendor;
+    PyObject * version;
+    PyObject * renderer;
+    PyObject * vendor;
 };
 
 struct Blending : public BaseObject {
