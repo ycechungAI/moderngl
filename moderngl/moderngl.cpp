@@ -954,11 +954,10 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
         int name_len = 0;
         char name[256];
         self->gl.GetActiveAttrib(res->glo, i, 256, &name_len, &size, (GLenum *)&gltype, name);
-        PyObject * location = PyLong_FromLong(self->gl.GetAttribLocation(res->glo, name));
+        int location = self->gl.GetAttribLocation(res->glo, name);
         clean_glsl_name(name, name_len);
-        PyObject * attrib = Py_BuildValue("Nii", location, gltype, size);
+        PyObject * attrib = Py_BuildValue("iiis", location, gltype, size, get_default_layout(gltype));
         PyDict_SetItemString(res->attributes, name, attrib);
-        PyDict_SetItem(res->attributes, location, attrib);
         Py_DECREF(attrib);
     }
 
@@ -1286,7 +1285,7 @@ Sampler * Context_meth_sampler(Context * self, PyObject * args, PyObject * kwa) 
     };
 
     Texture * texture;
-    PyObject * filter = self->consts.nearest;
+    PyObject * filter = PyUnicode_FromString("NEAREST"); // TODO: remove
     PyObject * wrap = default_wrap;
     PyObject * compare_func = Py_None;
     PyObject * anisotropy = Py_None;
@@ -1462,7 +1461,7 @@ PyType_Spec Sampler_spec = {
 Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TRACE
     static char * kw[] = {"enable", "framebuffer", "samplers", "uniform_buffers", "storage_buffers", "blending", "line_width", "point_size", "viewport", NULL};
 
-    int enable = MGL_NOTHING;
+    PyObject * enable = Py_None;
     Framebuffer * framebuffer = self->screen;
     PyObject * samplers = NULL;
     PyObject * uniform_buffers = NULL;
@@ -1475,7 +1474,7 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TR
     int args_ok = PyArg_ParseTupleAndKeywords(
         args,
         kwa,
-        "|iO!OOOOOff(iiii)",
+        "|OO!OOOOOff(iiii)",
         kw,
         &enable,
         Framebuffer_type,
@@ -1524,7 +1523,14 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TR
 
     memcpy(res->viewport, viewport, sizeof(viewport));
 
-    res->enable = enable;
+    enable = PyObject_CallMethod(self->tools, "serialize_enable", "O", enable);
+    if (!enable) {
+        return NULL;
+    }
+
+    res->enable = PyLong_AsLong(enable);
+    Py_DECREF(enable);
+
     res->framebuffer = new_ref(framebuffer);
     res->blending = new_ref(blending);
     res->num_samplers = num_samplers;
@@ -2309,6 +2315,21 @@ PyObject * VertexArray_meth_transform(VertexArray * self, PyObject * args, PyObj
     return res;
 }
 
+PyObject * VertexArray_get_mode(VertexArray * self) { TRACE
+    return PyLong_FromLong(self->mode);
+}
+
+int VertexArray_set_mode(VertexArray * self, PyObject * value) { TRACE
+    if (!PyUnicode_Check(value)) {
+        return -1;
+    }
+    if (PyObject * mode = PyObject_GetItem(self->ctx->consts, value)) {
+        self->mode = PyLong_AsLong(mode);
+        return 0;
+    }
+    return -1;
+}
+
 Scope * VertexArray_get_scope(VertexArray * self) { TRACE
     return new_ref(self->scope);
 }
@@ -2323,12 +2344,11 @@ int VertexArray_set_scope(VertexArray * self, Scope * value) { TRACE
     return 0;
 }
 
-Program * VertexArray_get_program(VertexArray * self) { TRACE
+PyObject * VertexArray_get_program(VertexArray * self) { TRACE
     if (!self->program) {
-        PyErr_Format(PyExc_AttributeError, "program");
-        return NULL;
+        Py_RETURN_NONE;
     }
-    return new_ref(self->program);
+    return (PyObject *)new_ref(self->program);
 }
 
 int VertexArray_set_program(VertexArray * self, Program * value) { TRACE
@@ -2425,6 +2445,7 @@ PyMethodDef VertexArray_methods[] = {
 };
 
 PyGetSetDef VertexArray_getset[] = {
+    {"mode", (getter)VertexArray_get_mode, (setter)VertexArray_set_mode, NULL, NULL},
     {"scope", (getter)VertexArray_get_scope, (setter)VertexArray_set_scope, NULL, NULL},
     {"program", (getter)VertexArray_get_program, (setter)VertexArray_set_program, NULL, NULL},
     {"index_element_size", (getter)VertexArray_get_index_element_size, (setter)VertexArray_set_index_element_size, NULL, NULL},
@@ -2435,7 +2456,6 @@ PyGetSetDef VertexArray_getset[] = {
 };
 
 PyMemberDef VertexArray_members[] = {
-    {"mode", T_INT, offsetof(VertexArray, mode), 0, NULL},
     {"vertices", T_INT, offsetof(VertexArray, vertices), 0, NULL},
     {"instances", T_INT, offsetof(VertexArray, instances), 0, NULL},
     {"glo", T_INT, offsetof(VertexArray, glo), READONLY, NULL},

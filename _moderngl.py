@@ -549,6 +549,18 @@ GLTYPE_INFO = {
     0x8B59: (4, 1, 0x18B56), # 'p'),
 }
 
+GLTYPE_ROWS = {
+    0x8B5A: 2,
+    0x8B5B: 3,
+    0x8B5C: 4,
+    0x8B65: 2,
+    0x8B66: 2,
+    0x8B67: 3,
+    0x8B68: 3,
+    0x8B69: 4,
+    0x8B6A: 4,
+}
+
 FLOAT_TYPES = {0x1406, 0x8B50, 0x8B51, 0x8B52, 0x8B5A, 0x8B5B, 0x8B5C, 0x8B65, 0x8B66, 0x8B67, 0x8B68, 0x8B69, 0x8B6A}
 
 
@@ -594,48 +606,39 @@ def texture3d_from(ctx, images):
 def bind_attributes(vao, bindings, setmax=True):
     max_vertices = None
     max_instances = None
-    attr_info = vao.program.attributes
+
     for buffer, attribs, layout, offset, stride, divisor in bindings:
         total_size = 0
         binds = []
 
-        if layout:
-            if layout.endswith('/i'):
-                layout = layout[:-2]
-                divisor = 1
+        if layout is None:
+            layout = ' '.join(vao.program.attributes[x][3] for x in attribs)
 
-            if layout.endswith('/r'):
-                layout = layout[:-2]
-                divisor = 0x7fffffff
+        assert re.match(r'^\d*n?[fiux][124]?( \d*n?[fiux][124]?)*$', layout)
+        layout = [(int(x), y) for x, y in re.findall(r'(\d*)(n?[fiux][124]?)', layout)]
+        attribs = iter(attribs)
 
-            assert re.match(r'^\d*n?[fiux][124]?( \d*n?[fiux][124]?)*$', layout)
-            layout = [(int(x), y) for x, y in re.findall(r'(\d*)(n?[fiux][124]?)', layout)]
-            attribs = iter(attribs)
+        for items, fmt in layout:
+            size, bind_type = FORMAT[fmt]
+            if not bind_type:
+                total_size += items * size
+                offset += items * size
+                continue
 
-            for items, fmt in layout:
-                size, bind_type = FORMAT[fmt]
-                if not bind_type:
-                    total_size += items * size
-                    offset += items * size
-                    continue
-                attr = next(attribs)
-                location, attrib_type, alen = attr_info[attr]
-                _, rows, _ = GLTYPE_INFO.get(attrib_type, (1, 1, 0x11405))
-                cols = items // rows
-                total_size += alen * rows * cols * size
-                for i in range(alen * rows):
-                    if bind_type:
-                        binds.append((location + i, bind_type, cols, offset))
-                    offset += cols * size
+            attr = next(attribs)
+            if type(attr) is int:
+                binds.append((attr, bind_type, items, offset))
+                total_size += items * size
+                offset += items * size
+                continue
 
-        else:
-            for attr in attribs:
-                location, attrib_type, alen = attr_info[attr]
-                cols, rows, bind_type = GLTYPE_INFO.get(attrib_type, (1, 1, 0x11405))
-                total_size += alen * rows * cols * 4
-                for i in range(alen * rows):
-                    binds.append((location + i, bind_type, cols, offset))
-                    offset += cols * 4
+            location, attrib_type, alen, _ = vao.program.attributes[attr]
+            rows = GLTYPE_ROWS.get(attrib_type, 1)
+            cols = items // rows
+            total_size += alen * rows * cols * size
+            for i in range(alen * rows):
+                binds.append((location + i, bind_type, cols, offset))
+                offset += cols * size
 
         stride = max(stride, total_size)
 
