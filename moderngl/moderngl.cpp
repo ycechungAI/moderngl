@@ -138,13 +138,14 @@ struct Scope : public BaseObject {
     struct Framebuffer * framebuffer;
     struct Blending * blending;
     PyObject * bindings_lst;
-    int num_samplers;
-    int num_uniform_buffers;
-    int num_storage_buffers;
     int enable;
     float line_width;
     float point_size;
     int viewport[4];
+    int num_samplers;
+    int num_uniform_buffers;
+    int num_storage_buffers;
+    int num_texture_images;
     ScopeBinding bindings[1];
 };
 
