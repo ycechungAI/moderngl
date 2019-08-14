@@ -661,12 +661,16 @@ def bind_attributes(vao, bindings, setmax=True):
             vao.instances = max_instances
 
 
-def serialize_uniform(prog, uniform, value):
-    import numpy as np
-    if prog.uniforms[uniform][1] in FLOAT_TYPES:
-        prog[uniform] = np.array([value], 'f4').tobytes()
+def flatten(node):
+    if hasattr(node, '__iter__'):
+        for x in node:
+            yield from flatten(x)
     else:
-        prog[uniform] = np.array([value], 'i4').tobytes()
+        yield node
+
+
+def serialize_uniform(mgl, prog, uniform, value):
+    prog[uniform] = mgl.pack(list(flatten(value)), prog.uniforms[uniform][3])
 
 
 def strsize(reserve):

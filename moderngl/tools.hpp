@@ -208,6 +208,37 @@ inline const char * get_default_layout(int gltype) {
     return "?";
 }
 
+inline const char * get_base_layout(int gltype) {
+    switch (gltype) {
+        case GL_BOOL: return "i";
+        case GL_BOOL_VEC2: return "i";
+        case GL_BOOL_VEC3: return "i";
+        case GL_BOOL_VEC4: return "i";
+        case GL_INT: return "i";
+        case GL_INT_VEC2: return "i";
+        case GL_INT_VEC3: return "i";
+        case GL_INT_VEC4: return "i";
+        case GL_UNSIGNED_INT: return "u";
+        case GL_UNSIGNED_INT_VEC2: return "u";
+        case GL_UNSIGNED_INT_VEC3: return "u";
+        case GL_UNSIGNED_INT_VEC4: return "u";
+        case GL_FLOAT: return "f";
+        case GL_FLOAT_VEC2: return "f";
+        case GL_FLOAT_VEC3: return "f";
+        case GL_FLOAT_VEC4: return "f";
+        case GL_FLOAT_MAT2: return "f";
+        case GL_FLOAT_MAT2x3: return "f";
+        case GL_FLOAT_MAT2x4: return "f";
+        case GL_FLOAT_MAT3x2: return "f";
+        case GL_FLOAT_MAT3: return "f";
+        case GL_FLOAT_MAT3x4: return "f";
+        case GL_FLOAT_MAT4x2: return "f";
+        case GL_FLOAT_MAT4x3: return "f";
+        case GL_FLOAT_MAT4: return "f";
+    }
+    return "?";
+}
+
 inline void set_uniform(const GLMethods & gl, int gltype, int location, int size, void * buffer) {
     switch (gltype) {
         case GL_BOOL: gl.Uniform1iv(location, size, (int *)buffer); break;

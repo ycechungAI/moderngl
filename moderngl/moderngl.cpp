@@ -1033,7 +1033,7 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
             continue;
         }
 
-        PyObject * uniform = Py_BuildValue("iii", location, gltype, size);
+        PyObject * uniform = Py_BuildValue("iiis", location, gltype, size, get_base_layout(gltype));
         PyDict_SetItemString(res->uniforms, name, uniform);
         Py_DECREF(uniform);
     }
@@ -1085,7 +1085,7 @@ int Program_set_item(Program * self, PyObject * key, PyObject * value) { TRACE
         return 0;
     }
     if (!is_buffer(value)) {
-        PyObject * call = PyObject_CallMethod(self->ctx->tools, "serialize_uniform", "OOO", self, key, value);
+        PyObject * call = PyObject_CallMethod(self->ctx->tools, "serialize_uniform", "OOOO", self->ctx->module, self, key, value);
         Py_XDECREF(call);
         if (!call) {
             return -1;
