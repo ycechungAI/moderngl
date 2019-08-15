@@ -904,22 +904,9 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
     const char * src[6] = {};
     PyObject * varyings = NULL;
 
-    // int args_ok = PyArg_ParseTupleAndKeywords(
-    //     args, kwa, "|ssssssO", kw, &src[0], &src[1], &src[2], &src[3], &src[4], &src[5], &varyings
-    // );
-
-    // backward compatibility
-    PyObject * asrc[6] = {Py_None, Py_None, Py_None, Py_None, Py_None, Py_None};
     int args_ok = PyArg_ParseTupleAndKeywords(
-        args, kwa, "|OOOOOOO", kw, &asrc[0], &asrc[1], &asrc[2], &asrc[3], &asrc[4], &asrc[5], &varyings
+        args, kwa, "|zzzzzzO", kw, &src[0], &src[1], &src[2], &src[3], &src[4], &src[5], &varyings
     );
-
-    // backward compatibility
-    for (int i = 0; i < 6; ++i) {
-        if (asrc[i] != Py_None) {
-            src[i] = PyUnicode_AsUTF8(asrc[i]);
-        }
-    }
 
     if (!args_ok) {
         return NULL;
