@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The `Framebuffer.clear` have an optional `color` parameter to replace the old `red, green, blue, alpha` parameters.
 - Samplers and Buffers have an `assing` method to simplify the scope creation.
 - Samplers have an optional `texture` parameter that will be used together with the sampler when given.
-- The Scope's `enable_only` keyword argument is deprecated in favor of the `enable` keyword argument. 
+- The Scope's `enable_only` keyword argument is deprecated in favor of the `enable` keyword argument.
 - Buffers have a `bind` method that replaces the tuples in the VertexArray creation.
 - VertexArrays have an optional `scope` property that will be used when rendering.
 - The VertexArray's `vertices` property is now writeable.
@@ -25,6 +25,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The `ctx.simple_vertex_array` is deprecated in favor of using `ctx.vertex_array` with the same parameters.
 - The `prog[uniform].value = value` is deprecated in favor of using `prog[uniform] = value`.
 - The `prog[uniform].write(bytes_value)` is deprecated in favor of using the `prog[uniform] = bytes_value`.
+
+## [5.5.3] - 2019-08-16
+
+### Fixed
+
+- Scope object uniform buffer bindings.
+
+### Removed
+
+- Removed version transition helper properties: "new" and "old".
 
 ## [5.5.2] - 2019-06-13
 
@@ -493,7 +503,8 @@ For more information please see: [Differneces between ModernGL5 and ModernGL4](h
 
 - It was a tool for me to develop games in python
 
-[Unreleased]: https://github.com/cprogrammer1994/ModernGL/compare/5.5.2...master
+[Unreleased]: https://github.com/cprogrammer1994/ModernGL/compare/5.5.3...master
+[5.5.3]: https://github.com/cprogrammer1994/ModernGL/compare/5.5.2...5.5.3
 [5.5.2]: https://github.com/cprogrammer1994/ModernGL/compare/5.5.1...5.5.2
 [5.5.1]: https://github.com/cprogrammer1994/ModernGL/compare/5.5.0...5.5.1
 [5.5.0]: https://github.com/cprogrammer1994/ModernGL/compare/5.4.2...5.5.0
