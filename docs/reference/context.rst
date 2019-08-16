@@ -28,7 +28,7 @@ ModernGL Objects
 .. automethod:: Context.framebuffer(color_attachments=(), depth_attachment=None) -> Framebuffer
 .. automethod:: Context.renderbuffer(size, components=4, samples=0, dtype='f1') -> Renderbuffer
 .. automethod:: Context.depth_renderbuffer(size, samples=0) -> Renderbuffer
-.. automethod:: Context.scope(framebuffer, enable_only=None, textures=(), uniform_buffers=(), storage_buffers=()) -> Scope
+.. automethod:: Context.scope(framebuffer=None, enable_only=None, textures=(), uniform_buffers=(), storage_buffers=(), samplers=()) -> Scope
 .. automethod:: Context.query(samples=False, any_samples=False, time=False, primitives=False) -> Query
 .. automethod:: Context.compute_shader(source) -> ComputeShader
 .. automethod:: Context.sampler(repeat_x=True, repeat_y=True, repeat_z=True, filter=None, anisotropy=1.0, compare_func='?', border_color=None, min_lod=-1000.0, max_lod=1000.0) -> Sampler

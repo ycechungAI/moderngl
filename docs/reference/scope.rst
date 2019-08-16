@@ -9,7 +9,7 @@ Scope
 Create
 ------
 
-.. automethod:: Context.scope(framebuffer, enable_only=None, textures=(), uniform_buffers=(), storage_buffers=()) -> Scope
+.. automethod:: Context.scope(framebuffer=None, enable_only=None, textures=(), uniform_buffers=(), storage_buffers=(), samplers=()) -> Scope
     :noindex:
 
 Attributes
