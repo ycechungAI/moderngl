@@ -63,25 +63,6 @@ class Context:
         ModernGL objects can be created from this class.
     '''
 
-    BLEND = 1
-    DEPTH_TEST = 2
-    CULL_FACE = 4
-
-    ZERO = 0x0000
-    ONE = 0x0001
-
-    SRC_COLOR = 0x0300
-    ONE_MINUS_SRC_COLOR = 0x0301
-    SRC_ALPHA = 0x0302
-    ONE_MINUS_SRC_ALPHA = 0x0303
-    DST_ALPHA = 0x0304
-    ONE_MINUS_DST_ALPHA = 0x0305
-    DST_COLOR = 0x0306
-    ONE_MINUS_DST_COLOR = 0x0307
-
-    FIRST_VERTEX_CONVENTION = 0x8E4D
-    LAST_VERTEX_CONVENTION = 0x8E4E
-
     __slots__ = ['mglo', '_screen', '_info', 'version_code', 'fbo', 'extra']
 
     def __init__(self):

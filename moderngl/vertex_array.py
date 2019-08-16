@@ -91,14 +91,6 @@ class VertexArray:
         self.mglo.vertices = int(value)
 
     @property
-    def instances(self) -> int:
-        return self.mglo.instances
-
-    @instances.setter
-    def instances(self, value):
-        self.mglo.instances = int(value)
-
-    @property
     def subroutines(self) -> Tuple[int, ...]:
         '''
             tuple: The subroutines assinged to the VertexArray.
@@ -120,7 +112,7 @@ class VertexArray:
 
         return self._glo
 
-    def render(self, mode=None, vertices=-1, *, first=0, instances=-1) -> None:
+    def render(self, mode=None, vertices=-1, *, first=0, instances=1) -> None:
         '''
             The render primitive (mode) must be the same as
             the input primitive of the GeometryShader.
@@ -160,7 +152,7 @@ class VertexArray:
 
         self.mglo.render_indirect(buffer.mglo, mode, count, first)
 
-    def transform(self, buffer, mode=None, vertices=-1, *, first=0, instances=-1) -> None:
+    def transform(self, buffer, mode=None, vertices=-1, *, first=0, instances=1) -> None:
         '''
             Transform vertices.
             Stores the output in a single buffer.
