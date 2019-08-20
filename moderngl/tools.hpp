@@ -20,6 +20,19 @@ struct _Trace {
 // #define TRACE _Trace(__FUNCTION__, __FILE__, __LINE__);
 #define TRACE
 
+struct ErrorResponse {
+    template <typename T>
+    operator T * () {
+        return NULL;
+    }
+    operator int() {
+        return -1;
+    }
+};
+
+#define ensure(cond, ...) if (!(cond)) { PyErr_Format(PyExc_Exception, __VA_ARGS__); return ErrorResponse(); }
+#define ensurei(cond) if (!(cond)) { PyErr_BadInternalCall(); return ErrorResponse(); }
+
 inline PyObject * _type_check(PyObject * obj, PyTypeObject * typ, const char * file, int line) {
     if (!obj) {
         fprintf(stderr, "null object %s:%d", file, line);

@@ -254,12 +254,14 @@ Blending * Context_meth_blending(Context * self, PyObject * args, PyObject * kwa
 
     int num_params = (int)PySequence_Fast_GET_SIZE(params);
     Blending * res = PyObject_NewVar(Blending, Blending_type, num_params);
+    ensurei(res);
+
     res->prev = self;
     res->next = self->next;
     self->next = res;
     res->ctx = self;
-
     res->extra = NULL;
+
     memcpy(res->blend_color, color, sizeof(color));
     res->blend_functions = (int)PySequence_Size(blend_functions);
     res->blend_equations = (int)PySequence_Size(blend_equations);
@@ -268,6 +270,10 @@ Blending * Context_meth_blending(Context * self, PyObject * args, PyObject * kwa
         res->params[i] = PyLong_AsLong(PySequence_Fast_GET_ITEM(params, i));
     }
     Py_DECREF(params);
+
+    if (PyErr_Occurred()) {
+        return NULL;
+    }
 
     return new_ref(res);
 }
@@ -311,12 +317,14 @@ Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) { 
     }
 
     Buffer * res = PyObject_New(Buffer, Buffer_type);
+    ensurei(res);
+
     res->prev = self;
     res->next = self->next;
     self->next = res;
     res->ctx = self;
-
     res->extra = NULL;
+
     res->mem = NULL;
     res->flags = 0;
 
@@ -331,9 +339,14 @@ Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) { 
         } else {
             res->size = PyLong_AsLong(reserve);
         }
+        if (PyErr_Occurred()) {
+            return NULL;
+        }
     } else {
         Py_buffer view = {};
-        PyObject_GetBuffer(data, &view, PyBUF_STRIDED_RO);
+        if (PyObject_GetBuffer(data, &view, PyBUF_STRIDED_RO) < 0) {
+            return NULL;
+        }
         res->size = (int)view.len;
         PyBuffer_Release(&view);
     }
@@ -404,24 +417,14 @@ PyObject * Buffer_meth_read(Buffer * self, PyObject * args, PyObject * kwa) { TR
         Py_RETURN_NONE;
     }
 
-    if (Py_TYPE(into) == Texture_type) {
-        Texture * dst = cast(Texture, into);
-        // gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, self->glo);
-        // if (dst->texture_target == GL_TEXTURE_2D_ARRAY) {
-        //     gl.TexSubImage3D(dst->texture_target, 0, x, y, z, width, height, depth, format, pixel_type, 0);
-        // } else {
-        //     gl.TexSubImage2D(dst->texture_target, 0, x, y, width, height, format, pixel_type, 0);
-        // }
-        // gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-        PyErr_Format(PyExc_NotImplementedError, "");
-        return NULL;
-    }
-
     if (is_buffer(into)) {
         self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
         Py_buffer view = {};
-        PyObject_GetBuffer(into, &view, PyBUF_WRITABLE);
+        if (PyObject_GetBuffer(into, &view, PyBUF_WRITABLE) < 0) {
+            return NULL;
+        }
         void * map = self->ctx->gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_READ_BIT);
+        ensurei(map);
         memcpy((char *)view.buf + write_offset, map, size);
         PyBuffer_Release(&view);
         self->ctx->gl.UnmapBuffer(GL_ARRAY_BUFFER);
@@ -431,11 +434,14 @@ PyObject * Buffer_meth_read(Buffer * self, PyObject * args, PyObject * kwa) { TR
     if (into == Py_None) {
         self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
         void * map = self->ctx->gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, GL_MAP_READ_BIT);
+        ensurei(map);
         PyObject * res = PyBytes_FromStringAndSize((const char *)map, size);
+        ensurei(res);
         self->ctx->gl.UnmapBuffer(GL_ARRAY_BUFFER);
         return res;
     }
 
+    PyErr_Format(PyExc_ValueError, "invalid into");
     return NULL;
 }
 
@@ -473,16 +479,12 @@ PyObject * Buffer_meth_map(Buffer * self, PyObject * args, PyObject * kwa) { TRA
         size = self->size - offset;
     }
 
-    if (self->mem) {
-        return NULL;
-    }
+    ensure(!self->mem, "already mapped");
 
 	self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
     int access = coherent << 7 | persistent << 6 | writable << 1 | readable;
     void * ptr = self->ctx->gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, access);
-    if (!ptr) {
-        return NULL;
-    }
+    ensure(ptr, "cannot map the buffer");
     self->mem = PyMemoryView_FromMemory((char *)ptr, size, writable ? PyBUF_WRITE : PyBUF_READ);
     return new_ref(self->mem);
 }
@@ -572,6 +574,8 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
 
     int num_attachments = (int)PySequence_Fast_GET_SIZE(color_attachments);
     Framebuffer * res = PyObject_NewVar(Framebuffer, Framebuffer_type, num_attachments);
+    ensurei(res);
+
     res->prev = self;
     res->next = self->next;
     self->next = res;
@@ -620,6 +624,7 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
             continue;
         }
 
+        PyErr_Format(PyExc_ValueError, "invalid color attachment");
         return NULL;
     }
 
@@ -656,6 +661,9 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
                 0
             );
         }
+
+        PyErr_Format(PyExc_ValueError, "invalid depth attachment");
+        return NULL;
     }
 
     self->gl.DrawBuffers(num_attachments, default_draw_buffers);
@@ -761,7 +769,9 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
         int offset = write_offset ? PyLong_AsLong(write_offset) : 0;
         self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
         Py_buffer view = {};
-        PyObject_GetBuffer(into, &view, PyBUF_WRITABLE);
+        if (PyObject_GetBuffer(into, &view, PyBUF_WRITABLE) < 0) {
+            return NULL;
+        }
         self->ctx->gl.ReadBuffer(GL_COLOR_ATTACHMENT0 + attachment);
         self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, (char *)view.buf + offset);
         PyBuffer_Release(&view);
@@ -770,12 +780,14 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
 
     if (into == Py_None) {
         PyObject * res = PyBytes_FromStringAndSize(NULL, width * height * components);
+        ensurei(res);
         char * data = PyBytes_AS_STRING(res);
         self->ctx->gl.ReadBuffer(GL_COLOR_ATTACHMENT0 + attachment);
         self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, data);
         return res;
     }
 
+    PyErr_Format(PyExc_ValueError, "invalid into");
     return NULL;
 }
 
@@ -785,7 +797,7 @@ PyObject * Framebuffer_meth_clear(Framebuffer * self, PyObject * args, PyObject 
     PyObject * color = NULL;
     PyObject * depth = NULL;
     PyObject * attachment = NULL;
-    PyObject * viewport;
+    PyObject * viewport = NULL;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwa, "|OOOO", kw, &color, &depth, &attachment, &viewport)) {
         return NULL;
@@ -808,14 +820,22 @@ PyObject * Framebuffer_meth_clear(Framebuffer * self, PyObject * args, PyObject 
         char color_bytes[32] = {};
         if (is_buffer(color)) {
             Py_buffer view = {};
-            PyObject_GetBuffer(color, &view, PyBUF_STRIDED_RO);
-            PyBuffer_ToContiguous(color_bytes, &view, view.len, 'C');
+            if (PyObject_GetBuffer(color, &view, PyBUF_STRIDED_RO) < 0) {
+                return NULL;
+            }
+            ensure(view.len < 32, "buffer overflow");
+            if (PyBuffer_ToContiguous(color_bytes, &view, view.len, 'C') < 0) {
+                return NULL;
+            }
             PyBuffer_Release(&view);
         } else {
             switch (shape) {
                 case 'f': py_floats((float *)color_bytes, 1, components, color); break;
                 case 'i': py_ints((int *)color_bytes, 1, components, color); break;
                 case 'u': py_uints((unsigned *)color_bytes, 1, components, color); break;
+            }
+            if (PyErr_Occurred()) {
+                return NULL;
             }
         }
         switch (shape) {
@@ -827,6 +847,9 @@ PyObject * Framebuffer_meth_clear(Framebuffer * self, PyObject * args, PyObject 
 
     if (depth) {
         float val = (float)PyFloat_AsDouble(depth);
+        if (PyErr_Occurred()) {
+            return NULL;
+        }
         self->ctx->gl.ClearBufferfv(GL_DEPTH, 0, &val);
     } else if (!attachment) {
         float val = 1.0f;
@@ -902,7 +925,7 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
     };
 
     const char * src[6] = {};
-    PyObject * varyings = NULL;
+    PyObject * varyings = Py_None;
 
     int args_ok = PyArg_ParseTupleAndKeywords(
         args, kwa, "|zzzzzzO", kw, &src[0], &src[1], &src[2], &src[3], &src[4], &src[5], &varyings
@@ -912,21 +935,22 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
         return NULL;
     }
 
-    if ((src[0] || src[1] || src[2] || src[3] || src[4]) && src[5]) {
-        PyErr_BadInternalCall();
-        return NULL;
-    }
+    bool compute = !!src[5];
+    bool render = src[0] || src[1] || src[2] || src[3] || src[4];\
+    ensure(!compute || varyings == Py_None, "invalid varyings");
+    ensure(render ^ compute, "invalid program");
 
     Program * res = PyObject_New(Program, Program_type);
+    ensurei(res);
+
     res->prev = self;
     res->next = self->next;
     self->next = res;
     res->ctx = self;
-
     res->extra = NULL;
 
     res->glo = self->gl.CreateProgram();
-    res->compute = !!src[5];
+    res->compute = compute;
 
     const int SHADER_TYPE[] = {
         GL_VERTEX_SHADER,
@@ -966,12 +990,14 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
         }
     }
 
-    if (varyings) {
+    if (varyings != Py_None) {
         int varyings_len = (int)PySequence_Length(varyings);
+        ensurei(varyings_len < 1024);
         const char * varyings_str[1024];
         for (int i = 0; i < varyings_len; ++i) {
             varyings_str[i] = PyUnicode_AsUTF8(PySequence_GetItem(varyings, i));
         }
+        ensure(!PyErr_Occurred(), "invalid varying");
         self->gl.TransformFeedbackVaryings(res->glo, varyings_len, varyings_str, GL_INTERLEAVED_ATTRIBS);
     }
 
@@ -1081,8 +1107,13 @@ int Program_set_item(Program * self, PyObject * key, PyObject * value) { TRACE
     }
     char buffer[16384];
     Py_buffer view = {};
-    PyObject_GetBuffer(value, &view, PyBUF_STRIDED_RO);
-    PyBuffer_ToContiguous(buffer, &view, view.len, 'C');
+    if (PyObject_GetBuffer(value, &view, PyBUF_STRIDED_RO) < 0) {
+        return -1;
+    }
+    ensure(view.len < 16384, "buffer overflow");
+    if (PyBuffer_ToContiguous(buffer, &view, view.len, 'C') < 0) {
+        return NULL;
+    }
     PyBuffer_Release(&view);
     self->ctx->gl.UseProgram(self->glo);
     set_uniform(self->ctx->gl, gltype, location, size, buffer);
@@ -1152,11 +1183,12 @@ Query * Context_meth_query(Context * self, PyObject * args, PyObject * kwa) { TR
     }
 
     Query * res = PyObject_New(Query, Query_type);
+    ensurei(res);
+
     res->prev = self;
     res->next = self->next;
     self->next = res;
     res->ctx = self;
-
     res->extra = NULL;
 
     if (time_elapsed) {
@@ -1266,11 +1298,12 @@ Renderbuffer * Context_meth_renderbuffer(Context * self, PyObject * args, PyObje
     }
 
     Renderbuffer * res = PyObject_New(Renderbuffer, Renderbuffer_type);
+    ensurei(res);
+
     res->prev = self;
     res->next = self->next;
     self->next = res;
     res->ctx = self;
-
     res->extra = NULL;
 
     res->width = width;
@@ -1357,12 +1390,14 @@ Sampler * Context_meth_sampler(Context * self, PyObject * args, PyObject * kwa) 
     }
 
     Sampler * res = PyObject_New(Sampler, Sampler_type);
+    ensurei(res);
+
     res->prev = self;
     res->next = self->next;
     self->next = res;
     res->ctx = self;
-
     res->extra = NULL;
+
     res->texture = NULL;
 
     self->gl.GenSamplers(1, (GLuint *)&res->glo);
@@ -1553,12 +1588,14 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TR
     int num_bindings = num_samplers + num_uniform_buffers + num_storage_buffers;
 
     Scope * res = PyObject_NewVar(Scope, Scope_type, num_bindings);
+    ensurei(res);
+
     res->prev = self;
     res->next = self->next;
     self->next = res;
     res->ctx = self;
-
     res->extra = NULL;
+
     res->bindings_lst = PyList_New(0);
 
     res->line_width = line_width;
@@ -1704,11 +1741,12 @@ Texture * Context_meth_texture(Context * self, PyObject * args, PyObject * kwa) 
     }
 
     Texture * res = PyObject_New(Texture, Texture_type);
+    ensurei(res);
+
     res->prev = self;
     res->next = self->next;
     self->next = res;
     res->ctx = self;
-
     res->extra = NULL;
 
     res->width = width;
@@ -1780,11 +1818,12 @@ Texture * Context_meth_texture_array(Context * self, PyObject * args, PyObject *
     }
 
     Texture * res = PyObject_New(Texture, Texture_type);
+    ensurei(res);
+
     res->prev = self;
     res->next = self->next;
     self->next = res;
     res->ctx = self;
-
     res->extra = NULL;
 
     res->width = width;
@@ -1837,11 +1876,12 @@ Texture * Context_meth_texture3d(Context * self, PyObject * args, PyObject * kwa
     int pixel_type = 0;
 
     Texture * res = PyObject_New(Texture, Texture_type);
+    ensurei(res);
+
     res->prev = self;
     res->next = self->next;
     self->next = res;
     res->ctx = self;
-
     res->extra = NULL;
 
     if (self->gl.TexStorage3D) {
@@ -1880,11 +1920,12 @@ Texture * Context_meth_texture_cube(Context * self, PyObject * args, PyObject * 
     int pixel_type = 0;
 
     Texture * res = PyObject_New(Texture, Texture_type);
+    ensurei(res);
+
     res->prev = self;
     res->next = self->next;
     self->next = res;
     res->ctx = self;
-
     res->extra = NULL;
 
     if (samples) {
@@ -1957,7 +1998,9 @@ PyObject * Texture_meth_read(Texture * self, PyObject * args, PyObject * kwa) { 
         int offset = write_offset ? PyLong_AsLong(write_offset) : 0;
         self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
         Py_buffer view = {};
-        PyObject_GetBuffer(into, &view, PyBUF_WRITABLE);
+        if (PyObject_GetBuffer(into, &view, PyBUF_WRITABLE) < 0) {
+            return NULL;
+        }
         self->ctx->gl.GetTexImage(self->texture_target, 0, GL_RGB, GL_UNSIGNED_BYTE, (char *)view.buf + offset);
         PyBuffer_Release(&view);
         Py_RETURN_NONE;
@@ -1965,6 +2008,7 @@ PyObject * Texture_meth_read(Texture * self, PyObject * args, PyObject * kwa) { 
 
     if (into == Py_None) {
         PyObject * res = PyBytes_FromStringAndSize(NULL, self->width * self->height * self->components);
+        ensurei(res);
         self->ctx->gl.GetTexImage(self->texture_target, 0, GL_RGB, GL_UNSIGNED_BYTE, PyBytes_AS_STRING(res));
         return res;
     }
@@ -2120,11 +2164,12 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
     }
 
     VertexArray * res = PyObject_New(VertexArray, VertexArray_type);
+    ensurei(res);
+
     res->prev = self;
     res->next = self->next;
     self->next = res;
     res->ctx = self;
-
     res->extra = NULL;
 
     res->program = program ? new_ref(program) : NULL;
@@ -2347,6 +2392,8 @@ PyObject * VertexArray_meth_transform(VertexArray * self, PyObject * args, PyObj
     Buffer * old = self->output_buffer;
     self->output_buffer = into;
     PyObject * res = PyObject_CallMethod((PyObject *)self, "render", "iii", mode, vertices, instances);
+    ensurei(res);
+
     self->output_buffer = old;
     return res;
 }
@@ -2507,14 +2554,17 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     static char * kw[] = {"standalone", "glversion", "glhooks", NULL};
     int standalone = false;
     int glversion = 330;
+
     PyObject * glhooks = Py_None;
     if (!PyArg_ParseTupleAndKeywords(args, kwa, "|piO", kw, &standalone, &glversion, &glhooks)) {
         return NULL;
     }
+
     Context * res = PyObject_New(Context, Context_type);
+    ensurei(res);
+
     res->next = res;
     res->prev = res;
-
     res->extra = NULL;
 
     if (!res->ctx.load(standalone, glversion)) {
@@ -2554,7 +2604,6 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->module = self;
     res->tools = PyObject_GetAttrString(self, "mgl");
 
-    // res->gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     res->gl.Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     res->gl.Enable(GL_PRIMITIVE_RESTART);
     res->gl.PrimitiveRestartIndex(-1);
@@ -2996,13 +3045,17 @@ PyDoc_STRVAR(moderngl_doc,
 // backward compatibility
 PyObject * moderngl_meth_create_context(PyObject * self, PyObject * args, PyObject * kwa) { TRACE
     static char * kw[] = {"require", NULL};
+
     PyObject * require = Py_None;
+
     if (!PyArg_ParseTupleAndKeywords(args, kwa, "|O", kw, &require)) {
         return NULL;
     }
+
     if (require == Py_None) {
         require = PyLong_FromLong(330);
     }
+
     return PyObject_CallMethod(self, "context", "OO", Py_False, require);
 }
 
