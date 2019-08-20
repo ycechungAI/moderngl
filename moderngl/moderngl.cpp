@@ -243,7 +243,11 @@ Blending * Context_meth_blending(Context * self, PyObject * args, PyObject * kwa
     PyObject * blend_equations = empty_tuple;
     float color[4] = {};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|OO(ffff)", kw, &blend_functions, &blend_equations, &color[0], &color[1], &color[2], &color[3])) {
+    int args_ok = PyArg_ParseTupleAndKeywords(
+        args, kwa, "|OO(ffff)", kw, &blend_functions, &blend_equations, &color[0], &color[1], &color[2], &color[3]
+    );
+
+    if (!args_ok) {
         return NULL;
     }
 
@@ -301,7 +305,9 @@ PyType_Spec Blending_spec = {
 #pragma region Buffer
 
 Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) { TRACE
-    static char * kw[] = {"data", "reserve", "dynamic", "readable", "writable", "persistent", "coherent", "local", NULL};
+    static char * kw[] = {
+        "data", "reserve", "dynamic", "readable", "writable", "persistent", "coherent", "local", NULL,
+    };
 
     PyObject * data = Py_None;
     PyObject * reserve = NULL;
@@ -312,7 +318,11 @@ Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) { 
     int coherent = false;
     int local = false;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|OOpppppp", kw, &data, &reserve, &dynamic, &readable, &writable, &persistent, &coherent, &local)) {
+    int args_ok = PyArg_ParseTupleAndKeywords(
+        args, kwa, "|OOpppppp", kw, &data, &reserve, &dynamic, &readable, &writable, &persistent, &coherent, &local
+    );
+
+    if (!args_ok) {
         return NULL;
     }
 
@@ -471,7 +481,11 @@ PyObject * Buffer_meth_map(Buffer * self, PyObject * args, PyObject * kwa) { TRA
     int persistent = self->flags >> 6 & 1;
     int coherent = self->flags >> 7 & 1;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|iipppp", kw, &size, &offset, &readable, &writable, &persistent, &coherent)) {
+    int args_ok = PyArg_ParseTupleAndKeywords(
+        args, kwa, "|iipppp", kw, &size, &offset, &readable, &writable, &persistent, &coherent
+    );
+
+    if (!args_ok) {
         return NULL;
     }
 
@@ -689,7 +703,9 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
 }
 
 PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject * kwa) { TRACE
-    static char * kw[] = {"size", "components", "attachment", "read_offset", "write_offset", "into", "alignment", NULL};
+    static char * kw[] = {
+        "size", "components", "attachment", "read_offset", "write_offset", "into", "alignment", NULL,
+    };
 
     int width = self->width;
     int height = self->height;
@@ -758,9 +774,9 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
 
     if (Py_TYPE(into) == Buffer_type) {
         Buffer * dst = cast(Buffer, into);
-        int offset = write_offset ? PyLong_AsLong(write_offset) : 0;
+        char * ptr = (char *)NULL + (write_offset ? PyLong_AsLong(write_offset) : 0);
 		self->ctx->gl.BindBuffer(GL_PIXEL_PACK_BUFFER, dst->glo);
-		self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, (char *)NULL + offset);
+		self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, ptr);
 		self->ctx->gl.BindBuffer(GL_PIXEL_PACK_BUFFER, 0);
         Py_RETURN_NONE;
     }
@@ -772,8 +788,9 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
         if (PyObject_GetBuffer(into, &view, PyBUF_WRITABLE) < 0) {
             return NULL;
         }
+        char * ptr = (char *)view.buf + offset;
         self->ctx->gl.ReadBuffer(GL_COLOR_ATTACHMENT0 + attachment);
-        self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, (char *)view.buf + offset);
+        self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, ptr);
         PyBuffer_Release(&view);
         Py_RETURN_NONE;
     }
@@ -782,7 +799,6 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
         PyObject * res = PyBytes_FromStringAndSize(NULL, width * height * components);
         ensurei(res);
         char * data = PyBytes_AS_STRING(res);
-        self->ctx->gl.ReadBuffer(GL_COLOR_ATTACHMENT0 + attachment);
         self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, data);
         return res;
     }
@@ -1098,7 +1114,9 @@ int Program_set_item(Program * self, PyObject * key, PyObject * value) { TRACE
         return 0;
     }
     if (!is_buffer(value)) {
-        PyObject * call = PyObject_CallMethod(self->ctx->tools, "serialize_uniform", "OOOO", self->ctx->module, self, key, value);
+        PyObject * call = PyObject_CallMethod(
+            self->ctx->tools, "serialize_uniform", "OOOO", self->ctx->module, self, key, value
+        );
         Py_XDECREF(call);
         if (!call) {
             return -1;
@@ -1537,7 +1555,18 @@ PyType_Spec Sampler_spec = {
 #pragma region Scope
 
 Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TRACE
-    static char * kw[] = {"enable", "framebuffer", "samplers", "uniform_buffers", "storage_buffers", "blending", "line_width", "point_size", "viewport", NULL};
+    static char * kw[] = {
+        "enable",
+        "framebuffer",
+        "samplers",
+        "uniform_buffers",
+        "storage_buffers",
+        "blending",
+        "line_width",
+        "point_size",
+        "viewport",
+        NULL,
+    };
 
     int enable = MGL_NOTHING;
     Framebuffer * framebuffer = self->screen;
@@ -1774,7 +1803,9 @@ Texture * Context_meth_texture(Context * self, PyObject * args, PyObject * kwa) 
         if (self->gl.TexStorage2D) {
             self->gl.TexStorage2D(res->texture_target, levels, res->internal_format, width, height);
         } else {
-            self->gl.TexImage2D(res->texture_target, 0, res->internal_format, width, height, 0, res->base_format, res->pixel_type, NULL);
+            self->gl.TexImage2D(
+                res->texture_target, 0, res->internal_format, width, height, 0, res->base_format, res->pixel_type, NULL
+            );
         }
     }
 
@@ -1844,7 +1875,9 @@ Texture * Context_meth_texture_array(Context * self, PyObject * args, PyObject *
     if (self->gl.TexStorage3D) {
         self->gl.TexStorage3D(res->texture_target, levels, res->internal_format, width, height, length);
     } else {
-        self->gl.TexImage3D(res->texture_target, 0, res->internal_format, width, height, length, 0, res->base_format, res->pixel_type, NULL);
+        self->gl.TexImage3D(
+            res->texture_target, 0, res->internal_format, width, height, length, 0, res->base_format, res->pixel_type, NULL
+        );
     }
     if (data) {
         PyObject * call = PyObject_CallMethod((PyObject *)res, "write", "O", data);
@@ -1887,7 +1920,9 @@ Texture * Context_meth_texture3d(Context * self, PyObject * args, PyObject * kwa
     if (self->gl.TexStorage3D) {
         self->gl.TexStorage3D(res->texture_target, levels, internal_format, width, height, length);
     } else {
-        self->gl.TexImage3D(res->texture_target, 0, internal_format, width, height, length, 0, base_format, pixel_type, NULL);
+        self->gl.TexImage3D(
+            res->texture_target, 0, internal_format, width, height, length, 0, base_format, pixel_type, NULL
+        );
     }
 
     if (data) {
@@ -1933,7 +1968,9 @@ Texture * Context_meth_texture_cube(Context * self, PyObject * args, PyObject * 
             self->gl.TexStorage2DMultisample(GL_TEXTURE_CUBE_MAP, samples, internal_format, width, height, true);
         } else {
             for (int i = 0; i < 6; ++i) {
-                self->gl.TexImage2DMultisample(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, samples, internal_format, width, height, true);
+                self->gl.TexImage2DMultisample(
+                    GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, samples, internal_format, width, height, true
+                );
             }
         }
     } else {
@@ -1941,7 +1978,9 @@ Texture * Context_meth_texture_cube(Context * self, PyObject * args, PyObject * 
             self->gl.TexStorage2D(GL_TEXTURE_CUBE_MAP, levels, internal_format, width, height);
         } else {
             for (int i = 0; i < 6; ++i) {
-                self->gl.TexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internal_format, width, height, 0, base_format, pixel_type, NULL);
+                self->gl.TexImage2D(
+                    GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internal_format, width, height, 0, base_format, pixel_type, NULL
+                );
             }
         }
     }
@@ -2027,14 +2066,18 @@ PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) {
     int height = self->height;
     int length = self->length;
 
+    int args_ok;
+
     if (self->texture_target == GL_TEXTURE_2D_ARRAY) {
-        if (!PyArg_ParseTupleAndKeywords(args, kwa, "O|(iiiiii)", kw, &data, &offset_x, &offset_y, &offset_z, &width, &height, &length)) {
-            return NULL;
-        }
+        args_ok = PyArg_ParseTupleAndKeywords(
+            args, kwa, "O|(iiiiii)", kw, &data, &offset_x, &offset_y, &offset_z, &width, &height, &length
+        );
     } else {
-        if (!PyArg_ParseTupleAndKeywords(args, kwa, "O|(iiii)", kw, &data, &offset_x, &offset_y, &width, &height)) {
-            return NULL;
-        }
+        args_ok = PyArg_ParseTupleAndKeywords(args, kwa, "O|(iiii)", kw, &data, &offset_x, &offset_y, &width, &height);
+    }
+
+    if (!args_ok) {
+        return NULL;
     }
 
     Py_buffer view = {};
@@ -2050,9 +2093,13 @@ PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) {
 
     self->ctx->gl.BindTexture(self->texture_target, self->glo);
     if (self->texture_target == GL_TEXTURE_2D_ARRAY) {
-        self->ctx->gl.TexSubImage3D(self->texture_target, 0, offset_x, offset_y, offset_z, width, height, length, self->base_format, self->pixel_type, view.buf);
+        self->ctx->gl.TexSubImage3D(
+            self->texture_target, 0, offset_x, offset_y, offset_z, width, height, length, self->base_format, self->pixel_type, view.buf
+        );
     } else {
-        self->ctx->gl.TexSubImage2D(self->texture_target, 0, offset_x, offset_y, width, height, self->base_format, self->pixel_type, view.buf);
+        self->ctx->gl.TexSubImage2D(
+            self->texture_target, 0, offset_x, offset_y, width, height, self->base_format, self->pixel_type, view.buf
+        );
     }
     if (Py_TYPE(data) != Buffer_type) {
         self->ctx->gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
@@ -2159,7 +2206,11 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
     PyObject * index_buffer = NULL;
     int mode = GL_TRIANGLES;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|O!OOi", kw, Program_type, &program, &bindings, &index_buffer, &mode)) {
+    int args_ok = PyArg_ParseTupleAndKeywords(
+        args, kwa, "|O!OOi", kw, Program_type, &program, &bindings, &index_buffer, &mode
+    );
+
+    if (!args_ok) {
         return NULL;
     }
 
@@ -2278,7 +2329,9 @@ PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject
     self->ctx->gl.UseProgram(self->program->glo);
 
     if (self->scope) {
-        self->ctx->gl.Viewport(self->scope->viewport[0], self->scope->viewport[1], self->scope->viewport[2], self->scope->viewport[3]);
+        self->ctx->gl.Viewport(
+            self->scope->viewport[0], self->scope->viewport[1], self->scope->viewport[2], self->scope->viewport[3]
+        );
         self->ctx->gl.PointSize(self->scope->point_size);
         self->ctx->gl.LineWidth(self->scope->line_width);
         ((self->scope->enable & MGL_BLEND) ? self->ctx->gl.Enable : self->ctx->gl.Disable)(GL_BLEND);
