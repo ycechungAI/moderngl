@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include "opengl.hpp"
 
 struct DataType {
     int base_format[5];
@@ -81,24 +82,3 @@ static DataType d4 = {
     {0, GL_DEPTH_COMPONENT32, 0, 0, 0},
     GL_FLOAT, 'd', 4,
 };
-
-inline DataType * from_dtype(PyObject * dtype) {
-    if (PyUnicode_Check(dtype) && PyUnicode_GET_LENGTH(dtype) == 2) {
-        short * code = (short *)PyUnicode_AsUTF8(dtype);
-        switch (*code) {
-            case 'f' | '1' << 8: return &f1;
-            case 'f' | '2' << 8: return &f2;
-            case 'f' | '4' << 8: return &f4;
-            case 'u' | '1' << 8: return &u1;
-            case 'u' | '2' << 8: return &u2;
-            case 'u' | '4' << 8: return &u4;
-            case 'i' | '1' << 8: return &i1;
-            case 'i' | '2' << 8: return &i2;
-            case 'i' | '4' << 8: return &i4;
-            case 'd' | '2' << 8: return &d2;
-            case 'd' | '3' << 8: return &d3;
-            case 'd' | '4' << 8: return &d4;
-        }
-    }
-    return NULL;
-}

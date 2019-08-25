@@ -1,6 +1,7 @@
 #pragma once
 #include "common.hpp"
 #include "gl_methods.hpp"
+#include "converters.hpp"
 
 extern "C" unsigned glGetError();
 #define ERR printf("%s:%d %s (error=%x, before=%x)\n", __FILE__, __LINE__, __FUNCTION__, glGetError(), glGetError())
@@ -581,4 +582,12 @@ PyObject * get_limits(const GLMethods & gl, int glversion) {
         Py_DECREF(PyList_GET_ITEM(res, i));
     }
     return res;
+}
+
+inline int expected_size(int width, int height, int length, int level, int pixel_size, int alignment) {
+    int row = pixel_size * width;
+    if (row % alignment) {
+        row += alignment - row % alignment;
+    }
+    return row * height * length;
 }

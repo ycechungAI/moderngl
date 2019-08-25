@@ -565,43 +565,16 @@ GLTYPE_ROWS = {
 FLOAT_TYPES = {0x1406, 0x8B50, 0x8B51, 0x8B52, 0x8B5A, 0x8B5B, 0x8B5C, 0x8B65, 0x8B66, 0x8B67, 0x8B68, 0x8B69, 0x8B6A}
 
 
-def texture_from(ctx, image):
-    width, height = image.size
-    components = len(image.mode)
-    data = image.tobytes('raw', image.mode, 0, -1)
-    return ctx.texture((width, height), components, data)
+def texture_from(ctx, obj, array, cubemap):
+    if array or cubemap:
+        size = obj[0].size
+        components = len(obj[0].mode)
+        data = b''.join(img.tobytes('raw', img.mode, 0, -1) for img in obj)
+        return ctx.texture(size, components, data, array=len(obj) if array else 0, cubemap=cubemap)
 
-
-def texture_array_from(ctx, images):
-    length = len(images)
-    width, height = images[0].size
-    components = len(images[0].mode)
-    data = b''.join(img.tobytes('raw', img.mode, 0, -1) for img in images)
-    return ctx.texture_array((width, height, length), components, data)
-
-
-def texture_cube_from(ctx, images):
-    assert len(images) == 6
-    width, height = images[0].size
-    components = len(images[0].mode)
-    data = b''.join(img.tobytes('raw', img.mode, 0, -1) for img in images)
-    return ctx.texture_cube((width, height), components, data)
-
-
-def texture_cube_array_from(ctx, images):
-    assert len(images) % 6 == 0
-    width, height = images[0].size
-    components = len(images[0].mode)
-    data = b''.join(img.tobytes('raw', img.mode, 0, -1) for img in images)
-    return ctx.texture_cube((width, height), components, data)
-
-
-def texture3d_from(ctx, images):
-    length = len(images)
-    width, height = images[0].size
-    components = len(images[0].mode)
-    data = b''.join(img.tobytes('raw', img.mode, 0, -1) for img in images)
-    return ctx.texture3d((width, height, length), components, data)
+    components = len(obj.mode)
+    data = obj.tobytes('raw', obj.mode, 0, -1)
+    return ctx.texture(obj.size, components, data)
 
 
 def bind_attributes(vao, bindings, setmax=True):

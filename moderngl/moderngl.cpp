@@ -22,6 +22,7 @@ PyObject * empty_dict;
 PyObject * empty_tuple;
 PyObject * default_wrap;
 PyObject * default_border;
+PyObject * default_filter;
 
 unsigned default_draw_buffers[64];
 
@@ -166,12 +167,12 @@ struct Query : public BaseObject {
 
 struct Renderbuffer : public BaseObject {
     struct Context * ctx;
+    struct DataType * dtype;
     int glo;
     int width;
     int height;
     int components;
     int samples;
-    char shape;
 };
 
 struct Sampler : public BaseObject {
@@ -206,17 +207,15 @@ struct Scope : public BaseObject {
 
 struct Texture : public BaseObject {
     struct Context * ctx;
+    struct DataType * dtype;
     int glo;
     int width;
     int height;
     int length;
+    int array;
     int components;
     int samples;
     int texture_target;
-    int internal_format;
-    int base_format;
-    int pixel_type;
-    int shape;
 };
 
 struct VertexArray : public BaseObject {
@@ -244,7 +243,7 @@ Blending * Context_meth_blending(Context * self, PyObject * args, PyObject * kwa
     float color[4] = {};
 
     int args_ok = PyArg_ParseTupleAndKeywords(
-        args, kwa, "|OO(ffff)", kw, &blend_functions, &blend_equations, &color[0], &color[1], &color[2], &color[3]
+        args, kwa, "|OOO&", kw, &blend_functions, &blend_equations, parse_float_color, color
     );
 
     if (!args_ok) {
@@ -402,15 +401,14 @@ PyObject * Buffer_meth_clear(Buffer * self, PyObject * args, PyObject * kwa) { T
 }
 
 PyObject * Buffer_meth_read(Buffer * self, PyObject * args, PyObject * kwa) { TRACE
-    static char * kw[] = {"size", "offset", "into", "write_offset", "viewport", NULL};
+    static char * kw[] = {"size", "offset", "into", "write_offset", NULL};
 
     int size = -1;
     int offset = 0;
     PyObject * into = Py_None;
     int write_offset = 0;
-    PyObject * viewport = NULL;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|iiOiO", kw, &size, &offset, &into, &write_offset, &viewport)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|iiOiO", kw, &size, &offset, &into, &write_offset)) {
         return NULL;
     }
 
@@ -465,7 +463,7 @@ PyObject * Buffer_meth_write(Buffer * self, PyObject * args, PyObject * kwa) { T
         return NULL;
     }
 
-	self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
+    self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
     self->ctx->gl.BufferSubData(GL_ARRAY_BUFFER, offset, view.len, view.buf);
     PyBuffer_Release(&view);
     Py_RETURN_NONE;
@@ -495,7 +493,7 @@ PyObject * Buffer_meth_map(Buffer * self, PyObject * args, PyObject * kwa) { TRA
 
     ensure(!self->mem, "already mapped");
 
-	self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
+    self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
     int access = coherent << 7 | persistent << 6 | writable << 1 | readable;
     void * ptr = self->ctx->gl.MapBufferRange(GL_ARRAY_BUFFER, offset, size, access);
     ensure(ptr, "cannot map the buffer");
@@ -617,7 +615,7 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
             res->samples = renderbuffer->samples;
             res->color_attachments[i].renderbuffer = new_ref(renderbuffer);
             res->color_attachments[i].components = renderbuffer->components;
-            res->color_attachments[i].shape = renderbuffer->shape;
+            res->color_attachments[i].shape = renderbuffer->dtype->shape;
             continue;
         }
         if (Py_TYPE(item) == Texture_type) {
@@ -627,7 +625,7 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
             res->samples = texture->samples;
             res->color_attachments[i].texture = new_ref(texture);
             res->color_attachments[i].components = texture->components;
-            res->color_attachments[i].shape = texture->shape;
+            res->color_attachments[i].shape = texture->dtype->shape;
             self->gl.FramebufferTexture2D(
                 GL_FRAMEBUFFER,
                 GL_COLOR_ATTACHMENT0 + i,
@@ -657,7 +655,7 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
             res->samples = renderbuffer->samples;
             res->depth_attachment.renderbuffer = new_ref(renderbuffer);
             res->depth_attachment.components = renderbuffer->components;
-            res->depth_attachment.shape = renderbuffer->shape;
+            res->depth_attachment.shape = renderbuffer->dtype->shape;
         }
         if (Py_TYPE(depth_attachment) == Texture_type) {
             Texture * texture = cast(Texture, depth_attachment);
@@ -666,7 +664,7 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
             res->samples = texture->samples;
             res->depth_attachment.texture = new_ref(texture);
             res->depth_attachment.components = texture->components;
-            res->depth_attachment.shape = texture->shape;
+            res->depth_attachment.shape = texture->dtype->shape;
             self->gl.FramebufferTexture2D(
                 GL_FRAMEBUFFER,
                 GL_DEPTH_ATTACHMENT,
@@ -686,14 +684,14 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
     if (status != GL_FRAMEBUFFER_COMPLETE) {
         const char * error = "UNKNOWN";
         switch (status) {
-        	case GL_FRAMEBUFFER_UNDEFINED: error = "UNDEFINED"; break;
-        	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: error = "INCOMPLETE_ATTACHMENT"; break;
-        	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: error = "INCOMPLETE_MISSING_ATTACHMENT"; break;
-        	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER: error = "INCOMPLETE_DRAW_BUFFER"; break;
-        	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER: error = "INCOMPLETE_READ_BUFFER"; break;
-        	case GL_FRAMEBUFFER_UNSUPPORTED: error = "UNSUPPORTED"; break;
-        	case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: error = "INCOMPLETE_MULTISAMPLE"; break;
-        	case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS: error = "INCOMPLETE_LAYER_TARGETS"; break;
+            case GL_FRAMEBUFFER_UNDEFINED: error = "UNDEFINED"; break;
+            case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: error = "INCOMPLETE_ATTACHMENT"; break;
+            case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: error = "INCOMPLETE_MISSING_ATTACHMENT"; break;
+            case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER: error = "INCOMPLETE_DRAW_BUFFER"; break;
+            case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER: error = "INCOMPLETE_READ_BUFFER"; break;
+            case GL_FRAMEBUFFER_UNSUPPORTED: error = "UNSUPPORTED"; break;
+            case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: error = "INCOMPLETE_MULTISAMPLE"; break;
+            case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS: error = "INCOMPLETE_LAYER_TARGETS"; break;
         }
         PyErr_Format(PyExc_Exception, "the framebuffer is not complete (%s)", error);
         return NULL;
@@ -715,12 +713,12 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
     PyObject * write_offset = NULL;
     PyObject * into = Py_None;
     int alignment = 1;
-    PyObject * dtype = NULL;
+    DataType * dtype = &f1;
 
     int args_ok = PyArg_ParseTupleAndKeywords(
         args,
         kwa,
-        "|(ii)ii(ii)OOiO",
+        "|(ii)ii(ii)OOiO&",
         kw,
         &width,
         &height,
@@ -731,23 +729,19 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
         &write_offset,
         &into,
         &alignment,
-        &dtype
+        parse_dtype, &dtype
     );
 
     if (!args_ok) {
         return NULL;
     }
 
-    DataType * typ = &f1;
-    if (dtype) {
-        typ = from_dtype(dtype);
-        if (typ->shape == 'd') {
-            components = 1;
-        }
+    if (dtype->shape == 'd') {
+        components = 1;
     }
 
-    int base_format = typ->base_format[components];
-    int pixel_type = typ->gl_type;
+    int base_format = dtype->base_format[components];
+    int pixel_type = dtype->gl_type;
 
     if (Py_TYPE(into) == Framebuffer_type) {
         int dst_xy[2] = {};
@@ -775,9 +769,9 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
     if (Py_TYPE(into) == Buffer_type) {
         Buffer * dst = cast(Buffer, into);
         char * ptr = (char *)NULL + (write_offset ? PyLong_AsLong(write_offset) : 0);
-		self->ctx->gl.BindBuffer(GL_PIXEL_PACK_BUFFER, dst->glo);
-		self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, ptr);
-		self->ctx->gl.BindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+        self->ctx->gl.BindBuffer(GL_PIXEL_PACK_BUFFER, dst->glo);
+        self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, ptr);
+        self->ctx->gl.BindBuffer(GL_PIXEL_PACK_BUFFER, 0);
         Py_RETURN_NONE;
     }
 
@@ -846,9 +840,9 @@ PyObject * Framebuffer_meth_clear(Framebuffer * self, PyObject * args, PyObject 
             PyBuffer_Release(&view);
         } else {
             switch (shape) {
-                case 'f': py_floats((float *)color_bytes, 1, components, color); break;
-                case 'i': py_ints((int *)color_bytes, 1, components, color); break;
-                case 'u': py_uints((unsigned *)color_bytes, 1, components, color); break;
+                case 'f': parse_float_color(color, (float *)color_bytes); break;
+                case 'i': parse_int_color(color, (int *)color_bytes); break;
+                case 'u': parse_uint_color(color, (unsigned *)color_bytes); break;
             }
             if (PyErr_Occurred()) {
                 return NULL;
@@ -1302,17 +1296,18 @@ Renderbuffer * Context_meth_renderbuffer(Context * self, PyObject * args, PyObje
     int height;
     int components = 4;
     int samples = 0;
-    PyObject * dtype = NULL;
+    DataType * dtype = &f1;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "(ii)|iiO", kw, &width, &height, &components, &samples, &dtype)) {
+    int args_ok = PyArg_ParseTupleAndKeywords(
+        args, kwa, "(ii)|iiO&", kw, &width, &height, &components, &samples, parse_dtype, &dtype
+    );
+
+    if (!args_ok) {
         return NULL;
     }
-    DataType * typ = &f1;
-    if (dtype) {
-        typ = from_dtype(dtype);
-        if (typ->shape == 'd') {
-            components = 1;
-        }
+
+    if (dtype->shape == 'd') {
+        components = 1;
     }
 
     Renderbuffer * res = PyObject_New(Renderbuffer, Renderbuffer_type);
@@ -1328,11 +1323,11 @@ Renderbuffer * Context_meth_renderbuffer(Context * self, PyObject * args, PyObje
     res->height = height;
     res->components = components;
     res->samples = samples;
-    res->shape = typ->shape;
+    res->dtype = dtype;
 
     self->gl.GenRenderbuffers(1, (GLuint *)&res->glo);
     self->gl.BindRenderbuffer(GL_RENDERBUFFER, res->glo);
-    self->gl.RenderbufferStorageMultisample(GL_RENDERBUFFER, samples, typ->internal_format[components], width, height);
+    self->gl.RenderbufferStorageMultisample(GL_RENDERBUFFER, samples, dtype->internal_format[components], width, height);
     return new_ref(res);
 }
 
@@ -1379,7 +1374,7 @@ Sampler * Context_meth_sampler(Context * self, PyObject * args, PyObject * kwa) 
     };
 
     Texture * texture;
-    PyObject * filter = self->consts.nearest;
+    PyObject * filter = default_filter;
     PyObject * wrap = default_wrap;
     PyObject * compare_func = Py_None;
     PyObject * anisotropy = Py_None;
@@ -1427,6 +1422,11 @@ Sampler * Context_meth_sampler(Context * self, PyObject * args, PyObject * kwa) 
     // PyObject_SetAttrString((PyObject *)res, "lod_range", lod_range);
     // PyObject_SetAttrString((PyObject *)res, "lod_bias", lod_bias);
     PyObject_SetAttrString((PyObject *)res, "border", border);
+
+    if (PyErr_Occurred()) {
+        return NULL;
+    }
+
     return new_ref(res);
 }
 
@@ -1449,24 +1449,19 @@ int Sampler_set_texture(Sampler * self, Texture * value) { TRACE
 }
 
 PyObject * Sampler_get_filter(Sampler * self) { TRACE
-    int min_filter = 0;
-    int mag_filter = 0;
-    self->ctx->gl.GetSamplerParameteriv(self->glo, GL_TEXTURE_MIN_FILTER, &min_filter);
-    self->ctx->gl.GetSamplerParameteriv(self->glo, GL_TEXTURE_MAG_FILTER, &mag_filter);
-    return Py_BuildValue("ii", min_filter, mag_filter);
+    int filter[2];
+    self->ctx->gl.GetSamplerParameteriv(self->glo, GL_TEXTURE_MIN_FILTER, &filter[0]);
+    self->ctx->gl.GetSamplerParameteriv(self->glo, GL_TEXTURE_MAG_FILTER, &filter[1]);
+    return Py_BuildValue("ii", filter[0], filter[1]);
 }
 
 int Sampler_set_filter(Sampler * self, PyObject * value) { TRACE
-    int min_filter = GL_NEAREST;
-    int mag_filter = GL_NEAREST;
-    if (PyLong_Check(value)) {
-        mag_filter = PyLong_AsLong(value);
-    } else {
-        min_filter = PyLong_AsLong(PyTuple_GetItem(value, 0));
-        mag_filter = PyLong_AsLong(PyTuple_GetItem(value, 1));
+    int filter[2];
+    if (!parse_filter(value, filter)) {
+        return -1;
     }
-    self->ctx->gl.SamplerParameteri(self->glo, GL_TEXTURE_MIN_FILTER, min_filter);
-    self->ctx->gl.SamplerParameteri(self->glo, GL_TEXTURE_MAG_FILTER, mag_filter);
+    self->ctx->gl.SamplerParameteri(self->glo, GL_TEXTURE_MIN_FILTER, filter[0]);
+    self->ctx->gl.SamplerParameteri(self->glo, GL_TEXTURE_MAG_FILTER, filter[1]);
     return 0;
 }
 
@@ -1475,31 +1470,13 @@ PyObject * Sampler_get_wrap(Sampler * self) { TRACE
 }
 
 int Sampler_set_wrap(Sampler * self, PyObject * value) { TRACE
-    if (!PyLong_Check(value)) {
+    int wrap[3];
+    if (!parse_wrap(value, wrap)) {
         return -1;
     }
-    int wrap = PyLong_AsLong(value);
-    static const int pnames[] = {GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T, GL_TEXTURE_WRAP_R};
-    for (int i = 0; i < 2; ++i) {
-        switch (((unsigned char *)&wrap)[i]) {
-            case 0:
-            case MGL_CLAMP_TO_EDGE:
-                self->ctx->gl.SamplerParameteri(self->glo, pnames[i], GL_CLAMP_TO_EDGE);
-                break;
-            case MGL_REPEAT:
-                self->ctx->gl.SamplerParameteri(self->glo, pnames[i], GL_REPEAT);
-                break;
-            case MGL_MIRRORED_REPEAT:
-                self->ctx->gl.SamplerParameteri(self->glo, pnames[i], GL_MIRRORED_REPEAT);
-                break;
-            case MGL_MIRROR_CLAMP_TO_EDGE:
-                self->ctx->gl.SamplerParameteri(self->glo, pnames[i], GL_MIRROR_CLAMP_TO_EDGE);
-                break;
-            case MGL_CLAMP_TO_BORDER:
-                self->ctx->gl.SamplerParameteri(self->glo, pnames[i], GL_CLAMP_TO_BORDER);
-                break;
-        }
-    }
+    self->ctx->gl.SamplerParameteri(self->glo, GL_TEXTURE_WRAP_S, wrap[0]);
+    self->ctx->gl.SamplerParameteri(self->glo, GL_TEXTURE_WRAP_T, wrap[1]);
+    self->ctx->gl.SamplerParameteri(self->glo, GL_TEXTURE_WRAP_R, wrap[2]);
     return 0;
 }
 
@@ -1508,8 +1485,8 @@ PyObject * Sampler_get_border(Sampler * self) { TRACE
 }
 
 int Sampler_set_border(Sampler * self, PyObject * value) { TRACE
-    float border[4] = {};
-    if (py_floats(border, 0, 4, value) < 0) {
+    float border[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+    if (!parse_float_color(value, border)) {
         return -1;
     }
     self->ctx->gl.SamplerParameterfv(self->glo, GL_TEXTURE_BORDER_COLOR, border);
@@ -1742,35 +1719,78 @@ PyType_Spec Scope_spec = {
 #pragma endregion
 #pragma region Texture
 
-Texture * Context_meth_texture(Context * self, PyObject * args, PyObject * kwa) { TRACE
-    static char * kw[] = {"size", "components", "data", "samples", "levels", "dtype", NULL};
+int get_texture_target(int width, int height, int length, int samples, int array, int cubemap) {
+    if (cubemap) {
+        if (samples || length || !height) {
+            return 0;
+        }
+        return array ? GL_TEXTURE_CUBE_MAP_ARRAY : GL_TEXTURE_CUBE_MAP;
+    }
+    if (samples) {
+        if (length || !height) {
+            return 0;
+        }
+        return array ? GL_TEXTURE_2D_MULTISAMPLE_ARRAY : GL_TEXTURE_2D_MULTISAMPLE;
+    }
+    if (length) {
+        if (array) {
+            return 0;
+        }
+        return GL_TEXTURE_3D;
+    }
+    if (height) {
+        return array ? GL_TEXTURE_2D_ARRAY : GL_TEXTURE_2D;
+    }
+    return array ? GL_TEXTURE_1D_ARRAY : GL_TEXTURE_1D;
+}
 
-    int width;
-    int height;
+Texture * Context_meth_texture(Context * self, PyObject * args, PyObject * kwa) { TRACE
+    static char * kw[] = {"size", "components", "data", "samples", "array", "levels", "cubemap", "dtype", NULL};
+
+    int size[3] = {};
     int components;
     PyObject * data = NULL;
     int samples = 0;
+    int array = 0;
+    int cubemap = 0;
     int levels = 1;
-    PyObject * dtype = NULL;
+    DataType * dtype = &f1;
 
     int args_ok = PyArg_ParseTupleAndKeywords(
-        args, kwa, "(ii)i|OiiO", kw, &width, &height, &components, &data, &samples, &levels, &dtype
+        args, kwa, "O&O&|OO&iipO&", kw,
+        parse_texture_size,
+        size,
+        parse_components,
+        &components,
+        &data,
+        parse_samples,
+        &samples,
+        &array,
+        &levels,
+        &cubemap,
+        parse_dtype,
+        &dtype
     );
 
     if (!args_ok) {
         return NULL;
     }
 
-    DataType * typ = &f1;
-    if (dtype) {
-        typ = from_dtype(dtype);
-        if (typ->shape == 'd') {
-            components = 1;
-        }
+    if (dtype->shape == 'd') {
+        components = 1;
     }
 
     Texture * res = PyObject_New(Texture, Texture_type);
     ensurei(res);
+
+    int tx = get_texture_target(size[0], size[1], size[2], samples, array, cubemap);
+    if (!tx) {
+        return NULL;
+    }
+
+    int internal_format = dtype->internal_format[components];
+    int base_format = dtype->base_format[components];
+    int pixel_type = dtype->gl_type;
 
     res->prev = self;
     res->next = self->next;
@@ -1778,211 +1798,108 @@ Texture * Context_meth_texture(Context * self, PyObject * args, PyObject * kwa) 
     res->ctx = self;
     res->extra = NULL;
 
-    res->width = width;
-    res->height = height;
-    res->length = 1;
+    res->width = size[0];
+    res->height = size[1];
+    res->length = size[2];
+    res->array = array;
     res->components = components;
     res->samples = samples;
 
-    res->texture_target = GL_TEXTURE_2D;
-    res->internal_format = typ->internal_format[components];
-    res->base_format = typ->base_format[components];
-    res->pixel_type = typ->gl_type;
-    res->shape = typ->shape;
+    res->texture_target = tx;
+    res->dtype = dtype;
 
     self->gl.GenTextures(1, (GLuint *)&res->glo);
     self->gl.BindTexture(res->texture_target, res->glo);
 
-    if (samples) {
-        if (self->gl.TexStorage2DMultisample) {
-            self->gl.TexStorage2DMultisample(res->texture_target, samples, res->internal_format, width, height, true);
-        } else {
-            self->gl.TexImage2DMultisample(res->texture_target, samples, res->internal_format, width, height, true);
-        }
-    } else {
-        if (self->gl.TexStorage2D) {
-            self->gl.TexStorage2D(res->texture_target, levels, res->internal_format, width, height);
-        } else {
-            self->gl.TexImage2D(
-                res->texture_target, 0, res->internal_format, width, height, 0, res->base_format, res->pixel_type, NULL
-            );
-        }
-    }
-
-    if (data) {
-        PyObject * call = PyObject_CallMethod((PyObject *)res, "write", "O", data);
-        Py_XDECREF(call);
-        if (!call) {
-            return NULL;
-        }
-    }
-
-    return new_ref(res);
-}
-
-Texture * Context_meth_texture_array(Context * self, PyObject * args, PyObject * kwa) { TRACE
-    static char * kw[] = {"size", "components", "data", "samples", "levels", "dtype", NULL};
-
-    int width;
-    int height;
-    int length;
-    int components;
-    PyObject * data = NULL;
-    int samples = 0;
-    int levels = 1;
-    PyObject * dtype = NULL;
-
-    int args_ok = PyArg_ParseTupleAndKeywords(
-        args, kwa, "(iii)i|OiiO", kw, &width, &height, &length, &components, &data, &samples, &levels, &dtype
-    );
-
-    if (!args_ok) {
-        return NULL;
-    }
-
-    DataType * typ = &f1;
-    if (dtype) {
-        typ = from_dtype(dtype);
-        if (typ->shape == 'd') {
-            components = 1;
-        }
-    }
-
-    Texture * res = PyObject_New(Texture, Texture_type);
-    ensurei(res);
-
-    res->prev = self;
-    res->next = self->next;
-    self->next = res;
-    res->ctx = self;
-    res->extra = NULL;
-
-    res->width = width;
-    res->height = height;
-    res->length = length;
-    res->components = components;
-    res->samples = 0;
-
-    res->texture_target = GL_TEXTURE_2D_ARRAY;
-    res->internal_format = typ->internal_format[components];
-    res->base_format = typ->base_format[components];
-    res->pixel_type = typ->gl_type;
-    res->shape = typ->shape;
-
-    self->gl.GenTextures(1, (GLuint *)&res->glo);
-    self->gl.BindTexture(res->texture_target, res->glo);
-
-    if (self->gl.TexStorage3D) {
-        self->gl.TexStorage3D(res->texture_target, levels, res->internal_format, width, height, length);
-    } else {
-        self->gl.TexImage3D(
-            res->texture_target, 0, res->internal_format, width, height, length, 0, res->base_format, res->pixel_type, NULL
-        );
-    }
-    if (data) {
-        PyObject * call = PyObject_CallMethod((PyObject *)res, "write", "O", data);
-        Py_XDECREF(call);
-        if (!call) {
-            return NULL;
-        }
-    }
-
-    return new_ref(res);
-}
-
-Texture * Context_meth_texture3d(Context * self, PyObject * args, PyObject * kwa) { TRACE
-    static char * kw[] = {"size", "components", "data", NULL};
-
-    int width;
-    int height;
-    int length;
-    int components;
-    PyObject * data = NULL;
-
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "(iii)i|O", kw, &width, &height, &length, &components, &data)) {
-        return NULL;
-    }
-
-    int internal_format = 0;
-    int base_format = 0;
-    int levels = 0;
-    int pixel_type = 0;
-
-    Texture * res = PyObject_New(Texture, Texture_type);
-    ensurei(res);
-
-    res->prev = self;
-    res->next = self->next;
-    self->next = res;
-    res->ctx = self;
-    res->extra = NULL;
-
-    if (self->gl.TexStorage3D) {
-        self->gl.TexStorage3D(res->texture_target, levels, internal_format, width, height, length);
-    } else {
-        self->gl.TexImage3D(
-            res->texture_target, 0, internal_format, width, height, length, 0, base_format, pixel_type, NULL
-        );
-    }
-
-    if (data) {
-        PyObject * call = PyObject_CallMethod((PyObject *)res, "write", "O", data);
-        Py_XDECREF(call);
-        if (!call) {
-            return NULL;
-        }
-    }
-
-    return new_ref(res);
-}
-
-Texture * Context_meth_texture_cube(Context * self, PyObject * args, PyObject * kwa) { TRACE
-    static char * kw[] = {"size", "components", "data", "samples", NULL};
-
-    int width;
-    int height;
-    int components;
-    PyObject * data = NULL;
-    int samples = 0;
-
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "(ii)i|Oi", kw, &width, &height, &components, &data, &samples)) {
-        return NULL;
-    }
-
-    int internal_format = 0;
-    int base_format = 0;
-    int levels = 0;
-    int pixel_type = 0;
-
-    Texture * res = PyObject_New(Texture, Texture_type);
-    ensurei(res);
-
-    res->prev = self;
-    res->next = self->next;
-    self->next = res;
-    res->ctx = self;
-    res->extra = NULL;
-
-    if (samples) {
-        if (self->gl.TexStorage2DMultisample) {
-            self->gl.TexStorage2DMultisample(GL_TEXTURE_CUBE_MAP, samples, internal_format, width, height, true);
-        } else {
-            for (int i = 0; i < 6; ++i) {
-                self->gl.TexImage2DMultisample(
-                    GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, samples, internal_format, width, height, true
+    switch (tx) {
+        case GL_TEXTURE_1D:
+            if (self->gl.TexStorage1D) {
+                self->gl.TexStorage1D(tx, levels, internal_format, size[0]);
+            } else {
+                self->gl.TexImage1D(
+                    tx, 0, internal_format, size[0], 0, base_format, pixel_type, NULL
                 );
             }
-        }
-    } else {
-        if (self->gl.TexStorage2D) {
-            self->gl.TexStorage2D(GL_TEXTURE_CUBE_MAP, levels, internal_format, width, height);
-        } else {
-            for (int i = 0; i < 6; ++i) {
+            break;
+
+        case GL_TEXTURE_2D:
+            if (self->gl.TexStorage2D) {
+                self->gl.TexStorage2D(tx, levels, internal_format, size[0], size[1]);
+            } else {
                 self->gl.TexImage2D(
-                    GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internal_format, width, height, 0, base_format, pixel_type, NULL
+                    tx, 0, internal_format, size[0], size[1], 0, base_format, pixel_type, NULL
                 );
             }
-        }
+            break;
+
+        case GL_TEXTURE_3D:
+            if (self->gl.TexStorage3D) {
+            self->gl.TexStorage3D(tx, levels, internal_format, size[0], size[1], size[2]);
+            } else {
+                self->gl.TexImage3D(
+                    tx, 0, internal_format, size[0], size[1], size[2], 0, base_format, pixel_type, NULL
+                );
+            }
+            break;
+
+        case GL_TEXTURE_1D_ARRAY:
+            if (self->gl.TexStorage2D) {
+                self->gl.TexStorage2D(tx, levels, internal_format, size[0], array);
+            } else {
+                self->gl.TexImage2D(
+                    tx, 0, internal_format, size[0], array, 0, base_format, pixel_type, NULL
+                );
+            }
+            break;
+
+        case GL_TEXTURE_2D_ARRAY:
+            if (self->gl.TexStorage3D) {
+                self->gl.TexStorage3D(tx, levels, internal_format, size[0], size[1], array);
+            } else {
+                self->gl.TexImage3D(
+                    tx, 0, internal_format, size[0], size[1], array, 0, base_format, pixel_type, NULL
+                );
+            }
+            break;
+
+        case GL_TEXTURE_CUBE_MAP:
+            if (self->gl.TexStorage2D) {
+                self->gl.TexStorage2D(tx, levels, internal_format, size[0], size[1]);
+            } else {
+                for (int i = 0; i < 6; ++i) {
+                    int txi = GL_TEXTURE_CUBE_MAP_POSITIVE_X + i;
+                    self->gl.TexImage2D(
+                        txi, 0, internal_format, size[0], size[1], 0, base_format, pixel_type, NULL
+                    );
+                }
+            }
+            break;
+
+        case GL_TEXTURE_CUBE_MAP_ARRAY:
+            if (self->gl.TexStorage3D) {
+                self->gl.TexStorage3D(tx, levels, internal_format, size[0], size[1], array);
+            } else {
+                self->gl.TexImage3D(
+                    tx, 0, internal_format, size[0], size[1], array, 0, base_format, pixel_type, NULL
+                );
+            }
+            break;
+
+        case GL_TEXTURE_2D_MULTISAMPLE:
+            if (self->gl.TexStorage2DMultisample) {
+                self->gl.TexStorage2DMultisample(tx, samples, internal_format, size[0], size[1], true);
+            } else {
+                self->gl.TexImage2DMultisample(tx, samples, internal_format, size[0], size[1], true);
+            }
+            break;
+
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY:
+            if (self->gl.TexStorage3DMultisample) {
+                self->gl.TexStorage3DMultisample(tx, samples, internal_format, size[0], size[1], array, true);
+            } else {
+                self->gl.TexImage3DMultisample(tx, samples, internal_format, size[0], size[1], array, true);
+            }
+            break;
     }
 
     if (data) {
@@ -1996,24 +1913,18 @@ Texture * Context_meth_texture_cube(Context * self, PyObject * args, PyObject * 
     return new_ref(res);
 }
 
-PyObject * Context_meth_texture_from(Context * self, PyObject * img) { TRACE
-    return PyObject_CallMethod(self->tools, "texture_from", "OO", self, img);
-}
+PyObject * Context_meth_texture_from(Context * self, PyObject * args, PyObject * kwa) { TRACE
+    static char * kw[] = {"obj", "array", "cubemap", NULL};
 
-PyObject * Context_meth_texture_array_from(Context * self, PyObject * images) { TRACE
-    return PyObject_CallMethod(self->tools, "texture_array_from", "OO", self, images);
-}
+    PyObject * obj;
+    PyObject * array = Py_False;
+    PyObject * cubemap = Py_False;
 
-PyObject * Context_meth_texture_cube_from(Context * self, PyObject * images) { TRACE
-    return PyObject_CallMethod(self->tools, "texture_cube_from", "OO", self, images);
-}
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "O|OO", kw, &obj, &array, &cubemap)) {
+        return NULL;
+    }
 
-PyObject * Context_meth_texture_cube_array_from(Context * self, PyObject * images) { TRACE
-    return PyObject_CallMethod(self->tools, "texture_cube_array_from", "OO", self, images);
-}
-
-PyObject * Context_meth_texture3d_from(Context * self, PyObject * images) { TRACE
-    return PyObject_CallMethod(self->tools, "texture3d_from", "OO", self, images);
+    return PyObject_CallMethod(self->tools, "texture_from", "OOOO", self, obj, array, cubemap);
 }
 
 PyObject * Texture_meth_read(Texture * self, PyObject * args, PyObject * kwa) { TRACE
@@ -2056,27 +1967,13 @@ PyObject * Texture_meth_read(Texture * self, PyObject * args, PyObject * kwa) { 
 }
 
 PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) { TRACE
-    static char * kw[] = {"data", "viewport", NULL};
+    static char * kw[] = {"data", "size", "offset", "alignment", NULL};
 
     PyObject * data;
-    int offset_x = 0;
-    int offset_y = 0;
-    int offset_z = 0;
-    int width = self->width;
-    int height = self->height;
-    int length = self->length;
+    PyObject * temp[2];
+    int alignment = 1;
 
-    int args_ok;
-
-    if (self->texture_target == GL_TEXTURE_2D_ARRAY) {
-        args_ok = PyArg_ParseTupleAndKeywords(
-            args, kwa, "O|(iiiiii)", kw, &data, &offset_x, &offset_y, &offset_z, &width, &height, &length
-        );
-    } else {
-        args_ok = PyArg_ParseTupleAndKeywords(args, kwa, "O|(iiii)", kw, &data, &offset_x, &offset_y, &width, &height);
-    }
-
-    if (!args_ok) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "O|OOi", kw, &data, &temp[0], &temp[1], &alignment)) {
         return NULL;
     }
 
@@ -2091,16 +1988,107 @@ PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) {
         }
     }
 
-    self->ctx->gl.BindTexture(self->texture_target, self->glo);
-    if (self->texture_target == GL_TEXTURE_2D_ARRAY) {
-        self->ctx->gl.TexSubImage3D(
-            self->texture_target, 0, offset_x, offset_y, offset_z, width, height, length, self->base_format, self->pixel_type, view.buf
-        );
-    } else {
-        self->ctx->gl.TexSubImage2D(
-            self->texture_target, 0, offset_x, offset_y, width, height, self->base_format, self->pixel_type, view.buf
-        );
+    // int expected = expected_size(width, height, length, 0, self->components * self->dtype->size, alignment);
+
+    int tx = self->texture_target;
+    int base_format = self->dtype->base_format[self->components];
+    int pixel_type = self->dtype->gl_type;
+
+    self->ctx->gl.BindTexture(tx, self->glo);
+    self->ctx->gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
+    self->ctx->gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+
+    switch (tx) {
+        case GL_TEXTURE_1D: {
+            int size[1] = {self->width};
+            int offset[1] = {};
+            int args_ok = PyArg_ParseTupleAndKeywords(
+                args, kwa, "O|iii", kw, &data, &size[0], &offset[0], &alignment
+            );
+            self->ctx->gl.TexSubImage1D(
+                tx, 0, offset[0], size[0], base_format, pixel_type, view.buf
+            );
+            break;
+        }
+
+        case GL_TEXTURE_2D: {
+            int size[2] = {self->width, self->height};
+            int offset[2] = {};
+            int args_ok = PyArg_ParseTupleAndKeywords(
+                args, kwa, "O|(ii)(ii)i", kw, &data, &size[0], &size[1], &offset[0], &offset[1], &alignment
+            );
+            self->ctx->gl.TexSubImage2D(
+                tx, 0, offset[0], offset[1], size[0], size[1], base_format, pixel_type, view.buf
+            );
+            break;
+        }
+
+        case GL_TEXTURE_3D: {
+            int size[3] = {self->width, self->height, self->length};
+            int offset[3] = {};
+            int args_ok = PyArg_ParseTupleAndKeywords(
+                args, kwa, "O|(iii)(iii)i", kw, &data, &size[0], &size[1], &size[2], &offset[0], &offset[1], &offset[2], &alignment
+            );
+            self->ctx->gl.TexSubImage3D(
+                tx, 0, offset[0], offset[1], offset[2], size[0], size[1], size[2], base_format, pixel_type, view.buf
+            );
+            break;
+        }
+
+        case GL_TEXTURE_1D_ARRAY: {
+            int size[2] = {self->width, self->array};
+            int offset[2] = {};
+            int args_ok = PyArg_ParseTupleAndKeywords(
+                args, kwa, "O|(ii)(ii)i", kw, &data, &size[0], &size[1], &offset[0], &offset[1], &alignment
+            );
+            self->ctx->gl.TexSubImage2D(
+                tx, 0, offset[0], offset[1], size[0], size[1], base_format, pixel_type, view.buf
+            );
+            break;
+        }
+
+        case GL_TEXTURE_2D_ARRAY: {
+            int size[3] = {self->width, self->height, self->array};
+            int offset[3] = {};
+            int args_ok = PyArg_ParseTupleAndKeywords(
+                args, kwa, "O|(iii)(iii)i", kw, &data, &size[0], &size[1], &size[2], &offset[0], &offset[1], &offset[2], &alignment
+            );
+            self->ctx->gl.TexSubImage3D(
+                tx, 0, offset[0], offset[1], offset[2], size[0], size[1], size[2], base_format, pixel_type, view.buf
+            );
+            break;
+        }
+
+        case GL_TEXTURE_CUBE_MAP: {
+            int size[3] = {self->width, self->height, 6};
+            int offset[3] = {};
+            int args_ok = PyArg_ParseTupleAndKeywords(
+                args, kwa, "O|(iii)(iii)i", kw, &data, &size[0], &size[1], &size[2], &offset[0], &offset[1], &offset[2], &alignment
+            );
+            char * ptr = (char *)view.buf;
+            for (int i = offset[2]; i < size[2]; ++i) {
+                int txi = GL_TEXTURE_CUBE_MAP_POSITIVE_X + i;
+                self->ctx->gl.TexSubImage2D(
+                    txi, 0, offset[0], offset[1], size[0], size[1], base_format, pixel_type, ptr
+                );
+                ptr += size[0] * size[1] * self->components;
+            }
+            break;
+        }
+
+        case GL_TEXTURE_CUBE_MAP_ARRAY: {
+            int size[3] = {self->width, self->height, self->array};
+            int offset[3] = {};
+            int args_ok = PyArg_ParseTupleAndKeywords(
+                args, kwa, "O|(iii)(iii)i", kw, &data, &size[0], &size[1], &size[2], &offset[0], &offset[1], &offset[2], &alignment
+            );
+            self->ctx->gl.TexSubImage3D(
+                tx, 0, offset[0], offset[1], offset[2], size[0], size[1], size[2], base_format, pixel_type, view.buf
+            );
+            break;
+        }
     }
+
     if (Py_TYPE(data) != Buffer_type) {
         self->ctx->gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
     } else {
@@ -2131,23 +2119,19 @@ PyObject * Texture_get_swizzle(Texture * self) {
     self->ctx->gl.ActiveTexture(GL_TEXTURE0);
     self->ctx->gl.BindTexture(self->texture_target, self->glo);
     self->ctx->gl.GetTexParameteriv(self->texture_target, GL_TEXTURE_SWIZZLE_RGBA, tex_swizzle);
-	char swizzle[4] = {
-		chr_from_swizzle(tex_swizzle[0]),
-		chr_from_swizzle(tex_swizzle[1]),
-		chr_from_swizzle(tex_swizzle[2]),
-		chr_from_swizzle(tex_swizzle[3]),
-	};
-	return PyUnicode_FromStringAndSize(swizzle, 4);
+    char swizzle[4] = {
+        chr_from_swizzle(tex_swizzle[0]),
+        chr_from_swizzle(tex_swizzle[1]),
+        chr_from_swizzle(tex_swizzle[2]),
+        chr_from_swizzle(tex_swizzle[3]),
+    };
+    return PyUnicode_FromStringAndSize(swizzle, 4);
 }
 
 int Texture_set_swizzle(Texture * self, PyObject * value) { TRACE
-    const char * swizzle = PyUnicode_AsUTF8(value);
-    if (PyUnicode_GetLength(value) > 4) {
+    int tex_swizzle[4];
+    if (!parse_swizzle(value, tex_swizzle)) {
         return -1;
-    }
-    int tex_swizzle[4] = {GL_ZERO, GL_ZERO, GL_ZERO, GL_ONE};
-    for (int i = 0; swizzle[i]; ++i) {
-        tex_swizzle[i] = swizzle_from_chr(swizzle[i]);
     }
     self->ctx->gl.ActiveTexture(GL_TEXTURE0);
     self->ctx->gl.BindTexture(self->texture_target, self->glo);
@@ -2234,7 +2218,7 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
     res->index_buffer = NULL;
     res->output_buffer = NULL;
 
-	self->gl.GenVertexArrays(1, (GLuint *)&res->glo);
+    self->gl.GenVertexArrays(1, (GLuint *)&res->glo);
 
     if (bindings != Py_None) {
         PyObject * call = PyObject_CallMethod(self->tools, "bind_attributes", "OO", res, bindings);
@@ -2277,8 +2261,8 @@ PyObject * VertexArray_meth_bind(VertexArray * self, PyObject * args) { TRACE
         return NULL;
     }
 
-	self->ctx->gl.BindVertexArray(self->glo);
-	self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, buffer->glo);
+    self->ctx->gl.BindVertexArray(self->glo);
+    self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, buffer->glo);
 
     if (gltype >> 16 & 1) {
         self->ctx->gl.VertexAttribIPointer(location, size, gltype & 0xffff, stride, offset);
@@ -2286,8 +2270,8 @@ PyObject * VertexArray_meth_bind(VertexArray * self, PyObject * args) { TRACE
         self->ctx->gl.VertexAttribPointer(location, size, gltype & 0xffff, gltype >> 20 & 1, stride, offset);
     }
 
-	self->ctx->gl.VertexAttribDivisor(location, divisor);
-	self->ctx->gl.EnableVertexAttribArray(location);
+    self->ctx->gl.VertexAttribDivisor(location, divisor);
+    self->ctx->gl.EnableVertexAttribArray(location);
     Py_RETURN_NONE;
 }
 
@@ -2924,15 +2908,7 @@ PyMethodDef Context_methods[] = {
     {"sampler", (PyCFunction)Context_meth_sampler, METH_VARARGS | METH_KEYWORDS, NULL},
     {"scope", (PyCFunction)Context_meth_scope, METH_VARARGS | METH_KEYWORDS, NULL},
     {"texture", (PyCFunction)Context_meth_texture, METH_VARARGS | METH_KEYWORDS, NULL},
-    {"texture_array", (PyCFunction)Context_meth_texture_array, METH_VARARGS | METH_KEYWORDS, NULL},
-    // {"texture_cube", (PyCFunction)Context_meth_texture_cube, METH_VARARGS | METH_KEYWORDS, NULL},
-    // {"texture_cube_array", (PyCFunction)Context_meth_texture_cube_array, METH_VARARGS | METH_KEYWORDS, NULL},
-    // {"texture3d", (PyCFunction)Context_meth_texture3d, METH_VARARGS | METH_KEYWORDS, NULL},
-    {"texture_from", (PyCFunction)Context_meth_texture_from, METH_O, NULL},
-    {"texture_array_from", (PyCFunction)Context_meth_texture_array_from, METH_O, NULL},
-    // {"texture_cube_from", (PyCFunction)Context_meth_texture_cube_from, METH_O, NULL},
-    // {"texture_cube_array_from", (PyCFunction)Context_meth_texture_cube_array_from, METH_O, NULL},
-    // {"texture3d_from", (PyCFunction)Context_meth_texture3d_from, METH_O, NULL},
+    {"texture_from", (PyCFunction)Context_meth_texture_from, METH_VARARGS | METH_KEYWORDS, NULL},
     {"vertex_array", (PyCFunction)Context_meth_vertex_array, METH_VARARGS | METH_KEYWORDS, NULL},
     {"objects", (PyCFunction)Context_meth_objects, METH_NOARGS, NULL},
     {"release", (PyCFunction)Context_meth_release, METH_O, NULL},
@@ -3143,6 +3119,7 @@ extern "C" PyObject * PyInit_moderngl() {
     empty_tuple = PyTuple_New(0);
     default_wrap = PyLong_FromLong(0);
     default_border = Py_BuildValue("ffff", 0.0f, 0.0f, 0.0f, 0.0f);
+    default_filter = Py_BuildValue("ii", GL_NEAREST, GL_NEAREST);
 
     Context_type = (PyTypeObject *)PyType_FromSpec(&Context_spec);
     Blending_type = (PyTypeObject *)PyType_FromSpec(&Blending_spec);
@@ -3172,6 +3149,18 @@ extern "C" PyObject * PyInit_moderngl() {
     PyModule_AddObject(module, "Texture3D", (PyObject *)Texture_type);
     PyModule_AddObject(module, "TextureArray", (PyObject *)Texture_type);
     PyModule_AddObject(module, "TextureCube", (PyObject *)Texture_type);
+
+    // backward compatibility
+    PyModule_AddIntConstant(module, "TRIANGLES", GL_TRIANGLES);
+    PyModule_AddIntConstant(module, "TRIANGLE_FAN", GL_TRIANGLE_FAN);
+    PyModule_AddIntConstant(module, "TRIANGLE_STRIP", GL_TRIANGLE_STRIP);
+    PyModule_AddIntConstant(module, "TRIANGLES_ADJACENCY", GL_TRIANGLES_ADJACENCY);
+    PyModule_AddIntConstant(module, "TRIANGLE_STRIP_ADJACENCY", GL_TRIANGLE_STRIP_ADJACENCY);
+    PyModule_AddIntConstant(module, "POINTS", GL_POINTS);
+    PyModule_AddIntConstant(module, "LINES", GL_LINES);
+    PyModule_AddIntConstant(module, "LINE_STRIP", GL_LINE_STRIP);
+    PyModule_AddIntConstant(module, "LINE_LOOP", GL_LINE_LOOP);
+    PyModule_AddIntConstant(module, "LINES_ADJACENCY", GL_LINES_ADJACENCY);
 
     PyObject * math_module = PyInit_moderngl_math();
     PyModule_AddObject(module, "math", math_module);

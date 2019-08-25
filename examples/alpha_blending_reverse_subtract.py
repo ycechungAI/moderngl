@@ -56,7 +56,7 @@ class Example(_example.Example):
             50, 1, 100, 0,
         ], 'i'))
 
-        self.vao.scope = self.ctx.scope('BLEND')
+        self.vao.scope = self.ctx.scope(self.ctx.BLEND)
         self.vao.scope.blending = self.ctx.blending(
             blend_functions=[
                 (self.ctx.SRC_ALPHA, self.ctx.ONE_MINUS_SRC_ALPHA),

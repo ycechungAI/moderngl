@@ -62,6 +62,7 @@ ext = Extension(
     sources=[
         'moderngl/moderngl.cpp',
         'moderngl/extras.cpp',
+        'moderngl/converters.cpp',
         'moderngl/gl_methods.cpp',
     ] + context_source[target],
     libraries=libraries[target],
