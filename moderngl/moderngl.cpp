@@ -51,6 +51,7 @@ struct Context : public BaseObject {
     struct Framebuffer * screen;
     struct Scope * default_scope;
     struct Blending * default_blending;
+    int default_texture_unit;
 
     struct ContextConstants {
         PyObject * version;
@@ -215,6 +216,7 @@ struct Texture : public BaseObject {
     int array;
     int components;
     int samples;
+    int levels;
     int texture_target;
 };
 
@@ -1804,11 +1806,13 @@ Texture * Context_meth_texture(Context * self, PyObject * args, PyObject * kwa) 
     res->array = array;
     res->components = components;
     res->samples = samples;
+    res->levels = levels;
 
     res->texture_target = tx;
     res->dtype = dtype;
 
     self->gl.GenTextures(1, (GLuint *)&res->glo);
+	self->gl.ActiveTexture(self->default_texture_unit);
     self->gl.BindTexture(res->texture_target, res->glo);
 
     switch (tx) {
@@ -1937,6 +1941,7 @@ PyObject * Texture_meth_read(Texture * self, PyObject * args, PyObject * kwa) { 
         return NULL;
     }
 
+	self->ctx->gl.ActiveTexture(self->ctx->default_texture_unit);
     self->ctx->gl.BindTexture(self->texture_target, self->glo);
 
     if (Py_TYPE(into) == Texture_type) {
@@ -1994,6 +1999,7 @@ PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) {
     int base_format = self->dtype->base_format[self->components];
     int pixel_type = self->dtype->gl_type;
 
+	self->ctx->gl.ActiveTexture(self->ctx->default_texture_unit);
     self->ctx->gl.BindTexture(tx, self->glo);
     self->ctx->gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
     self->ctx->gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
@@ -2116,7 +2122,7 @@ PyMethodDef Texture_methods[] = {
 
 PyObject * Texture_get_swizzle(Texture * self) {
     int tex_swizzle[4] = {GL_ZERO, GL_ZERO, GL_ZERO, GL_ONE};
-    self->ctx->gl.ActiveTexture(GL_TEXTURE0);
+	self->ctx->gl.ActiveTexture(self->ctx->default_texture_unit);
     self->ctx->gl.BindTexture(self->texture_target, self->glo);
     self->ctx->gl.GetTexParameteriv(self->texture_target, GL_TEXTURE_SWIZZLE_RGBA, tex_swizzle);
     char swizzle[4] = {
@@ -2133,7 +2139,7 @@ int Texture_set_swizzle(Texture * self, PyObject * value) { TRACE
     if (!parse_swizzle(value, tex_swizzle)) {
         return -1;
     }
-    self->ctx->gl.ActiveTexture(GL_TEXTURE0);
+	self->ctx->gl.ActiveTexture(self->ctx->default_texture_unit);
     self->ctx->gl.BindTexture(self->texture_target, self->glo);
     self->ctx->gl.TexParameteriv(self->texture_target, GL_TEXTURE_SWIZZLE_RGBA, tex_swizzle);
     return 0;
@@ -2684,6 +2690,10 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->default_scope->num_storage_buffers = 0;
 
     res->gl.GetIntegerv(GL_VIEWPORT, res->default_scope->viewport);
+
+    int max_texture_units = 0;
+	res->gl.GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_texture_units);
+	res->default_texture_unit = GL_TEXTURE0 + max_texture_units - 1;
 
     res->screen->glo = 0;
     res->screen->color_attachments[0].shape = 'f';
