@@ -20,9 +20,12 @@ PyTypeObject * VertexArray_type;
 
 PyObject * empty_dict;
 PyObject * empty_tuple;
-PyObject * default_wrap;
-PyObject * default_border;
 PyObject * default_filter;
+PyObject * default_wrap;
+PyObject * default_anisotropy;
+PyObject * default_lod_range;
+PyObject * default_lod_bias;
+PyObject * default_border;
 
 unsigned default_draw_buffers[64];
 
@@ -1379,9 +1382,9 @@ Sampler * Context_meth_sampler(Context * self, PyObject * args, PyObject * kwa) 
     PyObject * filter = default_filter;
     PyObject * wrap = default_wrap;
     PyObject * compare_func = Py_None;
-    PyObject * anisotropy = Py_None;
-    PyObject * lod_range = Py_None;
-    PyObject * lod_bias = Py_None;
+    PyObject * anisotropy = default_anisotropy;
+    PyObject * lod_range = default_lod_range;
+    PyObject * lod_bias = default_lod_bias;
     PyObject * border = default_border;
 
     int args_ok = PyArg_ParseTupleAndKeywords(
@@ -1419,10 +1422,10 @@ Sampler * Context_meth_sampler(Context * self, PyObject * args, PyObject * kwa) 
     PyObject_SetAttrString((PyObject *)res, "texture", (PyObject *)texture);
     PyObject_SetAttrString((PyObject *)res, "filter", filter);
     PyObject_SetAttrString((PyObject *)res, "wrap", wrap);
-    // PyObject_SetAttrString((PyObject *)res, "compare_func", compare_func);
-    // PyObject_SetAttrString((PyObject *)res, "anisotropy", anisotropy);
-    // PyObject_SetAttrString((PyObject *)res, "lod_range", lod_range);
-    // PyObject_SetAttrString((PyObject *)res, "lod_bias", lod_bias);
+    PyObject_SetAttrString((PyObject *)res, "compare_func", compare_func);
+    PyObject_SetAttrString((PyObject *)res, "anisotropy", anisotropy);
+    PyObject_SetAttrString((PyObject *)res, "lod_range", lod_range);
+    PyObject_SetAttrString((PyObject *)res, "lod_bias", lod_bias);
     PyObject_SetAttrString((PyObject *)res, "border", border);
 
     if (PyErr_Occurred()) {
@@ -1482,6 +1485,64 @@ int Sampler_set_wrap(Sampler * self, PyObject * value) { TRACE
     return 0;
 }
 
+PyObject * Sampler_get_compare_func(Sampler * self) { TRACE
+    Py_RETURN_NONE;
+}
+
+int Sampler_set_compare_func(Sampler * self, PyObject * value) { TRACE
+    if (value == Py_None) {
+        self->ctx->gl.SamplerParameteri(self->glo, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+        return 0;
+    }
+    int compare_func = PyLong_AsLong(value);
+    if (PyErr_Occurred()) {
+        return -1;
+    }
+    self->ctx->gl.SamplerParameteri(self->glo, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+    self->ctx->gl.SamplerParameteri(self->glo, GL_TEXTURE_COMPARE_FUNC, compare_func);
+    return 0;
+}
+
+PyObject * Sampler_get_anisotropy(Sampler * self) { TRACE
+    Py_RETURN_NONE;
+}
+
+int Sampler_set_anisotropy(Sampler * self, PyObject * value) { TRACE
+    float anisotropy = (float)PyFloat_AsDouble(value);
+    if (PyErr_Occurred()) {
+        return -1;
+    }
+    self->ctx->gl.SamplerParameterf(self->glo, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
+    return 0;
+}
+
+PyObject * Sampler_get_lod_range(Sampler * self) { TRACE
+    Py_RETURN_NONE;
+}
+
+int Sampler_set_lod_range(Sampler * self, PyObject * value) { TRACE
+    float lod_range[2];
+    if (!parse_lod_range(value, lod_range)) {
+        return -1;
+    }
+    self->ctx->gl.SamplerParameterf(self->glo, GL_TEXTURE_MIN_LOD, lod_range[0]);
+    self->ctx->gl.SamplerParameterf(self->glo, GL_TEXTURE_MAX_LOD, lod_range[1]);
+    return 0;
+}
+
+PyObject * Sampler_get_lod_bias(Sampler * self) { TRACE
+    Py_RETURN_NONE;
+}
+
+int Sampler_set_lod_bias(Sampler * self, PyObject * value) { TRACE
+    float lod_bias = (float)PyFloat_AsDouble(value);
+    if (PyErr_Occurred()) {
+        return -1;
+    }
+    self->ctx->gl.SamplerParameterf(self->glo, GL_TEXTURE_LOD_BIAS, lod_bias);
+    return 0;
+}
+
 PyObject * Sampler_get_border(Sampler * self) { TRACE
     Py_RETURN_NONE;
 }
@@ -1504,6 +1565,10 @@ PyGetSetDef Sampler_getset[] = {
     {"texture", (getter)Sampler_get_texture, (setter)Sampler_set_texture, NULL, NULL},
     {"filter", (getter)Sampler_get_filter, (setter)Sampler_set_filter, NULL, NULL},
     {"wrap", (getter)Sampler_get_wrap, (setter)Sampler_set_wrap, NULL, NULL},
+    {"anisotropy", (getter)Sampler_get_anisotropy, (setter)Sampler_set_anisotropy, NULL, NULL},
+    {"compare_func", (getter)Sampler_get_compare_func, (setter)Sampler_set_compare_func, NULL, NULL},
+    {"lod_range", (getter)Sampler_get_lod_range, (setter)Sampler_set_lod_range, NULL, NULL},
+    {"lod_bias", (getter)Sampler_get_lod_bias, (setter)Sampler_set_lod_bias, NULL, NULL},
     {"border", (getter)Sampler_get_border, (setter)Sampler_set_border, NULL, NULL},
     {},
 };
@@ -3146,9 +3211,12 @@ extern "C" PyObject * PyInit_moderngl() {
 
     empty_dict = PyDict_New();
     empty_tuple = PyTuple_New(0);
-    default_wrap = PyLong_FromLong(0);
-    default_border = Py_BuildValue("ffff", 0.0f, 0.0f, 0.0f, 0.0f);
     default_filter = Py_BuildValue("ii", GL_NEAREST, GL_NEAREST);
+    default_wrap = PyLong_FromLong(0);
+    default_anisotropy = PyFloat_FromDouble(1.0);
+    default_lod_range = Py_BuildValue("ff", -1000.0, 1000.0);
+    default_lod_bias = PyFloat_FromDouble(0.0);
+    default_border = Py_BuildValue("ffff", 0.0f, 0.0f, 0.0f, 0.0f);
 
     Context_type = (PyTypeObject *)PyType_FromSpec(&Context_spec);
     Blending_type = (PyTypeObject *)PyType_FromSpec(&Blending_spec);
