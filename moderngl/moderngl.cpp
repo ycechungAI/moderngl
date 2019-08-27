@@ -1038,10 +1038,12 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
         int name_len = 0;
         char name[256];
         self->gl.GetActiveAttrib(res->glo, i, 256, &name_len, &size, (GLenum *)&gltype, name);
-        int location = self->gl.GetAttribLocation(res->glo, name);
+        PyObject * location = PyLong_FromLong(self->gl.GetAttribLocation(res->glo, name));
         clean_glsl_name(name, name_len);
-        PyObject * attrib = Py_BuildValue("iiis", location, gltype, size, get_default_layout(gltype));
+        PyObject * attrib = Py_BuildValue("Oiis", location, gltype, size, get_default_layout(gltype));
         PyDict_SetItemString(res->attributes, name, attrib);
+        PyDict_SetItem(res->attributes, location, attrib);
+        Py_DECREF(location);
         Py_DECREF(attrib);
     }
 
