@@ -3197,7 +3197,7 @@ PyModuleDef module_def = {PyModuleDef_HEAD_INIT, "moderngl", moderngl_doc, -1, m
 
 extern "C" PyObject * PyInit_moderngl() {
     PyObject * module = PyModule_Create(&module_def);
-    PyModule_AddStringConstant(module, "__version__", "6.0.0");
+    PyModule_AddStringConstant(module, "__version__", "6.0.dev0");
 
     for (int i = 0; i < 64; ++i) {
         default_draw_buffers[i] = GL_COLOR_ATTACHMENT0 + i;

@@ -83,7 +83,7 @@ ext = Extension(
 
 setup(
     name='moderngl',
-    version='0.1.0',
+    version='6.0.dev0',
     ext_modules=[ext],
     py_modules=['_moderngl'],
 )
