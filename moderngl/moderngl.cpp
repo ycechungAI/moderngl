@@ -2104,6 +2104,25 @@ PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) {
 }
 
 PyObject * Texture_meth_build_mipmaps(Texture * self, PyObject * args, PyObject * kwa) { TRACE
+    static char * kw[] = {"base_level", "max_level", NULL};
+
+    int base_level = 0;
+    int max_level = -1;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|ii", kw, &base_level, &max_level)) {
+        return NULL;
+    }
+
+    if (max_level < 0) {
+        max_level = self->levels;
+    }
+
+    int tx = self->texture_target;
+	self->ctx->gl.ActiveTexture(self->ctx->default_texture_unit);
+	self->ctx->gl.BindTexture(tx, self->glo);
+	self->ctx->gl.TexParameteri(tx, GL_TEXTURE_BASE_LEVEL, base_level);
+	self->ctx->gl.TexParameteri(tx, GL_TEXTURE_MAX_LEVEL, max_level);
+	self->ctx->gl.GenerateMipmap(tx);
     Py_RETURN_NONE;
 }
 
