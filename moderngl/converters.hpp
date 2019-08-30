@@ -2,6 +2,7 @@
 
 #include "data_types.hpp"
 
+int parse_reserve(PyObject * obj, int * reserve);
 int parse_texture_size(PyObject * obj, int * size);
 int parse_viewport2d(PyObject * obj, int * viewport);
 int parse_viewport3d(PyObject * obj, int * viewport);

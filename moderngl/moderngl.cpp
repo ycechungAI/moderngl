@@ -314,7 +314,7 @@ Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) { 
     };
 
     PyObject * data = Py_None;
-    PyObject * reserve = NULL;
+    int reserve = 0;
     int dynamic = true;
     int readable = true;
     int writable = true;
@@ -323,7 +323,19 @@ Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) { 
     int local = false;
 
     int args_ok = PyArg_ParseTupleAndKeywords(
-        args, kwa, "|OOpppppp", kw, &data, &reserve, &dynamic, &readable, &writable, &persistent, &coherent, &local
+        args,
+        kwa,
+        "|OO&pppppp",
+        kw,
+        &data,
+        parse_reserve,
+        &reserve,
+        &dynamic,
+        &readable,
+        &writable,
+        &persistent,
+        &coherent,
+        &local
     );
 
     if (!args_ok) {
@@ -343,19 +355,7 @@ Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) { 
     res->flags = 0;
 
     if (reserve) {
-        if (PyUnicode_Check(reserve)) {
-            PyObject * size = PyObject_CallMethod(self->tools, "strsize", "O", reserve);
-            if (!size) {
-                return NULL;
-            }
-            res->size = PyLong_AsLong(size);
-            Py_DECREF(size);
-        } else {
-            res->size = PyLong_AsLong(reserve);
-        }
-        if (PyErr_Occurred()) {
-            return NULL;
-        }
+        res->size = reserve;
     } else {
         Py_buffer view = {};
         if (PyObject_GetBuffer(data, &view, PyBUF_STRIDED_RO) < 0) {

@@ -34,12 +34,12 @@ int parse_reserve(PyObject * obj, int * reserve) {
         return 1;
     }
     if (!PyUnicode_Check(obj)) {
-        PyErr_Format(PyExc_ValueError, "invalid reserve");
+        PyErr_Format(PyExc_ValueError, "invalid reserve 1");
         return 0;
     }
     int size = 0;
     const char * str = PyUnicode_AsUTF8(obj);
-    while (char chr = *str) {
+    while (char chr = *str++) {
         if (chr >= '0' && chr <= '9') {
             size = size * 10 + chr - '0';
         } else {
@@ -50,23 +50,25 @@ int parse_reserve(PyObject * obj, int * reserve) {
                     size *= 1024;
                 case 'K':
                     size *= 1024;
-                    if (str[1] != 'B' || str[2]) {
-                        PyErr_Format(PyExc_ValueError, "invalid reserve");
+                    if (str[0] != 'B' || str[1]) {
+                        PyErr_Format(PyExc_ValueError, "invalid reserve 2");
                         return 0;
                     }
+                    break;
                 case 'B':
-                    if (str[1]) {
-                        PyErr_Format(PyExc_ValueError, "invalid reserve");
+                    if (str[0]) {
+                        PyErr_Format(PyExc_ValueError, "invalid reserve 3");
                         return 0;
                     }
+                    break;
                 default:
-                    PyErr_Format(PyExc_ValueError, "invalid reserve");
+                    PyErr_Format(PyExc_ValueError, "invalid reserve 4");
                     return 0;
             }
         }
     }
     if (size < 1) {
-        PyErr_Format(PyExc_ValueError, "invalid reserve");
+        PyErr_Format(PyExc_ValueError, "invalid reserve 5");
         return 0;
     }
     *reserve = size;
