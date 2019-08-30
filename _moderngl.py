@@ -1,6 +1,6 @@
 import re
 
-__version__ = '6.0.dev0'
+__version__ = '6.0.dev1'
 
 
 class Limits:
