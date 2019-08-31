@@ -45,7 +45,7 @@ class Example(_example.Example):
             0, 0, 255,
         ], 'u1')
 
-        self.texture = self.ctx.texture([5], 3, pixels)
+        self.texture = self.ctx.texture(5, 3, pixels)
         self.sampler = self.ctx.sampler(self.texture)
 
         vertex_data = moderngl.pack([

@@ -2,17 +2,22 @@
 #include "moderngl.hpp"
 
 int parse_texture_size(PyObject * obj, int * size) {
+    if (PyLong_Check(obj)) {
+        size[0] = PyLong_AsLong(obj);
+        size[1] = 0;
+        size[2] = 0;
+        return 1;
+    }
     PyObject * seq = PySequence_Fast(obj, "not iterable");
     if (!seq) {
         return 0;
     }
     int len = (int)PySequence_Fast_GET_SIZE(seq);
     PyObject ** items = PySequence_Fast_ITEMS(seq);
-    if (len == 1) {
-        size[0] = PyLong_AsLong(items[0]);
-    } else if (len == 2) {
+    if (len == 2) {
         size[0] = PyLong_AsLong(items[0]);
         size[1] = PyLong_AsLong(items[1]);
+        size[2] = 0;
     } else if (len == 3) {
         size[0] = PyLong_AsLong(items[0]);
         size[1] = PyLong_AsLong(items[1]);
