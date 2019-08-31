@@ -16,3 +16,4 @@ int parse_swizzle(PyObject * obj, int * swizzle);
 int parse_filter(PyObject * obj, int * filter);
 int parse_wrap(PyObject * obj, int * wrap);
 int parse_lod_range(PyObject * obj, float * lod_range);
+int parse_offset2d(PyObject * obj, int * offset);

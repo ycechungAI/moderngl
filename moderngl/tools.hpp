@@ -3,24 +3,6 @@
 #include "gl_methods.hpp"
 #include "converters.hpp"
 
-extern "C" unsigned glGetError();
-#define ERR printf("%s:%d %s (error=%x, before=%x)\n", __FILE__, __LINE__, __FUNCTION__, glGetError(), glGetError())
-
-struct _Trace {
-    const char * f;
-    const char * fn;
-    int ln;
-    _Trace(const char * f, const char * fn, int ln): fn(fn), f(f), ln(ln) {
-        printf("entering %s (%s:%d)\n", f, fn, ln);
-    }
-    ~_Trace() {
-        printf("leaving %s\n", f);
-    }
-};
-
-// #define TRACE _Trace(__FUNCTION__, __FILE__, __LINE__);
-#define TRACE
-
 struct ErrorResponse {
     template <typename T>
     operator T * () {
@@ -70,63 +52,6 @@ PyObject * new_ref_or_none(void * obj) {
 
 inline bool is_buffer(PyObject * obj) {
     return obj && Py_TYPE(obj)->tp_as_buffer && Py_TYPE(obj)->tp_as_buffer->bf_getbuffer;
-}
-
-inline int py_floats(float * ptr, int min, int max, PyObject * tup) {
-    PyObject * seq = PySequence_Fast(tup, "not iterable");
-    if (!seq) {
-        return -1;
-    }
-    int size = (int)PySequence_Fast_GET_SIZE(seq);
-    if (size < min || size > max) {
-        return -1;
-    }
-    for (int i = 0; i < size; ++i) {
-        ptr[i] = (float)PyFloat_AsDouble(PySequence_Fast_GET_ITEM(seq, i));
-    }
-    Py_DECREF(seq);
-    if (PyErr_Occurred()) {
-        return -1;
-    }
-    return size;
-}
-
-inline int py_ints(int * ptr, int min, int max, PyObject * tup) {
-    PyObject * seq = PySequence_Fast(tup, "not iterable");
-    if (!seq) {
-        return -1;
-    }
-    int size = (int)PySequence_Fast_GET_SIZE(seq);
-    if (size < min || size > max) {
-        return -1;
-    }
-    for (int i = 0; i < size; ++i) {
-        ptr[i] = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, i));
-    }
-    Py_DECREF(seq);
-    if (PyErr_Occurred()) {
-        return -1;
-    }
-    return size;
-}
-
-inline int py_uints(unsigned * ptr, int min, int max, PyObject * tup) {
-    PyObject * seq = PySequence_Fast(tup, "not iterable");
-    if (!seq) {
-        return -1;
-    }
-    int size = (int)PySequence_Fast_GET_SIZE(seq);
-    if (size < min || size > max) {
-        return -1;
-    }
-    for (int i = 0; i < size; ++i) {
-        ptr[i] = PyLong_AsUnsignedLong(PySequence_Fast_GET_ITEM(seq, i));
-    }
-    Py_DECREF(seq);
-    if (PyErr_Occurred()) {
-        return -1;
-    }
-    return size;
 }
 
 inline void clean_glsl_name(char * name, int & name_len) {

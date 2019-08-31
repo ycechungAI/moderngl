@@ -369,3 +369,24 @@ int parse_lod_range(PyObject * obj, float * lod_range) {
 
     return 1;
 }
+
+int parse_offset2d(PyObject * obj, int * offset) {
+    PyObject * seq = PySequence_Fast(obj, "not iterable");
+    if (!seq) {
+        return 0;
+    }
+
+    int size = (int)PySequence_Fast_GET_SIZE(seq);
+    if (size != 2) {
+        return 0;
+    }
+
+    offset[0] = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 0));
+    offset[1] = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 1));
+
+    if (PyErr_Occurred()) {
+        return 0;
+    }
+
+    return 1;
+}

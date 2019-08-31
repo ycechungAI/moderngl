@@ -750,7 +750,7 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
 
     if (Py_TYPE(into) == Framebuffer_type) {
         int dst_xy[2] = {};
-        if (write_offset && py_ints(dst_xy, 2, 2, write_offset) < 0) {
+        if (write_offset && !parse_offset2d(write_offset, dst_xy)) {
             return NULL;
         }
         Framebuffer * dst = cast(Framebuffer, into);
@@ -1721,7 +1721,7 @@ PyObject * Scope_get_viewport(Scope * self) {
 }
 
 int Scope_set_viewport(Scope * self, PyObject * value) {
-    if (py_ints(self->viewport, 4, 4, value) < 0) {
+    if (!parse_viewport2d(value, self->viewport)) {
         return -1;
     }
     return 0;
