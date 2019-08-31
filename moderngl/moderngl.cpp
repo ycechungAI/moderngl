@@ -2811,6 +2811,7 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->default_scope->num_samplers = 0;
     res->default_scope->num_uniform_buffers = 0;
     res->default_scope->num_storage_buffers = 0;
+    res->default_scope->blending = new_ref(res->default_blending);
 
     res->gl.GetIntegerv(GL_VIEWPORT, res->default_scope->viewport);
 
