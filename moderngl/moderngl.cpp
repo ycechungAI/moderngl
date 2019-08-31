@@ -149,6 +149,7 @@ struct Framebuffer : public BaseObject {
     int width;
     int height;
     int samples;
+    int attachments;
     Attachment depth_attachment;
     Attachment color_attachments[1];
 };
@@ -600,6 +601,7 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
 
     res->extra = NULL;
     res->attachments_lst = PyList_New(0);
+    res->attachments = num_attachments;
 
     self->gl.GenFramebuffers(1, (GLuint *)&res->glo);
     self->gl.BindFramebuffer(GL_FRAMEBUFFER, res->glo);
@@ -828,6 +830,14 @@ PyObject * Framebuffer_meth_clear(Framebuffer * self, PyObject * args, PyObject 
     }
 
     int idx = attachment ? PyLong_AsLong(attachment) : 0;
+    if (PyErr_Occurred()) {
+        return NULL;
+    }
+
+    if (idx < 0 || idx >= self->attachments) {
+        PyErr_Format(PyExc_ValueError, "invalid attachment");
+        return NULL;
+    }
 
     if (color) {
         char shape = self->color_attachments[idx].shape;
@@ -2809,6 +2819,7 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
 	res->default_texture_unit = GL_TEXTURE0 + max_texture_units - 1;
 
     res->screen->glo = 0;
+    res->screen->attachments = 1;
     res->screen->color_attachments[0].shape = 'f';
     res->screen->color_attachments[0].components = 4;
     res->screen->width = res->default_scope->viewport[2];
