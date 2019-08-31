@@ -6,6 +6,8 @@
 /build
 /dist
 
+/extras/gltraces/build
+
 __pycache__
 *.egg-info
 
