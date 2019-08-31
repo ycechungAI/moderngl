@@ -16,39 +16,7 @@ struct ErrorResponse {
 #define ensure(cond, ...) if (!(cond)) { PyErr_Format(PyExc_Exception, __VA_ARGS__); return ErrorResponse(); }
 #define ensurei(cond) if (!(cond)) { PyErr_BadInternalCall(); return ErrorResponse(); }
 
-inline PyObject * _type_check(PyObject * obj, PyTypeObject * typ, const char * file, int line) {
-    if (!obj) {
-        fprintf(stderr, "null object %s:%d", file, line);
-        exit(1);
-    }
-    if (Py_TYPE(obj) != typ) {
-        fprintf(stderr, "type error at %s:%d", file, line);
-        exit(1);
-    }
-    return obj;
-}
-
-#define cast(T, o) (T *)_type_check((PyObject *)o, T ## _type, __FILE__, __LINE__)
-
-template <typename T>
-inline T * _new_ref(T * x, const char * file, int line) {
-    if (!x) {
-        fprintf(stderr, "new_ref NULL %s:%d", file, line);
-        exit(1);
-    }
-    Py_INCREF(x);
-    return x;
-}
-
-#define new_ref(obj) _new_ref(obj, __FILE__, __LINE__)
-
-PyObject * new_ref_or_none(void * obj) {
-    if (obj) {
-        Py_INCREF(obj);
-        return (PyObject *)obj;
-    }
-    Py_RETURN_NONE;
-}
+#define new_ref(obj) (Py_INCREF(obj), obj)
 
 inline bool is_buffer(PyObject * obj) {
     return obj && Py_TYPE(obj)->tp_as_buffer && Py_TYPE(obj)->tp_as_buffer->bf_getbuffer;

@@ -422,7 +422,7 @@ PyObject * Buffer_meth_read(Buffer * self, PyObject * args, PyObject * kwa) {
     }
 
     if (Py_TYPE(into) == Buffer_type) {
-        Buffer * dst = cast(Buffer, into);
+        Buffer * dst = (Buffer *)into;
         self->ctx->gl.BindBuffer(GL_COPY_READ_BUFFER, self->glo);
         self->ctx->gl.BindBuffer(GL_COPY_WRITE_BUFFER, dst->glo);
         self->ctx->gl.CopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, offset, write_offset, size);
@@ -608,7 +608,7 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
         PyObject * item = PySequence_Fast_GET_ITEM(color_attachments, i);
         PyList_Append(res->attachments_lst, item);
         if (Py_TYPE(item) == Renderbuffer_type) {
-            Renderbuffer * renderbuffer = cast(Renderbuffer, item);
+            Renderbuffer * renderbuffer = (Renderbuffer *)item;
             self->gl.FramebufferRenderbuffer(
                 GL_FRAMEBUFFER,
                 GL_COLOR_ATTACHMENT0 + i,
@@ -624,7 +624,7 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
             continue;
         }
         if (Py_TYPE(item) == Texture_type) {
-            Texture * texture = cast(Texture, item);
+            Texture * texture = (Texture *)item;
             res->width = texture->width;
             res->height = texture->height;
             res->samples = texture->samples;
@@ -648,7 +648,7 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
     if (depth_attachment) {
         PyList_Append(res->attachments_lst, depth_attachment);
         if (Py_TYPE(depth_attachment) == Renderbuffer_type) {
-            Renderbuffer * renderbuffer = cast(Renderbuffer, depth_attachment);
+            Renderbuffer * renderbuffer = (Renderbuffer *)depth_attachment;
             self->gl.FramebufferRenderbuffer(
                 GL_FRAMEBUFFER,
                 GL_DEPTH_ATTACHMENT,
@@ -663,7 +663,7 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
             res->depth_attachment.shape = renderbuffer->dtype->shape;
         }
         if (Py_TYPE(depth_attachment) == Texture_type) {
-            Texture * texture = cast(Texture, depth_attachment);
+            Texture * texture = (Texture *)depth_attachment;
             res->width = texture->width;
             res->height = texture->height;
             res->samples = texture->samples;
@@ -753,7 +753,7 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
         if (write_offset && !parse_offset2d(write_offset, dst_xy)) {
             return NULL;
         }
-        Framebuffer * dst = cast(Framebuffer, into);
+        Framebuffer * dst = (Framebuffer *)into;
         self->ctx->gl.BindFramebuffer(GL_READ_FRAMEBUFFER, self->glo);
         self->ctx->gl.BindFramebuffer(GL_DRAW_FRAMEBUFFER, dst->glo);
         self->ctx->gl.ReadBuffer(GL_COLOR_ATTACHMENT0 + attachment);
@@ -772,7 +772,7 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
     self->ctx->gl.ReadBuffer(attachment == -1 ? GL_NONE : (GL_COLOR_ATTACHMENT0 + attachment));
 
     if (Py_TYPE(into) == Buffer_type) {
-        Buffer * dst = cast(Buffer, into);
+        Buffer * dst = (Buffer *)into;
         char * ptr = (char *)NULL + (write_offset ? PyLong_AsLong(write_offset) : 0);
         self->ctx->gl.BindBuffer(GL_PIXEL_PACK_BUFFER, dst->glo);
         self->ctx->gl.ReadPixels(src_xy[0], src_xy[1], width, height, base_format, pixel_type, ptr);
@@ -1687,7 +1687,11 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) {
 
     int binding = 0;
     for (int i = 0; i < num_samplers; ++i) {
-        Sampler * sampler = cast(Sampler, PyTuple_GetItem(PySequence_Fast_GET_ITEM(samplers, i), 0));
+        Sampler * sampler = (Sampler *)PyTuple_GetItem(PySequence_Fast_GET_ITEM(samplers, i), 0);
+        if (Py_TYPE(sampler) != Sampler_type) {
+            PyErr_Format(PyExc_ValueError, "not a sampler");
+            return NULL;
+        }
         PyList_Append(res->bindings_lst, (PyObject *)sampler);
         int bind = PyLong_AsLong(PyTuple_GetItem(PySequence_Fast_GET_ITEM(samplers, i), 1));
         res->bindings[binding].sampler = new_ref(sampler);
@@ -1696,7 +1700,11 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) {
     }
 
     for (int i = 0; i < num_uniform_buffers; ++i) {
-        Buffer * buffer = cast(Buffer, PyTuple_GetItem(PySequence_Fast_GET_ITEM(uniform_buffers, i), 0));
+        Buffer * buffer = (Buffer *)PyTuple_GetItem(PySequence_Fast_GET_ITEM(uniform_buffers, i), 0);
+        if (Py_TYPE(buffer) != Buffer_type) {
+            PyErr_Format(PyExc_ValueError, "not a buffer");
+            return NULL;
+        }
         PyList_Append(res->bindings_lst, (PyObject *)buffer);
         int bind = PyLong_AsLong(PyTuple_GetItem(PySequence_Fast_GET_ITEM(uniform_buffers, i), 1));
         res->bindings[binding].buffer = new_ref(buffer);
@@ -1705,7 +1713,11 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) {
     }
 
     for (int i = 0; i < num_storage_buffers; ++i) {
-        Buffer * buffer = cast(Buffer, PyTuple_GetItem(PySequence_Fast_GET_ITEM(storage_buffers, i), 0));
+        Buffer * buffer = (Buffer *)PyTuple_GetItem(PySequence_Fast_GET_ITEM(storage_buffers, i), 0);
+        if (Py_TYPE(buffer) != Buffer_type) {
+            PyErr_Format(PyExc_ValueError, "not a buffer");
+            return NULL;
+        }
         PyList_Append(res->bindings_lst, (PyObject *)buffer);
         int bind = PyLong_AsLong(PyTuple_GetItem(PySequence_Fast_GET_ITEM(storage_buffers, i), 1));
         res->bindings[binding].buffer = new_ref(buffer);
@@ -2052,7 +2064,7 @@ PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) {
     Py_buffer view = {};
 
     if (Py_TYPE(data) == Buffer_type) {
-        Buffer * buffer = cast(Buffer, data);
+        Buffer * buffer = (Buffer *)data;
         self->ctx->gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer->glo);
     } else {
         if (PyObject_GetBuffer(data, &view, PyBUF_STRIDED_RO) < 0) {
@@ -2325,7 +2337,7 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
             return NULL;
         }
         // backward compatibility
-        Buffer * ibo = cast(Buffer, index_buffer);
+        Buffer * ibo = (Buffer *)index_buffer;
         res->vertices = ibo->size / 4;
     }
 
@@ -2578,7 +2590,10 @@ int VertexArray_set_index_element_size(VertexArray * self, PyObject * value) {
 }
 
 PyObject * VertexArray_get_index_buffer(VertexArray * self) {
-    return new_ref_or_none(self->index_buffer);
+    if (self->index_buffer) {
+        return (PyObject *)new_ref(self->index_buffer);
+    }
+    Py_RETURN_NONE;
 }
 
 int VertexArray_set_index_buffer(VertexArray * self, Buffer * value) {
@@ -2599,7 +2614,10 @@ int VertexArray_set_index_buffer(VertexArray * self, Buffer * value) {
 }
 
 PyObject * VertexArray_get_output_buffer(VertexArray * self) {
-    return new_ref_or_none(self->output_buffer);
+    if (self->output_buffer) {
+        return (PyObject *)new_ref(self->output_buffer);
+    }
+    Py_RETURN_NONE;
 }
 
 int VertexArray_set_output_buffer(VertexArray * self, Buffer * value) {
@@ -2617,7 +2635,10 @@ int VertexArray_set_output_buffer(VertexArray * self, Buffer * value) {
 }
 
 PyObject * VertexArray_get_indirect_buffer(VertexArray * self) {
-    return new_ref_or_none(self->indirect_buffer);
+    if (self->indirect_buffer) {
+        return (PyObject *)new_ref(self->indirect_buffer);
+    }
+    Py_RETURN_NONE;
 }
 
 int VertexArray_set_indirect_buffer(VertexArray * self, Buffer * value) {
@@ -2876,25 +2897,25 @@ PyObject * Context_meth_release(Context * self, BaseObject * arg) {
     arg->prev = NULL;
     arg->next = NULL;
     if (t == Buffer_type) {
-        Buffer * obj = cast(Buffer, arg);
+        Buffer * obj = (Buffer *)arg;
         self->gl.DeleteBuffers(1, (GLuint *)&obj->glo);
         obj->glo = 0;
     }
     if (t == Context_type) {
-        Context * obj = cast(Context, arg);
+        Context * obj = (Context *)arg;
     }
     if (t == Framebuffer_type) {
-        Framebuffer * obj = cast(Framebuffer, arg);
+        Framebuffer * obj = (Framebuffer *)arg;
         self->gl.DeleteFramebuffers(1, (GLuint *)&obj->glo);
         obj->glo = 0;
     }
     if (t == Program_type) {
-        Program * obj = cast(Program, arg);
+        Program * obj = (Program *)arg;
         self->gl.DeleteProgram(obj->glo);
         obj->glo = 0;
     }
     if (t == Query_type) {
-        Query * obj = cast(Query, arg);
+        Query * obj = (Query *)arg;
         for (int i = 0; i < 4; ++i) {
             if (obj->glo[i]) {
                 self->gl.DeleteQueries(1, (GLuint *)&obj->glo[i]);
@@ -2903,25 +2924,25 @@ PyObject * Context_meth_release(Context * self, BaseObject * arg) {
         }
     }
     if (t == Renderbuffer_type) {
-        Renderbuffer * obj = cast(Renderbuffer, arg);
+        Renderbuffer * obj = (Renderbuffer *)arg;
         self->gl.DeleteRenderbuffers(1, (GLuint *)&obj->glo);
         obj->glo = 0;
     }
     if (t == Sampler_type) {
-        Sampler * obj = cast(Sampler, arg);
+        Sampler * obj = (Sampler *)arg;
         self->gl.DeleteSamplers(1, (GLuint *)&obj->glo);
         obj->glo = 0;
     }
     if (t == Scope_type) {
-        Scope * obj = cast(Scope, arg);
+        Scope * obj = (Scope *)arg;
     }
     if (t == Texture_type) {
-        Texture * obj = cast(Texture, arg);
+        Texture * obj = (Texture *)arg;
         self->gl.DeleteTextures(1, (GLuint *)&obj->glo);
         obj->glo = 0;
     }
     if (t == VertexArray_type) {
-        VertexArray * obj = cast(VertexArray, arg);
+        VertexArray * obj = (VertexArray *)arg;
         self->gl.DeleteVertexArrays(1, (GLuint *)&obj->glo);
         obj->glo = 0;
     }
