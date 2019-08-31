@@ -2390,16 +2390,14 @@ PyObject * VertexArray_meth_bind(VertexArray * self, PyObject * args) {
 }
 
 PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject * kwa) {
-    static char * kw[] = {"mode", "vertices", "instances", "condition", NULL};
+    static char * kw[] = {"mode", "vertices", "instances", NULL};
 
     // backward compatibility
     int mode = -1;
     int vertices = -1;
     int instances = -1;
 
-    Query * condition = NULL;
-
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|iiiO!", kw, &mode, &vertices, &instances, Query_type, &condition)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|iii", kw, &mode, &vertices, &instances)) {
         return NULL;
     }
 
@@ -2435,28 +2433,26 @@ PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject
         ((self->scope->enable & MGL_BLEND) ? self->ctx->gl.Enable : self->ctx->gl.Disable)(GL_BLEND);
         ((self->scope->enable & MGL_DEPTH_TEST) ? self->ctx->gl.Enable : self->ctx->gl.Disable)(GL_DEPTH_TEST);
         ((self->scope->enable & MGL_CULL_FACE) ? self->ctx->gl.Enable : self->ctx->gl.Disable)(GL_CULL_FACE);
-        if (self->scope->bindings) {
-            for (int i = 0; i < self->scope->num_samplers; ++i) {
-                int location = self->scope->bindings[i].bind;
-                int texture_target = self->scope->bindings[i].sampler->texture->texture_target;
-                int texture_glo = self->scope->bindings[i].sampler->texture->glo;
-                int sampler_glo = self->scope->bindings[i].sampler->glo;
-                self->ctx->gl.ActiveTexture(GL_TEXTURE0 + location);
-                self->ctx->gl.BindTexture(texture_target, texture_glo);
-                self->ctx->gl.BindSampler(location, sampler_glo);
-            }
-            for (int i = 0; i < self->scope->num_uniform_buffers; ++i) {
-                int index = self->scope->bindings[i].bind;
-                int buffer_glo = self->scope->bindings[i].buffer->glo;
-                int size = self->scope->bindings[i].buffer->size;
-                self->ctx->gl.BindBufferRange(GL_UNIFORM_BUFFER, index, buffer_glo, 0, size);
-            }
-            for (int i = 0; i < self->scope->num_storage_buffers; ++i) {
-                int index = self->scope->bindings[i].bind;
-                int buffer_glo = self->scope->bindings[i].buffer->glo;
-                int size = self->scope->bindings[i].buffer->size;
-                self->ctx->gl.BindBufferRange(GL_SHADER_STORAGE_BUFFER, index, buffer_glo, 0, size);
-            }
+        for (int i = 0; i < self->scope->num_samplers; ++i) {
+            int location = self->scope->bindings[i].bind;
+            int texture_target = self->scope->bindings[i].sampler->texture->texture_target;
+            int texture_glo = self->scope->bindings[i].sampler->texture->glo;
+            int sampler_glo = self->scope->bindings[i].sampler->glo;
+            self->ctx->gl.ActiveTexture(GL_TEXTURE0 + location);
+            self->ctx->gl.BindTexture(texture_target, texture_glo);
+            self->ctx->gl.BindSampler(location, sampler_glo);
+        }
+        for (int i = 0; i < self->scope->num_uniform_buffers; ++i) {
+            int index = self->scope->bindings[i].bind;
+            int buffer_glo = self->scope->bindings[i].buffer->glo;
+            int size = self->scope->bindings[i].buffer->size;
+            self->ctx->gl.BindBufferRange(GL_UNIFORM_BUFFER, index, buffer_glo, 0, size);
+        }
+        for (int i = 0; i < self->scope->num_storage_buffers; ++i) {
+            int index = self->scope->bindings[i].bind;
+            int buffer_glo = self->scope->bindings[i].buffer->glo;
+            int size = self->scope->bindings[i].buffer->size;
+            self->ctx->gl.BindBufferRange(GL_SHADER_STORAGE_BUFFER, index, buffer_glo, 0, size);
         }
         if (self->scope->framebuffer) {
             self->ctx->gl.BindFramebuffer(GL_FRAMEBUFFER, self->scope->framebuffer->glo);
@@ -2484,21 +2480,12 @@ PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject
         }
     }
 
-    if (condition) {
-        int cond = condition->glo[MGL_ANY_SAMPLES_PASSED];
-        if (!cond) {
-            cond = condition->glo[MGL_SAMPLES_PASSED];
-        }
-        self->ctx->gl.BeginConditionalRender(cond, GL_QUERY_NO_WAIT);
-    }
-
     if (self->output_buffer) {
         self->ctx->gl.BindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, self->output_buffer->glo);
         self->ctx->gl.Enable(GL_RASTERIZER_DISCARD);
         self->ctx->gl.BeginTransformFeedback(mode);
     }
 
-    // backward compatibility
     if (self->indirect_buffer) {
         self->ctx->gl.BindBuffer(GL_DRAW_INDIRECT_BUFFER, self->indirect_buffer->glo);
         if (self->index_buffer) {
@@ -2518,10 +2505,6 @@ PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject
     if (self->output_buffer) {
         self->ctx->gl.EndTransformFeedback();
         self->ctx->gl.Disable(GL_RASTERIZER_DISCARD);
-    }
-
-    if (condition) {
-        self->ctx->gl.EndConditionalRender();
     }
 
     Py_RETURN_NONE;
