@@ -48,13 +48,6 @@ extra_linker_args = {
     'darwin': ['-framework', 'OpenGL', '-Wno-deprecated'],
 }
 
-context_source = {
-    'windows': ['moderngl/gl_context_windows.cpp'],
-    'linux': ['moderngl/gl_context_linux.cpp'],
-    'cygwin': ['moderngl/gl_context_linux.cpp'],
-    'darwin': ['moderngl/gl_context_darwin.cpp'],
-}
-
 short_description = 'ModernGL: High performance rendering for Python 3'
 
 ext = Extension(
@@ -63,8 +56,9 @@ ext = Extension(
         'moderngl/moderngl.cpp',
         'moderngl/extras.cpp',
         'moderngl/converters.cpp',
+        'moderngl/gl_context.cpp',
         'moderngl/gl_methods.cpp',
-    ] + context_source[target],
+    ],
     libraries=libraries[target],
     extra_compile_args=extra_compile_args[target],
     extra_link_args=extra_linker_args[target],
