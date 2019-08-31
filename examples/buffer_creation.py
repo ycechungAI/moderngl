@@ -1,7 +1,7 @@
 import moderngl
 import numpy as np
 
-ctx = moderngl.context(standalone=True)
+ctx = moderngl.create_context(standalone=True)
 
 # reserving a buffer with 500 bytes
 buf1 = ctx.buffer(reserve=500)

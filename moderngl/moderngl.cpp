@@ -2701,13 +2701,19 @@ PyType_Spec VertexArray_spec = {
 #pragma region Context
 
 Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa) {
-    static char * kw[] = {"standalone", "glversion", "glhooks", NULL};
+    static char * kw[] = {"standalone", "glversion", "glhooks", "require", NULL};
+
     int standalone = false;
     int glversion = 330;
-
     PyObject * glhooks = Py_None;
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|piO", kw, &standalone, &glversion, &glhooks)) {
+    int require = 0;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|piOi", kw, &standalone, &glversion, &glhooks, &require)) {
         return NULL;
+    }
+
+    if (require) {
+        glversion = require;
     }
 
     Context * res = PyObject_New(Context, Context_type);
@@ -2881,7 +2887,13 @@ PyObject * Context_meth_objects(Context * self) {
     return res;
 }
 
-PyObject * Context_meth_release(Context * self, BaseObject * arg) {
+PyObject * Context_meth_release(Context * self, PyObject * args) {
+    BaseObject * arg = self;
+
+    if (!PyArg_ParseTuple(args, "|O", &arg)) {
+        return NULL;
+    }
+
     PyTypeObject * t = Py_TYPE(arg);
     if (t != Buffer_type && t != Context_type && t != Framebuffer_type && t != Program_type && t != Query_type &&
         t != Renderbuffer_type && t != Sampler_type && t != Scope_type && t != Texture_type && t != VertexArray_type) {
@@ -3028,7 +3040,7 @@ PyMethodDef Context_methods[] = {
     {"texture_from", (PyCFunction)Context_meth_texture_from, METH_VARARGS | METH_KEYWORDS, NULL},
     {"vertex_array", (PyCFunction)Context_meth_vertex_array, METH_VARARGS | METH_KEYWORDS, NULL},
     {"objects", (PyCFunction)Context_meth_objects, METH_NOARGS, NULL},
-    {"release", (PyCFunction)Context_meth_release, METH_O, NULL},
+    {"release", (PyCFunction)Context_meth_release, METH_VARARGS, NULL},
 
     // backward compatibility
     {"clear", (PyCFunction)Context_meth_clear, METH_VARARGS | METH_KEYWORDS, NULL},
@@ -3182,35 +3194,15 @@ PyType_Spec Context_spec = {
 #pragma region Module
 
 PyDoc_STRVAR(moderngl_meth_context_doc,
-"context(standalone, glversion, glhooks)\n"
+"create_context(standalone, glversion, glhooks)\n"
 ":rtype: _moderngl.Context");
 
 PyDoc_STRVAR(moderngl_doc,
 "High Performance Rendering for Python.");
 
-// backward compatibility
-PyObject * moderngl_meth_create_context(PyObject * self, PyObject * args, PyObject * kwa) {
-    static char * kw[] = {"require", NULL};
-
-    PyObject * require = Py_None;
-
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|O", kw, &require)) {
-        return NULL;
-    }
-
-    if (require == Py_None) {
-        require = PyLong_FromLong(330);
-    }
-
-    return PyObject_CallMethod(self, "context", "OO", Py_False, require);
-}
-
 PyMethodDef module_methods[] = {
-    {"context", (PyCFunction)moderngl_meth_context, METH_VARARGS | METH_KEYWORDS, moderngl_meth_context_doc},
+    {"create_context", (PyCFunction)moderngl_meth_context, METH_VARARGS | METH_KEYWORDS, moderngl_meth_context_doc},
     {"pack", (PyCFunction)moderngl_meth_pack, METH_VARARGS | METH_KEYWORDS, NULL},
-
-    // backward compatibility
-    {"create_context", (PyCFunction)moderngl_meth_create_context, METH_VARARGS | METH_KEYWORDS, NULL},
     {},
 };
 
