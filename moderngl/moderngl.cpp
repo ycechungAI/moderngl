@@ -240,7 +240,7 @@ struct VertexArray : public BaseObject {
 #pragma endregion
 #pragma region Blending
 
-Blending * Context_meth_blending(Context * self, PyObject * args, PyObject * kwa) { TRACE
+Blending * Context_meth_blending(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"blend_functions", "blend_equations", "blend_color", NULL};
 
     PyObject * blend_functions = empty_tuple;
@@ -308,7 +308,7 @@ PyType_Spec Blending_spec = {
 #pragma endregion
 #pragma region Buffer
 
-Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) { TRACE
+Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {
         "data", "reserve", "dynamic", "readable", "writable", "persistent", "coherent", "local", NULL,
     };
@@ -386,7 +386,7 @@ Buffer * Context_meth_buffer(Context * self, PyObject * args, PyObject * kwa) { 
     return new_ref(res);
 }
 
-PyObject * Buffer_meth_clear(Buffer * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Buffer_meth_clear(Buffer * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"size", "offset", NULL};
 
     int size = -1;
@@ -405,7 +405,7 @@ PyObject * Buffer_meth_clear(Buffer * self, PyObject * args, PyObject * kwa) { T
     Py_RETURN_NONE;
 }
 
-PyObject * Buffer_meth_read(Buffer * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Buffer_meth_read(Buffer * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"size", "offset", "into", "write_offset", NULL};
 
     int size = -1;
@@ -458,7 +458,7 @@ PyObject * Buffer_meth_read(Buffer * self, PyObject * args, PyObject * kwa) { TR
     return NULL;
 }
 
-PyObject * Buffer_meth_write(Buffer * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Buffer_meth_write(Buffer * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"data", "offset", NULL};
 
     Py_buffer view;
@@ -474,7 +474,7 @@ PyObject * Buffer_meth_write(Buffer * self, PyObject * args, PyObject * kwa) { T
     Py_RETURN_NONE;
 }
 
-PyObject * Buffer_meth_map(Buffer * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Buffer_meth_map(Buffer * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"size", "offset", "readable", "writable", "persistent", "coherent", NULL};
 
     int size = -1;
@@ -506,7 +506,7 @@ PyObject * Buffer_meth_map(Buffer * self, PyObject * args, PyObject * kwa) { TRA
     return new_ref(self->mem);
 }
 
-PyObject * Buffer_meth_unmap(Buffer * self) { TRACE
+PyObject * Buffer_meth_unmap(Buffer * self) {
     if (self->mem) {
         self->ctx->gl.BindBuffer(GL_ARRAY_BUFFER, self->glo);
         self->ctx->gl.UnmapBuffer(GL_ARRAY_BUFFER);
@@ -516,7 +516,7 @@ PyObject * Buffer_meth_unmap(Buffer * self) { TRACE
     Py_RETURN_NONE;
 }
 
-PyObject * Buffer_meth_bind(Buffer * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Buffer_meth_bind(Buffer * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"layout", "stride", "divisor", "offset", NULL};
 
     PyObject * attributes = args;
@@ -532,7 +532,7 @@ PyObject * Buffer_meth_bind(Buffer * self, PyObject * args, PyObject * kwa) { TR
     return Py_BuildValue("OOOiii", self, attributes, layout, offset, stride, divisor);
 }
 
-PyObject * Buffer_meth_assign(Buffer * self, PyObject * arg) { TRACE
+PyObject * Buffer_meth_assign(Buffer * self, PyObject * arg) {
     return Py_BuildValue("OO", self, arg);
 }
 
@@ -573,7 +573,7 @@ PyType_Spec Buffer_spec = {
 #pragma endregion
 #pragma region Framebuffer
 
-Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject * kwa) { TRACE
+Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"color_attachments", "depth_attachment", NULL};
 
     PyObject * color_attachments;
@@ -705,7 +705,7 @@ Framebuffer * Context_meth_framebuffer(Context * self, PyObject * args, PyObject
     return new_ref(res);
 }
 
-PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {
         "size", "components", "attachment", "read_offset", "write_offset", "into", "alignment", NULL,
     };
@@ -806,7 +806,7 @@ PyObject * Framebuffer_meth_read(Framebuffer * self, PyObject * args, PyObject *
     return NULL;
 }
 
-PyObject * Framebuffer_meth_clear(Framebuffer * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Framebuffer_meth_clear(Framebuffer * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"color", "depth", "attachment", "viewport", NULL};
 
     PyObject * color = NULL;
@@ -879,7 +879,7 @@ PyObject * Framebuffer_get_size(Framebuffer * self) {
 }
 
 // backward compatibility
-PyObject * Framebuffer_meth_use(Framebuffer * self) { TRACE
+PyObject * Framebuffer_meth_use(Framebuffer * self) {
     Framebuffer * old = self->ctx->default_scope->framebuffer;
     self->ctx->default_scope->framebuffer = new_ref(self);
     Py_XDECREF(old);
@@ -927,7 +927,7 @@ PyType_Spec Framebuffer_spec = {
 #pragma endregion
 #pragma region Program
 
-Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) { TRACE
+Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {
         "vertex_shader",
         "fragment_shader",
@@ -1088,7 +1088,7 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
     return new_ref(res);
 }
 
-PyObject * Program_meth_run(Program * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Program_meth_run(Program * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"x", "y", "z", NULL};
     int x, y, z;
     if (!PyArg_ParseTupleAndKeywords(args, kwa, "iii", kw, &x, &y, &z)) {
@@ -1099,11 +1099,11 @@ PyObject * Program_meth_run(Program * self, PyObject * args, PyObject * kwa) { T
     Py_RETURN_NONE;
 }
 
-PyObject * Program_get_item(Program * self, Program * key) { TRACE
+PyObject * Program_get_item(Program * self, Program * key) {
     return PyObject_CallMethod(self->ctx->tools, "Uniform", "OO", self, key);
 }
 
-int Program_set_item(Program * self, PyObject * key, PyObject * value) { TRACE
+int Program_set_item(Program * self, PyObject * key, PyObject * value) {
     PyObject * uniform = PyDict_GetItem(self->uniforms, key);
     int location = PyLong_AsLong(PyTuple_GET_ITEM(uniform, 0));
     int gltype = PyLong_AsLong(PyTuple_GET_ITEM(uniform, 1));
@@ -1172,7 +1172,7 @@ PyType_Spec Program_spec = {
 #pragma endregion
 #pragma region Query
 
-Query * Context_meth_query(Context * self, PyObject * args, PyObject * kwa) { TRACE
+Query * Context_meth_query(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {
         "time_elapsed", "primitives_generated", "samples_passed", "any_samples_passed", NULL,
     };
@@ -1229,7 +1229,7 @@ Query * Context_meth_query(Context * self, PyObject * args, PyObject * kwa) { TR
     return new_ref(res);
 }
 
-PyObject * Query_meth_enter(Query * self) { TRACE
+PyObject * Query_meth_enter(Query * self) {
     if (self->glo[MGL_ANY_SAMPLES_PASSED]) {
         self->ctx->gl.BeginQuery(GL_ANY_SAMPLES_PASSED, self->glo[MGL_ANY_SAMPLES_PASSED]);
     }
@@ -1245,7 +1245,7 @@ PyObject * Query_meth_enter(Query * self) { TRACE
     Py_RETURN_NONE;
 }
 
-PyObject * Query_meth_exit(Query * self) { TRACE
+PyObject * Query_meth_exit(Query * self) {
     if (self->glo[MGL_TIME_ELAPSED]) {
         self->ctx->gl.EndQuery(GL_TIME_ELAPSED);
         self->ctx->gl.GetQueryObjectiv(self->glo[MGL_TIME_ELAPSED], GL_QUERY_RESULT, &self->elapsed);
@@ -1296,7 +1296,7 @@ PyType_Spec Query_spec = {
 #pragma endregion
 #pragma region Renderbuffer
 
-Renderbuffer * Context_meth_renderbuffer(Context * self, PyObject * args, PyObject * kwa) { TRACE
+Renderbuffer * Context_meth_renderbuffer(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"size", "components", "samples", "dtype", NULL};
 
     int width;
@@ -1338,7 +1338,7 @@ Renderbuffer * Context_meth_renderbuffer(Context * self, PyObject * args, PyObje
     return new_ref(res);
 }
 
-PyObject * Renderbuffer_get_size(Renderbuffer * self) { TRACE
+PyObject * Renderbuffer_get_size(Renderbuffer * self) {
     return Py_BuildValue("ii", self->width, self->height);
 }
 
@@ -1375,7 +1375,7 @@ PyType_Spec Renderbuffer_spec = {
 #pragma endregion
 #pragma region Sampler
 
-Sampler * Context_meth_sampler(Context * self, PyObject * args, PyObject * kwa) { TRACE
+Sampler * Context_meth_sampler(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {
         "texture", "filter", "wrap", "compare_func", "anisotropy", "lod_range", "lod_bias", "border", NULL,
     };
@@ -1437,15 +1437,15 @@ Sampler * Context_meth_sampler(Context * self, PyObject * args, PyObject * kwa) 
     return new_ref(res);
 }
 
-PyObject * Sampler_meth_assign(Sampler * self, PyObject * arg) { TRACE
+PyObject * Sampler_meth_assign(Sampler * self, PyObject * arg) {
     return Py_BuildValue("OO", self, arg);
 }
 
-Texture * Sampler_get_texture(Sampler * self) { TRACE
+Texture * Sampler_get_texture(Sampler * self) {
     return new_ref(self->texture);
 }
 
-int Sampler_set_texture(Sampler * self, Texture * value) { TRACE
+int Sampler_set_texture(Sampler * self, Texture * value) {
     if (Py_TYPE(value) != Texture_type) {
         return -1;
     }
@@ -1455,14 +1455,14 @@ int Sampler_set_texture(Sampler * self, Texture * value) { TRACE
     return 0;
 }
 
-PyObject * Sampler_get_filter(Sampler * self) { TRACE
+PyObject * Sampler_get_filter(Sampler * self) {
     int filter[2];
     self->ctx->gl.GetSamplerParameteriv(self->glo, GL_TEXTURE_MIN_FILTER, &filter[0]);
     self->ctx->gl.GetSamplerParameteriv(self->glo, GL_TEXTURE_MAG_FILTER, &filter[1]);
     return Py_BuildValue("ii", filter[0], filter[1]);
 }
 
-int Sampler_set_filter(Sampler * self, PyObject * value) { TRACE
+int Sampler_set_filter(Sampler * self, PyObject * value) {
     int filter[2];
     if (!parse_filter(value, filter)) {
         return -1;
@@ -1472,11 +1472,11 @@ int Sampler_set_filter(Sampler * self, PyObject * value) { TRACE
     return 0;
 }
 
-PyObject * Sampler_get_wrap(Sampler * self) { TRACE
+PyObject * Sampler_get_wrap(Sampler * self) {
     Py_RETURN_NONE;
 }
 
-int Sampler_set_wrap(Sampler * self, PyObject * value) { TRACE
+int Sampler_set_wrap(Sampler * self, PyObject * value) {
     int wrap[3];
     if (!parse_wrap(value, wrap)) {
         return -1;
@@ -1487,11 +1487,11 @@ int Sampler_set_wrap(Sampler * self, PyObject * value) { TRACE
     return 0;
 }
 
-PyObject * Sampler_get_compare_func(Sampler * self) { TRACE
+PyObject * Sampler_get_compare_func(Sampler * self) {
     Py_RETURN_NONE;
 }
 
-int Sampler_set_compare_func(Sampler * self, PyObject * value) { TRACE
+int Sampler_set_compare_func(Sampler * self, PyObject * value) {
     if (value == Py_None) {
         self->ctx->gl.SamplerParameteri(self->glo, GL_TEXTURE_COMPARE_MODE, GL_NONE);
         return 0;
@@ -1505,11 +1505,11 @@ int Sampler_set_compare_func(Sampler * self, PyObject * value) { TRACE
     return 0;
 }
 
-PyObject * Sampler_get_anisotropy(Sampler * self) { TRACE
+PyObject * Sampler_get_anisotropy(Sampler * self) {
     Py_RETURN_NONE;
 }
 
-int Sampler_set_anisotropy(Sampler * self, PyObject * value) { TRACE
+int Sampler_set_anisotropy(Sampler * self, PyObject * value) {
     float anisotropy = (float)PyFloat_AsDouble(value);
     if (PyErr_Occurred()) {
         return -1;
@@ -1518,11 +1518,11 @@ int Sampler_set_anisotropy(Sampler * self, PyObject * value) { TRACE
     return 0;
 }
 
-PyObject * Sampler_get_lod_range(Sampler * self) { TRACE
+PyObject * Sampler_get_lod_range(Sampler * self) {
     Py_RETURN_NONE;
 }
 
-int Sampler_set_lod_range(Sampler * self, PyObject * value) { TRACE
+int Sampler_set_lod_range(Sampler * self, PyObject * value) {
     float lod_range[2];
     if (!parse_lod_range(value, lod_range)) {
         return -1;
@@ -1532,11 +1532,11 @@ int Sampler_set_lod_range(Sampler * self, PyObject * value) { TRACE
     return 0;
 }
 
-PyObject * Sampler_get_lod_bias(Sampler * self) { TRACE
+PyObject * Sampler_get_lod_bias(Sampler * self) {
     Py_RETURN_NONE;
 }
 
-int Sampler_set_lod_bias(Sampler * self, PyObject * value) { TRACE
+int Sampler_set_lod_bias(Sampler * self, PyObject * value) {
     float lod_bias = (float)PyFloat_AsDouble(value);
     if (PyErr_Occurred()) {
         return -1;
@@ -1545,11 +1545,11 @@ int Sampler_set_lod_bias(Sampler * self, PyObject * value) { TRACE
     return 0;
 }
 
-PyObject * Sampler_get_border(Sampler * self) { TRACE
+PyObject * Sampler_get_border(Sampler * self) {
     Py_RETURN_NONE;
 }
 
-int Sampler_set_border(Sampler * self, PyObject * value) { TRACE
+int Sampler_set_border(Sampler * self, PyObject * value) {
     float border[4] = {0.0f, 0.0f, 0.0f, 1.0f};
     if (!parse_float_color(value, border)) {
         return -1;
@@ -1600,7 +1600,7 @@ PyType_Spec Sampler_spec = {
 #pragma endregion
 #pragma region Scope
 
-Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TRACE
+Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {
         "enable",
         "framebuffer",
@@ -1716,22 +1716,22 @@ Scope * Context_meth_scope(Context * self, PyObject * args, PyObject * kwa) { TR
     return new_ref(res);
 }
 
-PyObject * Scope_get_viewport(Scope * self) { TRACE
+PyObject * Scope_get_viewport(Scope * self) {
     return Py_BuildValue("iiii", self->viewport[0], self->viewport[1], self->viewport[2], self->viewport[3]);
 }
 
-int Scope_set_viewport(Scope * self, PyObject * value) { TRACE
+int Scope_set_viewport(Scope * self, PyObject * value) {
     if (py_ints(self->viewport, 4, 4, value) < 0) {
         return -1;
     }
     return 0;
 }
 
-Framebuffer * Scope_get_framebuffer(Scope * self) { TRACE
+Framebuffer * Scope_get_framebuffer(Scope * self) {
     return self->framebuffer;
 }
 
-int Scope_set_framebuffer(Scope * self, Framebuffer * value) { TRACE
+int Scope_set_framebuffer(Scope * self, Framebuffer * value) {
     if (Py_TYPE(value) != Framebuffer_type) {
         return -1;
     }
@@ -1741,11 +1741,11 @@ int Scope_set_framebuffer(Scope * self, Framebuffer * value) { TRACE
     return 0;
 }
 
-Blending * Scope_get_blending(Scope * self) { TRACE
+Blending * Scope_get_blending(Scope * self) {
     return self->blending;
 }
 
-int Scope_set_blending(Scope * self, Blending * value) { TRACE
+int Scope_set_blending(Scope * self, Blending * value) {
     if (Py_TYPE(value) != Blending_type) {
         return -1;
     }
@@ -1813,7 +1813,7 @@ int get_texture_target(int width, int height, int length, int samples, int array
     return array ? GL_TEXTURE_1D_ARRAY : GL_TEXTURE_1D;
 }
 
-Texture * Context_meth_texture(Context * self, PyObject * args, PyObject * kwa) { TRACE
+Texture * Context_meth_texture(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"size", "components", "data", "samples", "array", "levels", "cubemap", "dtype", NULL};
 
     int size[3] = {};
@@ -1984,7 +1984,7 @@ Texture * Context_meth_texture(Context * self, PyObject * args, PyObject * kwa) 
     return new_ref(res);
 }
 
-PyObject * Context_meth_texture_from(Context * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Context_meth_texture_from(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"obj", "array", "cubemap", NULL};
 
     PyObject * obj;
@@ -1998,7 +1998,7 @@ PyObject * Context_meth_texture_from(Context * self, PyObject * args, PyObject *
     return PyObject_CallMethod(self->tools, "texture_from", "OOOO", self, obj, array, cubemap);
 }
 
-PyObject * Texture_meth_read(Texture * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Texture_meth_read(Texture * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"into", "write_offset", NULL};
 
     PyObject * into = Py_None;
@@ -2038,7 +2038,7 @@ PyObject * Texture_meth_read(Texture * self, PyObject * args, PyObject * kwa) { 
     return NULL;
 }
 
-PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"data", "size", "offset", "alignment", NULL};
 
     PyObject * data;
@@ -2170,7 +2170,7 @@ PyObject * Texture_meth_write(Texture * self, PyObject * args, PyObject * kwa) {
     Py_RETURN_NONE;
 }
 
-PyObject * Texture_meth_build_mipmaps(Texture * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Texture_meth_build_mipmaps(Texture * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"base_level", "max_level", NULL};
 
     int base_level = 0;
@@ -2193,7 +2193,7 @@ PyObject * Texture_meth_build_mipmaps(Texture * self, PyObject * args, PyObject 
     Py_RETURN_NONE;
 }
 
-PyObject * Texture_get_size(Texture * self) { TRACE
+PyObject * Texture_get_size(Texture * self) {
     return Py_BuildValue("ii", self->width, self->height);
 }
 
@@ -2220,7 +2220,7 @@ PyObject * Texture_get_swizzle(Texture * self) {
     return PyUnicode_FromStringAndSize(swizzle, 4);
 }
 
-int Texture_set_swizzle(Texture * self, PyObject * value) { TRACE
+int Texture_set_swizzle(Texture * self, PyObject * value) {
     int tex_swizzle[4];
     if (!parse_swizzle(value, tex_swizzle)) {
         return -1;
@@ -2267,7 +2267,7 @@ PyType_Spec Texture_spec = {
 #pragma endregion
 #pragma region VertexArray
 
-VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObject * kwa) { TRACE
+VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObject * kwa) {
     if (PyTuple_Size(args) > 2 && Py_TYPE(PyTuple_GET_ITEM(args, 1)) == Buffer_type) {
         PyObject * attribs = PyTuple_GetSlice(args, 2, PY_SSIZE_T_MAX);
         PyObject * bindings = Py_BuildValue("ONOiii", PyTuple_GET_ITEM(args, 1), attribs, Py_None, 0, 0, 0);
@@ -2332,7 +2332,7 @@ VertexArray * Context_meth_vertex_array(Context * self, PyObject * args, PyObjec
     return new_ref(res);
 }
 
-PyObject * VertexArray_meth_bind(VertexArray * self, PyObject * args) { TRACE
+PyObject * VertexArray_meth_bind(VertexArray * self, PyObject * args) {
     if (PyTuple_Size(args) == 1) {
         return PyObject_CallMethod(self->ctx->tools, "bind_attributes", "OOO", self, args, Py_False);
     }
@@ -2367,7 +2367,7 @@ PyObject * VertexArray_meth_bind(VertexArray * self, PyObject * args) { TRACE
     Py_RETURN_NONE;
 }
 
-PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"mode", "vertices", "instances", "condition", NULL};
 
     // backward compatibility
@@ -2506,7 +2506,7 @@ PyObject * VertexArray_meth_render(VertexArray * self, PyObject * args, PyObject
 }
 
 // backward compatibility
-PyObject * VertexArray_meth_transform(VertexArray * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * VertexArray_meth_transform(VertexArray * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"into", "mode", "vertices", "instances", NULL};
 
     Buffer * into;
@@ -2527,11 +2527,11 @@ PyObject * VertexArray_meth_transform(VertexArray * self, PyObject * args, PyObj
     return res;
 }
 
-Scope * VertexArray_get_scope(VertexArray * self) { TRACE
+Scope * VertexArray_get_scope(VertexArray * self) {
     return new_ref(self->scope);
 }
 
-int VertexArray_set_scope(VertexArray * self, Scope * value) { TRACE
+int VertexArray_set_scope(VertexArray * self, Scope * value) {
     if (Py_TYPE(value) != Scope_type) {
         return -1;
     }
@@ -2541,14 +2541,14 @@ int VertexArray_set_scope(VertexArray * self, Scope * value) { TRACE
     return 0;
 }
 
-PyObject * VertexArray_get_program(VertexArray * self) { TRACE
+PyObject * VertexArray_get_program(VertexArray * self) {
     if (!self->program) {
         Py_RETURN_NONE;
     }
     return (PyObject *)new_ref(self->program);
 }
 
-int VertexArray_set_program(VertexArray * self, Program * value) { TRACE
+int VertexArray_set_program(VertexArray * self, Program * value) {
     if (Py_TYPE(value) != Program_type) {
         return -1;
     }
@@ -2558,7 +2558,7 @@ int VertexArray_set_program(VertexArray * self, Program * value) { TRACE
     return 0;
 }
 
-PyObject * VertexArray_get_index_element_size(VertexArray * self) { TRACE
+PyObject * VertexArray_get_index_element_size(VertexArray * self) {
     switch (self->index_format) {
         case GL_UNSIGNED_BYTE: return PyLong_FromLong(1);
         case GL_UNSIGNED_SHORT: return PyLong_FromLong(2);
@@ -2567,7 +2567,7 @@ PyObject * VertexArray_get_index_element_size(VertexArray * self) { TRACE
     }
 }
 
-int VertexArray_set_index_element_size(VertexArray * self, PyObject * value) { TRACE
+int VertexArray_set_index_element_size(VertexArray * self, PyObject * value) {
     int size = PyLong_AsLong(value);
     if (size != 1 && size != 2 && size != 4) {
         return -1;
@@ -2577,11 +2577,11 @@ int VertexArray_set_index_element_size(VertexArray * self, PyObject * value) { T
     return 0;
 }
 
-PyObject * VertexArray_get_index_buffer(VertexArray * self) { TRACE
+PyObject * VertexArray_get_index_buffer(VertexArray * self) {
     return new_ref_or_none(self->index_buffer);
 }
 
-int VertexArray_set_index_buffer(VertexArray * self, Buffer * value) { TRACE
+int VertexArray_set_index_buffer(VertexArray * self, Buffer * value) {
     self->ctx->gl.BindVertexArray(self->glo);
     Buffer * old = self->index_buffer;
     if (value == (Buffer *)Py_None) {
@@ -2598,11 +2598,11 @@ int VertexArray_set_index_buffer(VertexArray * self, Buffer * value) { TRACE
     return 0;
 }
 
-PyObject * VertexArray_get_output_buffer(VertexArray * self) { TRACE
+PyObject * VertexArray_get_output_buffer(VertexArray * self) {
     return new_ref_or_none(self->output_buffer);
 }
 
-int VertexArray_set_output_buffer(VertexArray * self, Buffer * value) { TRACE
+int VertexArray_set_output_buffer(VertexArray * self, Buffer * value) {
     Buffer * old = self->output_buffer;
     if (value == (Buffer *)Py_None) {
         self->output_buffer = NULL;
@@ -2616,11 +2616,11 @@ int VertexArray_set_output_buffer(VertexArray * self, Buffer * value) { TRACE
     return 0;
 }
 
-PyObject * VertexArray_get_indirect_buffer(VertexArray * self) { TRACE
+PyObject * VertexArray_get_indirect_buffer(VertexArray * self) {
     return new_ref_or_none(self->indirect_buffer);
 }
 
-int VertexArray_set_indirect_buffer(VertexArray * self, Buffer * value) { TRACE
+int VertexArray_set_indirect_buffer(VertexArray * self, Buffer * value) {
     Buffer * old = self->indirect_buffer;
     if (value == (Buffer *)Py_None) {
         self->indirect_buffer = NULL;
@@ -2679,7 +2679,7 @@ PyType_Spec VertexArray_spec = {
 #pragma endregion
 #pragma region Context
 
-Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa) { TRACE
+Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"standalone", "glversion", "glhooks", NULL};
     int standalone = false;
     int glversion = 330;
@@ -2851,7 +2851,7 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     return new_ref(res);
 }
 
-PyObject * Context_meth_objects(Context * self) { TRACE
+PyObject * Context_meth_objects(Context * self) {
     PyObject * res = PyList_New(0);
     BaseObject * obj = self->next;
     while (obj != self) {
@@ -2860,7 +2860,7 @@ PyObject * Context_meth_objects(Context * self) { TRACE
     return res;
 }
 
-PyObject * Context_meth_release(Context * self, BaseObject * arg) { TRACE
+PyObject * Context_meth_release(Context * self, BaseObject * arg) {
     PyTypeObject * t = Py_TYPE(arg);
     if (t != Buffer_type && t != Context_type && t != Framebuffer_type && t != Program_type && t != Query_type &&
         t != Renderbuffer_type && t != Sampler_type && t != Scope_type && t != Texture_type && t != VertexArray_type) {
@@ -2930,7 +2930,7 @@ PyObject * Context_meth_release(Context * self, BaseObject * arg) { TRACE
 }
 
 // backward compatibility
-PyObject * Context_meth_clear(Context * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Context_meth_clear(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"red", "green", "blue", "alpha", "depth", "viewport", NULL};
     float red = 0.0f, green = 0.0f, blue = 0.0f, alpha = 0.0f, depth = 1.0f;
     PyObject * viewport = NULL;
@@ -2941,7 +2941,7 @@ PyObject * Context_meth_clear(Context * self, PyObject * args, PyObject * kwa) {
 }
 
 // backward compatibility
-PyObject * Context_meth_enable(Context * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Context_meth_enable(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"enable", NULL};
     int flags;
     if (!PyArg_ParseTupleAndKeywords(args, kwa, "i", kw, &flags)) {
@@ -2952,7 +2952,7 @@ PyObject * Context_meth_enable(Context * self, PyObject * args, PyObject * kwa) 
 }
 
 // backward compatibility
-PyObject * Context_meth_disable(Context * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Context_meth_disable(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"enable", NULL};
     int flags;
     if (!PyArg_ParseTupleAndKeywords(args, kwa, "i", kw, &flags)) {
@@ -2963,7 +2963,7 @@ PyObject * Context_meth_disable(Context * self, PyObject * args, PyObject * kwa)
 }
 
 // backward compatibility
-PyObject * Context_meth_enable_only(Context * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Context_meth_enable_only(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"enable", NULL};
     int flags;
     if (!PyArg_ParseTupleAndKeywords(args, kwa, "i", kw, &flags)) {
@@ -2974,7 +2974,7 @@ PyObject * Context_meth_enable_only(Context * self, PyObject * args, PyObject * 
 }
 
 // backward compatibility
-PyObject * Context_meth_copy_buffer(Context * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * Context_meth_copy_buffer(Context * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"dst", "src", NULL};
     PyObject * dst;
     PyObject * src;
@@ -2984,12 +2984,12 @@ PyObject * Context_meth_copy_buffer(Context * self, PyObject * args, PyObject * 
     return PyObject_CallMethod(src, "read", "iiO", -1, 0, dst);
 }
 
-PyObject * Context_meth_enter(Context * self) { TRACE
+PyObject * Context_meth_enter(Context * self) {
     self->ctx.enter();
     Py_RETURN_NONE;
 }
 
-PyObject * Context_meth_exit(Context * self, PyObject * args) { TRACE
+PyObject * Context_meth_exit(Context * self, PyObject * args) {
     self->ctx.exit();
     Py_RETURN_NONE;
 }
@@ -3023,7 +3023,7 @@ PyMethodDef Context_methods[] = {
 };
 
 // backward compatibility
-PyObject * Context_get_info(Context * self) { TRACE
+PyObject * Context_get_info(Context * self) {
     PyObject * res = PyDict_New();
     PyDict_SetItemString(res, "GL_VENDOR", self->consts.vendor);
     PyDict_SetItemString(res, "GL_RENDERER", self->consts.renderer);
@@ -3032,37 +3032,37 @@ PyObject * Context_get_info(Context * self) { TRACE
 }
 
 // backward compatibility
-PyObject * Context_get_version_code(Context * self) { TRACE
+PyObject * Context_get_version_code(Context * self) {
     return PyLong_FromLong(self->ctx.glversion);
 }
 
 // backward compatibility
-PyObject * Context_get_viewport(Context * self) { TRACE
+PyObject * Context_get_viewport(Context * self) {
     return PyObject_GetAttrString((PyObject *)self->default_scope, "viewport");
 }
 
 // backward compatibility
-int Context_set_viewport(Context * self, PyObject * value) { TRACE
+int Context_set_viewport(Context * self, PyObject * value) {
     return PyObject_SetAttrString((PyObject *)self->default_scope, "viewport", value);
 }
 
 // backward compatibility
-PyObject * Context_get_point_size(Context * self) { TRACE
+PyObject * Context_get_point_size(Context * self) {
     return PyObject_GetAttrString((PyObject *)self->default_scope, "point_size");
 }
 
 // backward compatibility
-int Context_set_point_size(Context * self, PyObject * value) { TRACE
+int Context_set_point_size(Context * self, PyObject * value) {
     return PyObject_SetAttrString((PyObject *)self->default_scope, "point_size", value);
 }
 
 // backward compatibility
-PyObject * Context_get_line_width(Context * self) { TRACE
+PyObject * Context_get_line_width(Context * self) {
     return PyObject_GetAttrString((PyObject *)self->default_scope, "line_width");
 }
 
 // backward compatibility
-int Context_set_line_width(Context * self, PyObject * value) { TRACE
+int Context_set_line_width(Context * self, PyObject * value) {
     return PyObject_SetAttrString((PyObject *)self->default_scope, "line_width", value);
 }
 
@@ -3168,7 +3168,7 @@ PyDoc_STRVAR(moderngl_doc,
 "High Performance Rendering for Python.");
 
 // backward compatibility
-PyObject * moderngl_meth_create_context(PyObject * self, PyObject * args, PyObject * kwa) { TRACE
+PyObject * moderngl_meth_create_context(PyObject * self, PyObject * args, PyObject * kwa) {
     static char * kw[] = {"require", NULL};
 
     PyObject * require = Py_None;
