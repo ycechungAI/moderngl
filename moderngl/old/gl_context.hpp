@@ -10,7 +10,7 @@ struct GLContext {
     const char * error;
     bool standalone;
 
-    bool load(bool standalone);
+    bool load(bool standalone, bool egl);
     void enter();
     void exit();
     bool active();

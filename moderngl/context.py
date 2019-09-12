@@ -1202,7 +1202,7 @@ def create_standalone_context(require=None, **settings) -> 'Context':
         settings['backend'] = backend
 
     ctx = Context.__new__(Context)
-    ctx.mglo, ctx.version_code = mgl.create_standalone_context(settings)
+    ctx.mglo, ctx.version_code = mgl.create_standalone_context(settings.get('backend') == 'EGL')
     ctx._screen = None
     ctx.fbo = None
     ctx._info = None

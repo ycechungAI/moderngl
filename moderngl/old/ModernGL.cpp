@@ -99,12 +99,12 @@ PyObject * fmtdebug(PyObject * self, PyObject * args) {
 }
 
 PyObject * create_standalone_context(PyObject * self, PyObject * args) {
-	PyObject * settings;
+	int egl = false;
 
 	int args_ok = PyArg_ParseTuple(
 		args,
-		"O",
-		&settings
+		"p",
+		&egl
 	);
 
 	if (!args_ok) {
@@ -114,7 +114,7 @@ PyObject * create_standalone_context(PyObject * self, PyObject * args) {
 	MGLContext * ctx = (MGLContext *)MGLContext_Type.tp_alloc(&MGLContext_Type, 0);
 
 	ctx->gl_context.error = "unknown error";
-	if (!ctx->gl_context.load(true)) {
+	if (!ctx->gl_context.load(true, !!egl)) {
 		MGLError_Set(ctx->gl_context.error);
 		return 0;
 	}
@@ -141,7 +141,7 @@ PyObject * create_standalone_context(PyObject * self, PyObject * args) {
 PyObject * create_context(PyObject * self) {
 	MGLContext * ctx = (MGLContext *)MGLContext_Type.tp_alloc(&MGLContext_Type, 0);
 
-	ctx->gl_context.load(false);
+	ctx->gl_context.load(false, NULL);
 	ctx->wireframe = false;
 
 	if (PyErr_Occurred()) {
