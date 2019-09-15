@@ -6,7 +6,7 @@ from setuptools import Extension, setup
 if sys.version_info < (3, 0):
     raise Exception('Python 2 is not supported!')
 
-PLATFORMS = {'windows', 'linux', 'darwin', 'cygwin'}
+PLATFORMS = {'windows', 'linux', 'darwin'}
 
 target = platform.system().lower()
 
@@ -28,24 +28,21 @@ if target == 'darwin':
             os.environ['MACOSX_DEPLOYMENT_TARGET'] = '10.9'
 
 libraries = {
-    'windows': ['gdi32', 'opengl32', 'user32'],
-    'linux': ['GL', 'dl', 'X11'],
-    'cygwin': ['GL', 'X11'],
+    'windows': ['gdi32', 'user32'],
+    'linux': ['GL', 'dl'],
     'darwin': [],
 }
 
 extra_compile_args = {
     'windows': [],
     'linux': ['-fpermissive'],
-    'cygwin': ['-fpermissive'],
     'darwin': ['-fpermissive', '-Wno-deprecated-declarations'],
 }
 
-extra_linker_args = {
+extra_link_args = {
     'windows': [],
     'linux': [],
-    'cygwin': [],
-    'darwin': ['-framework', 'OpenGL', '-Wno-deprecated'],
+    'darwin': ['-Wno-deprecated'],
 }
 
 short_description = 'ModernGL: High performance rendering for Python 3'
@@ -56,17 +53,14 @@ ext = Extension(
         'moderngl/moderngl.cpp',
         'moderngl/extras.cpp',
         'moderngl/converters.cpp',
-        'moderngl/gl_context.cpp',
-        'moderngl/gl_methods.cpp',
     ],
     libraries=libraries[target],
     extra_compile_args=extra_compile_args[target],
-    extra_link_args=extra_linker_args[target],
+    extra_link_args=extra_link_args[target],
     depends=[
         'moderngl/common.hpp',
         'moderngl/data_types.hpp',
         'moderngl/extras.hpp',
-        'moderngl/gl_context.hpp',
         'moderngl/gl_methods.hpp',
         'moderngl/moderngl.hpp',
         'moderngl/opengl.hpp',

@@ -1,7 +1,6 @@
 #include "moderngl.hpp"
 
 #include "extras.hpp"
-#include "gl_context.hpp"
 #include "gl_methods.hpp"
 #include "data_types.hpp"
 #include "tools.hpp"
@@ -44,8 +43,11 @@ void BaseObject_dealloc(BaseObject * self) {
 #pragma region Objects
 
 struct Context : public BaseObject {
-    GLContext ctx;
     GLMethods gl;
+
+    PyObject * ctx;
+    PyObject * enter_func;
+    PyObject * exit_func;
 
     PyObject * limits;
     PyObject * module;
@@ -2731,15 +2733,26 @@ PyType_Spec VertexArray_spec = {
 #pragma region Context
 
 Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa) {
-    static char * kw[] = {"standalone", "glversion", "glhooks", "require", NULL};
+    static char * kw[] = {"backend", "standalone", "glversion", "require", NULL};
 
-    int standalone = false;
+    PyObject * backend = Py_None;
+    PyObject * standalone = Py_False;
     int glversion = 330;
-    PyObject * glhooks = Py_None;
     int require = 0;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|piOi", kw, &standalone, &glversion, &glhooks, &require)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwa, "|OOii", kw, &backend, &standalone, &glversion, &require)) {
         return NULL;
+    }
+
+    if (backend == Py_None) {
+        PyObject * glcontext = PyImport_ImportModule("glcontext");
+        if (!glcontext) {
+            return NULL;
+        }
+        backend = PyObject_CallMethod(glcontext, "default_backend", "O", standalone);
+        if (!backend) {
+            return NULL;
+        }
     }
 
     if (require) {
@@ -2753,23 +2766,29 @@ Context * moderngl_meth_context(PyObject * self, PyObject * args, PyObject * kwa
     res->prev = res;
     res->extra = NULL;
 
-    if (!res->ctx.load(standalone, glversion)) {
-        PyErr_Format(PyExc_Exception, "%s", res->ctx.error);
+    res->ctx = PyObject_CallFunction(backend, "i", glversion);
+    if (!res->ctx) {
         return NULL;
     }
 
-    if (!res->gl.load()) {
-        PyErr_Format(PyExc_Exception, "cannot load OpenGL");
+    res->enter_func = PyObject_GetAttrString(res->ctx, "__enter__");
+    if (!res->enter_func) {
         return NULL;
     }
 
-    if (glhooks != Py_None) {
-        PyObject * glprocs = PyMemoryView_FromMemory((char *)&res->gl, sizeof(GLMethods), PyBUF_WRITE);
-        PyObject * call = PyObject_CallFunction(glhooks, "N", glprocs);
-        Py_XDECREF(call);
-        if (!call) {
+    res->exit_func = PyObject_GetAttrString(res->ctx, "__exit__");
+    if (!res->exit_func) {
+        return NULL;
+    }
+
+    void ** gl_function = (void **)&res->gl;
+    for (int i = 0; GL_FUNCTIONS[i]; ++i) {
+        PyObject * val = PyObject_CallMethod(res->ctx, "load", "s", GL_FUNCTIONS[i]);
+        if (!val) {
             return NULL;
         }
+        gl_function[i] = PyLong_AsVoidPtr(val);
+        Py_DECREF(val);
     }
 
     const GLMethods & gl = res->gl;
@@ -3057,16 +3076,6 @@ PyObject * Context_meth_copy_buffer(Context * self, PyObject * args, PyObject * 
     return PyObject_CallMethod(src, "read", "iiO", -1, 0, dst);
 }
 
-PyObject * Context_meth_enter(Context * self) {
-    self->ctx.enter();
-    Py_RETURN_NONE;
-}
-
-PyObject * Context_meth_exit(Context * self, PyObject * args) {
-    self->ctx.exit();
-    Py_RETURN_NONE;
-}
-
 PyMethodDef Context_methods[] = {
     {"blending", (PyCFunction)Context_meth_blending, METH_VARARGS | METH_KEYWORDS, NULL},
     {"buffer", (PyCFunction)Context_meth_buffer, METH_VARARGS | METH_KEYWORDS, NULL},
@@ -3089,9 +3098,6 @@ PyMethodDef Context_methods[] = {
     {"enable_only", (PyCFunction)Context_meth_enable_only, METH_VARARGS | METH_KEYWORDS, NULL},
     {"simple_vertex_array", (PyCFunction)Context_meth_vertex_array, METH_VARARGS | METH_KEYWORDS, NULL},
     {"copy_buffer", (PyCFunction)Context_meth_copy_buffer, METH_VARARGS | METH_KEYWORDS, NULL},
-
-    {"__enter__", (PyCFunction)Context_meth_enter, METH_NOARGS, NULL},
-    {"__exit__", (PyCFunction)Context_meth_exit, METH_VARARGS, NULL},
     {},
 };
 
@@ -3106,7 +3112,7 @@ PyObject * Context_get_info(Context * self) {
 
 // backward compatibility
 PyObject * Context_get_version_code(Context * self) {
-    return PyLong_FromLong(self->ctx.glversion);
+    return PyLong_FromLong(0);
 }
 
 // backward compatibility
@@ -3150,6 +3156,9 @@ PyGetSetDef Context_getset[] = {
 };
 
 PyMemberDef Context_members[] = {
+    {"__enter__", T_OBJECT, offsetof(Context, enter_func), READONLY, NULL},
+    {"__exit__", T_OBJECT, offsetof(Context, exit_func), READONLY, NULL},
+
     {"limits", T_OBJECT_EX, offsetof(Context, limits), READONLY, NULL},
     {"screen", T_OBJECT_EX, offsetof(Context, screen), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
