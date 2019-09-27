@@ -74,4 +74,5 @@ setup(
     version='6.0.dev1',
     ext_modules=[ext],
     py_modules=['_moderngl'],
+    install_requires=['glcontext==0.2.*'],
 )
