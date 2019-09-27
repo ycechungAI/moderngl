@@ -160,6 +160,7 @@ struct Program : public BaseObject {
     struct Context * ctx;
     PyObject * uniforms;
     PyObject * attributes;
+    PyObject * deprecated_members;
     bool compute;
     int glo;
 };
@@ -974,7 +975,7 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
     }
 
     bool compute = !!src[5];
-    bool render = src[0] || src[1] || src[2] || src[3] || src[4];\
+    bool render = src[0] || src[1] || src[2] || src[3] || src[4];
     ensure(!compute || varyings == Py_None, "invalid varyings");
     ensure(render ^ compute, "invalid program");
 
@@ -1108,6 +1109,8 @@ Program * Context_meth_program(Context * self, PyObject * args, PyObject * kwa) 
         Py_DECREF(uniform_block);
     }
 
+    res->deprecated_members = PyDict_New();
+
     return new_ref(res);
 }
 
@@ -1172,6 +1175,7 @@ PyMethodDef Program_methods[] = {
 PyMemberDef Program_members[] = {
     {"uniforms", T_OBJECT_EX, offsetof(Program, uniforms), READONLY, NULL},
     {"attributes", T_OBJECT_EX, offsetof(Program, attributes), READONLY, NULL},
+    {"_members", T_OBJECT_EX, offsetof(Program, deprecated_members), READONLY, NULL},
     {"glo", T_INT, offsetof(Program, glo), READONLY, NULL},
     {"extra", T_OBJECT_EX, offsetof(BaseObject, extra), 0, NULL},
     {},
@@ -3102,6 +3106,11 @@ PyMethodDef Context_methods[] = {
 };
 
 // backward compatibility
+PyObject * Context_get_error(Context * self) {
+    return PyUnicode_FromString("GL_NO_ERROR");
+}
+
+// backward compatibility
 PyObject * Context_get_info(Context * self) {
     PyObject * res = PyDict_New();
     PyDict_SetItemString(res, "GL_VENDOR", self->consts.vendor);
@@ -3147,6 +3156,7 @@ int Context_set_line_width(Context * self, PyObject * value) {
 
 PyGetSetDef Context_getset[] = {
     // backward compatibility
+    {"error", (getter)Context_get_error, NULL, NULL, NULL},
     {"info", (getter)Context_get_info, NULL, NULL, NULL},
     {"version_code", (getter)Context_get_version_code, NULL, NULL, NULL},
     {"viewport", (getter)Context_get_viewport, (setter)Context_set_viewport, NULL, NULL},
@@ -3257,6 +3267,131 @@ PyMethodDef module_methods[] = {
 
 PyModuleDef module_def = {PyModuleDef_HEAD_INIT, "moderngl", moderngl_doc, -1, module_methods};
 
+/* deprecated */
+
+PyTypeObject * Attribute_type;
+PyTypeObject * Uniform_type;
+PyTypeObject * UniformBlock_type;
+PyTypeObject * Varying_type;
+PyTypeObject * Subroutine_type;
+
+struct Attribute {
+    PyObject_HEAD
+};
+
+struct Uniform {
+    PyObject_HEAD
+};
+
+struct UniformBlock {
+    PyObject_HEAD
+};
+
+struct Varying {
+    PyObject_HEAD
+};
+
+struct Subroutine {
+    PyObject_HEAD
+};
+
+PyMemberDef Attribute_members[] = {
+    // {"foo", T_INT, offsetof(Attribute, foo), READONLY, NULL},
+    {},
+};
+
+PyMemberDef Uniform_members[] = {
+    // {"foo", T_INT, offsetof(Uniform, foo), READONLY, NULL},
+    {},
+};
+
+PyMemberDef UniformBlock_members[] = {
+    // {"foo", T_INT, offsetof(UniformBlock, foo), READONLY, NULL},
+    {},
+};
+
+PyMemberDef Varying_members[] = {
+    // {"foo", T_INT, offsetof(Varying, foo), READONLY, NULL},
+    {},
+};
+
+PyMemberDef Subroutine_members[] = {
+    // {"foo", T_INT, offsetof(Subroutine, foo), READONLY, NULL},
+    {},
+};
+
+PyType_Slot Attribute_slots[] = {
+    {Py_tp_members, Attribute_members},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
+    {},
+};
+
+PyType_Slot Uniform_slots[] = {
+    {Py_tp_members, Uniform_members},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
+    {},
+};
+
+PyType_Slot UniformBlock_slots[] = {
+    {Py_tp_members, UniformBlock_members},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
+    {},
+};
+
+PyType_Slot Varying_slots[] = {
+    {Py_tp_members, Varying_members},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
+    {},
+};
+
+PyType_Slot Subroutine_slots[] = {
+    {Py_tp_members, Subroutine_members},
+    {Py_tp_dealloc, (void *)BaseObject_dealloc},
+    {},
+};
+
+PyType_Spec Attribute_spec = {
+    "moderngl.Attribute",
+    sizeof(Attribute),
+    0,
+    Py_TPFLAGS_DEFAULT,
+    Attribute_slots
+};
+
+PyType_Spec Uniform_spec = {
+    "moderngl.Uniform",
+    sizeof(Uniform),
+    0,
+    Py_TPFLAGS_DEFAULT,
+    Uniform_slots
+};
+
+PyType_Spec UniformBlock_spec = {
+    "moderngl.UniformBlock",
+    sizeof(UniformBlock),
+    0,
+    Py_TPFLAGS_DEFAULT,
+    UniformBlock_slots
+};
+
+PyType_Spec Varying_spec = {
+    "moderngl.Varying",
+    sizeof(Varying),
+    0,
+    Py_TPFLAGS_DEFAULT,
+    Varying_slots
+};
+
+PyType_Spec Subroutine_spec = {
+    "moderngl.Subroutine",
+    sizeof(Subroutine),
+    0,
+    Py_TPFLAGS_DEFAULT,
+    Subroutine_slots
+};
+
+/* end of deprecated */
+
 extern "C" PyObject * PyInit_moderngl() {
     PyObject * module = PyModule_Create(&module_def);
     PyModule_AddStringConstant(module, "__version__", "6.0.dev1");
@@ -3294,6 +3429,18 @@ extern "C" PyObject * PyInit_moderngl() {
     Texture_type = (PyTypeObject *)PyType_FromSpec(&Texture_spec);
     VertexArray_type = (PyTypeObject *)PyType_FromSpec(&VertexArray_spec);
 
+    // deprecated
+    Attribute_type = (PyTypeObject *)PyType_FromSpec(&Attribute_spec);
+    Uniform_type = (PyTypeObject *)PyType_FromSpec(&Uniform_spec);
+    UniformBlock_type = (PyTypeObject *)PyType_FromSpec(&UniformBlock_spec);
+    Varying_type = (PyTypeObject *)PyType_FromSpec(&Varying_spec);
+    Subroutine_type = (PyTypeObject *)PyType_FromSpec(&Subroutine_spec);
+    PyModule_AddObject(module, "Attribute", (PyObject *)Attribute_type);
+    PyModule_AddObject(module, "Uniform", (PyObject *)Uniform_type);
+    PyModule_AddObject(module, "UniformBlock", (PyObject *)UniformBlock_type);
+    PyModule_AddObject(module, "Varying", (PyObject *)Varying_type);
+    PyModule_AddObject(module, "Subroutine", (PyObject *)Subroutine_type);
+
     PyModule_AddObject(module, "Context", (PyObject *)Context_type);
     PyModule_AddObject(module, "Blending", (PyObject *)Blending_type);
     PyModule_AddObject(module, "Buffer", (PyObject *)Buffer_type);
@@ -3322,6 +3469,32 @@ extern "C" PyObject * PyInit_moderngl() {
     PyModule_AddIntConstant(module, "LINE_STRIP", GL_LINE_STRIP);
     PyModule_AddIntConstant(module, "LINE_LOOP", GL_LINE_LOOP);
     PyModule_AddIntConstant(module, "LINES_ADJACENCY", GL_LINES_ADJACENCY);
+
+    // backward compatibility
+    PyModule_AddIntConstant(module, "CLAMP_TO_EDGE_X", MGL_CLAMP_TO_EDGE_X);
+    PyModule_AddIntConstant(module, "CLAMP_TO_EDGE_Y", MGL_CLAMP_TO_EDGE_Y);
+    PyModule_AddIntConstant(module, "CLAMP_TO_EDGE_Z", MGL_CLAMP_TO_EDGE_Z);
+    PyModule_AddIntConstant(module, "REPEAT_X", MGL_REPEAT_X);
+    PyModule_AddIntConstant(module, "REPEAT_Y", MGL_REPEAT_Y);
+    PyModule_AddIntConstant(module, "REPEAT_Z", MGL_REPEAT_Z);
+    PyModule_AddIntConstant(module, "MIRRORED_REPEAT_X", MGL_MIRRORED_REPEAT_X);
+    PyModule_AddIntConstant(module, "MIRRORED_REPEAT_Y", MGL_MIRRORED_REPEAT_Y);
+    PyModule_AddIntConstant(module, "MIRRORED_REPEAT_Z", MGL_MIRRORED_REPEAT_Z);
+    PyModule_AddIntConstant(module, "MIRROR_CLAMP_TO_EDGE_X", MGL_MIRROR_CLAMP_TO_EDGE_X);
+    PyModule_AddIntConstant(module, "MIRROR_CLAMP_TO_EDGE_Y", MGL_MIRROR_CLAMP_TO_EDGE_Y);
+    PyModule_AddIntConstant(module, "MIRROR_CLAMP_TO_EDGE_Z", MGL_MIRROR_CLAMP_TO_EDGE_Z);
+    PyModule_AddIntConstant(module, "CLAMP_TO_BORDER_X", MGL_CLAMP_TO_BORDER_X);
+    PyModule_AddIntConstant(module, "CLAMP_TO_BORDER_Y", MGL_CLAMP_TO_BORDER_Y);
+    PyModule_AddIntConstant(module, "CLAMP_TO_BORDER_Z", MGL_CLAMP_TO_BORDER_Z);
+    PyModule_AddIntConstant(module, "CLAMP_TO_EDGE", MGL_CLAMP_TO_EDGE);
+    PyModule_AddIntConstant(module, "REPEAT", MGL_REPEAT);
+    PyModule_AddIntConstant(module, "MIRRORED_REPEAT", MGL_MIRRORED_REPEAT);
+    PyModule_AddIntConstant(module, "MIRROR_CLAMP_TO_EDGE", MGL_MIRROR_CLAMP_TO_EDGE);
+    PyModule_AddIntConstant(module, "CLAMP_TO_BORDER", MGL_CLAMP_TO_BORDER);
+    PyModule_AddIntConstant(module, "NOTHING", MGL_NOTHING);
+    PyModule_AddIntConstant(module, "BLEND", MGL_BLEND);
+    PyModule_AddIntConstant(module, "DEPTH_TEST", MGL_DEPTH_TEST);
+    PyModule_AddIntConstant(module, "CULL_FACE", MGL_CULL_FACE);
 
     PyObject * math_module = PyInit_moderngl_math();
     PyModule_AddObject(module, "math", math_module);
