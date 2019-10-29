@@ -15,7 +15,7 @@ pip install moderngl
 - [ModernGL on Github](https://github.com/moderngl/moderngl/)
 - [ModernGL on PyPI](https://pypi.org/project/ModernGL/)
 - [ModernGL Discord Server](https://discord.gg/UEMtW8D)
-- [moderngl_window] (Window creation, resource loading, ..)
+- [moderngl-window] (Window creation, resource loading, ..)
 
 ## Features
 
@@ -104,7 +104,7 @@ OpenGL 3.3 came out in February 2010. With **up to date drivers** you will be ab
 
 ### Can ModernGL create a Window?
 
-**NO**, but we provide a utility library [moderngl_window] making window creation and
+**NO**, but we provide a utility library [moderngl-window] making window creation and
 resource loading very simple.
 
 ### Limitations using ModernGL over PyOpenGL?
@@ -147,7 +147,7 @@ pytest tests
 ```sh
 apt-get install xvfb
 alias xpy='xvfb-run -s "-screen 0 1x1x24" python3'
-xpy -m ModernGL
+xpy -m moderngl
 ```
 
 ## Code quality
@@ -158,7 +158,7 @@ Code is tested with [pep8], [flake8], [prospector] and [pylint]
 [flake8]: http://flake8.pycqa.org/en/latest/
 [prospector]: https://prospector.landscape.io/en/master/
 [pylint]: https://www.pylint.org/
-[moderngl_window]: https://github.com/moderngl/moderngl_window
+[moderngl-window]: https://github.com/moderngl/moderngl-window
 
 ## Community
 
