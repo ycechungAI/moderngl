@@ -156,7 +156,7 @@ Code is tested with [pep8], [flake8], [prospector] and [pylint]
 
 [pep8]: https://www.python.org/dev/peps/pep-0008/
 [flake8]: http://flake8.pycqa.org/en/latest/
-[prospector]: https://prospector.landscape.io/en/master/
+[prospector]: https://prospector.readthedocs.io/en/master/
 [pylint]: https://www.pylint.org/
 [moderngl-window]: https://github.com/moderngl/moderngl-window
 
