@@ -524,6 +524,7 @@ int MGLContext_set_point_size(MGLContext * self, PyObject * value) {
 	return 0;
 }
 
+// NOTE: currently never called from python
 PyObject * MGLContext_get_blend_func(MGLContext * self) {
 	PyObject * res = PyTuple_New(2);
 	PyTuple_SET_ITEM(res, 0, PyLong_FromLong(self->blend_func_src));
@@ -532,18 +533,59 @@ PyObject * MGLContext_get_blend_func(MGLContext * self) {
 }
 
 int MGLContext_set_blend_func(MGLContext * self, PyObject * value) {
-	if (PyTuple_GET_SIZE(value) != 2) {
+	Py_ssize_t num_values = PyTuple_GET_SIZE(value);
+
+	if (!(num_values == 2 || num_values == 4)) {
+		MGLError_Set("Invalid number of values. Must be 2 or 4.");
 		return -1;
 	}
 
-	int sfact = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 0));
-	int dfact = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 1));
+	int src_rgb = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 0));
+	int dst_rgb = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 1));
+	int src_alpha = src_rgb;
+	int dst_alpha = dst_rgb;
+
+	if (num_values == 4) {
+		src_alpha = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 2));
+		dst_alpha = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 3));
+	}
 
 	if (PyErr_Occurred()) {
 		return -1;
 	}
 
-	self->gl.BlendFunc(sfact, dfact);
+	self->gl.BlendFuncSeparate(src_rgb, dst_rgb, src_alpha, dst_alpha);
+
+	return 0;
+}
+
+// NOTE: currently never called from python
+PyObject * MGLContext_get_blend_equation(MGLContext * self) {
+	PyObject * res = PyTuple_New(2);
+	PyTuple_SET_ITEM(res, 0, PyLong_FromLong(GL_FUNC_ADD));
+	PyTuple_SET_ITEM(res, 1, PyLong_FromLong(GL_FUNC_ADD));
+	return res;
+}
+
+int MGLContext_set_blend_equation(MGLContext * self, PyObject * value) {
+	Py_ssize_t num_values = PyTuple_GET_SIZE(value);
+
+	if (!(num_values == 1 || num_values == 2)) {
+		MGLError_Set("Invalid number of values. Must be 1 or 2.");
+		return -1;
+	}
+
+	int mode_rgb = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 0));
+	int mode_alpha = mode_rgb;
+	if (num_values == 2) {
+		mode_alpha = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 1));
+	}
+
+	if (PyErr_Occurred()) {
+		return -1;
+	}
+
+	self->gl.BlendEquationSeparate(mode_rgb, mode_alpha);
 
 	return 0;
 }
@@ -1267,8 +1309,9 @@ PyGetSetDef MGLContext_tp_getseters[] = {
 	{(char *)"line_width", (getter)MGLContext_get_line_width, (setter)MGLContext_set_line_width, 0, 0},
 	{(char *)"point_size", (getter)MGLContext_get_point_size, (setter)MGLContext_set_point_size, 0, 0},
 
-	{(char *)"depth_func", (getter)MGLContext_get_blend_func, (setter)MGLContext_set_depth_func, 0, 0},
-	{(char *)"blend_func", (getter)MGLContext_get_depth_func, (setter)MGLContext_set_blend_func, 0, 0},
+	{(char *)"depth_func", (getter)MGLContext_get_depth_func, (setter)MGLContext_set_depth_func, 0, 0},
+	{(char *)"blend_func", (getter)MGLContext_get_blend_func, (setter)MGLContext_set_blend_func, 0, 0},
+	{(char *)"blend_equation", (getter)MGLContext_get_blend_equation, (setter)MGLContext_set_blend_equation, 0, 0},
 	{(char *)"multisample", (getter)MGLContext_get_multisample, (setter)MGLContext_set_multisample, 0, 0},
 
 	{(char *)"provoking_vertex", (getter)MGLContext_get_provoking_vertex, (setter)MGLContext_set_provoking_vertex, 0, 0},

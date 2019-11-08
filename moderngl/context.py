@@ -28,6 +28,7 @@ __all__ = ['Context', 'create_context', 'create_standalone_context',
            'NOTHING', 'BLEND', 'DEPTH_TEST', 'CULL_FACE', 'RASTERIZER_DISCARD',
            'ZERO', 'ONE', 'SRC_COLOR', 'ONE_MINUS_SRC_COLOR', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA', 'DST_ALPHA',
            'ONE_MINUS_DST_ALPHA', 'DST_COLOR', 'ONE_MINUS_DST_COLOR',
+           'FUNC_ADD', 'FUNC_SUBTRACT', 'FUNC_REVERSE_SUBTRACT', 'MIN', 'MAX',
            'DEFAULT_BLENDING', 'PREMULTIPLIED_ALPHA', 'FIRST_VERTEX_CONVENTION', 'LAST_VERTEX_CONVENTION'
 ]
 
@@ -49,6 +50,13 @@ DST_ALPHA = 0x0304
 ONE_MINUS_DST_ALPHA = 0x0305
 DST_COLOR = 0x0306
 ONE_MINUS_DST_COLOR = 0x0307
+
+# Blend equations
+FUNC_ADD = 0x8006
+FUNC_SUBTRACT = 0x800A
+FUNC_REVERSE_SUBTRACT = 0x800B
+MIN = 0x8007
+MAX = 0x8008
 
 FIRST_VERTEX_CONVENTION = 0x8E4D
 LAST_VERTEX_CONVENTION = 0x8E4E
@@ -133,14 +141,34 @@ class Context:
         self.mglo.depth_func = value
 
     @property
-    def blend_func(self) -> Tuple[int, int]:
+    def blend_func(self):
         '''
-            tuple: Set the blend depth func.
+            tuple: Set the blend func (write only)
+            Blend func can be set for rgb and alpha separately if needed.
+
+            Supported blend functions are:
+
+                moderngl.ZERO
+                moderngl.ONE
+                moderngl.SRC_COLOR
+                moderngl.ONE_MINUS_SRC_COLOR
+                moderngl.DST_COLOR
+                moderngl.ONE_MINUS_DST_COLOR
+                moderngl.SRC_ALPHA
+                moderngl.ONE_MINUS_SRC_ALPHA
+                moderngl.DST_ALPHA
+                moderngl.ONE_MINUS_DST_ALPHA,
 
             Example::
 
-                ctx.enable(moderngl.BLEND)
+                # For both rgb and alpha
                 ctx.blend_func = moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA
+
+                # Separate for rgb and alpha
+                ctx.blend_func = (
+                    moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA,
+                    moderngl.ONE, moderngl.ONE
+                )
         '''
 
         raise NotImplementedError()
@@ -148,6 +176,38 @@ class Context:
     @blend_func.setter
     def blend_func(self, value):
         self.mglo.blend_func = tuple(value)
+
+    @property
+    def blend_equation(self):
+        '''
+            tuple: Set the blend equation (write only).
+            Blend equation can be set for rgb and alpha separately if needed.
+
+            Supported functions are::
+
+                moderngl.FUNC_ADD
+                moderngl.FUNC_SUBTRACT
+                moderngl.FUNC_REVERSE_SUBTRACT
+                moderngl.MIN
+                moderngl.MAX
+
+            Example::
+
+                # For both rgb and alpha channel
+                ctx.blend_func = moderngl.FUNC_ADD
+
+                # Separate for rgb and alpha channel
+                ctx.blend_func = moderngl.FUNC_ADD, moderngl.MAX
+        '''
+
+        raise NotImplementedError()
+
+    @blend_equation.setter
+    def blend_equation(self, value):
+        if not isinstance(value, tuple):
+            self.mglo.blend_equation = tuple([value])
+        else:
+            self.mglo.blend_equation = tuple(value)
 
     @property
     def multisample(self) -> bool:

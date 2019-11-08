@@ -53,6 +53,7 @@ Attributes
 .. autoattribute:: Context.point_size
 .. autoattribute:: Context.depth_func
 .. autoattribute:: Context.blend_func
+.. autoattribute:: Context.blend_equation
 .. autoattribute:: Context.viewport
 .. autoattribute:: Context.version_code
 .. autoattribute:: Context.screen
