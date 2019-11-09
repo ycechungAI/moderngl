@@ -5,12 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## 5.5.4 [Unreleased]
 
 ### Added
 
+- `Context.blend_func` now supports separate blend functions for rgb and alpha.
+- Added `Context.blend_equation` supporting separate blend equations for rgb and alpha.
 - The `Framebuffer.clear` have an optional `color` parameter to replace the old `red, green, blue, alpha` parameters.
-- Samplers and Buffers have an `assing` method to simplify the scope creation.
+- Samplers and Buffers have an `assign` method to simplify the scope creation.
 - Samplers have an optional `texture` parameter that will be used together with the sampler when given.
 - The Scope's `enable_only` keyword argument is deprecated in favor of the `enable` keyword argument.
 - Buffers have a `bind` method that replaces the tuples in the VertexArray creation.
@@ -40,7 +42,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- missing packange in setup.py
+- missing package in setup.py
 
 ## [5.5.1] - 2019-06-12
 
@@ -52,7 +54,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- depth texture filder and compare func
+- depth texture filter and compare func
 - scope restores old enable flags properly
 - clear gl errors as the final step of initialization
 - fix default framebuffer's number of attachments
@@ -93,7 +95,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - missing `ComputeShader` uniforms and uniform blocks
 - wrong `DrawBuffer` call when clearing the screen
 - reading depth values from textures
-- broken comapre functions
+- broken compare functions
 
 ## [5.3.0] - 2018-06-27
 
@@ -103,7 +105,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- comapre fuctions
+- compare functions
 
 ## [5.2.1] - 2018-05-10
 
@@ -186,7 +188,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [5.0.0] - 2018-02-18
 
-For more information please see: [Differneces between ModernGL5 and ModernGL4](https://moderngl.readthedocs.io/en/stable/misc/mgl5_vs_mgl4.html)
+For more information please see: [Differences between ModernGL5 and ModernGL4](https://moderngl.readthedocs.io/en/stable/misc/mgl5_vs_mgl4.html)
 
 ### Added
 
@@ -225,7 +227,7 @@ For more information please see: [Differneces between ModernGL5 and ModernGL4](h
 
 ### Fixed
 
-- Contex.info `GL_MAX_COMPUTE_WORK_GROUP_COUNT` value
+- Context.info `GL_MAX_COMPUTE_WORK_GROUP_COUNT` value
 - Missing TextureCube class
 - Buffer.clear return type hint
 
@@ -465,7 +467,7 @@ For more information please see: [Differneces between ModernGL5 and ModernGL4](h
 ### Changed
 
 - Wrap the C/C++ module with a pure python module
-- Rename internal module to avoid ambiguosity
+- Rename internal module to avoid ambiguity
 - Rename class like members from the Context class
 
 ## [3.1.5] - 2017-05-07
