@@ -6,7 +6,8 @@ class Uniform:
         A uniform is a global GLSL variable declared with the "uniform" storage qualifier.
         These act as parameters that the user of a shader program can pass to that program.
 
-        In ModernGL, Uniforms can be accessed using :py:attr:`Program.uniforms`
+        In ModernGL, Uniforms can be accessed using :py:meth:`Program.__getitem__`
+        or :py:meth:`Program.__iter__`
     '''
 
     __slots__ = ['mglo', '_location', '_array_length', '_dimension', '_name', 'extra']
