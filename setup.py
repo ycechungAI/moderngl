@@ -157,7 +157,7 @@ classifiers = [
 
 setup(
     name='moderngl',
-    version='5.5.3',
+    version='5.5.4',
     description=short_description,
     long_description=long_description,
     long_description_content_type='text/markdown',
