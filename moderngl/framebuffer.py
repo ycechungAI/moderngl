@@ -139,7 +139,7 @@ class Framebuffer:
         '''
             Clear the framebuffer.
 
-            If the `viewport` is not ``None`` then scrissor test
+            If the `viewport` is not ``None`` then scissor test
             will be used to clear the given viewport.
 
             If the `viewport` is a 2-tuple it will clear the

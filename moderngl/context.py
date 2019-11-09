@@ -472,7 +472,7 @@ class Context:
         '''
             Clear the bound framebuffer. By default clears the :py:data:`screen`.
 
-            If the `viewport` is not ``None`` then scrissor test
+            If the `viewport` is not ``None`` then scissor test
             will be used to clear the given viewport.
 
             If the `viewport` is a 2-tuple it will clear the
@@ -1091,7 +1091,7 @@ class Context:
                 anisotropy (float): Number of samples for anisotropic filtering. Any value greater than 1.0 counts as a use of anisotropic filtering
                 compare_func: Compare function for depth textures
                 border_color (tuple): The (r, g, b, a) color for the texture border.
-                                      When this value is set the ``repeat_`` values are overriden
+                                      When this value is set the ``repeat_`` values are overridden
                                       setting the texture wrap to return the border color when outside ``[0, 1]`` range.
                 min_lod (float): Minimum level-of-detail parameter (Default ``-1000.0``).
                                  This floating-point value limits the selection of highest resolution mipmap (lowest mipmap level)

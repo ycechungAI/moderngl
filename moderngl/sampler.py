@@ -14,7 +14,7 @@ class Sampler:
         without the sampler object being bound/in use.
 
         Samplers are bound to a texture unit and not a texture itself. Be careful with leaving
-        samplers bound to texture units as it can cause texture incompletness issues
+        samplers bound to texture units as it can cause texture incompleteness issues
         (the texture bind is ignored).
 
         Sampler bindings do clear automatically between every frame so a texture unit
@@ -186,7 +186,7 @@ class Sampler:
     def border_color(self):
         '''
             border_color (tuple) – The (r, g, b, a) color for the texture border (Default ``(0.0, 0.0, 0.0, 0.0)``)
-            When setting this value the ``repeat_`` values are overriden setting the texture wrap to return
+            When setting this value the ``repeat_`` values are overridden setting the texture wrap to return
             the border color when outside [0, 1] range.
 
             Example::

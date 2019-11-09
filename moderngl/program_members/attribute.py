@@ -122,7 +122,7 @@ class Attribute:
     @property
     def shape(self) -> str:
         '''
-            str: The shape is a single character, representing the scalar type of the attriute.
+            str: The shape is a single character, representing the scalar type of the attribute.
 
             +---------+--------------------------+
             | shape   | GLSL types               |

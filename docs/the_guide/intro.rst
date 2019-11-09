@@ -8,12 +8,16 @@ A short introduction
 
 To get something rendered, you will need a :py:class:`VertexArray`.
 
-VertexArrays can be created from a :py:class:`Program` object and several :py:class:`Buffer` objects.
+VertexArrays can be created from a :py:class:`Program` object and several
+:py:class:`Buffer` objects.
 
-To create a :py:class:`Program` object, you will need some :py:class:`Shader` objects.
+To create a :py:class:`Program` object, you will need some :py:class:`Shader`
+objects.
 
-Once you have your :py:class:`Program` object, you can fill a :py:class:`Buffer` with your data,
-then pass them to :py:class:`VertexArray`, then call :py:meth:`VertexArray.render`.
+Once you have your :py:class:`Program` object, you can fill a
+:py:class:`Buffer` with your data,
+then pass them to :py:class:`VertexArray`, then call
+:py:meth:`VertexArray.render`.
 
 All of the objects above can only be created from a :py:class:`Context` object.
 
@@ -24,4 +28,4 @@ All of the objects above can only be created from a :py:class:`Context` object.
 3. Create a Program object.
 4. Create a VertexArray object.
 
-Proceede to the :doc:`next step <install>`.
+Proceed to the :doc:`next step <install>`.
