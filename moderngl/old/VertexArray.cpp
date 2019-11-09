@@ -39,10 +39,11 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 
 	int content_len = (int)PyTuple_GET_SIZE(content);
 
-	if (!content_len) {
-		MGLError_Set("the content must not be emtpy");
-		return 0;
-	}
+	// Allow empty vertextbuffers: https://github.com/moderngl/moderngl/issues/321
+	// if (!content_len) {
+	// 	MGLError_Set("the content must not be emtpy");
+	// 	return 0;
+	// }
 
 	for (int i = 0; i < content_len; ++i) {
 		PyObject * tuple = PyTuple_GET_ITEM(content, i);
