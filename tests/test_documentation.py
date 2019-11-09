@@ -8,7 +8,7 @@ import moderngl
 
 class TestCase(unittest.TestCase):
 
-    def validate(self, filename, classname, ignore):
+    def validate(self, filename, classname, ignore, include=None):
         root = os.path.dirname(os.path.dirname(__file__))
         with open(os.path.normpath(os.path.join(root, 'docs', 'reference', filename))) as f:
             docs = f.read()
@@ -16,9 +16,11 @@ class TestCase(unittest.TestCase):
         attributes = re.findall(r'^\.\. autoattribute:: ([^\n]+)', docs, flags=re.M)
         documented = set(filter(lambda x: x.startswith(classname), [a for a, b in methods] + attributes))
         implemented = set(classname + '.' + x for x in dir(getattr(moderngl, classname)) if not x.startswith('_'))
+        include = set('{}.{}'.format(classname, e) for e in include or [])
         ignored = set(classname + '.' + x for x in ignore)
         self.assertSetEqual(implemented - documented - ignored, set(), msg='Implemented but not Documented')
-        self.assertSetEqual(documented - implemented, set(), msg='Documented but not Implemented')
+        print(documented)
+        self.assertSetEqual(documented - implemented - include, set(), msg='Documented but not Implemented')
 
         attribute_access = re.compile(r"[a-zA-Z]\w*\.(\w+)")
         for method, docsig in methods:
@@ -35,7 +37,7 @@ class TestCase(unittest.TestCase):
         self.validate('context.rst', 'Context', ['release', 'mglo', 'core_profile_check'])
 
     def test_program_docs(self):
-        self.validate('program.rst', 'Program', ['release', 'mglo', 'glo', 'ctx'])
+        self.validate('program.rst', 'Program', ['release', 'mglo', 'glo', 'ctx'], ['__getitem__', '__eq__', '__iter__'])
 
     def test_vertex_array_docs(self):
         self.validate('vertex_array.rst', 'VertexArray', ['release', 'mglo', 'glo', 'ctx'])

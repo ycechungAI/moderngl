@@ -16,6 +16,9 @@ Methods
 -------
 
 .. automethod:: Program.get(key, default) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]
+.. automethod:: Program.__getitem__(key) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]
+.. automethod:: Program.__iter__()
+.. automethod:: Program.__eq__(other)
 
 Attributes
 ----------

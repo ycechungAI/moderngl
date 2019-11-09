@@ -37,12 +37,38 @@ class Program:
         return '<Program: %d>' % self._glo
 
     def __eq__(self, other):
+        """Compares two programs opengl names
+
+        Example::
+
+            # True if the internal opengl name is the same
+            program_1 == program_2
+
+        """
         return type(self) is type(other) and self.mglo is other.mglo
 
     def __getitem__(self, key) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+        """Get a member such as uniforms, uniform blocks, subroutines,
+        attributes and varyings by name.
+
+        Example::
+
+            # Get a uniform
+            uniform = program['color]
+
+            # Set a vec4 uniform
+            uniform.value = 1.0, 1.0, 1.0, 1.0
+        """
         return self._members[key]
 
     def __iter__(self):
+        """Yields the internal members such as uniforms, uniform blocks etc.
+
+        Example::
+
+            for name, member in program:
+                print(name, member)
+        """
         yield from self._members
 
     @property
