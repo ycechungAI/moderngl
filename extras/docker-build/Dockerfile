@@ -4,6 +4,7 @@ RUN tar --strip-components=1 -zxvf moderngl.tar.gz
 RUN /opt/python/cp35-cp35m/bin/python setup.py bdist_wheel && auditwheel repair dist/*.whl && rm dist/*.whl
 RUN /opt/python/cp36-cp36m/bin/python setup.py bdist_wheel && auditwheel repair dist/*.whl && rm dist/*.whl
 RUN /opt/python/cp37-cp37m/bin/python setup.py bdist_wheel && auditwheel repair dist/*.whl && rm dist/*.whl
+RUN /opt/python/cp38-cp38/bin/python setup.py bdist_wheel && auditwheel repair dist/*.whl && rm dist/*.whl
 
 FROM quay.io/pypa/manylinux1_x86_64:latest as build_x86_64
 COPY moderngl-*.tar.gz moderngl.tar.gz
@@ -11,6 +12,7 @@ RUN tar --strip-components=1 -zxvf moderngl.tar.gz
 RUN /opt/python/cp35-cp35m/bin/python setup.py bdist_wheel && auditwheel repair dist/*.whl && rm dist/*.whl
 RUN /opt/python/cp36-cp36m/bin/python setup.py bdist_wheel && auditwheel repair dist/*.whl && rm dist/*.whl
 RUN /opt/python/cp37-cp37m/bin/python setup.py bdist_wheel && auditwheel repair dist/*.whl && rm dist/*.whl
+RUN /opt/python/cp38-cp38/bin/python setup.py bdist_wheel && auditwheel repair dist/*.whl && rm dist/*.whl
 
 FROM python:3.7.3
 RUN pip install -U twine
