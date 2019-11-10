@@ -28,6 +28,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [5.5.4]
 
+This version was originally meant to only add python 3.8 support,
+but a few additions and fixes where cherry-picked from the 5.6 branch.
+
 - Python 3.8 support
 - `Vertexarray`s can now be crated without any content.
 - `Context.blend_func` now supports separate blend functions for rgb and alpha.
