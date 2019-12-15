@@ -1,4 +1,4 @@
-from typing import Tuple, Union
+from typing import Tuple, Union, Generator
 
 from .program_members import (Attribute, Subroutine, Uniform, UniformBlock,
                               Varying)
@@ -36,8 +36,11 @@ class Program:
     def __repr__(self):
         return '<Program: %d>' % self._glo
 
-    def __eq__(self, other):
-        """Compares two programs opengl names
+    def __eq__(self, other) -> bool:
+        """Compares two programs opengl names (mglo).
+
+        Returns:
+            bool: If the programs have the same opengl name
 
         Example::
 
@@ -61,13 +64,42 @@ class Program:
         """
         return self._members[key]
 
-    def __iter__(self):
-        """Yields the internal members such as uniforms, uniform blocks etc.
+    def __iter__(self) -> Generator[str, None, None]:
+        """Yields the internal members names as strings.
+        This includes all members such as uniforms, attributes etc.
 
         Example::
 
-            for name, member in program:
-                print(name, member)
+            # Print member information
+            for name in program:
+                member = program[name]
+                print(name, type(member), member)
+
+        Output::
+
+            vert <class 'moderngl.program_members.attribute.Attribute'> <Attribute: 0>
+            vert_color <class 'moderngl.program_members.attribute.Attribute'> <Attribute: 1>
+            gl_InstanceID <class 'moderngl.program_members.attribute.Attribute'> <Attribute: -1>
+            rotation <class 'moderngl.program_members.uniform.Uniform'> <Uniform: 0>
+            scale <class 'moderngl.program_members.uniform.Uniform'> <Uniform: 1>
+
+        We can filter on member type if needed::
+
+            for name in prog:
+                member = prog[name]
+                if isinstance(member, moderngl.Uniform):
+                    print("Uniform", name, member)
+
+        or a less verbose version using dict comprehensions::
+
+            uniforms = {name: self.prog[name] for name in self.prog
+                        if isinstance(self.prog[name], moderngl.Uniform)}
+            print(uniforms)
+
+        Output::
+
+            {'rotation': <Uniform: 0>, 'scale': <Uniform: 1>}
+
         """
         yield from self._members
 
