@@ -13,7 +13,7 @@ Here is a sample program that passes the input vertex coordinates as is to
 screen coordinates.
 
 Screen coordinates are in the [-1, 1], [-1, 1] range for x and y axes.
-The (-1, 1) point is the lower left corner of the screen.
+The (-1, -1) point is the lower left corner of the screen.
 
 .. figure:: screen_coordinates.png
     :alt: Screen Coordinates
