@@ -16,7 +16,7 @@ jobs:
   - os: windows
     language: bash
     before_install:
-    - choco install python --version 3.8.0
+    - choco install python --version 3.8.5
     - export PATH="/c/Python38:/c/Python/Scripts:$PATH"
 install:
   - python -m pip install -U setuptools wheel twine cibuildwheel==1.1.0
