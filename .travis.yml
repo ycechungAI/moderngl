@@ -19,9 +19,10 @@ jobs:
     - choco install python --version 3.8.5
     - export PATH="/c/Python38:/c/Python/Scripts:$PATH"
 install:
-  - python -m pip install -U setuptools wheel twine cibuildwheel==1.1.0
+  - python -m pip install -U setuptools wheel twine cibuildwheel
 script:
   - python -m cibuildwheel --output-dir ./wheelhouse
+  - python setup.py sdist -d ./wheelhouse
   - ls wheelhouse
 after_success:
   - if [[ $TRAVIS_TAG ]]; then python -m twine upload wheelhouse/*.whl; fi
