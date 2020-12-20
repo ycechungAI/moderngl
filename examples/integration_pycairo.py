@@ -78,7 +78,7 @@ class CairoExample(Example):
         ctx.arc(x, y, radius, 0, 2.0 * math.pi)
         ctx.set_source_rgb(0.8, 0.8, 0.8)
         ctx.fill_preserve()
-        ctx.set_source_rgb(1, 1, 1)
+        ctx.set_source_rgb(1, 1, 0)
         ctx.stroke()
 
         ctx.move_to(20, 30)
@@ -88,8 +88,9 @@ class CairoExample(Example):
         ctx.set_source_rgb(0.8, 0.8, 0.8)
         ctx.show_text("Example Text")
         # Copy surface to texture
-        return self.ctx.texture((width, height), 4, data=surface.get_data())
-
+        texture = self.ctx.texture((width, height), 4, data=surface.get_data())
+        texture.swizzle = 'BGRA' # use Cairo channel order (alternatively, the shader could do the swizzle)
+        return texture
 
 if __name__ == "__main__":
     CairoExample.run()
