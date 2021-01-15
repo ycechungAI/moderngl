@@ -170,6 +170,10 @@ class Context:
     @property
     def line_width(self) -> float:
         '''
+        .. Warning:: A line width other than 1.0 is not guaranteed to work
+                     across different OpenGL implementations. For wide
+                     lines you should be using geometry shaders.
+
             float: Set the default line width.
         '''
 
@@ -1389,7 +1393,6 @@ class Context:
         When exiting the context the previously bound context is activated again.
 
         .. Warning:: Context switching can be risky unless you know what you are doing.
-                     ModernGL objects are not aware of what context is currently active.
                      Use with care.
         """
         self.mglo.__enter__()
