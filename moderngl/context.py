@@ -1472,8 +1472,8 @@ def create_context(require=None, standalone=False, share=False, **settings) -> C
 
 def create_standalone_context(require=None, share=False, **settings) -> 'Context':
     '''
-        Create a standalone ModernGL context.
-        The preferred way to make a context ``
+        Create a standalone/headless ModernGL context.
+        The preferred way of making a context is through :py:func:`moderngl.create_context`.
 
         Example::
 
