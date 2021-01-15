@@ -26,10 +26,9 @@ Verify that the package is working:
     platform: win32
     code: 330
 
-.. Note:: If you can only run in headless mode this might not work
-          out of the box. You might need to set up ``xvfb``
-          and possibly supply more arguments during context creation.
-          More info can be found in later sections.
+.. Note:: If you experience issues it's probably related to context creation.
+          More configuration might be needed to run moderngl in some cases.
+          This is especially true on linux running without X. See the context section.
 
 Development environment
 -----------------------
@@ -49,3 +48,9 @@ Building on various platforms:
 * On OS X you need X Code installed + command line tools
   (``xcode-select --install``)
 * Building on linux should pretty much work out of the box
+* To compile moderngl: ``python setup.py build_ext --inplace``
+
+Package and dev dependencies:
+
+* Install ``requirements.txt``, ``tests/requirements.txt`` and ``docs/requirements.txt``
+* Install the package in editable mode: ``pip install -e .``
