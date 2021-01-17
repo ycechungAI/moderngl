@@ -14,7 +14,6 @@ Context Creation
           contexts provided per OS, please check the listed backends in
           the glcontext_ project.
 
-
 Introduction
 ------------
 
@@ -41,7 +40,7 @@ These default backends support two modes:
 Attaching to an existing active context created by a window library::
 
     import moderngl
-    # .. do window initialization here
+    # Create the window with an OpenGL context (Most window libraries support this)
     ctx = moderngl.create_context()
     # If successful we can now render to the window
     print("Default framebuffer is:", ctx.screen)
