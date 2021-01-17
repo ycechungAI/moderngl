@@ -5,11 +5,7 @@ The Guide
     :maxdepth: 2
 
     intro.rst
-    install.rst
-    context.rst
-    buffer_format.rst
+    basic.rst
+    rendering.rst
     program.rst
     vertex_array.rst
-    rendering.rst
-    gc.rst
-    headless_ubunut18_server.rst

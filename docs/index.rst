@@ -8,6 +8,8 @@ ModernGL is a high performance rendering module for Python.
 
     installation.rst
     the_guide/index.rst
+    advanced/index.rst
+    techniques/index.rst
     reference/index.rst
     misc/index.rst
 
