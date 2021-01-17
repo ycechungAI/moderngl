@@ -7,18 +7,18 @@ An introduction to OpenGL
 The simplified story
 --------------------
 
-**OpenGL** (Open Graphics Library) has a long history reaching all the way
-back to 1992 when to was created by Silicon Graphics. It was partly based
-in their proprietary **IRIS GL** (Integrated Raster Imaging System Graphics Library)
+`OpenGL`_ (Open Graphics Library) has a long history reaching all the way
+back to 1992 when it was created by `Silicon Graphics`_. It was partly based
+in their proprietary `IRIS GL`_ (Integrated Raster Imaging System Graphics Library)
 library.
 
-The purpose of OpenGL is to provide a standard way to interact
+The purpose of `OpenGL`_ is to provide a standard way to interact
 with the graphics processing unit to achieve hardware accelerated rendering
 across several platforms. How this is done under the hood is up to the
 vendors (AMD, Nvidia, Intel, ARM .. etc) as long as the the specifications are
 followed.
 
-OpenGL have gone though many versions and it can be confusing when looking
+`OpenGL`_ have gone though many versions and it can be confusing when looking
 up resources. Today we separate "Old OpenGL" and "Modern OpenGL".
 From 2008 to 2010 version 3.x of OpenGL evolved until version
 3.3 and 4.1 was released simultaneously 
@@ -34,7 +34,7 @@ remove all old features while running in **compatibility mode**
 would still allow mixing the old and new api.
 
 .. Note:: OpenGL 2.x, 3.0, 3.1 and 3.2 can of course access some
-          modern OpenGL features, but for simplicity we are
+          modern OpenGL features directly, but for simplicity we are
           are focused on version 3.3 as it created the final
           standard we are using today. Older OpenGL was also
           a pretty wild world with countless vendor specific
@@ -90,3 +90,6 @@ Learning ModernGL is more about learning shaders and the OpenGL
 pipeline.
 
 .. _Vulkan: https://www.khronos.org/vulkan/
+.. _IRIS GL: https://wikipedia.org/wiki/IRIS_GL
+.. _OpenGL: https://en.wikipedia.org/wiki/OpenGL
+.. _Silicon_Graphics: https://wikipedia.org/wiki/Silicon_Graphics
