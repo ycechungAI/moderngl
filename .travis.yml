@@ -21,7 +21,6 @@ install:
 script:
   - python3 setup.py install
   - python3 -m pip install pytest
-  - pytest tests/test_documentation.py  
 
 stages:
   - test
@@ -83,8 +82,6 @@ env:
   global:
   - CIBW_SKIP=cp34-*
   - CIBW_BUILD=cp3?-*
-  - CIBW_TEST_REQUIRES=pytest
-  - CIBW_TEST_COMMAND="pytest tests/test_documentation.py"
   - CIBW_MANYLINUX_X86_64_IMAGE=manylinux1
   - CIBW_MANYLINUX_I686_IMAGE=manylinux1
   - TWINE_USERNAME=__token__
