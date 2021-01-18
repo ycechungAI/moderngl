@@ -1,4 +1,5 @@
 # coding=utf-8
+import os
 import moderngl as mgl
 import numpy as np
 import pytest
@@ -11,6 +12,10 @@ EPSILON_IEEE_754 = 5.96e-08
 
 @pytest.fixture(scope="session", autouse=True)
 def standalone_context():
+    # HACK for CI
+    if os.environ.get("CI"):
+        return None
+
     return mgl.create_standalone_context()
 
 
