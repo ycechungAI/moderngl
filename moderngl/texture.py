@@ -345,7 +345,6 @@ class Texture:
             Generate mipmaps.
 
             This also changes the texture filter to ``LINEAR_MIPMAP_LINEAR, LINEAR``
-            (Will be removed in ``6.x``)
 
             Keyword Args:
                 base (int): The base level
