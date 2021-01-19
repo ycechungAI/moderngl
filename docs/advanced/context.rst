@@ -1,7 +1,9 @@
+
+.. _context:
+
 Context Creation
 ================
 
-.. py:module:: moderngl
 .. py:currentmodule:: moderngl
 
 .. Note:: From moderngl 5.6 context creation is handled by the glcontext_ package.
