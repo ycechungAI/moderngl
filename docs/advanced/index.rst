@@ -6,4 +6,5 @@ Advanced
 
     gc.rst
     context.rst
+    texture_formats.rst
     buffer_format.rst
