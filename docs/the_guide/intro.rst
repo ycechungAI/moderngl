@@ -7,10 +7,16 @@ An introduction to OpenGL
 The simplified story
 --------------------
 
-`OpenGL`_ (Open Graphics Library) has a long history reaching all the way
-back to 1992 when it was created by `Silicon Graphics`_. It was partly based
-in their proprietary `IRIS GL`_ (Integrated Raster Imaging System Graphics Library)
-library.
+`OpenGL`_ (Open Graphics Library) has a long history reaching
+all the way back to 1992 when it was created by `Silicon Graphics`_.
+It was partly based in their proprietary `IRIS GL`_ 
+(Integrated Raster Imaging System Graphics Library) library.
+
+Today OpenGL is managed by the `Khronos Group`_, an open 
+industry consortium of over 150 leading hardware and software
+companies creating advanced, royalty-free, acceleration
+standards for 3D graphics, Augmented and Virtual Reality,
+vision and machine learning
 
 The purpose of `OpenGL`_ is to provide a standard way to interact
 with the graphics processing unit to achieve hardware accelerated rendering
@@ -92,4 +98,5 @@ pipeline.
 .. _Vulkan: https://www.khronos.org/vulkan/
 .. _IRIS GL: https://wikipedia.org/wiki/IRIS_GL
 .. _OpenGL: https://en.wikipedia.org/wiki/OpenGL
-.. _Silicon_Graphics: https://wikipedia.org/wiki/Silicon_Graphics
+.. _Silicon Graphics: https://wikipedia.org/wiki/Silicon_Graphics
+.. _Khronos Group: https://www.khronos.org
