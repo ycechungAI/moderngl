@@ -88,7 +88,7 @@ For example: Making a headless EGL context on linux::
           the exact name of the library to load. More information
           in the glcontext_ docs.
 
-Context sharing
+Context Sharing
 ---------------
 
 .. Warning:: Object sharing is an experimental feature
@@ -137,5 +137,23 @@ More information for a deeper dive:
 * https://www.khronos.org/opengl/wiki/OpenGL_Object#Object_Sharing
 * https://www.khronos.org/opengl/wiki/Memory_Model
 
+Context Info
+------------
+
+Various information such as limits and driver information can be found in the
+:py:attr:`~moderngl.Context.info` property. It can often be useful to know
+the vendor and render for the context::
+
+    >>> import moderngl
+    >>> ctx = moderngl.create_context(standalone=True, gl_version=(4.6))
+    >>> ctx.info["GL_VENDOR"]
+    'NVIDIA Corporation'
+    >>> ctx.info["GL_RENDERER"] 
+    'GeForce RTX 2080 SUPER/PCIe/SSE2'
+    >>> ctx.info["GL_VERSION"]  
+    '3.3.0 NVIDIA 456.71'
+
+Note that it reports version 3.3 here because ModernGL by default
+requests a version 3.3 context (minimum requirement).
 
 .. _glcontext: https://github.com/moderngl/glcontext
