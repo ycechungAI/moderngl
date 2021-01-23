@@ -214,6 +214,14 @@ Output the program is::
     value = 8.0, product = 64.0
     value = 9.0, product = 81.0
 
+The GPU is at the very least slightly offended by the meager amount
+work we assigned it, but this at least shows the basic concept of transforms.
+We would in most situations also not read the results back into
+system memory because it's slow, but sometimes it is needed.
+
+This shader program could for example be modified to generate some
+geometry or data for any other purpose you might imagine useful.
+Using modulus (``mod``) on ``gl_VertexID`` can get you pretty far.
 
 .. _moderngl-window: https://github.com/moderngl/moderngl-window
 .. _GPU: https://wikipedia.org/wiki/Graphics_processing_unit
