@@ -83,8 +83,8 @@ Examples of types are::
     bool value = true;
     int value = 1;
     uint value = 1;
-    float value = 0.0
-    double value = 0.0
+    float value = 0.0;
+    double value = 0.0;
 
 Each type above also has a 2, 3 and 4 component version::
 
