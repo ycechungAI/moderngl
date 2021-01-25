@@ -107,6 +107,7 @@ struct MGLContext {
 	PyObject * enter_func;
 	PyObject * exit_func;
 	PyObject * release_func;
+	PyObject * extensions;
 
 	MGLFramebuffer * default_framebuffer;
 	MGLFramebuffer * bound_framebuffer;

@@ -176,6 +176,17 @@ PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
 
 	ctx->version_code = major * 100 + minor * 10;
 
+	// Load extensions
+	int num_extensions = 0;
+	gl.GetIntegerv(GL_NUM_EXTENSIONS, &num_extensions);
+	ctx->extensions = PySet_New(NULL);
+
+	for(int i = 0; i < num_extensions; i++) {
+		const char * ext = (const char *)gl.GetStringi(GL_EXTENSIONS, i);
+		PyObject * ext_name = PyUnicode_FromString(ext);
+		PySet_Add(ctx->extensions, ext_name);
+	}
+
 	gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	gl.Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);

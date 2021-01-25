@@ -854,6 +854,10 @@ PyObject * MGLContext_get_version_code(MGLContext * self, void * closure) {
 	return PyLong_FromLong(self->version_code);
 }
 
+PyObject * MGLContext_get_extensions(MGLContext * self, void * closure) {
+	return self->extensions;
+}
+
 PyObject * MGLContext_get_info(MGLContext * self, void * closure) {
 	const GLMethods & gl = self->gl;
 
@@ -1388,6 +1392,7 @@ PyGetSetDef MGLContext_tp_getseters[] = {
 
 	{(char *)"patch_vertices", (getter)MGLContext_get_patch_vertices, (setter)MGLContext_set_patch_vertices, 0, 0},
 
+	{(char *)"extensions", (getter)MGLContext_get_extensions, 0, 0, 0},
 	{(char *)"info", (getter)MGLContext_get_info, 0, 0, 0},
 	{(char *)"error", (getter)MGLContext_get_error, 0, 0, 0},
 	{0},

@@ -1,6 +1,6 @@
 import os
 import warnings
-from typing import Dict, Tuple
+from typing import Dict, Set, Tuple
 
 from .buffer import Buffer
 from .compute_shader import ComputeShader
@@ -148,12 +148,13 @@ class Context:
     #: Used with :py:attr:`Context.provoking_vertex`.
     LAST_VERTEX_CONVENTION = 0x8E4E
 
-    __slots__ = ['mglo', '_screen', '_info', 'version_code', 'fbo', 'extra']
+    __slots__ = ['mglo', '_screen', '_info', '_extensions', 'version_code', 'fbo', 'extra']
 
     def __init__(self):
         self.mglo = None  #: Internal representation for debug purposes only.
         self._screen = None
         self._info = None
+        self._extensions = None
         self.version_code = None  #: int: The OpenGL version code. Reports ``410`` for OpenGL 4.1
         #: Framebuffer: The active framebuffer.
         #: Set every time :py:meth:`Framebuffer.use()` is called.
@@ -531,11 +532,60 @@ class Context:
         return self.mglo.error
 
     @property
+    def extensions(self) -> Set[str]:
+        '''
+            Set[str]: The extensions supported by the context
+
+            All extensions names have a ``GL_`` prefix, so if the spec refers to ``ARB_compute_shader``
+            we need to look for ``GL_ARB_compute_shader``::
+
+                # If compute shaders are supported ...
+                >> "GL_ARB_compute_shader" in ctx.extensions
+                True                
+
+            Example data::
+
+                {
+                    'GL_ARB_multi_bind',
+                    'GL_ARB_shader_objects',
+                    'GL_ARB_half_float_vertex',
+                    'GL_ARB_map_buffer_alignment',
+                    'GL_ARB_arrays_of_arrays',
+                    'GL_ARB_pipeline_statistics_query', 
+                    'GL_ARB_provoking_vertex',
+                    'GL_ARB_gpu_shader5',
+                    'GL_ARB_uniform_buffer_object',
+                    'GL_EXT_blend_equation_separate',
+                    'GL_ARB_tessellation_shader',
+                    'GL_ARB_multi_draw_indirect',
+                    'GL_ARB_multisample',
+                    .. etc ..
+                }
+
+        '''
+        if self._extensions is None:
+            self._extensions = self.mglo.extensions
+
+        return self._extensions
+
+    @property
     def info(self) -> Dict[str, object]:
         '''
-            dict: Information about the context
+            dict: OpenGL Limits and information about the context
 
             Example::
+
+                # The maximum width and height of a texture
+                >> ctx.info["GL_MAX_TEXTURE_SIZE"]
+                16384
+
+                # Vendor and renderer
+                >> ctx.info["GL_VENDOR"]
+                NVIDIA Corporation
+                >> ctx.info["GL_RENDERER"]
+                NVIDIA GeForce GT 650M OpenGL Engine
+
+            Example data::
 
                 {
                     'GL_VENDOR': 'NVIDIA Corporation',
@@ -1456,6 +1506,7 @@ def create_context(require=None, standalone=False, share=False, **settings) -> C
     ctx = Context.__new__(Context)
     ctx.mglo, ctx.version_code = mgl.create_context(glversion=require, mode=mode, **settings)
     ctx._info = None
+    ctx._extensions = None
     ctx.extra = None
 
     if ctx.version_code < require:
@@ -1502,6 +1553,7 @@ def create_standalone_context(require=None, share=False, **settings) -> 'Context
     ctx._screen = None
     ctx.fbo = None
     ctx._info = None
+    ctx._extensions = None
     ctx.extra = None
 
     if require is not None and ctx.version_code < require:
