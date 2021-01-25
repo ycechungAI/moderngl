@@ -75,6 +75,7 @@ Attributes
 .. autoattribute:: Context.patch_vertices
 .. autoattribute:: Context.provoking_vertex
 .. autoattribute:: Context.error
+.. autoattribute:: Context.extensions
 .. autoattribute:: Context.info
 .. autoattribute:: Context.mglo
 .. autoattribute:: Context.extra
