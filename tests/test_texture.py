@@ -147,6 +147,14 @@ class TestCase(unittest.TestCase):
 
         self.assertEqual(pbo.read(), pixels)
 
+    def test_override_internalformat(self):
+        """Ensure no errors occur when overriding internalformat"""
+        GL_SRGB8 = 0x8C41
+        pixels = struct.pack('16B', 255, 0, 0, 255, 0, 255, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255)
+        texture = self.ctx.texture((2, 2), 4, pixels, internal_format=GL_SRGB8)
+        data = texture.read()
+        self.assertEqual(self.ctx.error, "GL_NO_ERROR")
+
 
 if __name__ == '__main__':
     unittest.main()
