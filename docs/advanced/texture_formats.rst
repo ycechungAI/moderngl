@@ -174,3 +174,19 @@ Signed
 +----------+---------------+-----------------+-------------------+
 | i4       |  4            | GL_RGBA_INTEGER | GL_RGBA32I        |
 +----------+---------------+-----------------+-------------------+
+
+Overriding internalformat
+-------------------------
+
+:py:meth:`Context.texture` supports overriding the internalformat
+of the texture. This is only necessary when needing a different
+internalformats from the tables above. This can for
+example be ``GL_SRGB8 = 0x8C41`` or some compressed format.
+You may also need to look up in :py:attr:`Context.extensions`
+to ensure the context supports internalformat you are using.
+We do not provide the enum values for these alternative internalformats.
+They can be looked up in the registry : https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/master/xml/gl.xml
+
+Example::
+
+    texture = ctx.texture(image.size, 3, data=srbg_data, internal_format=GL_SRGB8)

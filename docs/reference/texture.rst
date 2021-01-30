@@ -9,7 +9,7 @@ Texture
 Create
 ------
 
-.. automethod:: Context.texture(size, components, data=None, samples=0, alignment=1, dtype='f1') -> Texture
+.. automethod:: Context.texture(size, components, data=None, samples=0, alignment=1, dtype='f1', internal_format=None) -> Texture
     :noindex:
 
 .. automethod:: Context.depth_texture(size, data=None, samples=0, alignment=4) -> Texture

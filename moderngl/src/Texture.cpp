@@ -15,10 +15,11 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
 
 	const char * dtype;
 	Py_ssize_t dtype_size;
+	int internal_format_override;
 
 	int args_ok = PyArg_ParseTuple(
 		args,
-		"(II)IOIIs#",
+		"(II)IOIIs#I",
 		&width,
 		&height,
 		&components,
@@ -26,7 +27,8 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
 		&samples,
 		&alignment,
 		&dtype,
-		&dtype_size
+		&dtype_size,
+		&internal_format_override
 	);
 
 	if (!args_ok) {
@@ -93,7 +95,7 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
 	int texture_target = samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 	int pixel_type = data_type->gl_type;
 	int base_format = data_type->base_format[components];
-	int internal_format = data_type->internal_format[components];
+	int internal_format = internal_format_override ? internal_format_override : data_type->internal_format[components];
 
 	const GLMethods & gl = self->gl;
 

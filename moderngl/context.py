@@ -865,9 +865,13 @@ class Context:
         return res
 
     def texture(self, size, components, data=None, *, samples=0, alignment=1,
-                dtype='f1') -> 'Texture':
+                dtype='f1', internal_format=None) -> 'Texture':
         '''
             Create a :py:class:`Texture` object.
+
+            .. Warning:: Do not play with ``internal_format`` unless you know exactly
+                         you are doing. This is an override to support sRGB and
+                         compressed textures if needed.
 
             Args:
                 size (tuple): The width and height of the texture.
@@ -878,13 +882,14 @@ class Context:
                 samples (int): The number of samples. Value 0 means no multisample format.
                 alignment (int): The byte alignment 1, 2, 4 or 8.
                 dtype (str): Data type.
+                internal_format (int): Override the internalformat of the texture (IF needed)
 
             Returns:
                 :py:class:`Texture` object
         '''
 
         res = Texture.__new__(Texture)
-        res.mglo, res._glo = self.mglo.texture(size, components, data, samples, alignment, dtype)
+        res.mglo, res._glo = self.mglo.texture(size, components, data, samples, alignment, dtype, internal_format or 0)
         res._size = size
         res._components = components
         res._samples = samples
