@@ -30,6 +30,9 @@ class Scope:
     def __repr__(self):
         return '<Scope>'
 
+    def __hash__(self) -> int:
+        return id(self)
+
     def __enter__(self):
         self.mglo.begin()
         return self

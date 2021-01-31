@@ -17,6 +17,9 @@ class Subroutine:
     def __repr__(self):
         return '<Subroutine: %d>' % self._index
 
+    def __hash__(self) -> int:
+        return id(self)
+
     @property
     def index(self) -> int:
         '''

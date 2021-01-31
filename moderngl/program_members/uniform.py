@@ -24,6 +24,9 @@ class Uniform:
     def __repr__(self):
         return '<Uniform: %d>' % self._location
 
+    def __hash__(self) -> int:
+        return id(self)
+
     @property
     def location(self) -> int:
         '''

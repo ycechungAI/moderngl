@@ -47,6 +47,9 @@ class Texture:
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
 
+    def __hash__(self) -> int:
+        return id(self)
+
     @property
     def repeat_x(self) -> bool:
         '''

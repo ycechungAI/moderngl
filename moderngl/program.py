@@ -54,6 +54,9 @@ class Program:
         """
         return type(self) is type(other) and self.mglo is other.mglo
 
+    def __hash__(self) -> int:
+        return id(self)
+
     def __getitem__(self, key) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
         """Get a member such as uniforms, uniform blocks, subroutines,
         attributes and varyings by name.

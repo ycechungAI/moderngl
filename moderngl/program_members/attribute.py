@@ -21,6 +21,9 @@ class Attribute:
     def __repr__(self):
         return '<Attribute: %d>' % self._location
 
+    def __hash__(self) -> int:
+        return id(self)
+
     @property
     def location(self) -> int:
         '''

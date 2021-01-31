@@ -19,6 +19,9 @@ class UniformBlock:
     def __repr__(self):
         return '<UniformBlock: %d>' % self._index
 
+    def __hash__(self) -> int:
+        return id(self)
+
     @property
     def binding(self) -> int:
         '''

@@ -34,6 +34,9 @@ class Framebuffer:
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
 
+    def __hash__(self) -> int:
+        return id(self)
+
     @property
     def viewport(self) -> Tuple[int, int, int, int]:
         '''

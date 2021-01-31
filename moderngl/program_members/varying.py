@@ -19,6 +19,9 @@ class Varying:
     def __repr__(self):
         return '<Varying: %d>' % self.number
 
+    def __hash__(self) -> int:
+        return id(self)
+
     @property
     def number(self) -> int:
         '''

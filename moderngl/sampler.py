@@ -30,6 +30,9 @@ class Sampler:
         self.extra = None  #: Any - Attribute for storing user defined objects
         raise TypeError()
 
+    def __hash__(self) -> int:
+        return id(self)
+
     def use(self, location=0) -> None:
         '''
             Bind the sampler to a texture unit
