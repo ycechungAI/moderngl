@@ -39,13 +39,16 @@ These default backends support two modes:
   library such as glfw, sdl2, pyglet etc.
 * Creating a headless context (No visible window)
 
-Attaching to an existing active context created by a window library::
+Detecting an existing active context created by a window library::
 
     import moderngl
     # Create the window with an OpenGL context (Most window libraries support this)
     ctx = moderngl.create_context()
     # If successful we can now render to the window
     print("Default framebuffer is:", ctx.screen)
+
+A great reference using various window libraries can be found here: 
+https://github.com/moderngl/moderngl-window/tree/master/moderngl_window/context
 
 Creating a headless context::
 
