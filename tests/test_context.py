@@ -76,7 +76,8 @@ class ContextTests(TestCase):
 
     def test_extensions(self):
         ctx = moderngl.create_context(standalone=True)
-        self.assertTrue("GL_EXT_geometry_shader4" in ctx.extensions)
-        self.assertTrue("GL_ARB_copy_buffer" in ctx.extensions)
-        self.assertTrue("GL_EXT_framebuffer_object" in ctx.extensions)
+        print(ctx.extensions)
+        self.assertTrue("GL_ARB_gpu_shader5" in ctx.extensions)
+        self.assertTrue("GL_ARB_transform_feedback2" in ctx.extensions)
+        self.assertTrue("GL_ARB_shader_subroutine" in ctx.extensions)
         ctx.release()
