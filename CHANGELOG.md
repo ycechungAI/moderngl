@@ -5,8 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-# [5.6.2]
+# [5.6.3]
 
+* Added `Context.extensions`. This is a `set` containing the
+  OpenGL extensions supported by the context.
+* Added support for overridable internal_format for `Texture`.
+  This opens up for sRGB and compressed formats if needed.
+* Docstring and documentation improvements
+
+# [5.6.2]
 ## Bugs
 
 * `TextureArray.build_mimpmaps()` used the wrong target when building mipmaps.
@@ -564,6 +571,7 @@ For more information please see: [Differences between ModernGL5 and ModernGL4](h
 
 - It was a tool for me to develop games in python
 
+[5.6.3]: https://github.com/moderngl/moderngl/compare/5.6.2...5.6.3
 [5.6.2]: https://github.com/moderngl/moderngl/compare/5.6.1...5.6.2
 [5.6.1]: https://github.com/moderngl/moderngl/compare/5.6.0...5.6.1
 [5.6.0]: https://github.com/moderngl/moderngl/compare/5.5.4...5.6.0
