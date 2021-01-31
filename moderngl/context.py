@@ -825,7 +825,9 @@ class Context:
 
     def detect_framebuffer(self, glo=None) -> 'Framebuffer':
         '''
-            Detect framebuffer.
+            Detect framebuffer. This is already done when creating a context,
+            but if the underlying window library for some changes the default framebuffer
+            during the lifetime of the application this might be necessary.
 
             Args:
                 glo (int): Framebuffer object.
