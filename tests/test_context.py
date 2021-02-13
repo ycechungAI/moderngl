@@ -81,3 +81,56 @@ class ContextTests(TestCase):
         self.assertTrue("GL_ARB_transform_feedback2" in ctx.extensions)
         self.assertTrue("GL_ARB_shader_subroutine" in ctx.extensions)
         ctx.release()
+
+    def test_attributes(self):
+        """Ensure enums are present in the context instance"""
+        ctx = moderngl.create_context(standalone=True)
+        # Flags
+        self.assertIsInstance(ctx.NOTHING, int)
+        self.assertIsInstance(ctx.BLEND, int)
+        self.assertIsInstance(ctx.DEPTH_TEST, int)
+        self.assertIsInstance(ctx.CULL_FACE, int)
+        self.assertIsInstance(ctx.RASTERIZER_DISCARD, int)
+        self.assertIsInstance(ctx.PROGRAM_POINT_SIZE, int)
+
+        # Primitive modes
+        self.assertIsInstance(ctx.POINTS, int)
+        self.assertIsInstance(ctx.LINES, int)
+        self.assertIsInstance(ctx.LINE_LOOP, int)
+        self.assertIsInstance(ctx.LINE_STRIP, int)
+        self.assertIsInstance(ctx.TRIANGLES, int)
+        self.assertIsInstance(ctx.TRIANGLE_STRIP, int)
+        self.assertIsInstance(ctx.TRIANGLE_FAN, int)
+        self.assertIsInstance(ctx.LINES_ADJACENCY, int)
+        self.assertIsInstance(ctx.LINE_STRIP_ADJACENCY, int)
+        self.assertIsInstance(ctx.TRIANGLES_ADJACENCY, int)
+        self.assertIsInstance(ctx.TRIANGLE_STRIP_ADJACENCY, int)
+        self.assertIsInstance(ctx.PATCHES, int)
+
+        # Blend functions
+        self.assertIsInstance(ctx.ZERO, int)
+        self.assertIsInstance(ctx.ONE, int)
+        self.assertIsInstance(ctx.SRC_COLOR, int)
+        self.assertIsInstance(ctx.ONE_MINUS_SRC_COLOR, int)
+        self.assertIsInstance(ctx.SRC_ALPHA, int)
+        self.assertIsInstance(ctx.ONE_MINUS_SRC_ALPHA, int)
+        self.assertIsInstance(ctx.DST_ALPHA, int)
+        self.assertIsInstance(ctx.ONE_MINUS_DST_ALPHA, int)
+        self.assertIsInstance(ctx.DST_COLOR, int)
+        self.assertIsInstance(ctx.ONE_MINUS_DST_COLOR, int)
+
+        # Blend shortcuts
+        self.assertIsInstance(ctx.DEFAULT_BLENDING, tuple)
+        self.assertIsInstance(ctx.ADDITIVE_BLENDING, tuple)
+        self.assertIsInstance(ctx.PREMULTIPLIED_ALPHA, tuple)
+
+        # Blend equations
+        self.assertIsInstance(ctx.FUNC_ADD, int)
+        self.assertIsInstance(ctx.FUNC_SUBTRACT, int)
+        self.assertIsInstance(ctx.FUNC_REVERSE_SUBTRACT, int)
+        self.assertIsInstance(ctx.MIN, int)
+        self.assertIsInstance(ctx.MAX, int)
+
+        # Provoking vertex
+        self.assertIsInstance(ctx.FIRST_VERTEX_CONVENTION, int)
+        self.assertIsInstance(ctx.LAST_VERTEX_CONVENTION, int)
