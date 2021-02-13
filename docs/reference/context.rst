@@ -108,6 +108,22 @@ These values are available in the ``Context`` object and in the
 .. autoattribute:: Context.RASTERIZER_DISCARD
 .. autoattribute:: Context.PROGRAM_POINT_SIZE
 
+Primitive Modes
+---------------
+
+.. autoattribute:: Context.POINTS
+.. autoattribute:: Context.LINES
+.. autoattribute:: Context.LINE_LOOP
+.. autoattribute:: Context.LINE_STRIP
+.. autoattribute:: Context.TRIANGLES
+.. autoattribute:: Context.TRIANGLE_STRIP
+.. autoattribute:: Context.TRIANGLE_FAN
+.. autoattribute:: Context.LINES_ADJACENCY
+.. autoattribute:: Context.LINE_STRIP_ADJACENCY
+.. autoattribute:: Context.TRIANGLES_ADJACENCY
+.. autoattribute:: Context.TRIANGLE_STRIP_ADJACENCY
+.. autoattribute:: Context.PATCHES
+
 Blend Functions
 ---------------
 
