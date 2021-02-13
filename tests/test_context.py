@@ -107,6 +107,14 @@ class ContextTests(TestCase):
         self.assertIsInstance(ctx.TRIANGLE_STRIP_ADJACENCY, int)
         self.assertIsInstance(ctx.PATCHES, int)
 
+        # Texture filters
+        self.assertIsInstance(ctx.LINEAR, int)
+        self.assertIsInstance(ctx.NEAREST, int)
+        self.assertIsInstance(ctx.NEAREST_MIPMAP_NEAREST, int)
+        self.assertIsInstance(ctx.LINEAR_MIPMAP_LINEAR, int)
+        self.assertIsInstance(ctx.LINEAR_MIPMAP_NEAREST, int)
+        self.assertIsInstance(ctx.NEAREST_MIPMAP_LINEAR, int)
+
         # Blend functions
         self.assertIsInstance(ctx.ZERO, int)
         self.assertIsInstance(ctx.ONE, int)
