@@ -15,7 +15,8 @@ but they are imported during initialization.
 Context Flags
 ~~~~~~~~~~~~~
 
-Also available in the :py:class:`Context` instance.
+Also available in the :py:class:`Context` instance
+including mode details.
 
 .. autodata:: moderngl.context.NOTHING
 .. autodata:: moderngl.context.BLEND
@@ -27,7 +28,8 @@ Also available in the :py:class:`Context` instance.
 Primitive Modes
 ~~~~~~~~~~~~~~~
 
-Also available in the :py:class:`Context` instance.
+Also available in the :py:class:`Context` instance
+including mode details.
 
 .. autodata:: moderngl.vertex_array.POINTS
 .. autodata:: moderngl.vertex_array.LINES
@@ -45,7 +47,8 @@ Also available in the :py:class:`Context` instance.
 Blend Functions
 ~~~~~~~~~~~~~~~
 
-Also available in the :py:class:`Context` instance.
+Also available in the :py:class:`Context` instance
+including mode details.
 
 .. autodata:: moderngl.context.ZERO
 .. autodata:: moderngl.context.ONE
@@ -68,7 +71,8 @@ Shortcuts
 Blend Equations
 ~~~~~~~~~~~~~~~
 
-Also available in the :py:class:`Context` instance.
+Also available in the :py:class:`Context` instance
+including mode details.
 
 .. autodata:: moderngl.context.FUNC_ADD
 .. autodata:: moderngl.context.FUNC_SUBTRACT
@@ -79,13 +83,16 @@ Also available in the :py:class:`Context` instance.
 Provoking Vertex
 ~~~~~~~~~~~~~~~~
 
-Also available in the :py:class:`Context` instance.
+Also available in the :py:class:`Context` instance
+including mode details.
 
 .. autodata:: moderngl.context.FIRST_VERTEX_CONVENTION
 .. autodata:: moderngl.context.LAST_VERTEX_CONVENTION
 
 Functions
 ---------
+
+Also see :py:class:`Context`.
 
 .. autofunction:: create_context
 .. autofunction:: create_standalone_context
