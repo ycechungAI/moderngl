@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# [5.6.4]
+
+* Primitive modes are now accessible in the `Context` instance.
+  For example: `ctx.POINTS` and `ctx.TRIANGLES`
+* Texture filers are now also available in the `Context` instance.
+  For example: `ctx.NEAREST` and `ctx.LINEAR`
+* Docstring and documentation improvements
+
 # [5.6.3]
 
 * Added `Context.extensions`. This is a `set` containing the
@@ -571,6 +579,7 @@ For more information please see: [Differences between ModernGL5 and ModernGL4](h
 
 - It was a tool for me to develop games in python
 
+[5.6.4]: https://github.com/moderngl/moderngl/compare/5.6.4...5.6.4
 [5.6.3]: https://github.com/moderngl/moderngl/compare/5.6.2...5.6.3
 [5.6.2]: https://github.com/moderngl/moderngl/compare/5.6.1...5.6.2
 [5.6.1]: https://github.com/moderngl/moderngl/compare/5.6.0...5.6.1
