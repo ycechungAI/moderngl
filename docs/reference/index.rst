@@ -4,6 +4,7 @@ Reference
 .. toctree::
     :maxdepth: 1
 
+    moderngl.rst
     context.rst
     buffer.rst
     vertex_array.rst
