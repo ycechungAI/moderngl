@@ -124,6 +124,19 @@ Primitive Modes
 .. autoattribute:: Context.TRIANGLE_STRIP_ADJACENCY
 .. autoattribute:: Context.PATCHES
 
+Texture Filters
+~~~~~~~~~~~~~~~
+
+Also available in the :py:class:`Context` instance
+including mode details.
+
+.. autoattribute:: Context.NEAREST
+.. autoattribute:: Context.LINEAR
+.. autoattribute:: Context.NEAREST_MIPMAP_NEAREST
+.. autoattribute:: Context.LINEAR_MIPMAP_NEAREST
+.. autoattribute:: Context.NEAREST_MIPMAP_LINEAR
+.. autoattribute:: Context.LINEAR_MIPMAP_LINEAR
+
 Blend Functions
 ---------------
 

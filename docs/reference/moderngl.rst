@@ -44,6 +44,19 @@ including mode details.
 .. autodata:: moderngl.vertex_array.TRIANGLE_STRIP_ADJACENCY
 .. autodata:: moderngl.vertex_array.PATCHES
 
+Texture Filters
+~~~~~~~~~~~~~~~
+
+Also available in the :py:class:`Context` instance
+including mode details.
+
+.. autodata:: moderngl.texture.NEAREST
+.. autodata:: moderngl.texture.LINEAR
+.. autodata:: moderngl.texture.NEAREST_MIPMAP_NEAREST
+.. autodata:: moderngl.texture.LINEAR_MIPMAP_NEAREST
+.. autodata:: moderngl.texture.NEAREST_MIPMAP_LINEAR
+.. autodata:: moderngl.texture.LINEAR_MIPMAP_LINEAR
+
 Blend Functions
 ~~~~~~~~~~~~~~~
 
@@ -96,3 +109,4 @@ Also see :py:class:`Context`.
 
 .. autofunction:: create_context
 .. autofunction:: create_standalone_context
+.. autofunction:: detect_format
