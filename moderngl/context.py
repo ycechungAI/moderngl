@@ -33,7 +33,7 @@ __all__ = ['Context', 'create_context', 'create_standalone_context',
            'FIRST_VERTEX_CONVENTION', 'LAST_VERTEX_CONVENTION']
 
 # Context Flags
-# Context Flags
+
 #: Represents no states. Can be used with :py:meth:`Context.enable_only` to disable all states.
 NOTHING = 0
 #: Enable/disable blending
@@ -49,15 +49,25 @@ RASTERIZER_DISCARD = 8
 PROGRAM_POINT_SIZE = 16
 
 # Blend functions
+#: (0,0,0,0)
 ZERO = 0x0000
+#: (1,1,1,1)
 ONE = 0x0001
+#: (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
 SRC_COLOR = 0x0300
+#: (1,1,1,1) − (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
 ONE_MINUS_SRC_COLOR = 0x0301
+#: (As0/kA,As0/kA,As0/kA,As0/kA)
 SRC_ALPHA = 0x0302
+#: (1,1,1,1) − (As0/kA,As0/kA,As0/kA,As0/kA)
 ONE_MINUS_SRC_ALPHA = 0x0303
+#: (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
 DST_ALPHA = 0x0304
+#: (1,1,1,1) − (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
 ONE_MINUS_DST_ALPHA = 0x0305
+#: (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
 DST_COLOR = 0x0306
+#: (1,1,1,1) − (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
 ONE_MINUS_DST_COLOR = 0x0307
 
 # Blend equations
@@ -107,16 +117,75 @@ class Context:
     #: When disabled :py:attr:`Context.point_size` is used.
     PROGRAM_POINT_SIZE = 16
 
+    # Primitive modes
+
+    #: Each vertex represents a point
+    POINTS = 0x0000
+    #: Vertices 0 and 1 are considered a line. Vertices 2 and 3 are considered a line.
+    #: And so on. If the user specifies a non-even number of vertices, then the extra vertex is ignored.
+    LINES = 0x0001
+    #: As line strips, except that the first and last vertices are also used as a line.
+    #: Thus, you get n lines for n input vertices. If the user only specifies 1 vertex,
+    #: the drawing command is ignored. The line between the first and last vertices happens
+    #: after all of the previous lines in the sequence.
+    LINE_LOOP = 0x0002
+    #: The adjacent vertices are considered lines. Thus, if you pass n vertices, you will get n-1 lines.
+    #: If the user only specifies 1 vertex, the drawing command is ignored.
+    LINE_STRIP = 0x0003
+    #: Vertices 0, 1, and 2 form a triangle. Vertices 3, 4, and 5 form a triangle. And so on.
+    TRIANGLES = 0x0004
+    #: Every group of 3 adjacent vertices forms a triangle. The face direction of the
+    #: strip is determined by the winding of the first triangle. Each successive triangle
+    #: will have its effective face order reversed, so the system compensates for that
+    #: by testing it in the opposite way. A vertex stream of n length will generate n-2 triangles.
+    TRIANGLE_STRIP = 0x0005
+    #: The first vertex is always held fixed. From there on, every group of 2 adjacent
+    #: vertices form a triangle with the first. So with a vertex stream, you get a list
+    #: of triangles like so: (0, 1, 2) (0, 2, 3), (0, 3, 4), etc. A vertex stream of
+    #: n length will generate n-2 triangles.
+    TRIANGLE_FAN = 0x0006
+    #: These are special primitives that are expected to be used specifically with 
+    # geomtry shaders. These primitives give the geometry shader more vertices
+    # to work with for each input primitive. Data needs to be duplicated in buffers.
+    LINES_ADJACENCY = 0x000A
+    #: These are special primitives that are expected to be used specifically with 
+    #: geomtry shaders. These primitives give the geometry shader more vertices
+    #: to work with for each input primitive. Data needs to be duplicated in buffers.
+    LINE_STRIP_ADJACENCY = 0x000B
+    #: These are special primitives that are expected to be used specifically with 
+    #: geomtry shaders. These primitives give the geometry shader more vertices
+    #: to work with for each input primitive. Data needs to be duplicated in buffers.
+    TRIANGLES_ADJACENCY = 0x000C
+    #: These are special primitives that are expected to be used specifically with 
+    #: geomtry shaders. These primitives give the geometry shader more vertices
+    #: to work with for each input primitive. Data needs to be duplicated in buffers.
+    TRIANGLE_STRIP_ADJACENCY = 0x000D0
+    #: primitive type can only be used when Tessellation is active. It is a primitive
+    #: with a user-defined number of vertices, which is then tessellated based on the
+    #: control and evaluation shaders into regular points, lines, or triangles, depending
+    #: on the TES's settings. 
+    PATCHES = 0x000E
+
     # Blend functions
+    #: (0,0,0,0)
     ZERO = 0x0000
+    #: (1,1,1,1)
     ONE = 0x0001
+    #: (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
     SRC_COLOR = 0x0300
+    #: (1,1,1,1) − (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
     ONE_MINUS_SRC_COLOR = 0x0301
+    #: (As0/kA,As0/kA,As0/kA,As0/kA)
     SRC_ALPHA = 0x0302
+    #: (1,1,1,1) − (As0/kA,As0/kA,As0/kA,As0/kA)
     ONE_MINUS_SRC_ALPHA = 0x0303
+    #: (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
     DST_ALPHA = 0x0304
+    #: (1,1,1,1) − (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
     ONE_MINUS_DST_ALPHA = 0x0305
+    #: (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
     DST_COLOR = 0x0306
+    #: (1,1,1,1) − (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
     ONE_MINUS_DST_COLOR = 0x0307
 
     #: Shotcut for the default blending ``SRC_ALPHA, ONE_MINUS_SRC_ALPHA``
