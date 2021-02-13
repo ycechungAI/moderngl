@@ -145,8 +145,8 @@ class Context:
     #: n length will generate n-2 triangles.
     TRIANGLE_FAN = 0x0006
     #: These are special primitives that are expected to be used specifically with 
-    # geomtry shaders. These primitives give the geometry shader more vertices
-    # to work with for each input primitive. Data needs to be duplicated in buffers.
+    #: geomtry shaders. These primitives give the geometry shader more vertices
+    #: to work with for each input primitive. Data needs to be duplicated in buffers.
     LINES_ADJACENCY = 0x000A
     #: These are special primitives that are expected to be used specifically with 
     #: geomtry shaders. These primitives give the geometry shader more vertices
@@ -165,6 +165,7 @@ class Context:
     #: control and evaluation shaders into regular points, lines, or triangles, depending
     #: on the TES's settings. 
     PATCHES = 0x000E
+
 
     # Blend functions
     #: (0,0,0,0)

@@ -30,8 +30,8 @@ TRIANGLE_STRIP = 0x0005
 #: n length will generate n-2 triangles.
 TRIANGLE_FAN = 0x0006
 #: These are special primitives that are expected to be used specifically with 
-# geomtry shaders. These primitives give the geometry shader more vertices
-# to work with for each input primitive. Data needs to be duplicated in buffers.
+#: geomtry shaders. These primitives give the geometry shader more vertices
+#: to work with for each input primitive. Data needs to be duplicated in buffers.
 LINES_ADJACENCY = 0x000A
 #: These are special primitives that are expected to be used specifically with 
 #: geomtry shaders. These primitives give the geometry shader more vertices
