@@ -310,8 +310,480 @@ class TestCase(unittest.TestCase):
             )
         )
 
-    # Geometry shader
+    # ------ Geometry shader -------
 
+    def test_geometry_points(self):
+        data = (1.0, 2.0, 3.0, 4.0, 5.0, 6.0)
+        vertices = np.array(data, dtype='f4')
+        prog = self.ctx.program(
+            vertex_shader=
+            """
+            #version 330
+
+            in float in_value;
+
+            void main() {
+                gl_Position = vec4(in_value);
+            }
+            """,
+            geometry_shader="""
+            #version 330
+
+            out float out_value;
+
+            layout(points) in;
+            layout(points, max_vertices=1) out;
+
+            void main() {
+                out_value = gl_in[0].gl_Position.x * 2;
+                EmitVertex();
+            }
+            """,
+            varyings=['out_value'],
+        )
+        vbo = self.ctx.buffer(vertices)
+        vao = self.ctx.vertex_array(prog, [(vbo, 'f', 'in_value')])
+        buffer = self.ctx.buffer(reserve=vbo.size)
+        vao.transform(buffer, mode=moderngl.POINTS)
+        self.assertEqual(tuple(v * 2 for v in data), struct.unpack('6f', buffer.read()))
+
+    def test_geometry_lines(self):
+        data = (
+            1.0, 2.0,
+            3.0, 4.0,
+            5.0, 6.0,
+        )
+        vertices = np.array(data, dtype='f4')
+        prog = self.ctx.program(
+            vertex_shader=
+            """
+            #version 330
+
+            in float in_value;
+
+            void main() {
+                gl_Position = vec4(in_value);
+            }
+            """,
+            geometry_shader="""
+            #version 330
+
+            out float out_value;
+
+            layout(lines) in;
+            layout(line_strip, max_vertices=2) out;
+
+            void main() {
+                out_value = gl_in[0].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[1].gl_Position.x;
+                EmitVertex();
+                EndPrimitive();
+            }
+            """,
+            varyings=['out_value'],
+        )
+        vbo = self.ctx.buffer(vertices)
+        vao = self.ctx.vertex_array(prog, [(vbo, 'f', 'in_value')])
+        buffer = self.ctx.buffer(reserve=vbo.size)
+        vao.transform(buffer, mode=moderngl.LINES)
+        self.assertEqual(data, struct.unpack('6f', buffer.read()))
+
+    def test_geometry_line_loop(self):
+        data = (
+            1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
+        )
+        vertices = np.array(data, dtype='f4')
+        prog = self.ctx.program(
+            vertex_shader=
+            """
+            #version 330
+
+            in float in_value;
+
+            void main() {
+                gl_Position = vec4(in_value);
+            }
+            """,
+            geometry_shader="""
+            #version 330
+
+            out float out_value;
+
+            layout(lines) in;
+            layout(line_strip, max_vertices=2) out;
+
+            void main() {
+                out_value = gl_in[0].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[1].gl_Position.x;
+                EmitVertex();
+                EndPrimitive();
+            }
+            """,
+            varyings=['out_value'],
+        )
+        vbo = self.ctx.buffer(vertices)
+        vao = self.ctx.vertex_array(prog, [(vbo, 'f', 'in_value')])
+        buffer = self.ctx.buffer(reserve=4 * 12)
+        vao.transform(buffer, mode=moderngl.LINE_LOOP)
+        self.assertEqual(
+            (1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0, 5.0, 5.0, 6.0, 6.0, 1.0),
+            struct.unpack('12f', buffer.read())
+        )
+
+    def test_geometry_line_strip(self):
+        data = (
+            1.0, 2.0, 3.0, 4.0, 5.0
+        )
+        vertices = np.array(data, dtype='f4')
+        prog = self.ctx.program(
+            vertex_shader=
+            """
+            #version 330
+
+            in float in_value;
+
+            void main() {
+                gl_Position = vec4(in_value);
+            }
+            """,
+            geometry_shader="""
+            #version 330
+
+            out float out_value;
+
+            layout(lines) in;
+            layout(line_strip, max_vertices=2) out;
+
+            void main() {
+                out_value = gl_in[0].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[1].gl_Position.x;
+                EmitVertex();
+                EndPrimitive();
+            }
+            """,
+            varyings=['out_value'],
+        )
+        vbo = self.ctx.buffer(vertices)
+        vao = self.ctx.vertex_array(prog, [(vbo, 'f', 'in_value')])
+        buffer = self.ctx.buffer(reserve=4 * 8)
+        vao.transform(buffer, mode=moderngl.LINE_LOOP)
+        self.assertEqual(
+            (1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0, 5.0),
+            struct.unpack('8f', buffer.read())
+        )
+
+    def test_geometry_lines_adjacency(self):
+        data = (
+            1.0, 2.0, 3.0, 4.0,
+        )
+        vertices = np.array(data, dtype='f4')
+        prog = self.ctx.program(
+            vertex_shader=
+            """
+            #version 330
+
+            in float in_value;
+
+            void main() {
+                gl_Position = vec4(in_value);
+            }
+            """,
+            geometry_shader="""
+            #version 330
+
+            out float out_value;
+
+            layout(lines_adjacency) in;
+            layout(line_strip, max_vertices=2) out;
+
+            void main() {
+                out_value = gl_in[1].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[2].gl_Position.x;
+                EmitVertex();
+                EndPrimitive();
+            }
+            """,
+            varyings=['out_value'],
+        )
+        vbo = self.ctx.buffer(vertices)
+        vao = self.ctx.vertex_array(prog, [(vbo, 'f', 'in_value')])
+        buffer = self.ctx.buffer(reserve=4 * 2)
+        vao.transform(buffer, mode=moderngl.LINES_ADJACENCY)
+        self.assertEqual(
+            (2.0, 3.0),
+            struct.unpack('2f', buffer.read())
+        )
+
+    def test_geometry_line_strip_adjacency(self):
+        data = (
+            1.0, 2.0, 3.0, 4.0, 5.0,
+        )
+        vertices = np.array(data, dtype='f4')
+        prog = self.ctx.program(
+            vertex_shader=
+            """
+            #version 330
+
+            in float in_value;
+
+            void main() {
+                gl_Position = vec4(in_value);
+            }
+            """,
+            geometry_shader="""
+            #version 330
+
+            out float out_value;
+
+            layout(lines_adjacency) in;
+            layout(line_strip, max_vertices=2) out;
+
+            void main() {
+                out_value = gl_in[1].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[2].gl_Position.x;
+                EmitVertex();
+                EndPrimitive();
+            }
+            """,
+            varyings=['out_value'],
+        )
+        vbo = self.ctx.buffer(vertices)
+        vao = self.ctx.vertex_array(prog, [(vbo, 'f', 'in_value')])
+        buffer = self.ctx.buffer(reserve=4 * 4)
+        vao.transform(buffer, mode=moderngl.LINE_STRIP_ADJACENCY)
+        self.assertEqual(
+            (2.0, 3.0, 3.0, 4.0),
+            struct.unpack('4f', buffer.read())
+        )
+
+    # ---
+
+    def test_geometry_triangles(self):
+        data = (
+            1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
+        )
+        vertices = np.array(data, dtype='f4')
+        prog = self.ctx.program(
+            vertex_shader=
+            """
+            #version 330
+
+            in float in_value;
+
+            void main() {
+                gl_Position = vec4(in_value);
+            }
+            """,
+            geometry_shader="""
+            #version 330
+
+            out float out_value;
+
+            layout(triangles) in;
+            layout(triangle_strip, max_vertices=3) out;
+
+            void main() {
+                out_value = gl_in[0].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[1].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[2].gl_Position.x;
+                EmitVertex();
+                EndPrimitive();
+            }
+            """,
+            varyings=['out_value'],
+        )
+        vbo = self.ctx.buffer(vertices)
+        vao = self.ctx.vertex_array(prog, [(vbo, 'f', 'in_value')])
+        buffer = self.ctx.buffer(reserve=vbo.size)
+        vao.transform(buffer, mode=moderngl.TRIANGLES)
+        self.assertEqual(data, struct.unpack('6f', buffer.read()))
+
+    def test_geometry_triangle_strip(self):
+        data = (
+            1.0, 2.0, 3.0, 4.0,
+        )
+        vertices = np.array(data, dtype='f4')
+        prog = self.ctx.program(
+            vertex_shader=
+            """
+            #version 330
+
+            in float in_value;
+
+            void main() {
+                gl_Position = vec4(in_value);
+            }
+            """,
+            geometry_shader="""
+            #version 330
+
+            out float out_value;
+
+            layout(triangles) in;
+            layout(triangle_strip, max_vertices=3) out;
+
+            void main() {
+                out_value = gl_in[0].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[1].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[2].gl_Position.x;
+                EmitVertex();
+                EndPrimitive();
+            }
+            """,
+            varyings=['out_value'],
+        )
+        vbo = self.ctx.buffer(vertices)
+        vao = self.ctx.vertex_array(prog, [(vbo, 'f', 'in_value')])
+        buffer = self.ctx.buffer(reserve=4 * 6)
+        vao.transform(buffer, mode=moderngl.TRIANGLE_STRIP)
+        self.assertEqual(
+            (1.0, 2.0, 3.0, 3.0, 2.0, 4.0),
+            struct.unpack('6f', buffer.read())
+        )
+
+    def test_geometry_triangle_fan(self):
+        data = (
+            0.0, 1.0, 2.0, 3.0,
+        )
+        vertices = np.array(data, dtype='f4')
+        prog = self.ctx.program(
+            vertex_shader=
+            """
+            #version 330
+
+            in float in_value;
+
+            void main() {
+                gl_Position = vec4(in_value);
+            }
+            """,
+            geometry_shader="""
+            #version 330
+
+            out float out_value;
+
+            layout(triangles) in;
+            layout(triangle_strip, max_vertices=3) out;
+
+            void main() {
+                out_value = gl_in[0].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[1].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[2].gl_Position.x;
+                EmitVertex();
+                EndPrimitive();
+            }
+            """,
+            varyings=['out_value'],
+        )
+        vbo = self.ctx.buffer(vertices)
+        vao = self.ctx.vertex_array(prog, [(vbo, 'f', 'in_value')])
+        buffer = self.ctx.buffer(reserve=4 * 6)
+        vao.transform(buffer, mode=moderngl.TRIANGLE_FAN)
+        self.assertEqual(
+            (0.0, 1.0, 2.0, 0.0, 2.0, 3.0),
+            struct.unpack('6f', buffer.read())
+        )
+
+    def test_geometry_triangles_adjacency(self):
+        data = (
+            1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
+        )
+        vertices = np.array(data, dtype='f4')
+        prog = self.ctx.program(
+            vertex_shader=
+            """
+            #version 330
+
+            in float in_value;
+
+            void main() {
+                gl_Position = vec4(in_value);
+            }
+            """,
+            geometry_shader="""
+            #version 330
+
+            out float out_value;
+
+            layout(triangles_adjacency) in;
+            layout(triangle_strip, max_vertices=3) out;
+
+            void main() {
+                out_value = gl_in[0].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[2].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[4].gl_Position.x;
+                EmitVertex();
+                EndPrimitive();
+            }
+            """,
+            varyings=['out_value'],
+        )
+        vbo = self.ctx.buffer(vertices)
+        vao = self.ctx.vertex_array(prog, [(vbo, 'f', 'in_value')])
+        buffer = self.ctx.buffer(reserve=4 * 3)
+        vao.transform(buffer, mode=moderngl.TRIANGLES_ADJACENCY)
+        self.assertEqual(
+            (1.0, 3.0, 5.0),
+            struct.unpack('3f', buffer.read())
+        )
+
+    def test_geometry_triangle_strip_adjacency(self):
+        data = (
+            1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0,
+        )
+        vertices = np.array(data, dtype='f4')
+        prog = self.ctx.program(
+            vertex_shader=
+            """
+            #version 330
+
+            in float in_value;
+
+            void main() {
+                gl_Position = vec4(in_value);
+            }
+            """,
+            geometry_shader="""
+            #version 330
+
+            out float out_value;
+
+            layout(triangles_adjacency) in;
+            layout(triangle_strip, max_vertices=3) out;
+
+            void main() {
+                out_value = gl_in[0].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[2].gl_Position.x;
+                EmitVertex();
+                out_value = gl_in[4].gl_Position.x;
+                EmitVertex();
+                EndPrimitive();
+            }
+            """,
+            varyings=['out_value'],
+        )
+        vbo = self.ctx.buffer(vertices)
+        vao = self.ctx.vertex_array(prog, [(vbo, 'f', 'in_value')])
+        buffer = self.ctx.buffer(reserve=4 * 6)
+        vao.transform(buffer, mode=moderngl.TRIANGLE_STRIP_ADJACENCY)
+        self.assertEqual(
+            (1.0, 3.0, 5.0, 5.0, 3.0, 7.0),
+            struct.unpack('6f', buffer.read())
+        )
 
     def gl_error(self, raise_exception=True):
         error = self.ctx.error
