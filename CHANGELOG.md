@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 # [5.6.4]
 
+* Transform feedback now supports all primitive modes both for
+  vertex and geometry shaders
+* ``VertexArray.transform()` now raises sane errors when using the wrong primitive mode
+  when used with geometry shaders
+* `VertexArray.transform()` now automatically detects output primitive based on
+  the input mode.
+* `GL_TRIANGLES_ADJACENCY` enum incorrectly mapped (`D0` instead of `0D`)
 * Primitive modes are now accessible in the `Context` instance.
   For example: `ctx.POINTS` and `ctx.TRIANGLES`
 * Texture filers are now also available in the `Context` instance.
