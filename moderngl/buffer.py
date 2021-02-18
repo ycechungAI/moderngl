@@ -37,7 +37,7 @@ class Buffer:
     @property
     def size(self) -> int:
         '''
-            int: The size of the buffer.
+            int: The size of the buffer in bytes.
         '''
 
         return self.mglo.size()
