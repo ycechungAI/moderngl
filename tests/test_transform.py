@@ -37,7 +37,7 @@ class TestCase(unittest.TestCase):
         self.assertIn('vert', program)
         self.assertIn('vert_length', program)
 
-    def test_geometry_points(self):
+    def test_vertex_points(self):
         """Transform with points"""
         data = (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0)
         buffer = self.ctx.buffer(array('f', data))
@@ -60,7 +60,7 @@ class TestCase(unittest.TestCase):
         vao.transform(buffer2, mode=self.ctx.POINTS)
         self.assertEqual(data, struct.unpack(f"{len(data)}f", buffer.read()))
 
-    def test_geometry_lines(self):
+    def test_vertex_lines(self):
         data = (
             0.0, 0.0,
             1.0, 1.0,
@@ -87,7 +87,7 @@ class TestCase(unittest.TestCase):
         vao.transform(buffer2, mode=self.ctx.LINES)
         self.assertEqual(tuple(v * 2 for v in data), struct.unpack(f"{len(data)}f", buffer2.read()))
 
-    def test_geometry_lines_adjacency(self):
+    def test_vertex_lines_adjacency(self):
         data = (
             1.0, 1.0,
             2.0, 2.0,
@@ -115,25 +115,161 @@ class TestCase(unittest.TestCase):
         # Start end end line is removed
         self.assertEqual(tuple(data[2:6]), struct.unpack(f"4f", buffer2.read()))
 
-    def test_geometry_line_strip(self):
-        pass
+    def test_vertex_line_strip(self):
+        data = (
+            1.0, 1.0,
+            2.0, 2.0,
+            3.0, 3.0,
+            4.0, 4.0,
+        )
+        buffer = self.ctx.buffer(array('f', data))
+        program = self.ctx.program(
+            vertex_shader="""
+            #version 330
 
-    def test_geometry_line_strip_adjacency(self):
-        pass
+            in vec2 in_pos;
+            out vec2 out_pos;
 
-    def test_geometry_triangles(self):
-        pass
+            void main() {
+                out_pos = in_pos;
+            }
+            """,
+            varyings=["out_pos"],
+        )
+        vao = self.ctx.vertex_array(program, [(buffer, "2f", "in_pos"),])
+        buffer2 = self.ctx.buffer(reserve=4 * 12)
+        vao.transform(buffer2, mode=self.ctx.LINE_STRIP)
+        self.assertEqual(
+            (1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 3.0, 3.0, 3.0, 3.0, 4.0, 4.0),
+            struct.unpack("12f", buffer2.read())
+        )
 
-    def test_geometry_triangles_adjacency(self):
-        pass
+    def test_vertex_line_strip_adjacency(self):
+        data = (
+            1.0, 1.0,
+            2.0, 2.0,
+            3.0, 3.0,
+            4.0, 4.0,
+            5.0, 5.0,
+        )
+        buffer = self.ctx.buffer(array('f', data))
+        program = self.ctx.program(
+            vertex_shader="""
+            #version 330
 
-    def test_geometry_triangle_strip(self):
-        pass
+            in vec2 in_pos;
+            out vec2 out_pos;
 
-    def test_geometry_triangle_adjacency(self):
-        pass
+            void main() {
+                out_pos = in_pos;
+            }
+            """,
+            varyings=["out_pos"],
+        )
+        vao = self.ctx.vertex_array(program, [(buffer, "2f", "in_pos"),])
+        buffer2 = self.ctx.buffer(reserve=4 * 8)
+        vao.transform(buffer2, mode=self.ctx.LINE_STRIP_ADJACENCY)
+        self.assertEqual(
+            (2.0, 2.0, 3.0, 3.0, 3.0, 3.0, 4.0, 4.0),
+            struct.unpack("8f", buffer2.read())
+        )
 
-    def test_geometry_triangle_fan(self):
+    def test_vertex_triangles(self):
+        data = (
+            1.0, 1.0,
+            2.0, 2.0,
+            3.0, 3.0,
+            4.0, 4.0,
+            5.0, 5.0,
+            6.0, 6.0,
+        )
+        buffer = self.ctx.buffer(array('f', data))
+        program = self.ctx.program(
+            vertex_shader="""
+            #version 330
+
+            in vec2 in_pos;
+            out vec2 out_pos;
+
+            void main() {
+                out_pos = in_pos * 2;
+            }
+            """,
+            varyings=["out_pos"],
+        )
+        vao = self.ctx.vertex_array(program, [(buffer, "2f", "in_pos"),])
+        buffer2 = self.ctx.buffer(reserve=4 * 12)
+        vao.transform(buffer2, mode=self.ctx.TRIANGLES)
+        self.assertEqual(
+            tuple(v * 2 for v in data),
+            struct.unpack("12f", buffer2.read())
+        )
+
+    def test_vertex_triangles_adjacency(self):
+        data = (
+            1.0, 1.0, # outer points
+            2.0, 2.0,
+            3.0, 3.0,
+            4.0, 4.0,
+            5.0, 5.0,
+            6.0, 6.0,
+            7.0, 7.0, # inner triangle
+            8.0, 8.0,
+            9.0, 9.0,
+        )
+        buffer = self.ctx.buffer(array('f', data))
+        program = self.ctx.program(
+            vertex_shader="""
+            #version 330
+
+            in vec2 in_pos;
+            out vec2 out_pos;
+
+            void main() {
+                out_pos = in_pos;
+            }
+            """,
+            varyings=["out_pos"],
+        )
+        vao = self.ctx.vertex_array(program, [(buffer, "2f", "in_pos"),])
+        buffer2 = self.ctx.buffer(reserve=4 * 6)
+        vao.transform(buffer2, mode=self.ctx.TRIANGLES_ADJACENCY)
+        self.assertEqual(
+            (1.0, 1.0, 3.0, 3.0, 5.0, 5.0),
+            struct.unpack("6f", buffer2.read())
+        )
+
+    def test_vertex_triangle_strip(self):
+
+        data = (
+            1.0, 1.0,
+            2.0, 2.0,
+            3.0, 3.0,
+            4.0, 4.0,
+        )
+        buffer = self.ctx.buffer(array('f', data))
+        program = self.ctx.program(
+            vertex_shader="""
+            #version 330
+
+            in vec2 in_pos;
+            out vec2 out_pos;
+
+            void main() {
+                out_pos = in_pos;
+            }
+            """,
+            varyings=["out_pos"],
+        )
+        vao = self.ctx.vertex_array(program, [(buffer, "2f", "in_pos"),])
+        buffer2 = self.ctx.buffer(reserve=4 * 12)
+        vao.transform(buffer2, mode=self.ctx.TRIANGLE_STRIP)
+        self.assertEqual(
+            (1.0, 1.0, 2.0, 2.0, 3.0, 3.0, 3.0, 3.0, 2.0, 2.0, 4.0, 4.0),
+            struct.unpack("12f", buffer2.read())
+        )        
+
+    def test_vertex_triangle_fan(self):
         vertices = np.array(
             [
                 0.0, 0.0,  # Initial triangle
@@ -173,6 +309,9 @@ class TestCase(unittest.TestCase):
                 0.0, 1.0,
             )
         )
+
+    # Geometry shader
+
 
     def gl_error(self, raise_exception=True):
         error = self.ctx.error
