@@ -135,8 +135,12 @@ class Program:
     def geometry_input(self) -> int:
         '''
             int: The geometry input primitive.
+
             The GeometryShader's input primitive if the GeometryShader exists.
             The geometry input primitive will be used for validation.
+            (from ``layout(input_primitive) in;``)
+
+            This can only be ``POINTS``, ``LINES``, ``LINES_ADJACENCY``, ``TRIANGLES``, ``TRIANGLE_ADJACENCY``.
         '''
 
         return self._geom[0]
@@ -145,7 +149,10 @@ class Program:
     def geometry_output(self) -> int:
         '''
             int: The geometry output primitive.
+
             The GeometryShader's output primitive if the GeometryShader exists.
+            This can only be ``POINTS``, ``LINE_STRIP`` and ``TRIANGLE_STRIP``
+            (from ``layout(output_primitive​, max_vertices = vert_count) out;``)
         '''
 
         return self._geom[1]
@@ -154,7 +161,9 @@ class Program:
     def geometry_vertices(self) -> int:
         '''
             int: The maximum number of vertices that
+
             the geometry shader will output.
+            (from ``layout(output_primitive​, max_vertices = vert_count) out;``)
         '''
 
         return self._geom[2]

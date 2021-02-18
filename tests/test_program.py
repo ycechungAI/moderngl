@@ -46,6 +46,44 @@ class TestCase(unittest.TestCase):
         self.assertIsInstance(program['pos'], moderngl.Uniform)
         self.assertIsInstance(program['scale'], moderngl.Uniform)
 
+    def test_geo_input_output_primitive(self):
+        """Test detection of all geo shader input/output primitives types"""
+        input_types = [
+            ("points", moderngl.POINTS),
+            ("lines", moderngl.LINES),
+            ("lines_adjacency", moderngl.LINES_ADJACENCY),
+            ("triangles", moderngl.TRIANGLES),
+            ("triangles_adjacency", moderngl.TRIANGLES_ADJACENCY),
+        ]
+        output_types = [
+            ("points", moderngl.POINTS),
+            ("line_strip", moderngl.LINES),
+            ("triangle_strip", moderngl.TRIANGLES),
+        ]
+
+        for out_name, out_type in output_types:
+            for in_name, in_type in input_types:
+                p = self.ctx.program(
+                    vertex_shader="""
+                    #version 330
+                    void main() {
+                        gl_Position = vec4(1.0);
+                    }
+                    """,
+                    geometry_shader=(
+                        "#version 330\n"
+                        f"layout({in_name}) in;\n"
+                        f"layout({out_name}, max_vertices=6) out;\n"
+                        "void main() {\n"
+                        "    gl_Position = vec4(1.0);\n"
+                        "    EmitVertex();\n"
+                        "    EndPrimitive();\n"
+                        "}\n"
+                    ),
+                )
+                self.assertEqual(p.geometry_input, in_type)
+                self.assertEqual(p.geometry_output, out_type, msg=f"input: {in_name}, output: {out_name}")
+
 
 if __name__ == '__main__':
     unittest.main()

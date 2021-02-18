@@ -326,22 +326,17 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 				break;
 		}
 
-		// Only a few primitives are supported in geo shader output in transform feedback
-		// points = GL_POINTS, line_strip = GL_LINES, triangle_strip = GL_TRIANGLES
-		program->geometry_output_feedback = -1;
-
 		switch (geometry_out) {
 			case GL_TRIANGLES:
 				program->geometry_output = GL_TRIANGLES;
 				break;
 
 			case GL_TRIANGLE_STRIP:
-				program->geometry_output = GL_TRIANGLE_STRIP;
-				program->geometry_output_feedback = GL_TRIANGLES;
+				program->geometry_output = GL_TRIANGLES;
 				break;
 
 			case GL_TRIANGLE_FAN:
-				program->geometry_output = GL_TRIANGLE_FAN;
+				program->geometry_output = GL_TRIANGLES;
 				break;
 
 			case GL_LINES:
@@ -349,33 +344,31 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 				break;
 
 			case GL_LINE_STRIP:
-				program->geometry_output = GL_LINE_STRIP;
-				program->geometry_output_feedback = GL_LINE;
+				program->geometry_output = GL_LINES;
 				break;
 
 			case GL_LINE_LOOP:
-				program->geometry_output = GL_LINE_LOOP;
+				program->geometry_output = GL_LINES;
 				break;
 
 			case GL_POINTS:
 				program->geometry_output = GL_POINTS;
-				program->geometry_output_feedback = GL_POINTS;
 				break;
 
 			case GL_LINE_STRIP_ADJACENCY:
-				program->geometry_output = GL_LINE_STRIP_ADJACENCY;
+				program->geometry_output = GL_LINES;
 				break;
 
 			case GL_LINES_ADJACENCY:
-				program->geometry_output = GL_LINES_ADJACENCY;
+				program->geometry_output = GL_LINES;
 				break;
 
 			case GL_TRIANGLE_STRIP_ADJACENCY:
-				program->geometry_output = GL_TRIANGLE_STRIP_ADJACENCY;
+				program->geometry_output = GL_TRIANGLES;
 				break;
 
 			case GL_TRIANGLES_ADJACENCY:
-				program->geometry_output = GL_TRIANGLES_ADJACENCY;
+				program->geometry_output = GL_TRIANGLES;
 				break;
 
 			default:
@@ -386,7 +379,6 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 	} else {
 		program->geometry_input = -1;
 		program->geometry_output = -1;
-		program->geometry_output_feedback = -1;
 		program->geometry_vertices = 0;
 	}
 

@@ -181,8 +181,6 @@ struct MGLProgram {
 
 	int geometry_input;
 	int geometry_output;
-	// Output primitive in transform feedbacks with geo shader
-	int geometry_output_feedback;
 
 	int program_obj;
 

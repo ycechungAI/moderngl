@@ -375,17 +375,85 @@ PyObject * MGLVertexArray_transform(MGLVertexArray * self, PyObject * args) {
 		instances = self->num_instances;
 	}
 
-	const GLMethods & gl = self->context->gl;
+	int output_mode = -1;
 
-	// If geo shaders is the output we need to feedback with the output primitive type.
-	// This is limited to GL_POINTS, GL_LINES, GL_TRIANGLES
-	int output_mode = mode;
+	// If a geo shader is present we need to sanity check the the rendering mode
 	if (self->program->geometry_output > -1) {
-		output_mode = self->program->geometry_output_feedback;
-		if (output_mode == -1) {
-			MGLError_Set("Geometry shader output is limited to points, line_strip and triangle_strip for geometry shader transforms");
+		output_mode = self->program->geometry_output;
+
+		// The rendering mode must match the output type in the geometry shader
+		// points, lines, lines_adjacency, triangles, triangles_adjacency
+		switch (self->program->geometry_input)
+		{
+		case GL_POINTS:
+			if (mode != GL_POINTS) {
+				MGLError_Set("Geometry shader expects POINTS as input. Change the transform mode.");
+				return 0;
+			}
+			mode = GL_POINTS;
+			break;
+		case GL_LINES:
+			if(mode != GL_LINES && mode != GL_LINE_STRIP) {
+				MGLError_Set("Geometry shader expects LINES or LINE_STRIP as input. Change the rendering mode.");
+				return 0;
+			}
+			mode = GL_LINES;
+			break;
+		case GL_LINES_ADJACENCY:
+			if(mode != GL_LINES_ADJACENCY && mode != GL_LINE_STRIP_ADJACENCY) {
+				MGLError_Set("Geometry shader expects LINES_ADJACENCY or LINE_STRIP_ADJACENCY as input. Change the rendering mode.");
+				return 0;
+			}
+			mode = GL_LINES_ADJACENCY;
+			break;
+		case GL_TRIANGLES:
+			if(mode != GL_TRIANGLES && mode != GL_TRIANGLE_STRIP && mode != GL_TRIANGLE_FAN) {
+				MGLError_Set("Geometry shader expects GL_TRIANGLES, GL_TRIANGLE_STRIP or GL_TRIANGLE_FAN as input. Change the rendering mode.");
+				return 0;
+			}
+			mode = GL_TRIANGLES;
+			break;
+		case GL_TRIANGLES_ADJACENCY:
+			if(mode != GL_TRIANGLES_ADJACENCY && mode != GL_TRIANGLE_STRIP_ADJACENCY) {
+				MGLError_Set("Geometry shader expects GL_TRIANGLES_ADJACENCY or GL_TRIANGLE_STRIP_ADJACENCY as input. Change the rendering mode.");
+				return 0;
+			}
+			mode = GL_TRIANGLES_ADJACENCY;
+			break;
+		default:
+			MGLError_Set("Unexpected geometry shader input mode: %d", self->program->geometry_input);
+			return 0;
+			break;
+		}
+	} else {
+		// If no geometry shader is present we need to determine the output mode by looking at the input
+		switch (mode)
+		{
+		case GL_POINTS:
+			output_mode = GL_POINTS;
+			break;
+		case GL_LINES:
+		case GL_LINE_LOOP:
+		case GL_LINE_STRIP:
+		case GL_LINES_ADJACENCY:
+		case GL_LINE_STRIP_ADJACENCY:
+			output_mode = GL_LINES;
+			break;
+		case GL_TRIANGLES:
+		case GL_TRIANGLE_STRIP:
+		case GL_TRIANGLE_FAN:
+		case GL_TRIANGLES_ADJACENCY:
+		case GL_TRIANGLE_STRIP_ADJACENCY:
+			output_mode = GL_TRIANGLES;
+			break;
+		default:
+			MGLError_Set("Primitive mode not supported: %d", mode);
+			return 0;
+			break;
 		}
 	}
+
+	const GLMethods & gl = self->context->gl;
 
 	gl.UseProgram(self->program->program_obj);
 	gl.BindVertexArray(self->vertex_array_obj);
