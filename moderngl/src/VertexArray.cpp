@@ -381,7 +381,7 @@ PyObject * MGLVertexArray_transform(MGLVertexArray * self, PyObject * args) {
 	if (self->program->geometry_output > -1) {
 		output_mode = self->program->geometry_output;
 
-		// The rendering mode must match the output type in the geometry shader
+		// The rendering mode must match the input type in the geometry shader
 		// points, lines, lines_adjacency, triangles, triangles_adjacency
 		switch (self->program->geometry_input)
 		{
@@ -390,35 +390,30 @@ PyObject * MGLVertexArray_transform(MGLVertexArray * self, PyObject * args) {
 				MGLError_Set("Geometry shader expects POINTS as input. Change the transform mode.");
 				return 0;
 			}
-			mode = GL_POINTS;
 			break;
 		case GL_LINES:
-			if(mode != GL_LINES && mode != GL_LINE_STRIP) {
-				MGLError_Set("Geometry shader expects LINES or LINE_STRIP as input. Change the rendering mode.");
+			if(mode != GL_LINES && mode != GL_LINE_STRIP && mode != GL_LINE_LOOP && mode != GL_LINES_ADJACENCY) {
+				MGLError_Set("Geometry shader expects LINES, LINE_STRIP, GL_LINE_LOOP or GL_LINES_ADJACENCY as input. Change the rendering mode.");
 				return 0;
 			}
-			mode = GL_LINES;
 			break;
 		case GL_LINES_ADJACENCY:
 			if(mode != GL_LINES_ADJACENCY && mode != GL_LINE_STRIP_ADJACENCY) {
 				MGLError_Set("Geometry shader expects LINES_ADJACENCY or LINE_STRIP_ADJACENCY as input. Change the rendering mode.");
 				return 0;
 			}
-			mode = GL_LINES_ADJACENCY;
 			break;
 		case GL_TRIANGLES:
 			if(mode != GL_TRIANGLES && mode != GL_TRIANGLE_STRIP && mode != GL_TRIANGLE_FAN) {
 				MGLError_Set("Geometry shader expects GL_TRIANGLES, GL_TRIANGLE_STRIP or GL_TRIANGLE_FAN as input. Change the rendering mode.");
 				return 0;
 			}
-			mode = GL_TRIANGLES;
 			break;
 		case GL_TRIANGLES_ADJACENCY:
 			if(mode != GL_TRIANGLES_ADJACENCY && mode != GL_TRIANGLE_STRIP_ADJACENCY) {
 				MGLError_Set("Geometry shader expects GL_TRIANGLES_ADJACENCY or GL_TRIANGLE_STRIP_ADJACENCY as input. Change the rendering mode.");
 				return 0;
 			}
-			mode = GL_TRIANGLES_ADJACENCY;
 			break;
 		default:
 			MGLError_Set("Unexpected geometry shader input mode: %d", self->program->geometry_input);
