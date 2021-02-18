@@ -44,7 +44,7 @@ TRIANGLES_ADJACENCY = 0x000C
 #: These are special primitives that are expected to be used specifically with 
 #: geomtry shaders. These primitives give the geometry shader more vertices
 #: to work with for each input primitive. Data needs to be duplicated in buffers.
-TRIANGLE_STRIP_ADJACENCY = 0x000D0
+TRIANGLE_STRIP_ADJACENCY = 0x0000D
 #: primitive type can only be used when Tessellation is active. It is a primitive
 #: with a user-defined number of vertices, which is then tessellated based on the
 #: control and evaluation shaders into regular points, lines, or triangles, depending
