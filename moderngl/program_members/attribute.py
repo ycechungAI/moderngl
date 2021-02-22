@@ -1,3 +1,5 @@
+from typing import Any
+
 __all__ = ['Attribute']
 
 
@@ -10,12 +12,12 @@ class Attribute:
 
     def __init__(self):
         self.mglo = None   #: Internal representation for debug purposes only.
-        self._location = None
+        self._location: int = None
         self._array_length = None
         self._dimension = None
         self._shape = None
-        self._name = None
-        self.extra = None  #: Any - Attribute for storing user defined objects
+        self._name: str = None
+        self.extra: Any = None  #: Attribute for storing user defined objects
         raise TypeError()
 
     def __repr__(self):

@@ -1,8 +1,8 @@
 import logging
 import warnings
-from typing import Dict, Optional, Set, Tuple
+from typing import Any, Dict, Optional, Set, Tuple
 
-from moderngl.mgl import InvalidObject
+from moderngl.mgl import InvalidObject  # type: ignore
 from .buffer import Buffer
 from .compute_shader import ComputeShader
 from .conditional_render import ConditionalRender
@@ -709,7 +709,7 @@ class Context:
         return self._extensions
 
     @property
-    def info(self) -> Dict[str, object]:
+    def info(self) -> Dict[str, Any]:
         '''
             dict: OpenGL Limits and information about the context
 

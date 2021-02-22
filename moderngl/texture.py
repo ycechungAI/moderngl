@@ -2,7 +2,7 @@ import logging
 from typing import Tuple
 
 from .buffer import Buffer
-from moderngl.mgl import InvalidObject
+from moderngl.mgl import InvalidObject  # type: ignore
 
 __all__ = ['Texture',
            'NEAREST', 'LINEAR', 'NEAREST_MIPMAP_NEAREST', 'LINEAR_MIPMAP_NEAREST', 'NEAREST_MIPMAP_LINEAR',
@@ -70,7 +70,10 @@ class Texture:
         raise TypeError()
 
     def __repr__(self):
-        return '<Texture: %d>' % self.glo
+        if hasattr(self, '_glo'):
+            return '<Texture: %d>' % self._glo
+        else:
+            return '<Texture: INCOMPLETE>'
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
@@ -139,6 +142,10 @@ class Texture:
 
         return self.mglo.filter
 
+    @filter.setter
+    def filter(self, value):
+        self.mglo.filter = value
+
     @property
     def anisotropy(self) -> float:
         '''
@@ -158,10 +165,6 @@ class Texture:
     @anisotropy.setter
     def anisotropy(self, value):
         self.mglo.anisotropy = value
-
-    @filter.setter
-    def filter(self, value):
-        self.mglo.filter = value
 
     @property
     def swizzle(self) -> str:

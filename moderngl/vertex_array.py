@@ -1,4 +1,8 @@
-from typing import Tuple
+from typing import Tuple, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .program import Program
+    from .buffer import Buffer
 
 __all__ = ['VertexArray',
            'POINTS', 'LINES', 'LINE_LOOP', 'LINE_STRIP', 'TRIANGLES', 'TRIANGLE_STRIP', 'TRIANGLE_FAN',
@@ -88,7 +92,7 @@ class VertexArray:
         return id(self)
 
     @property
-    def program(self) -> 'Program':
+    def program(self) -> Program:
         '''
             Program: The program assigned to the VertexArray.
             The program used when rendering or transforming primitives.
@@ -97,7 +101,7 @@ class VertexArray:
         return self._program
 
     @property
-    def index_buffer(self) -> 'Buffer':
+    def index_buffer(self) -> Buffer:
         '''
             Buffer: The index buffer if the index_buffer is set, otherwise ``None``.
         '''

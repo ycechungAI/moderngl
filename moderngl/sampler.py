@@ -28,6 +28,7 @@ class Sampler:
         self._glo = None
         self.ctx = None  #: The context this object belongs to
         self.extra = None  #: Any - Attribute for storing user defined objects
+        self.texture = None
         raise TypeError()
 
     def __hash__(self) -> int:

@@ -1,10 +1,13 @@
 import logging
-from typing import Dict, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union, TYPE_CHECKING
 
-from moderngl.mgl import InvalidObject
+from moderngl.mgl import InvalidObject  # type: ignore
 from .buffer import Buffer
 from .renderbuffer import Renderbuffer
 from .texture import Texture
+
+if TYPE_CHECKING:
+    from .context import Context
 
 __all__ = ['Framebuffer']
 
@@ -26,10 +29,10 @@ class Framebuffer:
         self._color_attachments = None
         self._depth_attachment = None
         self._size = (None, None)
-        self._samples = None
-        self._glo = None
-        self.ctx = None  #: The context this object belongs to
-        self.extra = None  #: Any - Attribute for storing user defined objects
+        self._samples: int = None
+        self._glo: int = None
+        self.ctx: Context = None  #: The context this object belongs to
+        self.extra: Any = None  #: Attribute for storing user defined objects
         raise TypeError()
 
     def __repr__(self):
