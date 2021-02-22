@@ -282,7 +282,7 @@ class TestCase(unittest.TestCase):
 
         prog = self.ctx.program(vertex_shader=
             """
-            #version 130
+            #version 330
             in vec2 in_vert;
             out vec2 out_vert;
             void main(void) {
