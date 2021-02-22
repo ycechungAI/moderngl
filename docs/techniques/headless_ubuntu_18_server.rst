@@ -27,12 +27,9 @@ The libraries we are going to interact with has the following locations::
     /usr/lib/x86_64-linux-gnu/libX11.so.6
     /usr/lib/x86_64-linux-gnu/libEGL.so.1
 
-Double check what library versions you actually have installed
-and make modifications to what versions we refer to below.
-moderngl will attempt to load ``libGL.so``, ``libX11.so`` and ``libEGL.so``
-by default.
-Optionally you can create symlinks or use python to locate the desired
-lib files. For simplicity we will be using the exact library names.
+Double check that you have these libraries installed. ModernGL
+through the glcontext library will use ``ctype.find_library``
+to locate the latest installed version.
 
 Before we can create a context we to run a virtual display::
 
@@ -47,6 +44,7 @@ Now we can create a context with x11 or egl:
     import moderngl
     ctx = moderngl.create_context(
         standalone=True,
+        # These are OPTIONAL if you want to load a specific version
         libgl='libGL.so.1',
         libx11='libX11.so.6',
     )
@@ -56,6 +54,7 @@ Now we can create a context with x11 or egl:
     ctx = moderngl.create_context(
         standalone=True,
         backend='egl',
+        # These are OPTIONAL if you want to load a specific version
         libgl='libGL.so.1',
         libegl='libEGL.so.1',
     )
