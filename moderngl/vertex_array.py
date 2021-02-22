@@ -92,7 +92,7 @@ class VertexArray:
         return id(self)
 
     @property
-    def program(self) -> Program:
+    def program(self) -> 'Program':
         '''
             Program: The program assigned to the VertexArray.
             The program used when rendering or transforming primitives.
@@ -101,7 +101,7 @@ class VertexArray:
         return self._program
 
     @property
-    def index_buffer(self) -> Buffer:
+    def index_buffer(self) -> 'Buffer':
         '''
             Buffer: The index buffer if the index_buffer is set, otherwise ``None``.
         '''
