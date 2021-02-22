@@ -53,6 +53,7 @@ Methods
 Attributes
 ----------
 
+.. autoattribute:: Context.gc_mode
 .. autoattribute:: Context.line_width
 .. autoattribute:: Context.point_size
 .. autoattribute:: Context.depth_func

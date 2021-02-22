@@ -1,10 +1,14 @@
+import logging
 from typing import Dict, Tuple, Union
 
+from moderngl.mgl import InvalidObject
 from .buffer import Buffer
 from .renderbuffer import Renderbuffer
 from .texture import Texture
 
 __all__ = ['Framebuffer']
+
+LOG = logging.getLogger(__name__)
 
 
 class Framebuffer:
@@ -29,13 +33,27 @@ class Framebuffer:
         raise TypeError()
 
     def __repr__(self):
-        return '<Framebuffer: %d>' % self.glo
+        if hasattr(self, '_glo'):
+            return '<Framebuffer: %d>' % self._glo
+        else:
+            return "<Framebuffer: INCOMPLETE>"
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __del__(self):
+        LOG.debug("Framebuffer.__del__ %s", self)
+        # We should never destroy the default framebuffer
+        if hasattr(self, '_glo') and self._glo == 0:
+            LOG.debug("Attempting to deleted the default framebuffer")
+            return
+
+        # If object was initialized properly (ctx present) and gc_mode is auto
+        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+            self.release()
 
     @property
     def viewport(self) -> Tuple[int, int, int, int]:
@@ -291,5 +309,6 @@ class Framebuffer:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()
+        LOG.debug("Framebuffer.release(): %s", self)
+        if not isinstance(self.mglo, InvalidObject):
+            self.mglo.release()

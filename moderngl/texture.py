@@ -1,10 +1,14 @@
+import logging
 from typing import Tuple
 
 from .buffer import Buffer
+from moderngl.mgl import InvalidObject
 
 __all__ = ['Texture',
            'NEAREST', 'LINEAR', 'NEAREST_MIPMAP_NEAREST', 'LINEAR_MIPMAP_NEAREST', 'NEAREST_MIPMAP_LINEAR',
            'LINEAR_MIPMAP_LINEAR']
+
+LOG = logging.getLogger(__name__)
 
 #: Returns the value of the texture element that is nearest 
 #: (in Manhattan distance) to the specified texture coordinates. 
@@ -73,6 +77,11 @@ class Texture:
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __del__(self):
+        LOG.debug("Texture.__del__ %s", self)
+        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+            self.release()
 
     @property
     def repeat_x(self) -> bool:
@@ -446,5 +455,6 @@ class Texture:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()
+        LOG.debug("Texture.release() %s", self)
+        if not isinstance(self.mglo, InvalidObject):
+            self.mglo.release()
