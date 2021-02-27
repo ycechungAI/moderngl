@@ -672,8 +672,6 @@ void MGLProgram_Invalidate(MGLProgram * program) {
 		return;
 	}
 
-	// TODO: decref
-
 	const GLMethods & gl = program->context->gl;
 	gl.DeleteProgram(program->program_obj);
 

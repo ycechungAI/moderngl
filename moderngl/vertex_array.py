@@ -1,4 +1,8 @@
+import logging
+from moderngl.buffer import LOG
 from typing import Tuple, TYPE_CHECKING
+
+from moderngl.mgl import InvalidObject  # type: ignore
 
 if TYPE_CHECKING:
     from .program import Program
@@ -83,13 +87,21 @@ class VertexArray:
         raise TypeError()
 
     def __repr__(self):
-        return '<VertexArray: %d>' % self.glo
+        if hasattr(self, 'mglo'):
+            return '<VertexArray: %d>' % self.glo
+        else:
+            return '<VertexArray: INCOMPLETE>'
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __del__(self):
+        LOG.debug("VertexArray.__del__: %s", self)
+        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+            self.release()
 
     @property
     def program(self) -> 'Program':
@@ -259,5 +271,6 @@ class VertexArray:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()
+        LOG.debug("VertexArray.release: %s", self)
+        if not isinstance(self, InvalidObject) and hasattr(self, "ctx"):
+            self.mglo.release()

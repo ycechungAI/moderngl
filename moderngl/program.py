@@ -1,9 +1,13 @@
+import logging
 from typing import Tuple, Union, Generator
 
+from moderngl.mgl import InvalidObject  # type: ignore
 from .program_members import (Attribute, Subroutine, Uniform, UniformBlock,
                               Varying)
 
 __all__ = ['Program', 'detect_format']
+
+LOG = logging.getLogger(__name__)
 
 
 class Program:
@@ -56,6 +60,11 @@ class Program:
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __del__(self):
+        LOG.debug("Program.__del_: %s", self)
+        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+            self.release()
 
     def __getitem__(self, key) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
         """Get a member such as uniforms, uniform blocks, subroutines,
@@ -203,8 +212,9 @@ class Program:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()
+        LOG.debug("Program.release: %s", self)
+        if not isinstance(self, InvalidObject) and hasattr(self, "ctx"):
+            self.mglo.release()
 
 
 def detect_format(program, attributes, mode='mgl') -> str:

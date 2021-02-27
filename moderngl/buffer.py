@@ -31,7 +31,10 @@ class Buffer:
         raise TypeError()
 
     def __repr__(self):
-        return '<Buffer: %d>' % self.glo
+        if hasattr(self, "_glo"):
+            return '<Buffer: %d>' % self.glo
+        else:
+            return '<Buffer: INCOMPLETE>'
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
