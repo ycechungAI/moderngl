@@ -1,8 +1,8 @@
 import logging
 from typing import Tuple
 
-from .buffer import Buffer
 from moderngl.mgl import InvalidObject  # type: ignore
+from .buffer import Buffer
 
 __all__ = ['Texture',
            'NEAREST', 'LINEAR', 'NEAREST_MIPMAP_NEAREST', 'LINEAR_MIPMAP_NEAREST', 'NEAREST_MIPMAP_LINEAR',
@@ -71,9 +71,9 @@ class Texture:
 
     def __repr__(self):
         if hasattr(self, '_glo'):
-            return '<Texture: %d>' % self._glo
+            return f"<{self.__class__.__name__}: {self._glo}>"
         else:
-            return '<Texture: INCOMPLETE>'
+            return f"<{self.__class__.__name__}: INCOMPLETE>"
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
@@ -82,7 +82,7 @@ class Texture:
         return id(self)
 
     def __del__(self):
-        LOG.debug("Texture.__del__ %s", self)
+        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
         if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
             self.release()
 
@@ -458,6 +458,6 @@ class Texture:
         '''
             Release the ModernGL object.
         '''
-        LOG.debug("Texture.release() %s", self)
+        LOG.debug(f"{self.__class__.__name__}.release() {self}")
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()

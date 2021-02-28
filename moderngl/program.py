@@ -42,7 +42,10 @@ class Program:
         raise TypeError()
 
     def __repr__(self):
-        return '<Program: %d>' % self._glo
+        if hasattr(self, '_glo'):
+            return f"<{self.__class__.__name__}: {self._glo}>"
+        else:
+            return f"<{self.__class__.__name__}: INCOMPLETE>"
 
     def __eq__(self, other) -> bool:
         """Compares two programs opengl names (mglo).
@@ -62,7 +65,7 @@ class Program:
         return id(self)
 
     def __del__(self):
-        LOG.debug("Program.__del_: %s", self)
+        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
         if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
             self.release()
 
@@ -212,8 +215,8 @@ class Program:
         '''
             Release the ModernGL object.
         '''
-        LOG.debug("Program.release: %s", self)
-        if not isinstance(self, InvalidObject) and hasattr(self, "ctx"):
+        LOG.debug(f"{self.__class__.__name__}.release() {self}")
+        if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
 
 

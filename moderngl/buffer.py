@@ -31,10 +31,10 @@ class Buffer:
         raise TypeError()
 
     def __repr__(self):
-        if hasattr(self, "_glo"):
-            return '<Buffer: %d>' % self.glo
+        if hasattr(self, '_glo'):
+            return f"<{self.__class__.__name__}: {self._glo}>"
         else:
-            return '<Buffer: INCOMPLETE>'
+            return f"<{self.__class__.__name__}: INCOMPLETE>"
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
@@ -43,7 +43,7 @@ class Buffer:
         return id(self)
 
     def __del__(self):
-        LOG.debug("Buffer.__del__ %s", self)
+        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
         if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
             self.release()
 
@@ -268,7 +268,7 @@ class Buffer:
         '''
             Release the ModernGL object.
         '''
-        LOG.debug("Buffer.release() %s", self)
+        LOG.debug(f"{self.__class__.__name__}.release() {self}")
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
 

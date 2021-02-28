@@ -269,7 +269,7 @@ class Context:
         raise TypeError()
 
     def __repr__(self):
-        return '<Context {} version_code={}>'.format(id(self), self.version_code)
+        return f"<Context {id(self)} version_code={self.version_code}>"
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
@@ -278,7 +278,7 @@ class Context:
         return id(self)
 
     def __del__(self):
-        LOG.info("Context.__del__ %s", self)
+        LOG.info(f"{self.__class__.__name__}.__del__ %s", self)
         self.release()
 
     @property
@@ -1612,7 +1612,7 @@ class Context:
 
             Standalone contexts can normally be released.
         '''
-        LOG.debug("Contex.release() %s", self)
+        LOG.debug(f"{self.__class__.__name__}.release() {self}")
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
 
