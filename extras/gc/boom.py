@@ -15,6 +15,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 ctx = moderngl.create_context(standalone=True)
 ctx.gc_mode = "auto"
+print(ctx)
 
 
 def ref_count():
@@ -27,9 +28,31 @@ def test_texture():
     texture = ctx.texture((1000, 1000), 4, data=np.random.randint(0, 255, 1000 * 1000 * 4, dtype="u1"))
 
 
+def test_texture_array():
+    texture = ctx.texture_array((100, 100, 100), 4, data=np.random.randint(0, 255, 100 * 100 * 100 * 4, dtype="u1"))
+
+
+def test_texture_array_failure():
+    texture = ctx.texture_array((100, 100, 10), 4, data=np.random.randint(0, 255, 100 * 100 * 100 * 4, dtype="u1"))
+
+
+def test_texture_array_mass_create():
+    for _ in range(10_000):
+        texture = ctx.texture_array((100, 100, 100), 4, data=np.random.randint(0, 255, 100 * 100 * 100 * 4, dtype="u1"))
+
+
 def test_texture_mass_create():
     for _ in range(100):
         texture = ctx.texture((1000, 1000), 4, data=np.random.randint(0, 255, 1000 * 1000 * 4, dtype="u1"))
+
+
+def test_texture_3d():
+    texture = ctx.texture3d((100, 100, 100), 4, data=np.random.randint(0, 255, 100 * 100 * 100 * 4, dtype="u1"))
+
+
+def test_texture_3d_mass_create():
+    for _ in range(1_000):
+        texture = ctx.texture3d((100, 100, 100), 4, data=np.random.randint(0, 255, 100 * 100 * 100 * 4, dtype="u1"))
 
 
 def test_framebuffer():
@@ -93,7 +116,7 @@ def test_vertex_array_creation_failure():
 
 def test_vertex_array_mass_create():
     # print(c_long.from_address(id(prog)).value)
-    for i in range(10_000):
+    for i in range(1_000):
         prog = ctx.program(**prog_src)
         vbo = ctx.buffer(reserve=1_000_000)
         ibo = ctx.buffer(reserve=1_000_000)
@@ -103,14 +126,21 @@ def test_vertex_array_mass_create():
 
 
 # ref_count()
-# test_texture()
+test_texture()
+
+test_texture_array()
+# test_texture_array_failure()
+# test_texture_array_mass_create()
+
+test_texture_3d()
+# test_texture_3d_mass_create()
 # test_texture_mass_create()
-# test_framebuffer()
-# test_buffer()
+test_framebuffer()
+test_buffer()
 # test_buffer_creation_failed()
 # test_buffer_mass_create()
 # test_query_mass_create()
-# test_vertex_array()
+test_vertex_array()
 # test_vertex_array_creation_failure()
-test_vertex_array_mass_create()
+# test_vertex_array_mass_create()
 
