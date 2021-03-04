@@ -206,7 +206,7 @@ class VertexArray:
         '''
 
         if mode is None:
-            mode = TRIANGLES
+            mode = self._mode
 
         if self.scope:
             with self.scope:
@@ -231,7 +231,7 @@ class VertexArray:
         '''
 
         if mode is None:
-            mode = TRIANGLES
+            mode = self._mode
 
         if self.scope:
             with self.scope:
@@ -258,7 +258,7 @@ class VertexArray:
         '''
 
         if mode is None:
-            mode = POINTS
+            mode = self._mode
 
         if self.scope:
             with self.scope:

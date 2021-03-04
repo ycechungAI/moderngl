@@ -1188,7 +1188,8 @@ class Context:
             Keyword Args:
                 index_buffer (Buffer): An index buffer (optional)
                 index_element_size (int): byte size of each index element, 1, 2 or 4.
-                skip_errors (bool): Ignore skip_errors varyings.
+                skip_errors (bool): Ignore errors during creation
+                mode (int): The default draw mode (for example: ``TRIANGLES``)
 
             Returns:
                 :py:class:`VertexArray` object
@@ -1199,7 +1200,7 @@ class Context:
 
     def _vertex_array(self, program, content,
                       index_buffer=None, index_element_size=4, *,
-                      skip_errors=False) -> 'VertexArray':
+                      skip_errors=False, mode=None) -> 'VertexArray':
         '''
             Create a :py:class:`VertexArray` object.
 
@@ -1212,6 +1213,7 @@ class Context:
             Keyword Args:
                 index_element_size (int): byte size of each index element, 1, 2 or 4.
                 skip_errors (bool): Ignore skip_errors varyings.
+                mode (int): The default draw mode (for example: ``TRIANGLES``)
 
             Returns:
                 :py:class:`VertexArray` object
@@ -1231,14 +1233,17 @@ class Context:
         res._index_buffer = index_buffer
         res._content = content
         res._index_element_size = index_element_size
-        res._mode = self.POINTS if program.is_transform else self.TRIANGLES
+        if mode is not None:
+            res._mode = mode
+        else:
+            res._mode = self.POINTS if program.is_transform else self.TRIANGLES
         res.ctx = self
         res.extra = None
         res.scope = None
         return res
 
     def simple_vertex_array(self, program, buffer, *attributes,
-                            index_buffer=None, index_element_size=4) -> 'VertexArray':
+                            index_buffer=None, index_element_size=4, mode=None) -> 'VertexArray':
         '''
             Create a :py:class:`VertexArray` object.
 
@@ -1254,6 +1259,7 @@ class Context:
             Keyword Args:
                 index_element_size (int): byte size of each index element, 1, 2 or 4.
                 index_buffer (Buffer): An index buffer.
+                mode (int): The default draw mode (for example: ``TRIANGLES``)
 
             Returns:
                 :py:class:`VertexArray` object
@@ -1263,7 +1269,7 @@ class Context:
             raise SyntaxError('Change simple_vertex_array to vertex_array')
 
         content = [(buffer, detect_format(program, attributes)) + attributes]
-        return self._vertex_array(program, content, index_buffer, index_element_size)
+        return self._vertex_array(program, content, index_buffer, index_element_size, mode=mode)
 
     def program(self, *, vertex_shader, fragment_shader=None, geometry_shader=None,
                 tess_control_shader=None, tess_evaluation_shader=None, varyings=()) -> 'Program':
