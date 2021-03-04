@@ -33,6 +33,7 @@ class TestCase(unittest.TestCase):
 
         self.assertIs(program.geometry_input, None)
         self.assertIs(program.geometry_output, None)
+        self.assertIs(program.is_transform, True)
 
         self.assertIn('vert', program)
         self.assertIn('vert_length', program)
@@ -56,6 +57,7 @@ class TestCase(unittest.TestCase):
         )
 
         vao = self.ctx.vertex_array(program, [(buffer, "2f", "in_pos"),])
+        self.assertIs(vao.mode, moderngl.POINTS)
         buffer2 = self.ctx.buffer(reserve=buffer.size)
         vao.transform(buffer2, mode=self.ctx.POINTS)
         self.assertEqual(data, struct.unpack(f"{len(data)}f", buffer.read()))

@@ -75,6 +75,7 @@ class TestCase(unittest.TestCase):
         vbo1 = self.ctx.buffer(np.array([4.0, 2.0, 7.5, 1.8], dtype='f4').tobytes())
         vbo2 = self.ctx.buffer(reserve=vbo1.size)
         vao = self.ctx.simple_vertex_array(prog, vbo1, 'in_vert')
+        self.assertEqual(vao.mode, moderngl.POINTS)
         vao.transform(vbo2, moderngl.POINTS)
         res = np.frombuffer(vbo2.read(), dtype='f4')
         np.testing.assert_almost_equal(res, [4.0, 2.0, 7.5, 1.8])

@@ -41,6 +41,7 @@ class TestCase(unittest.TestCase):
         self.assertIn('vert', program)
         self.assertIn('pos', program)
         self.assertIn('scale', program)
+        self.assertIs(program.is_transform, False)
 
         self.assertIsInstance(program['vert'], moderngl.Attribute)
         self.assertIsInstance(program['pos'], moderngl.Uniform)
