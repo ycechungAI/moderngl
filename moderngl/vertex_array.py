@@ -73,14 +73,16 @@ class VertexArray:
         to create one.
     '''
 
-    __slots__ = ['mglo', '_program', '_index_buffer', '_index_element_size', '_glo', 'ctx', 'extra', 'scope']
+    __slots__ = ['mglo', '_program', '_index_buffer', '_content', '_index_element_size', '_glo', '_mode', 'ctx', 'extra', 'scope']
 
     def __init__(self):
         self.mglo = None  #: Internal representation for debug purposes only.
         self._program = None
         self._index_buffer = None
+        self._content = None
         self._index_element_size = None
         self._glo = None
+        self._mode = None  #: int: The default rendering mode
         self.ctx = None  #: The context this object belongs to
         self.extra = None  #: Any - Attribute for storing user defined objects
         self.scope = None  #: The :py:class:`moderngl.Scope`.
@@ -102,6 +104,22 @@ class VertexArray:
         LOG.debug("VertexArray.__del__: %s", self)
         if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
             self.release()
+
+    @property
+    def mode(self) -> int:
+        '''
+            int: Get or set the default rendering mode.
+            This value is used when ``mode`` is not passed in rendering calls.
+
+            Examples::
+
+                vao.mode = moderngl.TRIANGLE_STRIPS
+        '''
+        return self._mode
+
+    @mode.setter
+    def mode(self, value: int):
+        self._mode = value
 
     @property
     def program(self) -> 'Program':

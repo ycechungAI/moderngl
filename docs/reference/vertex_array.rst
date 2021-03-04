@@ -33,6 +33,7 @@ Methods
 Attributes
 ----------
 
+.. autoattribute:: VertexArray.mode
 .. autoattribute:: VertexArray.program
 .. autoattribute:: VertexArray.index_buffer
 .. autoattribute:: VertexArray.index_element_size

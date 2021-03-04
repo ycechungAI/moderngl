@@ -29,7 +29,7 @@ class Program:
         performance consider using :py:class:`moderngl.Scope`.
     '''
 
-    __slots__ = ['mglo', '_members', '_subroutines', '_geom', '_glo', 'ctx', 'extra']
+    __slots__ = ['mglo', '_members', '_subroutines', '_geom', '_glo', '_is_transform', 'ctx', 'extra']
 
     def __init__(self):
         self.mglo = None  #: Internal representation for debug purposes only.
@@ -37,6 +37,7 @@ class Program:
         self._subroutines = None
         self._geom = (None, None, None)
         self._glo = None
+        self._is_transform = None  #: bool: If this is a transform program
         self.ctx = None  #: The context this object belongs to
         self.extra = None  #: Any - Attribute for storing user defined objects
         raise TypeError()
@@ -142,6 +143,11 @@ class Program:
 
         """
         yield from self._members
+
+    @property
+    def is_transform(self) -> bool:
+        """bool: If this is a tranform program (no fragment shader)"""
+        return self._is_transform
 
     @property
     def geometry_input(self) -> int:

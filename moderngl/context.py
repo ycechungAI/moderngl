@@ -1152,15 +1152,41 @@ class Context:
         '''
             Create a :py:class:`VertexArray` object.
 
+            The vertex array describes how buffers are read by a shader program.
+            We need to supply buffer formats and attributes names. The attribute names
+            are defined by the user in the glsl code and can be anything.
+
+            Examples::
+
+                # Empty vertext array (no attribute input)
+                vao = ctx.vertex_array(program)
+
+                # Simple version with a single buffer
+                vao = ctx.vertex_array(program, buffer, "in_position", "in_normal")
+                vao = ctx.vertex_array(program, buffer, "in_position", "in_normal", index_buffer=ibo)
+
+                # Multiple buffers
+                vao = ctx.vertex_array(program, [
+                    (buffer1, '3f', 'in_position'),
+                    (buffer2, '3f', 'in_normal'),
+                ])
+                vao = ctx.vertex_array(program, [
+                        (buffer1, '3f', 'in_position'),
+                        (buffer2, '3f', 'in_normal'),
+                    ],
+                    index_buffer=ibo,
+                    index_element_size=2,  # 16 bit / 'u2' index buffer
+                )
+
             This method also supports arguments for :py:meth:`Context.simple_vertex_array`.
 
             Args:
-                program (Program): The program used when rendering.
+                program (Program): The program used when rendering
                 content (list): A list of (buffer, format, attributes).
                                 See :ref:`buffer-format-label`.
-                index_buffer (Buffer): An index buffer.
 
             Keyword Args:
+                index_buffer (Buffer): An index buffer (optional)
                 index_element_size (int): byte size of each index element, 1, 2 or 4.
                 skip_errors (bool): Ignore skip_errors varyings.
 
@@ -1170,7 +1196,6 @@ class Context:
         if len(args) > 2 and type(args[1]) is Buffer:
             return self.simple_vertex_array(*args, **kwargs)
         return self._vertex_array(*args, **kwargs)
-
 
     def _vertex_array(self, program, content,
                       index_buffer=None, index_element_size=4, *,
@@ -1194,15 +1219,19 @@ class Context:
 
         members = program._members
         index_buffer_mglo = None if index_buffer is None else index_buffer.mglo
-        content = tuple((a.mglo, b) + tuple(getattr(members.get(x), 'mglo', None)
-                        for x in c) for a, b, *c in content)
+        mgl_content = tuple((a.mglo, b) + tuple(getattr(members.get(x), 'mglo', None)
+            for x in c) for a, b, *c in content)
 
         res = VertexArray.__new__(VertexArray)
-        res.mglo, res._glo = self.mglo.vertex_array(program.mglo, content, index_buffer_mglo,
-                                                    index_element_size, skip_errors)
+        res.mglo, res._glo = self.mglo.vertex_array(
+            program.mglo, mgl_content, index_buffer_mglo,
+            index_element_size, skip_errors,
+        )
         res._program = program
         res._index_buffer = index_buffer
+        res._content = content
         res._index_element_size = index_element_size
+        res._mode = self.POINTS if program.is_transform else self.TRIANGLES
         res.ctx = self
         res.extra = None
         res.scope = None
@@ -1234,7 +1263,7 @@ class Context:
             raise SyntaxError('Change simple_vertex_array to vertex_array')
 
         content = [(buffer, detect_format(program, attributes)) + attributes]
-        return self.vertex_array(program, content, index_buffer, index_element_size)
+        return self._vertex_array(program, content, index_buffer, index_element_size)
 
     def program(self, *, vertex_shader, fragment_shader=None, geometry_shader=None,
                 tess_control_shader=None, tess_evaluation_shader=None, varyings=()) -> 'Program':
@@ -1293,6 +1322,7 @@ class Context:
             members[obj.name] = obj
 
         res._members = members
+        res._is_transform = fragment_shader is None
         res.ctx = self
         res.extra = None
         return res
