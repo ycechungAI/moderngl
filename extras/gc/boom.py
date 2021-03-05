@@ -152,6 +152,11 @@ def test_compute_shader_mass_create():
         time.sleep(0.001)
 
 
+def test_sampler_mass_create():
+    for i in range(100_000):
+        sampler = ctx.sampler()
+        time.sleep(.001)
+
 # ref_count()
 # test_texture()
 
@@ -164,7 +169,7 @@ def test_compute_shader_mass_create():
 # test_texture_3d_mass_create()
 
 # test_framebuffer()
-test_renderbuffer_mass_create()
+# test_renderbuffer_mass_create()
 
 # test_buffer()
 # test_buffer_creation_failed()
@@ -179,3 +184,5 @@ test_renderbuffer_mass_create()
 # test_compute_shader()
 # test_compute_shader_fail()
 # test_compute_shader_mass_create()
+
+test_sampler_mass_create()
