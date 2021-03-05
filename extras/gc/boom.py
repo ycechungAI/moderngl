@@ -13,9 +13,8 @@ import moderngl
 
 logging.basicConfig(level=logging.DEBUG)
 
-ctx = moderngl.create_context(standalone=True)
+ctx = moderngl.create_context(standalone=True, require=450)
 ctx.gc_mode = "auto"
-print(ctx)
 
 
 def ref_count():
@@ -125,22 +124,49 @@ def test_vertex_array_mass_create():
     time.sleep(4)
 
 
-# ref_count()
-test_texture()
+def test_compute_shader():
+    compute_shader = ctx.compute_shader('''
+        #version 430
+        layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+        void main() {
+        }
+    ''')
 
-test_texture_array()
+def test_compute_shader_fail():
+    compute_shader = ctx.compute_shader('''
+        #version 430
+        layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+        void main() {
+        }
+    ''')
+
+
+def test_compute_shader_mass_create():
+    for i in range(100_000):
+        test_compute_shader()
+        print(i)
+        time.sleep(0.001)
+
+
+# ref_count()
+# test_texture()
+
+# test_texture_array()
 # test_texture_array_failure()
 # test_texture_array_mass_create()
 
-test_texture_3d()
+# test_texture_3d()
 # test_texture_3d_mass_create()
 # test_texture_mass_create()
-test_framebuffer()
-test_buffer()
+# test_framebuffer()
+# test_buffer()
 # test_buffer_creation_failed()
 # test_buffer_mass_create()
 # test_query_mass_create()
-test_vertex_array()
+# test_vertex_array()
 # test_vertex_array_creation_failure()
 # test_vertex_array_mass_create()
 
+# test_compute_shader()
+# test_compute_shader_fail()
+test_compute_shader_mass_create()

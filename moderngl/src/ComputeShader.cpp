@@ -336,6 +336,7 @@ void MGLComputeShader_Invalidate(MGLComputeShader * compute_shader) {
 	// TODO: decref
 
 	const GLMethods & gl = compute_shader->context->gl;
+	gl.DeleteShader(compute_shader->shader_obj);
 	gl.DeleteProgram(compute_shader->program_obj);
 
 	Py_DECREF(compute_shader->context);
