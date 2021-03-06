@@ -154,6 +154,7 @@ PyObject * MGLContext_enable_direct(MGLContext * self, PyObject * args) {
 	}
 
 	self->gl.Enable(value);
+	Py_RETURN_NONE;
 }
 
 PyObject * MGLContext_disable_direct(MGLContext * self, PyObject * args) {
@@ -170,6 +171,7 @@ PyObject * MGLContext_disable_direct(MGLContext * self, PyObject * args) {
 	}
 
 	self->gl.Disable(value);
+	Py_RETURN_NONE;
 }
 
 PyObject * MGLContext_finish(MGLContext * self) {
