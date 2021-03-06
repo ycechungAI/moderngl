@@ -291,4 +291,7 @@ class VertexArray:
         '''
         LOG.debug("VertexArray.release: %s", self)
         if not isinstance(self, InvalidObject) and hasattr(self, "ctx"):
+            self._program = None
+            self._index_buffer = None
+            self._content = None
             self.mglo.release()
