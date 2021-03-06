@@ -120,6 +120,7 @@ PyObject * MGLContext_scope(MGLContext * self, PyObject * args) {
 			return 0;
 		}
 	}
+	Py_INCREF(scope);
 
 	return (PyObject *)scope;
 }
@@ -264,10 +265,15 @@ PyObject * MGLScope_end(MGLScope * self, PyObject * args) {
 	Py_RETURN_NONE;
 }
 
+PyObject * MGLScope_release(MGLScope * self) {
+	MGLScope_Invalidate(self);
+	Py_RETURN_NONE;
+}
+
 PyMethodDef MGLScope_tp_methods[] = {
 	{"begin", (PyCFunction)MGLScope_begin, METH_VARARGS, 0},
 	{"end", (PyCFunction)MGLScope_end, METH_VARARGS, 0},
-	// {"release", (PyCFunction)MGLScope_release, METH_NOARGS, 0},
+	{"release", (PyCFunction)MGLScope_release, METH_NOARGS, 0},
 	{0},
 };
 
@@ -321,11 +327,8 @@ void MGLScope_Invalidate(MGLScope * scope) {
 		return;
 	}
 
-	// TODO: decref
-
-	// const GLMethods & gl = scope->context->gl;
-
-	// TODO: release
+	Py_DECREF(scope->framebuffer);
+	Py_DECREF(scope->old_framebuffer);
 
 	Py_DECREF(scope->context);
 	Py_TYPE(scope) = &MGLInvalidObject_Type;

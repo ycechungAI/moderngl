@@ -1,9 +1,13 @@
+import logging
 from typing import Tuple, Union, Generator
 
+from moderngl.mgl import InvalidObject  # type: ignore
 from .program_members import (Attribute, Subroutine, Uniform, UniformBlock,
                               Varying)
 
 __all__ = ['Program', 'detect_format']
+
+LOG = logging.getLogger(__name__)
 
 
 class Program:
@@ -25,7 +29,7 @@ class Program:
         performance consider using :py:class:`moderngl.Scope`.
     '''
 
-    __slots__ = ['mglo', '_members', '_subroutines', '_geom', '_glo', 'ctx', 'extra']
+    __slots__ = ['mglo', '_members', '_subroutines', '_geom', '_glo', '_is_transform', 'ctx', 'extra']
 
     def __init__(self):
         self.mglo = None  #: Internal representation for debug purposes only.
@@ -33,12 +37,16 @@ class Program:
         self._subroutines = None
         self._geom = (None, None, None)
         self._glo = None
+        self._is_transform = None  #: bool: If this is a transform program
         self.ctx = None  #: The context this object belongs to
         self.extra = None  #: Any - Attribute for storing user defined objects
         raise TypeError()
 
     def __repr__(self):
-        return '<Program: %d>' % self._glo
+        if hasattr(self, '_glo'):
+            return f"<{self.__class__.__name__}: {self._glo}>"
+        else:
+            return f"<{self.__class__.__name__}: INCOMPLETE>"
 
     def __eq__(self, other) -> bool:
         """Compares two programs opengl names (mglo).
@@ -56,6 +64,11 @@ class Program:
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __del__(self):
+        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
+        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+            self.release()
 
     def __getitem__(self, key) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
         """Get a member such as uniforms, uniform blocks, subroutines,
@@ -132,6 +145,11 @@ class Program:
         yield from self._members
 
     @property
+    def is_transform(self) -> bool:
+        """bool: If this is a tranform program (no fragment shader)"""
+        return self._is_transform
+
+    @property
     def geometry_input(self) -> int:
         '''
             int: The geometry input primitive.
@@ -203,8 +221,9 @@ class Program:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()
+        LOG.debug(f"{self.__class__.__name__}.release() {self}")
+        if not isinstance(self.mglo, InvalidObject):
+            self.mglo.release()
 
 
 def detect_format(program, attributes, mode='mgl') -> str:

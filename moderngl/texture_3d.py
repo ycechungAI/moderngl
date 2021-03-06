@@ -1,8 +1,12 @@
+import logging
 from typing import Tuple
 
+from moderngl.mgl import InvalidObject  # type: ignore
 from .buffer import Buffer
 
 __all__ = ['Texture3D']
+
+LOG = logging.getLogger(__name__)
 
 
 class Texture3D:
@@ -30,13 +34,21 @@ class Texture3D:
         raise TypeError()
 
     def __repr__(self):
-        return '<Texture3D: %d>' % self.glo
+        if hasattr(self, '_glo'):
+            return f"<{self.__class__.__name__}: {self._glo}>"
+        else:
+            return f"<{self.__class__.__name__}: INCOMPLETE>"
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __del__(self):
+        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
+        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+            self.release()
 
     @property
     def repeat_x(self) -> bool:
@@ -311,5 +323,6 @@ class Texture3D:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()
+        LOG.debug(f"{self.__class__.__name__}.release() {self}")
+        if not isinstance(self.mglo, InvalidObject):
+            self.mglo.release()

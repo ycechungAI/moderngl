@@ -983,8 +983,6 @@ void MGLTexture_Invalidate(MGLTexture * texture) {
 		return;
 	}
 
-	// TODO: decref
-
 	const GLMethods & gl = texture->context->gl;
 	gl.DeleteTextures(1, (GLuint *)&texture->texture_obj);
 

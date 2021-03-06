@@ -15,7 +15,7 @@ VertexArray
 Create
 ------
 
-.. automethod:: Context.simple_vertex_array(program, buffer, *attributes, index_buffer=None, index_element_size=4) -> VertexArray
+.. automethod:: Context.simple_vertex_array(program, buffer, *attributes, index_buffer=None, index_element_size=4, mode=None) -> VertexArray
     :noindex:
 
 .. automethod:: Context.vertex_array(*args, **kwargs) -> VertexArray
@@ -33,6 +33,7 @@ Methods
 Attributes
 ----------
 
+.. autoattribute:: VertexArray.mode
 .. autoattribute:: VertexArray.program
 .. autoattribute:: VertexArray.index_buffer
 .. autoattribute:: VertexArray.index_element_size

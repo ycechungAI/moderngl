@@ -37,6 +37,7 @@ class TestCase(unittest.TestCase):
         cls.vao = cls.ctx.simple_vertex_array(prog, vbo, 'vert')
 
     def test_1(self):
+        self.assertEqual(self.vao.mode, moderngl.TRIANGLES)
         fbo = self.ctx.framebuffer(self.ctx.renderbuffer((16, 16)))
         pixels = struct.pack('16B', 255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 0, 0, 0, 255)
         texture = self.ctx.texture((2, 2), 4, pixels)

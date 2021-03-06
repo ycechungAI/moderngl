@@ -347,11 +347,10 @@ void MGLSampler_Invalidate(MGLSampler * sampler) {
 		return;
 	}
 
-	// TODO: decref
-
 	const GLMethods & gl = sampler->context->gl;
 	gl.DeleteSamplers(1, (GLuint *)&sampler->sampler_obj);
 
 	Py_TYPE(sampler) = &MGLInvalidObject_Type;
 	Py_DECREF(sampler);
+	Py_DECREF(sampler->context);
 }

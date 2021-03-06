@@ -1,7 +1,8 @@
-import os
+import logging
 import warnings
-from typing import Dict, Set, Tuple
+from typing import Any, Dict, Optional, Set, Tuple
 
+from moderngl.mgl import InvalidObject  # type: ignore
 from .buffer import Buffer
 from .compute_shader import ComputeShader
 from .conditional_render import ConditionalRender
@@ -23,6 +24,8 @@ try:
     import moderngl.mgl as mgl
 except ImportError:
     pass
+
+LOG = logging.getLogger(__name__)
 
 __all__ = ['Context', 'create_context', 'create_standalone_context',
            'NOTHING', 'BLEND', 'DEPTH_TEST', 'CULL_FACE', 'RASTERIZER_DISCARD', 'PROGRAM_POINT_SIZE',
@@ -144,19 +147,19 @@ class Context:
     #: of triangles like so: (0, 1, 2) (0, 2, 3), (0, 3, 4), etc. A vertex stream of
     #: n length will generate n-2 triangles.
     TRIANGLE_FAN = 0x0006
-    #: These are special primitives that are expected to be used specifically with 
+    #: These are special primitives that are expected to be used specifically with
     #: geomtry shaders. These primitives give the geometry shader more vertices
     #: to work with for each input primitive. Data needs to be duplicated in buffers.
     LINES_ADJACENCY = 0x000A
-    #: These are special primitives that are expected to be used specifically with 
+    #: These are special primitives that are expected to be used specifically with
     #: geomtry shaders. These primitives give the geometry shader more vertices
     #: to work with for each input primitive. Data needs to be duplicated in buffers.
     LINE_STRIP_ADJACENCY = 0x000B
-    #: These are special primitives that are expected to be used specifically with 
+    #: These are special primitives that are expected to be used specifically with
     #: geomtry shaders. These primitives give the geometry shader more vertices
     #: to work with for each input primitive. Data needs to be duplicated in buffers.
     TRIANGLES_ADJACENCY = 0x000C
-    #: These are special primitives that are expected to be used specifically with 
+    #: These are special primitives that are expected to be used specifically with
     #: geomtry shaders. These primitives give the geometry shader more vertices
     #: to work with for each input primitive. Data needs to be duplicated in buffers.
     TRIANGLE_STRIP_ADJACENCY = 0x0000D
@@ -167,24 +170,24 @@ class Context:
     PATCHES = 0x000E
 
     # Texture filters
-    #: Returns the value of the texture element that is nearest 
-    #: (in Manhattan distance) to the specified texture coordinates. 
+    #: Returns the value of the texture element that is nearest
+    #: (in Manhattan distance) to the specified texture coordinates.
     NEAREST = 0x2600
     #: Returns the weighted average of the four texture elements
     #: that are closest to the specified texture coordinates.
     #: These can include items wrapped or repeated from other parts
     #: of a texture, depending on the values of texture repeat mode,
-    #: and on the exact mapping. 
+    #: and on the exact mapping.
     LINEAR = 0x2601
     #: Chooses the mipmap that most closely matches the size of the
     #: pixel being textured and uses the ``NEAREST`` criterion (the texture
     #: element closest to the specified texture coordinates) to produce
-    #: a texture value. 
+    #: a texture value.
     NEAREST_MIPMAP_NEAREST = 0x2700
     #: Chooses the mipmap that most closely matches the size of the pixel
     #: being textured and uses the ``LINEAR`` criterion (a weighted average
     #: of the four texture elements that are closest to the specified
-    #: texture coordinates) to produce a texture value. 
+    #: texture coordinates) to produce a texture value.
     LINEAR_MIPMAP_NEAREST = 0x2701
     #: Chooses the two mipmaps that most closely match the size of the
     #: pixel being textured and uses the ``NEAREST`` criterion (the texture
@@ -197,7 +200,7 @@ class Context:
     #: of the texture elements that are closest to the specified texture
     #: coordinates) to produce a texture value from each mipmap.
     #: The final texture value is a weighted average of those two values.
-    LINEAR_MIPMAP_LINEAR = 0x2703    
+    LINEAR_MIPMAP_LINEAR = 0x2703
 
     # Blend functions
     #: (0,0,0,0)
@@ -250,7 +253,7 @@ class Context:
     #: Used with :py:attr:`Context.provoking_vertex`.
     LAST_VERTEX_CONVENTION = 0x8E4E
 
-    __slots__ = ['mglo', '_screen', '_info', '_extensions', 'version_code', 'fbo', 'extra']
+    __slots__ = ['mglo', '_screen', '_info', '_extensions', 'version_code', 'fbo', '_gc_mode', 'extra']
 
     def __init__(self):
         self.mglo = None  #: Internal representation for debug purposes only.
@@ -262,16 +265,48 @@ class Context:
         #: Set every time :py:meth:`Framebuffer.use()` is called.
         self.fbo = None
         self.extra = None  #: Any - Attribute for storing user defined objects
+        self._gc_mode = None
         raise TypeError()
 
     def __repr__(self):
-        return '<Context {} version_code={}>'.format(id(self), self.version_code)
+        return f"<Context {id(self)} version_code={self.version_code}>"
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __del__(self):
+        LOG.info(f"{self.__class__.__name__}.__del__ %s", self)
+        self.release()
+
+    @property
+    def gc_mode(self) -> Optional[str]:
+        """Optional[str]: The garbage collection mode
+
+        WARNING: This is a highly experimental feature.
+
+        The default mode is `auto` acting as we would expect by default
+        in the python language. There are cases were this is not desirable.
+        Only alter this mode if you know exactly what you are doing.
+
+        Examples:
+
+            # Disable automatic garbage collection
+            ctx.gc_mode = None
+            # Enable automatic garbage collection
+            ctx.gc_mode = "auto"
+
+        """
+        return self._gc_mode
+
+    @gc_mode.setter
+    def gc_mode(self, value: Optional[str]):
+        modes = ["auto", None]
+        if value not in modes:
+            raise ValueError("Valid modes:", modes)
+        self._gc_mode = value
 
     @property
     def line_width(self) -> float:
@@ -674,7 +709,7 @@ class Context:
         return self._extensions
 
     @property
-    def info(self) -> Dict[str, object]:
+    def info(self) -> Dict[str, Any]:
         '''
             dict: OpenGL Limits and information about the context
 
@@ -1117,17 +1152,44 @@ class Context:
         '''
             Create a :py:class:`VertexArray` object.
 
+            The vertex array describes how buffers are read by a shader program.
+            We need to supply buffer formats and attributes names. The attribute names
+            are defined by the user in the glsl code and can be anything.
+
+            Examples::
+
+                # Empty vertext array (no attribute input)
+                vao = ctx.vertex_array(program)
+
+                # Simple version with a single buffer
+                vao = ctx.vertex_array(program, buffer, "in_position", "in_normal")
+                vao = ctx.vertex_array(program, buffer, "in_position", "in_normal", index_buffer=ibo)
+
+                # Multiple buffers
+                vao = ctx.vertex_array(program, [
+                    (buffer1, '3f', 'in_position'),
+                    (buffer2, '3f', 'in_normal'),
+                ])
+                vao = ctx.vertex_array(program, [
+                        (buffer1, '3f', 'in_position'),
+                        (buffer2, '3f', 'in_normal'),
+                    ],
+                    index_buffer=ibo,
+                    index_element_size=2,  # 16 bit / 'u2' index buffer
+                )
+
             This method also supports arguments for :py:meth:`Context.simple_vertex_array`.
 
             Args:
-                program (Program): The program used when rendering.
+                program (Program): The program used when rendering
                 content (list): A list of (buffer, format, attributes).
                                 See :ref:`buffer-format-label`.
-                index_buffer (Buffer): An index buffer.
 
             Keyword Args:
+                index_buffer (Buffer): An index buffer (optional)
                 index_element_size (int): byte size of each index element, 1, 2 or 4.
-                skip_errors (bool): Ignore skip_errors varyings.
+                skip_errors (bool): Ignore errors during creation
+                mode (int): The default draw mode (for example: ``TRIANGLES``)
 
             Returns:
                 :py:class:`VertexArray` object
@@ -1136,10 +1198,9 @@ class Context:
             return self.simple_vertex_array(*args, **kwargs)
         return self._vertex_array(*args, **kwargs)
 
-
     def _vertex_array(self, program, content,
                       index_buffer=None, index_element_size=4, *,
-                      skip_errors=False) -> 'VertexArray':
+                      skip_errors=False, mode=None) -> 'VertexArray':
         '''
             Create a :py:class:`VertexArray` object.
 
@@ -1152,6 +1213,7 @@ class Context:
             Keyword Args:
                 index_element_size (int): byte size of each index element, 1, 2 or 4.
                 skip_errors (bool): Ignore skip_errors varyings.
+                mode (int): The default draw mode (for example: ``TRIANGLES``)
 
             Returns:
                 :py:class:`VertexArray` object
@@ -1159,22 +1221,29 @@ class Context:
 
         members = program._members
         index_buffer_mglo = None if index_buffer is None else index_buffer.mglo
-        content = tuple((a.mglo, b) + tuple(getattr(members.get(x), 'mglo', None)
-                        for x in c) for a, b, *c in content)
+        mgl_content = tuple((a.mglo, b) + tuple(getattr(members.get(x), 'mglo', None)
+            for x in c) for a, b, *c in content)
 
         res = VertexArray.__new__(VertexArray)
-        res.mglo, res._glo = self.mglo.vertex_array(program.mglo, content, index_buffer_mglo,
-                                                    index_element_size, skip_errors)
+        res.mglo, res._glo = self.mglo.vertex_array(
+            program.mglo, mgl_content, index_buffer_mglo,
+            index_element_size, skip_errors,
+        )
         res._program = program
         res._index_buffer = index_buffer
+        res._content = content
         res._index_element_size = index_element_size
+        if mode is not None:
+            res._mode = mode
+        else:
+            res._mode = self.POINTS if program.is_transform else self.TRIANGLES
         res.ctx = self
         res.extra = None
         res.scope = None
         return res
 
     def simple_vertex_array(self, program, buffer, *attributes,
-                            index_buffer=None, index_element_size=4) -> 'VertexArray':
+                            index_buffer=None, index_element_size=4, mode=None) -> 'VertexArray':
         '''
             Create a :py:class:`VertexArray` object.
 
@@ -1190,6 +1259,7 @@ class Context:
             Keyword Args:
                 index_element_size (int): byte size of each index element, 1, 2 or 4.
                 index_buffer (Buffer): An index buffer.
+                mode (int): The default draw mode (for example: ``TRIANGLES``)
 
             Returns:
                 :py:class:`VertexArray` object
@@ -1199,7 +1269,7 @@ class Context:
             raise SyntaxError('Change simple_vertex_array to vertex_array')
 
         content = [(buffer, detect_format(program, attributes)) + attributes]
-        return self.vertex_array(program, content, index_buffer, index_element_size)
+        return self._vertex_array(program, content, index_buffer, index_element_size, mode=mode)
 
     def program(self, *, vertex_shader, fragment_shader=None, geometry_shader=None,
                 tess_control_shader=None, tess_evaluation_shader=None, varyings=()) -> 'Program':
@@ -1258,6 +1328,7 @@ class Context:
             members[obj.name] = obj
 
         res._members = members
+        res._is_transform = fragment_shader is None
         res.ctx = self
         res.extra = None
         return res
@@ -1308,14 +1379,19 @@ class Context:
         if framebuffer is None:
             framebuffer = self.screen
 
-        textures = tuple((tex.mglo, idx) for tex, idx in textures)
-        uniform_buffers = tuple((buf.mglo, idx) for buf, idx in uniform_buffers)
-        storage_buffers = tuple((buf.mglo, idx) for buf, idx in storage_buffers)
+        mgl_textures = tuple((tex.mglo, idx) for tex, idx in textures)
+        mgl_uniform_buffers = tuple((buf.mglo, idx) for buf, idx in uniform_buffers)
+        mgl_storage_buffers = tuple((buf.mglo, idx) for buf, idx in storage_buffers)
 
         res = Scope.__new__(Scope)
-        res.mglo = self.mglo.scope(framebuffer.mglo, enable_only, textures,
-                                   uniform_buffers, storage_buffers, samplers)
+        res.mglo = self.mglo.scope(framebuffer.mglo, enable_only, mgl_textures,
+                                   mgl_uniform_buffers, mgl_storage_buffers, samplers)
         res.ctx = self
+        res._framebuffer = framebuffer
+        res._textures = textures
+        res._uniform_buffers = uniform_buffers
+        res._storage_buffers = storage_buffers
+        res._samplers = samplers
         res.extra = None
         return res
 
@@ -1577,8 +1653,9 @@ class Context:
 
             Standalone contexts can normally be released.
         '''
-
-        self.mglo.release()
+        LOG.debug(f"{self.__class__.__name__}.release() {self}")
+        if not isinstance(self.mglo, InvalidObject):
+            self.mglo.release()
 
 
 def create_context(require=None, standalone=False, share=False, **settings) -> Context:
@@ -1620,6 +1697,7 @@ def create_context(require=None, standalone=False, share=False, **settings) -> C
     ctx._info = None
     ctx._extensions = None
     ctx.extra = None
+    ctx._gc_mode = "auto"
 
     if ctx.version_code < require:
         raise ValueError('Requested OpenGL version {}, got version {}'.format(
@@ -1629,8 +1707,8 @@ def create_context(require=None, standalone=False, share=False, **settings) -> C
         ctx._screen = None
         ctx.fbo = None
     else:
-        ctx._screen = ctx.detect_framebuffer(0)
-        ctx.fbo = ctx.detect_framebuffer()
+        ctx._screen = ctx.detect_framebuffer(0)  # Default framebuffer
+        ctx.fbo = ctx.detect_framebuffer()  # Currently bound framebuffer
         ctx.mglo.fbo = ctx.fbo.mglo
 
     return ctx
@@ -1667,6 +1745,7 @@ def create_standalone_context(require=None, share=False, **settings) -> 'Context
     ctx._info = None
     ctx._extensions = None
     ctx.extra = None
+    ctx._gc_mode = "auto"
 
     if require is not None and ctx.version_code < require:
         raise ValueError('Requested OpenGL version {}, got version {}'.format(

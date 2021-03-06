@@ -1,9 +1,13 @@
+import logging
 from typing import Generator, Tuple, Union
 
+from moderngl.mgl import InvalidObject  # type: ignore
 from .program_members import (Attribute, Subroutine, Uniform, UniformBlock,
                               Varying)
 
 __all__ = ['ComputeShader']
+
+LOG = logging.getLogger(__name__)
 
 
 class ComputeShader:
@@ -30,7 +34,10 @@ class ComputeShader:
         raise TypeError()
 
     def __repr__(self):
-        return '<ComputeShader: %d>' % self.glo
+        if hasattr(self, '_glo'):
+            return f"<{self.__class__.__name__}: {self._glo}>"
+        else:
+            return f"<{self.__class__.__name__}: INCOMPLETE>"
 
     def __eq__(self, other):
         """Compares to compute shaders ensuring the internal opengl name/id is the same"""
@@ -38,6 +45,11 @@ class ComputeShader:
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __del__(self):
+        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
+        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+            self.release()
 
     def __getitem__(self, key) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
         """Get a member such as uniforms, uniform blocks, subroutines,
@@ -127,5 +139,6 @@ class ComputeShader:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()
+        LOG.debug(f"{self.__class__.__name__}.release() {self}")
+        if not isinstance(self.mglo, InvalidObject):
+            self.mglo.release()

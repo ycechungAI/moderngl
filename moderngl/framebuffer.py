@@ -1,10 +1,17 @@
-from typing import Dict, Tuple, Union
+import logging
+from typing import Any, Dict, List, Tuple, Union, TYPE_CHECKING
 
+from moderngl.mgl import InvalidObject  # type: ignore
 from .buffer import Buffer
 from .renderbuffer import Renderbuffer
 from .texture import Texture
 
+if TYPE_CHECKING:
+    from .context import Context
+
 __all__ = ['Framebuffer']
+
+LOG = logging.getLogger(__name__)
 
 
 class Framebuffer:
@@ -22,20 +29,34 @@ class Framebuffer:
         self._color_attachments = None
         self._depth_attachment = None
         self._size = (None, None)
-        self._samples = None
-        self._glo = None
-        self.ctx = None  #: The context this object belongs to
-        self.extra = None  #: Any - Attribute for storing user defined objects
+        self._samples: int = None
+        self._glo: int = None
+        self.ctx: Context = None  #: The context this object belongs to
+        self.extra: Any = None  #: Attribute for storing user defined objects
         raise TypeError()
 
     def __repr__(self):
-        return '<Framebuffer: %d>' % self.glo
+        if hasattr(self, '_glo'):
+            return '<Framebuffer: %d>' % self._glo
+        else:
+            return "<Framebuffer: INCOMPLETE>"
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __del__(self):
+        LOG.debug("Framebuffer.__del__ %s", self)
+
+        # If object was initialized properly (ctx present) and gc_mode is auto
+        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+            # We should never destroy the default framebuffer
+            if self._glo == 0:
+                LOG.debug("Attempting to deleted the default framebuffer")
+            else:
+                self.release()
 
     @property
     def viewport(self) -> Tuple[int, int, int, int]:
@@ -291,5 +312,8 @@ class Framebuffer:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()
+        LOG.debug("Framebuffer.release(): %s", self)
+        if not isinstance(self.mglo, InvalidObject):
+            self._color_attachments = None
+            self._depth_attachment = None
+            self.mglo.release()

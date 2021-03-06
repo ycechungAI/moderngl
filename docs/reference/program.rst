@@ -33,6 +33,7 @@ Attributes
 .. autoattribute:: Program.glo
 .. autoattribute:: Program.mglo
 .. autoattribute:: Program.extra
+.. autoattribute:: Program.is_transform
 .. autoattribute:: Program.ctx
 
 Examples

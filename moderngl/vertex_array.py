@@ -1,4 +1,12 @@
-from typing import Tuple
+import logging
+from moderngl.buffer import LOG
+from typing import Tuple, TYPE_CHECKING
+
+from moderngl.mgl import InvalidObject  # type: ignore
+
+if TYPE_CHECKING:
+    from .program import Program
+    from .buffer import Buffer
 
 __all__ = ['VertexArray',
            'POINTS', 'LINES', 'LINE_LOOP', 'LINE_STRIP', 'TRIANGLES', 'TRIANGLE_STRIP', 'TRIANGLE_FAN',
@@ -65,27 +73,53 @@ class VertexArray:
         to create one.
     '''
 
-    __slots__ = ['mglo', '_program', '_index_buffer', '_index_element_size', '_glo', 'ctx', 'extra', 'scope']
+    __slots__ = ['mglo', '_program', '_index_buffer', '_content', '_index_element_size', '_glo', '_mode', 'ctx', 'extra', 'scope']
 
     def __init__(self):
         self.mglo = None  #: Internal representation for debug purposes only.
         self._program = None
         self._index_buffer = None
+        self._content = None
         self._index_element_size = None
         self._glo = None
+        self._mode = None  #: int: The default rendering mode
         self.ctx = None  #: The context this object belongs to
         self.extra = None  #: Any - Attribute for storing user defined objects
         self.scope = None  #: The :py:class:`moderngl.Scope`.
         raise TypeError()
 
     def __repr__(self):
-        return '<VertexArray: %d>' % self.glo
+        if hasattr(self, 'mglo'):
+            return '<VertexArray: %d>' % self.glo
+        else:
+            return '<VertexArray: INCOMPLETE>'
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __del__(self):
+        LOG.debug("VertexArray.__del__: %s", self)
+        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+            self.release()
+
+    @property
+    def mode(self) -> int:
+        '''
+            int: Get or set the default rendering mode.
+            This value is used when ``mode`` is not passed in rendering calls.
+
+            Examples::
+
+                vao.mode = moderngl.TRIANGLE_STRIPS
+        '''
+        return self._mode
+
+    @mode.setter
+    def mode(self, value: int):
+        self._mode = value
 
     @property
     def program(self) -> 'Program':
@@ -172,7 +206,7 @@ class VertexArray:
         '''
 
         if mode is None:
-            mode = TRIANGLES
+            mode = self._mode
 
         if self.scope:
             with self.scope:
@@ -197,7 +231,7 @@ class VertexArray:
         '''
 
         if mode is None:
-            mode = TRIANGLES
+            mode = self._mode
 
         if self.scope:
             with self.scope:
@@ -224,7 +258,7 @@ class VertexArray:
         '''
 
         if mode is None:
-            mode = POINTS
+            mode = self._mode
 
         if self.scope:
             with self.scope:
@@ -255,5 +289,9 @@ class VertexArray:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()
+        LOG.debug("VertexArray.release: %s", self)
+        if not isinstance(self, InvalidObject) and hasattr(self, "ctx"):
+            self._program = None
+            self._index_buffer = None
+            self._content = None
+            self.mglo.release()

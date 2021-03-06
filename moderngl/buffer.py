@@ -1,4 +1,9 @@
+import logging
+from moderngl.mgl import InvalidObject  # type: ignore
+
 __all__ = ['Buffer']
+
+LOG = logging.getLogger(__name__)
 
 
 class Buffer:
@@ -18,7 +23,7 @@ class Buffer:
 
     def __init__(self):
         self.mglo = None  #: Internal representation for debug purposes only.
-        self._size = None  #: Orignal buffer size during creation
+        self._size = None  #: Original buffer size during creation
         self._dynamic = None
         self._glo = None
         self.ctx = None  #: The context this object belongs to
@@ -26,13 +31,21 @@ class Buffer:
         raise TypeError()
 
     def __repr__(self):
-        return '<Buffer: %d>' % self.glo
+        if hasattr(self, '_glo'):
+            return f"<{self.__class__.__name__}: {self._glo}>"
+        else:
+            return f"<{self.__class__.__name__}: INCOMPLETE>"
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __del__(self):
+        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
+        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+            self.release()
 
     @property
     def size(self) -> int:
@@ -255,8 +268,9 @@ class Buffer:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()
+        LOG.debug(f"{self.__class__.__name__}.release() {self}")
+        if not isinstance(self.mglo, InvalidObject):
+            self.mglo.release()
 
     def bind(self, *attribs, layout=None):
         """Helper method for binding a buffer.

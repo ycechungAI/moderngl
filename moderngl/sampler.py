@@ -1,6 +1,11 @@
+import logging
 from typing import Tuple
 
+from moderngl.mgl import InvalidObject  # type: ignore
+
 __all__ = ['Sampler']
+
+LOG = logging.getLogger(__name__)
 
 
 class Sampler:
@@ -28,10 +33,22 @@ class Sampler:
         self._glo = None
         self.ctx = None  #: The context this object belongs to
         self.extra = None  #: Any - Attribute for storing user defined objects
+        self.texture = None
         raise TypeError()
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __repr__(self):
+        if hasattr(self, '_glo'):
+            return f"<{self.__class__.__name__}: {self._glo}>"
+        else:
+            return f"<{self.__class__.__name__}: INCOMPLETE>"
+
+    def __del__(self):
+        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
+        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+            self.release()
 
     def use(self, location=0) -> None:
         '''
@@ -57,7 +74,9 @@ class Sampler:
         '''
             Release/destroy the ModernGL object.
         '''
-        self.mglo.release()
+        LOG.debug(f"{self.__class__.__name__}.release() {self}")
+        if not isinstance(self.mglo, InvalidObject):
+            self.mglo.release()
 
     @property
     def repeat_x(self) -> bool:

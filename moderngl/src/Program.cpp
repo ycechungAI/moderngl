@@ -45,6 +45,8 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 		return 0;
 	}
 
+	int shader_objs[] = {0, 0, 0, 0, 0};
+
 	for (int i = 0; i < NUM_SHADER_SLOTS; ++i) {
 		if (shaders[i] == Py_None) {
 			continue;
@@ -100,6 +102,7 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 			return 0;
 		}
 
+		shader_objs[i] = shader_obj;
 		gl.AttachShader(program_obj, shader_obj);
 	}
 
@@ -116,6 +119,13 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 	}
 
 	gl.LinkProgram(program_obj);
+
+	// Delete the shader objects after the program is linked
+	for (int i = 0; i < NUM_SHADER_SLOTS; ++i) {
+		if (shader_objs[i]) {
+			gl.DeleteShader(shader_objs[i]);
+		}
+	}
 
 	int linked = GL_FALSE;
 	gl.GetProgramiv(program_obj, GL_LINK_STATUS, &linked);
@@ -671,8 +681,6 @@ void MGLProgram_Invalidate(MGLProgram * program) {
 	if (Py_TYPE(program) == &MGLInvalidObject_Type) {
 		return;
 	}
-
-	// TODO: decref
 
 	const GLMethods & gl = program->context->gl;
 	gl.DeleteProgram(program->program_obj);

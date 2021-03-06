@@ -1,10 +1,14 @@
+import logging
 from typing import Tuple
 
+from moderngl.mgl import InvalidObject  # type: ignore
 from .buffer import Buffer
 
 __all__ = ['Texture',
            'NEAREST', 'LINEAR', 'NEAREST_MIPMAP_NEAREST', 'LINEAR_MIPMAP_NEAREST', 'NEAREST_MIPMAP_LINEAR',
            'LINEAR_MIPMAP_LINEAR']
+
+LOG = logging.getLogger(__name__)
 
 #: Returns the value of the texture element that is nearest 
 #: (in Manhattan distance) to the specified texture coordinates. 
@@ -66,13 +70,21 @@ class Texture:
         raise TypeError()
 
     def __repr__(self):
-        return '<Texture: %d>' % self.glo
+        if hasattr(self, '_glo'):
+            return f"<{self.__class__.__name__}: {self._glo}>"
+        else:
+            return f"<{self.__class__.__name__}: INCOMPLETE>"
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __del__(self):
+        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
+        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+            self.release()
 
     @property
     def repeat_x(self) -> bool:
@@ -130,6 +142,10 @@ class Texture:
 
         return self.mglo.filter
 
+    @filter.setter
+    def filter(self, value):
+        self.mglo.filter = value
+
     @property
     def anisotropy(self) -> float:
         '''
@@ -149,10 +165,6 @@ class Texture:
     @anisotropy.setter
     def anisotropy(self, value):
         self.mglo.anisotropy = value
-
-    @filter.setter
-    def filter(self, value):
-        self.mglo.filter = value
 
     @property
     def swizzle(self) -> str:
@@ -446,5 +458,6 @@ class Texture:
         '''
             Release the ModernGL object.
         '''
-
-        self.mglo.release()
+        LOG.debug(f"{self.__class__.__name__}.release() {self}")
+        if not isinstance(self.mglo, InvalidObject):
+            self.mglo.release()

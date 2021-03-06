@@ -9,8 +9,8 @@ from setuptools import Extension, setup
 
 # pylint: disable=C0103, W0212
 
-if sys.version_info < (3, 0):
-    raise Exception('Python 2 is not supported!')
+if sys.version_info < (3, 6):
+    raise Exception('Python 3.6 or higher is required')
 
 PLATFORMS = {'windows', 'linux', 'darwin', 'cygwin', 'android'}
 
@@ -27,7 +27,7 @@ if target not in PLATFORMS:
     target = 'linux'
 
 # For mac, ensure extensions are built for macos 10.9 when compiling on a
-# 10.9 system or above, overriding distuitls behaviour which is to target
+# 10.9 system or above, overriding distuitls behavior which is to target
 # the version that python was built for. This may be overridden by setting
 # MACOSX_DEPLOYMENT_TARGET before calling setup.py
 if target == 'darwin':
@@ -154,7 +154,7 @@ classifiers = [
 
 setup(
     name='moderngl',
-    version='5.6.4',
+    version='5.7.0',
     description=short_description,
     long_description=long_description,
     long_description_content_type='text/markdown',

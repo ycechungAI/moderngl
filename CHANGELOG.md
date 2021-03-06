@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 5.7.0
+
+* Added `Program.is_transform` exposing if the program has a fragment shader or not
+* Added `VertexArray.mode` and a `mode` argument in `Context.vertex_array`.
+  This is now the default rendering mode when no mode parameter is passed
+  in `render()` or `transform()`
+* Docstring improvements
+* Documentation improvements
+
 # [5.6.4]
 
 * Transform feedback now supports all primitive modes both for
