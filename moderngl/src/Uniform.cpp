@@ -415,6 +415,24 @@ void MGLUniform_Complete(MGLUniform * self, const GLMethods & gl) {
 			}
 			break;
 
+		case GL_SAMPLER_1D:
+		case GL_SAMPLER_1D_ARRAY:
+		case GL_INT_SAMPLER_1D:
+		case GL_INT_SAMPLER_1D_ARRAY:
+			self->matrix = false;
+			self->dimension = 1;
+			self->element_size = 4;
+			self->gl_value_reader_proc = (MGLProc)gl.GetUniformiv;
+			self->gl_value_writer_proc = (MGLProc)gl.ProgramUniform1iv;
+			if (self->array_length > 1) {
+				self->value_getter = (MGLProc)MGLUniform_sampler_array_value_getter;
+				self->value_setter = (MGLProc)MGLUniform_sampler_array_value_setter;
+			} else {
+				self->value_getter = (MGLProc)MGLUniform_sampler_value_getter;
+				self->value_setter = (MGLProc)MGLUniform_sampler_value_setter;
+			}
+			break;
+
 		case GL_SAMPLER_2D:
 		case GL_INT_SAMPLER_2D:
 		case GL_UNSIGNED_INT_SAMPLER_2D:
