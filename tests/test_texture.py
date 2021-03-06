@@ -1,5 +1,6 @@
 import struct
 import unittest
+import platform
 
 import moderngl
 
@@ -150,6 +151,9 @@ class TestCase(unittest.TestCase):
 
     def test_override_internalformat(self):
         """Ensure no errors occur when overriding internalformat"""
+        if platform.system().lower() in ["darwin"]:
+            self.skipTest('Skip SRGB test in darwin')
+
         GL_SRGB8 = 0x8C41
         pixels = struct.pack('16B', 255, 0, 0, 255, 0, 255, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255)
         texture = self.ctx.texture((2, 2), 4, pixels, internal_format=GL_SRGB8)
