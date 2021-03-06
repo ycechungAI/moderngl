@@ -48,9 +48,9 @@ class TestScissor(unittest.TestCase):
         vbo = cls.ctx.buffer(np.array(quad, dtype='f4').tobytes())
         cls.vao = cls.ctx.simple_vertex_array(cls.prog, vbo, 'in_vert')
 
-    def create_fbo(self, size):
+    def create_fbo(self, size, components=3):
         return self.ctx.framebuffer(
-            color_attachments=[self.ctx.texture(size, 3)],
+            color_attachments=[self.ctx.texture(size, components)],
         )
 
     def test_default_value(self):
@@ -141,18 +141,18 @@ class TestScissor(unittest.TestCase):
 
     def test_scissor_leak(self):
         """Make sure we don't leak scissor values to other fbos"""
-        size = 2, 1
-        fbo1 = self.create_fbo(size)
-        fbo2 = self.create_fbo(size)
+        size = 2, 2
+        fbo1 = self.create_fbo(size, components=4)
+        fbo2 = self.create_fbo(size, components=4)
 
         fbo1.scissor = 0, 0, 1, 1
-        fbo2.scissor = 1, 0, 1, 1
+        fbo2.scissor = 1, 1, 1, 1
 
         fbo1.clear(color=(1.0, 0.0, 0.0, 0.0))
         fbo2.clear(color=(0.0, 1.0, 0.0, 0.0))
 
-        self.assertEqual(fbo1.read(), b'\xff\x00\x00\x00\x00\x00')
-        self.assertEqual(fbo2.read(), b'\x00\x00\x00\x00\xff\x00')
+        self.assertEqual(fbo1.read(), b'\xff\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
+        self.assertEqual(fbo2.read(), b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\x00')
 
     def test_clear_with_viewport(self):
         """Clearing with viewport take precense over scissor"""
