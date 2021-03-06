@@ -874,7 +874,7 @@ class Context:
 
         self.mglo.enable_only(flags)
 
-    def enable(self, flags) -> None:
+    def enable(self, flags: int) -> None:
         '''
             Enable flags.
 
@@ -899,7 +899,7 @@ class Context:
 
         self.mglo.enable(flags)
 
-    def disable(self, flags) -> None:
+    def disable(self, flags: int) -> None:
         '''
             Disable flags.
 
@@ -918,6 +918,32 @@ class Context:
         '''
 
         self.mglo.disable(flags)
+
+    def enable_direct(self, enum: int):
+        """
+        Gives direct access to ``glEnable`` so unsupported capabilities in ModernGL can be enabled.
+        Do not use this to set already supported context flags.
+
+        Example::
+
+            # Enum value from the opengl registry
+            GL_CONSERVATIVE_RASTERIZATION_NV = 0x9346
+            ctx.enable_direct(GL_CONSERVATIVE_RASTERIZATION_NV)
+        """
+        self.mglo.enable_direct(enum)
+
+    def disable_direct(self, enum: int):
+        """
+        Gives direct access to ``glDisable`` so unsupported capabilities in ModernGL can be disabled.
+        Do not use this to set already supported context flags.
+
+        Example::
+
+            # Enum value from the opengl registry
+            GL_CONSERVATIVE_RASTERIZATION_NV = 0x9346
+            ctx.disable_direct(GL_CONSERVATIVE_RASTERIZATION_NV)
+        """
+        self.mglo.disable_direct(enum)
 
     def finish(self) -> None:
         '''

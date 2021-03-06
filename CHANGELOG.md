@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Added `VertexArray.mode` and a `mode` argument in `Context.vertex_array`.
   This is now the default rendering mode when no mode parameter is passed
   in `render()` or `transform()`
+* Added support for 1D sampler in `Uniform`
+* Added direct access to `glEnable` / `glDisable` in `Context.enable_direct` / `Context.disable_direct`.
+  This can be used to enabled capabilities not supported by ModernGL.
 * Docstring improvements
 * Documentation improvements
 

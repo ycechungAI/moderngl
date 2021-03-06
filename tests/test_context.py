@@ -142,3 +142,15 @@ class ContextTests(TestCase):
         # Provoking vertex
         self.assertIsInstance(ctx.FIRST_VERTEX_CONVENTION, int)
         self.assertIsInstance(ctx.LAST_VERTEX_CONVENTION, int)
+
+    def test_enable_direct(self):
+        ctx = moderngl.create_context(standalone=True)
+        ctx.error  # consume error during initialization
+        # We already support this, but it's a safe value
+        GL_PROGRAM_POINT_SIZE = 0x8642
+
+        ctx.enable_direct(GL_PROGRAM_POINT_SIZE)
+        self.assertEqual(ctx.error, "GL_NO_ERROR")
+
+        ctx.disable_direct(GL_PROGRAM_POINT_SIZE)
+        self.assertEqual(ctx.error, "GL_NO_ERROR")

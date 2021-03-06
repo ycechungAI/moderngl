@@ -140,6 +140,38 @@ PyObject * MGLContext_disable(MGLContext * self, PyObject * args) {
 	Py_RETURN_NONE;
 }
 
+PyObject * MGLContext_enable_direct(MGLContext * self, PyObject * args) {
+	int value;
+
+	int args_ok = PyArg_ParseTuple(
+		args,
+		"i",
+		&value
+	);
+
+	if (!args_ok) {
+		return 0;
+	}
+
+	self->gl.Enable(value);
+}
+
+PyObject * MGLContext_disable_direct(MGLContext * self, PyObject * args) {
+	int value;
+
+	int args_ok = PyArg_ParseTuple(
+		args,
+		"i",
+		&value
+	);
+
+	if (!args_ok) {
+		return 0;
+	}
+
+	self->gl.Disable(value);
+}
+
 PyObject * MGLContext_finish(MGLContext * self) {
 	self->gl.Finish();
 	Py_RETURN_NONE;
@@ -488,6 +520,8 @@ PyMethodDef MGLContext_tp_methods[] = {
 	{"enable_only", (PyCFunction)MGLContext_enable_only, METH_VARARGS, 0},
 	{"enable", (PyCFunction)MGLContext_enable, METH_VARARGS, 0},
 	{"disable", (PyCFunction)MGLContext_disable, METH_VARARGS, 0},
+	{"enable_direct", (PyCFunction)MGLContext_enable_direct, METH_VARARGS, 0},
+	{"disable_direct", (PyCFunction)MGLContext_disable_direct, METH_VARARGS, 0},
 	{"finish", (PyCFunction)MGLContext_finish, METH_NOARGS, 0},
 	{"copy_buffer", (PyCFunction)MGLContext_copy_buffer, METH_VARARGS, 0},
 	{"copy_framebuffer", (PyCFunction)MGLContext_copy_framebuffer, METH_VARARGS, 0},

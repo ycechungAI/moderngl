@@ -41,8 +41,10 @@ Methods
 
 .. automethod:: Context.clear(red=0.0, green=0.0, blue=0.0, alpha=0.0, depth=1.0, viewport=None, color=None)
 .. automethod:: Context.enable_only(flags)
-.. automethod:: Context.enable(flags)
-.. automethod:: Context.disable(flags)
+.. automethod:: Context.enable(flags: int)
+.. automethod:: Context.disable(flags: int)
+.. automethod:: Context.enable_direct(enum: int)
+.. automethod:: Context.disable_direct(enum: int)
 .. automethod:: Context.finish()
 .. automethod:: Context.copy_buffer(dst, src, size=-1, read_offset=0, write_offset=0)
 .. automethod:: Context.copy_framebuffer(dst, src)
