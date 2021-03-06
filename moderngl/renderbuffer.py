@@ -35,7 +35,10 @@ class Renderbuffer:
         raise TypeError()
 
     def __repr__(self):
-        return '<Renderbuffer: %d>' % self.glo
+        if hasattr(self, '_glo'):
+            return f"<{self.__class__.__name__}: {self._glo}>"
+        else:
+            return f"<{self.__class__.__name__}: INCOMPLETE>"
 
     def __eq__(self, other):
         return type(self) is type(other) and self.mglo is other.mglo
