@@ -55,6 +55,7 @@ struct MGLDataType {
 	int * internal_format;
 	int gl_type;
 	int size;
+	bool float_type;
 };
 
 struct MGLAttribute {

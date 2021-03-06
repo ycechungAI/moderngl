@@ -13,15 +13,15 @@ static int i1_internal_format[5] = {0, GL_R8I, GL_RG8I, GL_RGB8I, GL_RGBA8I};
 static int i2_internal_format[5] = {0, GL_R16I, GL_RG16I, GL_RGB16I, GL_RGBA16I};
 static int i4_internal_format[5] = {0, GL_R32I, GL_RG32I, GL_RGB32I, GL_RGBA32I};
 
-static MGLDataType f1 = {float_base_format, f1_internal_format, GL_UNSIGNED_BYTE, 1};
-static MGLDataType f2 = {float_base_format, f2_internal_format, GL_HALF_FLOAT, 2};
-static MGLDataType f4 = {float_base_format, f4_internal_format, GL_FLOAT, 4};
-static MGLDataType u1 = {int_base_format, u1_internal_format, GL_UNSIGNED_BYTE, 1};
-static MGLDataType u2 = {int_base_format, u2_internal_format, GL_UNSIGNED_SHORT, 2};
-static MGLDataType u4 = {int_base_format, u4_internal_format, GL_UNSIGNED_INT, 4};
-static MGLDataType i1 = {int_base_format, i1_internal_format, GL_BYTE, 1};
-static MGLDataType i2 = {int_base_format, i2_internal_format, GL_SHORT, 2};
-static MGLDataType i4 = {int_base_format, i4_internal_format, GL_INT, 4};
+static MGLDataType f1 = {float_base_format, f1_internal_format, GL_UNSIGNED_BYTE, 1, true};
+static MGLDataType f2 = {float_base_format, f2_internal_format, GL_HALF_FLOAT, 2, true};
+static MGLDataType f4 = {float_base_format, f4_internal_format, GL_FLOAT, 4, true};
+static MGLDataType u1 = {int_base_format, u1_internal_format, GL_UNSIGNED_BYTE, 1, false};
+static MGLDataType u2 = {int_base_format, u2_internal_format, GL_UNSIGNED_SHORT, 2, false};
+static MGLDataType u4 = {int_base_format, u4_internal_format, GL_UNSIGNED_INT, 4, false};
+static MGLDataType i1 = {int_base_format, i1_internal_format, GL_BYTE, 1, false};
+static MGLDataType i2 = {int_base_format, i2_internal_format, GL_SHORT, 2, false};
+static MGLDataType i4 = {int_base_format, i4_internal_format, GL_INT, 4, false};
 
 MGLDataType * from_dtype(const char * dtype) {
 	if (!dtype[0] || (dtype[1] && dtype[2])) {

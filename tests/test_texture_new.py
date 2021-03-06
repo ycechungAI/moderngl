@@ -139,6 +139,17 @@ class TestCase(unittest.TestCase):
         self.assertEqual(result[0:6], b'\x80\x90\xA0\x80\x90\xA0')
         self.assertEqual(result[8:14], b'\x80\x90\xA0\x80\x90\xA0')
 
+    def test_texture_default_filter(self):
+        """Ensure default filter is correct"""
+        # Float types
+        for dtype in ["f1", "f2", "f4"]:
+            texture = self.ctx.texture((10, 10), 4, dtype=dtype)
+            self.assertEqual(texture.filter, (moderngl.LINEAR, moderngl.LINEAR))
+
+        for dtype in ["u1", "u2", "u4", "i1", "i2", "i4"]:
+            texture = self.ctx.texture((10, 10), 4, dtype=dtype)
+            self.assertEqual(texture.filter, (moderngl.NEAREST, moderngl.NEAREST))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -120,8 +120,13 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
 		gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
 		gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
 		gl.TexImage2D(texture_target, 0, internal_format, width, height, 0, base_format, pixel_type, buffer_view.buf);
-		gl.TexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		gl.TexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		if (data_type->float_type) {
+			gl.TexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			gl.TexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		} else {
+			gl.TexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			gl.TexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		}
 	}
 
 	if (data != Py_None) {
@@ -139,8 +144,8 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
 	texture->anisotropy = 1.0f;
 	texture->depth = false;
 
-	texture->min_filter = GL_LINEAR;
-	texture->mag_filter = GL_LINEAR;
+	texture->min_filter = data_type->float_type ? GL_LINEAR : GL_NEAREST;
+	texture->mag_filter = data_type->float_type ? GL_LINEAR : GL_NEAREST;
 
 	texture->repeat_x = true;
 	texture->repeat_y = true;
