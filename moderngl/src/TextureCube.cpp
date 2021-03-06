@@ -119,8 +119,13 @@ PyObject * MGLContext_texture_cube(MGLContext * self, PyObject * args) {
 	gl.TexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, internal_format, width, height, 0, base_format, pixel_type, ptr[3]);
 	gl.TexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, internal_format, width, height, 0, base_format, pixel_type, ptr[4]);
 	gl.TexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, internal_format, width, height, 0, base_format, pixel_type, ptr[5]);
-	gl.TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	gl.TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	if (data_type->float_type) {
+		gl.TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		gl.TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	} else {
+		gl.TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		gl.TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
 
 	if (data != Py_None) {
 		PyBuffer_Release(&buffer_view);
@@ -131,8 +136,8 @@ PyObject * MGLContext_texture_cube(MGLContext * self, PyObject * args) {
 	texture->components = components;
 	texture->data_type = data_type;
 
-	texture->min_filter = GL_LINEAR;
-	texture->mag_filter = GL_LINEAR;
+	texture->min_filter = data_type->float_type ? GL_LINEAR : GL_NEAREST;
+	texture->mag_filter = data_type->float_type ? GL_LINEAR : GL_NEAREST;
 	texture->max_level = 0;
 	texture->anisotropy = 1.0;
 

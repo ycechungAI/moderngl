@@ -104,8 +104,13 @@ PyObject * MGLContext_texture_array(MGLContext * self, PyObject * args) {
     gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
     gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
     gl.TexImage3D(GL_TEXTURE_2D_ARRAY, 0, internal_format, width, height, layers, 0, base_format, pixel_type, buffer_view.buf);
-    gl.TexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    gl.TexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	if (data_type->float_type) {
+		gl.TexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		gl.TexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	} else {
+		gl.TexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		gl.TexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
 
 	if (data != Py_None) {
 		PyBuffer_Release(&buffer_view);
@@ -117,8 +122,8 @@ PyObject * MGLContext_texture_array(MGLContext * self, PyObject * args) {
 	texture->components = components;
 	texture->data_type = data_type;
 
-	texture->min_filter = GL_LINEAR;
-	texture->mag_filter = GL_LINEAR;
+	texture->min_filter = data_type->float_type ? GL_LINEAR : GL_NEAREST;
+	texture->mag_filter = data_type->float_type ? GL_LINEAR : GL_NEAREST;
 
 	texture->repeat_x = true;
 	texture->repeat_y = true;

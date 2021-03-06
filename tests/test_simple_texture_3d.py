@@ -1,5 +1,6 @@
 import unittest
 
+import moderngl
 from common import get_context
 
 
@@ -99,6 +100,18 @@ class TestCase(unittest.TestCase):
 
         expectation = b''.join(pixel(x, y, z) for z in range(8) for y in range(8) for x in range(8))
         self.assertEqual(tex.read(), expectation)
+
+    def test_texture_default_filter(self):
+        """Ensure default filter is correct"""
+        # Float types
+        for dtype in ["f1", "f2", "f4"]:
+            texture = self.ctx.texture3d((10, 10, 10), 4, dtype=dtype)
+            self.assertEqual(texture.filter, (moderngl.LINEAR, moderngl.LINEAR))
+
+        for dtype in ["u1", "u2", "u4", "i1", "i2", "i4"]:
+            texture = self.ctx.texture3d((10, 10, 10), 4, dtype=dtype)
+            self.assertEqual(texture.filter, (moderngl.NEAREST, moderngl.NEAREST))
+
 
 
 if __name__ == '__main__':
