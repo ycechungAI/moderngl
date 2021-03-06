@@ -157,6 +157,38 @@ def test_sampler_mass_create():
         sampler = ctx.sampler()
         time.sleep(.001)
 
+
+def test_scope():
+    fbo = ctx.simple_framebuffer((100, 100))
+    tex1 = ctx.texture((10, 100), 4)
+    tex2 = ctx.texture((10, 100), 4)
+    ubo1 = ctx.buffer(reserve=16000)
+    ubo2 = ctx.buffer(reserve=16000)
+    ssob1 = ctx.buffer(reserve=1024)
+    ssob2 = ctx.buffer(reserve=1024)
+
+    for i in range(10_000):
+        print(i)
+        scope = ctx.scope(
+            framebuffer=fbo,
+            enable_only=moderngl.NOTHING,
+            textures=[(tex1, 0), (tex2, 1)],
+            uniform_buffers=[(ubo1, 0), (ubo2, 1)],
+            storage_buffers=[(ssob1, 0), (ssob2, 1)],
+        )
+        # scope = ctx.scope(
+        #     framebuffer=ctx.simple_framebuffer((100, 100)),
+        #     enable_only=moderngl.NOTHING,
+        #     textures=[(ctx.texture((10, 100), 4), 0), (ctx.texture((10, 100), 4), 1)],
+        #     uniform_buffers=[(ctx.buffer(reserve=16000), 0), (ctx.buffer(reserve=16000), 1)],
+        #     storage_buffers=[(ctx.buffer(reserve=1024), 0), (ctx.buffer(reserve=1024), 1)],
+        # )
+        # with scope:
+        #     pass
+
+        time.sleep(0.001)
+
+
 # ref_count()
 # test_texture()
 
@@ -185,4 +217,6 @@ def test_sampler_mass_create():
 # test_compute_shader_fail()
 # test_compute_shader_mass_create()
 
-test_sampler_mass_create()
+# test_sampler_mass_create()
+
+test_scope()

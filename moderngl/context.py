@@ -1379,14 +1379,19 @@ class Context:
         if framebuffer is None:
             framebuffer = self.screen
 
-        textures = tuple((tex.mglo, idx) for tex, idx in textures)
-        uniform_buffers = tuple((buf.mglo, idx) for buf, idx in uniform_buffers)
-        storage_buffers = tuple((buf.mglo, idx) for buf, idx in storage_buffers)
+        mgl_textures = tuple((tex.mglo, idx) for tex, idx in textures)
+        mgl_uniform_buffers = tuple((buf.mglo, idx) for buf, idx in uniform_buffers)
+        mgl_storage_buffers = tuple((buf.mglo, idx) for buf, idx in storage_buffers)
 
         res = Scope.__new__(Scope)
-        res.mglo = self.mglo.scope(framebuffer.mglo, enable_only, textures,
-                                   uniform_buffers, storage_buffers, samplers)
+        res.mglo = self.mglo.scope(framebuffer.mglo, enable_only, mgl_textures,
+                                   mgl_uniform_buffers, mgl_storage_buffers, samplers)
         res.ctx = self
+        res._framebuffer = framebuffer
+        res._textures = textures
+        res._uniform_buffers = uniform_buffers
+        res._storage_buffers = storage_buffers
+        res._samplers = samplers
         res.extra = None
         return res
 
