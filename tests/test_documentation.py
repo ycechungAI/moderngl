@@ -85,7 +85,7 @@ class TestCase(unittest.TestCase):
         self.validate_cls('query.rst', 'Query', [])
 
     def test_scope_docs(self):
-        self.validate_cls('scope.rst', 'Scope', [])
+        self.validate_cls('scope.rst', 'Scope', [], include=['__enter__', '__exit__'])
 
     def test_compute_shader_docs(self):
         self.validate_cls('compute_shader.rst', 'ComputeShader', [], ['__getitem__', '__setitem__', '__eq__', '__iter__'])
