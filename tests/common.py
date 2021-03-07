@@ -37,6 +37,7 @@ def get_context(require=330) -> moderngl.Context:
             return None
 
     entry['fbo'].use()
+    entry['fbo'].clear()
     entry['ctx'].__enter__()
     return entry['ctx']
  
