@@ -223,6 +223,7 @@ class TestCase(unittest.TestCase):
                 color = texelFetch(tex, 0, 0);
             }
             """,
+            varyings=["color"],
         )
         self.assertIn("tex", prog)
 

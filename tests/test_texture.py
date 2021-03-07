@@ -151,6 +151,7 @@ class TestCase(unittest.TestCase):
 
     def test_override_internalformat(self):
         """Ensure no errors occur when overriding internalformat"""
+        self.ctx.error
         if not "GL_EXT_texture_sRGB" in self.ctx.extensions:
             self.skipTest('GL_EXT_texture_sRGB extension not supported')
 
