@@ -514,7 +514,7 @@ PyObject * MGLContext_exit(MGLContext * self) {
 }
 
 PyObject * MGLContext_release(MGLContext * self) {
-	PyObject_CallMethod(self->ctx, "release", NULL);
+	MGLContext_Invalidate(self);
 	Py_RETURN_NONE;
 }
 
@@ -1481,6 +1481,8 @@ void MGLContext_Invalidate(MGLContext * context) {
 	if (Py_TYPE(context) == &MGLInvalidObject_Type) {
 		return;
 	}
+
+	PyObject_CallMethod(context->ctx, "release", NULL);
 
 	// TODO: decref
 

@@ -279,7 +279,8 @@ class Context:
 
     def __del__(self):
         LOG.info(f"{self.__class__.__name__}.__del__ %s", self)
-        self.release()
+        if self._gc_mode == "auto":
+            self.release()
 
     @property
     def gc_mode(self) -> Optional[str]:
