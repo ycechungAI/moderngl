@@ -1,4 +1,5 @@
 import struct
+import platform
 from array import array
 import unittest
 import numpy as np
@@ -90,6 +91,9 @@ class TestCase(unittest.TestCase):
         self.assertEqual(tuple(v * 2 for v in data), struct.unpack(f"{len(data)}f", buffer2.read()))
 
     def test_vertex_lines_adjacency(self):
+        if platform.system().lower() in ["darwin"]:
+            self.skipTest('Tranforms with adjacency primitives now working on OSX')
+
         data = (
             1.0, 1.0,
             2.0, 2.0,
@@ -147,6 +151,9 @@ class TestCase(unittest.TestCase):
         )
 
     def test_vertex_line_strip_adjacency(self):
+        if platform.system().lower() in ["darwin"]:
+            self.skipTest('Tranforms with adjacency primitives now working on OSX')
+
         data = (
             1.0, 1.0,
             2.0, 2.0,
@@ -208,6 +215,8 @@ class TestCase(unittest.TestCase):
         )
 
     def test_vertex_triangles_adjacency(self):
+        if platform.system().lower() in ["darwin"]:
+            self.skipTest('Tranforms with adjacency primitives now working on OSX')
         data = (
             1.0, 1.0, # outer points
             2.0, 2.0,
