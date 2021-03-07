@@ -133,7 +133,7 @@ Unsigned
 Signed
 ~~~~~~
 
-``u1`` textures store signed byte values (``GL_BYTE``).
+``i1`` textures store signed byte values (``GL_BYTE``).
 
 +----------+---------------+-----------------+-------------------+
 | **dtype**|  *Components* | *Base Format*   | *Internal Format* |
@@ -147,7 +147,7 @@ Signed
 | i1       |  4            | GL_RGBA_INTEGER | GL_RGBA8I         |
 +----------+---------------+-----------------+-------------------+
 
-``u2`` textures store 16 bit integers (``GL_SHORT``).
+``i2`` textures store 16 bit integers (``GL_SHORT``).
 
 +----------+---------------+-----------------+-------------------+
 | **dtype**|  *Components* | *Base Format*   | *Internal Format* |
@@ -161,7 +161,7 @@ Signed
 | i2       |  4            | GL_RGBA_INTEGER | GL_RGBA16I        |
 +----------+---------------+-----------------+-------------------+
 
-``u4`` textures store 32 bit integers (``GL_INT``)
+``i4`` textures store 32 bit integers (``GL_INT``)
 
 +----------+---------------+-----------------+-------------------+
 | **dtype**|  *Components* | *Base Format*   | *Internal Format* |
