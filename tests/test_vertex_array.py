@@ -1,4 +1,5 @@
 from array import array
+from moderngl.program_members import varying
 import unittest
 
 import moderngl
@@ -24,6 +25,7 @@ class TestCase(unittest.TestCase):
                 out_pos = pos + velocity;
             }
             """,
+            varyings=["out_pos"],
         )
         buffer = self.ctx.buffer(array('f', range(16)))
         self.ctx.vertex_array(prog, [(buffer, '2f 2x4', 'pos')])

@@ -151,8 +151,8 @@ class TestCase(unittest.TestCase):
 
     def test_override_internalformat(self):
         """Ensure no errors occur when overriding internalformat"""
-        if platform.system().lower() in ["darwin"]:
-            self.skipTest('Skip SRGB test in darwin')
+        if not "GL_EXT_texture_sRGB" in self.ctx.extensions:
+            self.skipTest('GL_EXT_texture_sRGB extension not supported')
 
         GL_SRGB8 = 0x8C41
         pixels = struct.pack('16B', 255, 0, 0, 255, 0, 255, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255)
