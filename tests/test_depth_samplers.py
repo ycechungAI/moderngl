@@ -74,7 +74,7 @@ def test_sampler_shadow(standalone_context,
     # It should have 1's where the triangle lies.                                                                      #
     ############################################################################
     texel_shadowed = 1
-    np_triangle_raster_visbility = np.array(
+    np_triangle_raster_visibility = np.array(
         [
             [texel_shadowed] * (size[0] - (j + 1)) + [1 - texel_shadowed] * (j + 1)
             for j in range(size[1])
@@ -99,13 +99,14 @@ def test_sampler_shadow(standalone_context,
         vao_fs_shadow.render(moderngl.TRIANGLE_STRIP)
 
         data = np.frombuffer(fbo_draw_depth.read(components=1, dtype='f4'), dtype=np.dtype('f4')).reshape(size[::-1])
-        np.testing.assert_array_almost_equal(data, np_triangle_raster_visbility)
+        np.testing.assert_array_almost_equal(data, np_triangle_raster_visibility)
 
     def _with_sampler():
         # https://github.com/Contraz/demosys-py/blob/01f285cd3a132012e14a51bf0ae9d7aa5a489b55/demosys/opengl/texture.py#L151
         shadow_sampler = ctx.sampler(filter=depth_tex_filter, compare_func=compare_func)  # enable depth func
         shadow_sampler.use(location=0)
         _do_test()
+        shadow_sampler.clear(location=0)
 
     def _with_texture_paramters():
         tex_depth.filter = depth_tex_filter
@@ -185,9 +186,12 @@ def test_sampler_shadow_with_bilinear_interpolation(
         )
         shadow_sampler.use(location=0)
         _do_test()
+        shadow_sampler.clear(location=0)
 
     def _with_texture_paremeters():
         tex_depth.filter = depth_tex_filter
+        tex_depth.repeat_x = False
+        tex_depth.repeat_y = False
         tex_depth.compare_func = compare_func
         _do_test()
 
