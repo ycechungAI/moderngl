@@ -1133,11 +1133,11 @@ void MGLFramebuffer_Invalidate(MGLFramebuffer * framebuffer) {
 		return;
 	}
 
-	// TODO: decref
-
 	if (framebuffer->framebuffer_obj) {
 		framebuffer->context->gl.DeleteFramebuffers(1, (GLuint *)&framebuffer->framebuffer_obj);
 		Py_DECREF(framebuffer->context);
+		delete[] framebuffer->draw_buffers;
+		delete[] framebuffer->color_mask;
 	}
 
 	Py_TYPE(framebuffer) = &MGLInvalidObject_Type;
