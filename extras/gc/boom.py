@@ -23,16 +23,33 @@ def ref_count():
     print(c_long.from_address(id(var1)).value)
 
 
-def test_texture():
-    texture = ctx.texture((1000, 1000), 4, data=np.random.randint(0, 255, 1000 * 1000 * 4, dtype="u1"))
+# --- Texture ---
 
+def test_texture():
+    return ctx.texture((1000, 1000), 4, data=np.random.randint(0, 255, 1000 * 1000 * 4, dtype="u1"))
+
+
+def test_texture_mass_create():
+    for _ in range(10_000):
+        texture = ctx.texture((1000, 1000), 4, data=np.random.randint(0, 255, 1000 * 1000 * 4, dtype="u1"))
+
+
+def test_texture_failure():
+    try:
+        texture = ctx.texture((1000, 1000), 4, data=np.random.randint(0, 255, 1000 * 1001 * 4, dtype="u1"))
+    except Exception as ex:
+        print(ex)
+
+
+def test_texture_failure_mass_create():
+    for i in range(10_000):
+        test_texture_failure()
+
+
+# --- TextureArray ---
 
 def test_texture_array():
     texture = ctx.texture_array((100, 100, 100), 4, data=np.random.randint(0, 255, 100 * 100 * 100 * 4, dtype="u1"))
-
-
-def test_texture_array_failure():
-    texture = ctx.texture_array((100, 100, 10), 4, data=np.random.randint(0, 255, 100 * 100 * 100 * 4, dtype="u1"))
 
 
 def test_texture_array_mass_create():
@@ -40,10 +57,19 @@ def test_texture_array_mass_create():
         texture = ctx.texture_array((100, 100, 100), 4, data=np.random.randint(0, 255, 100 * 100 * 100 * 4, dtype="u1"))
 
 
-def test_texture_mass_create():
-    for _ in range(100):
-        texture = ctx.texture((1000, 1000), 4, data=np.random.randint(0, 255, 1000 * 1000 * 4, dtype="u1"))
+def test_texture_array_failure():
+    try:
+        texture = ctx.texture_array((100, 100, 10), 4, data=np.random.randint(0, 255, 100 * 100 * 100 * 4, dtype="u1"))
+    except Exception as ex:
+        print(ex)
 
+
+def test_texture_array_failure_mass_create():
+    for i in range(10_000):
+        test_texture_array_failure()
+
+
+# --- Texture3D ---
 
 def test_texture_3d():
     texture = ctx.texture3d((100, 100, 100), 4, data=np.random.randint(0, 255, 100 * 100 * 100 * 4, dtype="u1"))
@@ -54,15 +80,61 @@ def test_texture_3d_mass_create():
         texture = ctx.texture3d((100, 100, 100), 4, data=np.random.randint(0, 255, 100 * 100 * 100 * 4, dtype="u1"))
 
 
+def test_texture_3d_failure():
+    try:
+        texture = ctx.texture3d((100, 100, 100), 4, data=np.random.randint(0, 255, 100 * 100 * 101 * 4, dtype="u1"))
+    except Exception as ex:
+        print(ex)
+
+
+def test_texture_3d_failure_mass_create():
+    for i in range(10_000):
+        test_texture_3d_failure()
+
+
+# --- Framebuffer ---
+
 def test_framebuffer():
     texture = ctx.texture((100, 100), 4)
     fbo = ctx.framebuffer(color_attachments=[texture])
 
 
+def test_framebuffer_mass_create():
+    for i in range(10_000):
+        texture = ctx.texture((100, 100), 4)
+        ctx.framebuffer(color_attachments=[texture])
+        # Depending on drivers FBOs might not release until flush/finish
+        ctx.finish()
+
+
+def test_framebuffer_failure():
+    try:
+        fbo = ctx.framebuffer(color_attachments=[])
+    except Exception as ex:
+        print(ex)
+
+
+def test_framebuffer_failure_mass_create():
+    for i in range(10_000):
+        test_framebuffer_failure()
+
+
+# --- RenderBuffer ---
+
 def test_renderbuffer_mass_create():
     for i in range(10_000):
         rb = ctx.renderbuffer((1000, 1000))
         time.sleep(0.01)
+
+
+def test_renderbuffer_failure_mass_create():
+    for i in range(10_000):
+        try:
+            rb = ctx.renderbuffer((1000, 1000), components=4, dtype="moo")
+        except Exception as ex:
+            print(ex)
+
+# --- Buffer ---
 
 def test_buffer():
     buffer = ctx.buffer(data=np.random.randint(0, 255, 1024 * 1024 * 1024, dtype="u1"))
@@ -78,6 +150,8 @@ def test_buffer_mass_create():
         b = ctx.buffer(data=np.random.randint(0, 255, 1024 * 1024, dtype="u1"))
         time.sleep(0.1)
 
+
+# --- Query ---
 
 def test_query_mass_create():
     for _ in range(1_000_000):
@@ -103,19 +177,12 @@ prog_src = {
 }
 
 
+# --- VertexArray ---
+
 def test_vertex_array():
     buffer = ctx.buffer(reserve=1024)
     prog = ctx.program(**prog_src)
     vao = ctx.vertex_array(prog, [(buffer, "2f", "in_pos")])
-
-
-def test_vertex_array_creation_failure():
-    try:
-        buffer = ctx.buffer(reserve=1024)
-        prog = ctx.program(**prog_src)
-        vao = ctx.vertex_array(prog, [(buffer, "2f", "in_pos_invalid")])
-    except moderngl.error.Error:
-        pass
 
 
 def test_vertex_array_mass_create():
@@ -128,6 +195,17 @@ def test_vertex_array_mass_create():
         time.sleep(0.01)
 
 
+def test_vertex_array_creation_failure():
+    try:
+        buffer = ctx.buffer(reserve=1024)
+        prog = ctx.program(**prog_src)
+        vao = ctx.vertex_array(prog, [(buffer, "2f", "in_pos_invalid")])
+    except moderngl.error.Error:
+        pass
+
+
+# --- ComputeShader ---
+
 def test_compute_shader():
     compute_shader = ctx.compute_shader('''
         #version 430
@@ -135,6 +213,7 @@ def test_compute_shader():
         void main() {
         }
     ''')
+
 
 def test_compute_shader_fail():
     compute_shader = ctx.compute_shader('''
@@ -152,11 +231,15 @@ def test_compute_shader_mass_create():
         time.sleep(0.001)
 
 
+# --- Sampler ---
+
 def test_sampler_mass_create():
     for i in range(100_000):
         sampler = ctx.sampler()
         time.sleep(.001)
 
+
+# Scope
 
 def test_scope():
     fbo = ctx.simple_framebuffer((100, 100))
@@ -190,18 +273,29 @@ def test_scope():
 
 
 # ref_count()
+
 # test_texture()
+# test_texture_mass_create()
+# test_texture_failure()
+# test_texture_failure_mass_create()
 
 # test_texture_array()
-# test_texture_array_failure()
 # test_texture_array_mass_create()
+# test_texture_array_failure()
+# test_texture_array_failure_mass_create()
 
 # test_texture_3d()
 # test_texture_3d_mass_create()
-# test_texture_3d_mass_create()
+# test_texture_3d_failure()
+# test_texture_3d_failure_mass_create()
 
 # test_framebuffer()
+# test_framebuffer_mass_create()
+# test_framebuffer_failure()
+# test_framebuffer_failure_mass_create()
+
 # test_renderbuffer_mass_create()
+# test_renderbuffer_failure_mass_create()
 
 # test_buffer()
 # test_buffer_creation_failed()
@@ -219,4 +313,4 @@ def test_scope():
 
 # test_sampler_mass_create()
 
-test_scope()
+# test_scope()
