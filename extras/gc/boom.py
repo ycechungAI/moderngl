@@ -13,7 +13,9 @@ import moderngl
 
 logging.basicConfig(level=logging.DEBUG)
 
-ctx = moderngl.create_context(standalone=True, require=450)
+ctx = moderngl.create_context(standalone=True, require=330)
+
+print(ctx)
 ctx.gc_mode = "auto"
 
 
@@ -26,8 +28,7 @@ def ref_count():
 # --- Texture ---
 
 def test_texture():
-    return ctx.texture((1000, 1000), 4, data=np.random.randint(0, 255, 1000 * 1000 * 4, dtype="u1"))
-
+    return ctx.texture((100, 100), 4, data=np.random.randint(0, 1, 100 * 100 * 4, dtype="u1"), dtype="u1")
 
 def test_texture_mass_create(n=1_000):
     for _ in range(n):
@@ -328,10 +329,11 @@ test_vertex_array_mass_create(N)
 test_vertex_array_creation_failure()
 test_vertex_array_creation_failure_mass_create(N)
 
-test_compute_shader()
-test_compute_shader_mass_create(N)
-test_compute_shader_fail()
-test_compute_shader_fail_mass_create(N)
+if ctx.version_code >= 430:
+    test_compute_shader()
+    test_compute_shader_mass_create(N)
+    test_compute_shader_fail()
+    test_compute_shader_fail_mass_create(N)
 
 test_sampler_mass_create(N)
 
