@@ -111,8 +111,6 @@ class Conway(Example):
         # Create the map texture
         self.texture = self.ctx.texture((self.width, self.height), 1, pixels.tobytes(), dtype='f4')
         self.texture.filter = moderngl.NEAREST, moderngl.NEAREST
-        self.texture.repeat_x = False
-        self.texture.repeat_y = False
         self.texture.swizzle = 'RRR1'  # What components texelFetch will get from the texture (in shader)
 
         # A quad covering the screen with texture coordinates
