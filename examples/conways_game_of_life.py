@@ -18,13 +18,16 @@ from ported._example import Example
 
 class Conway(Example):
     title = "Conway's Game of Life"
-    window_size = 640, 640
+    window_size = 800, 800
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        # How often the map should be updated
+        self.update_delay = 1 / 60  # updates per second
+        self.last_updated = 0
         # size of the map
-        self.width, self.height = 640, 640
+        self.width, self.height = 400, 400
         # Force the window to calculate black borders if needed to retain the aspect ratio
         self.wnd.fixed_aspect_ratio = self.width / self.height
         # Initial state of the map (random)
@@ -37,10 +40,12 @@ class Conway(Example):
                 #version 330
 
                 in vec2 in_vert;
+                in vec2 in_texcoord;
+
                 out vec2 v_text;
 
                 void main() {
-                    v_text = in_vert;
+                    v_text = in_texcoord;
                     gl_Position = vec4(in_vert, 0.0, 1.0);
                 }
             ''',
@@ -105,17 +110,20 @@ class Conway(Example):
 
         # Create the map texture
         self.texture = self.ctx.texture((self.width, self.height), 1, pixels.tobytes(), dtype='f4')
-        self.texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
+        self.texture.filter = moderngl.NEAREST, moderngl.NEAREST
+        self.texture.repeat_x = False
+        self.texture.repeat_y = False
         self.texture.swizzle = 'RRR1'  # What components texelFetch will get from the texture (in shader)
 
-        # A quad covering the screen (scaled in vertex shader)
+        # A quad covering the screen with texture coordinates
         self.vbo = self.ctx.buffer(np.array([
-            -1.0, -1.0, # lower left
-            -1.0, 1.0,  # upper left
-            1.0, -1.0,  # lower right
-            1.0, 1.0    # upper right
+            # x    y     u  v
+            -1.0, -1.0,  0, 0,  # lower left
+            -1.0,  1.0,  0, 1,  # upper left
+            1.0,  -1.0,  1, 0,  # lower right
+            1.0,   1.0,  1, 1,  # upper right
         ]).astype('f4'))
-        self.vao = self.ctx.simple_vertex_array(self.display_prog, self.vbo, 'in_vert')
+        self.vao = self.ctx.simple_vertex_array(self.display_prog, self.vbo, 'in_vert', 'in_texcoord')
 
         # Transform vertex array to generate new map state
         self.tao = self.ctx.vertex_array(self.transform_prog, [])
@@ -123,13 +131,16 @@ class Conway(Example):
 
     def render(self, time, frame_time):
         self.ctx.clear(1.0, 1.0, 1.0)
+
         # Bind texture to channel 0
         self.texture.use(location=0)
 
-        # Generate the new map and write that to the pbo buffer
-        self.tao.transform(self.pbo, vertices=self.width * self.height)
-        # Copy the pbo into the texture
-        self.texture.write(self.pbo)
+        if time - self.last_updated > self.update_delay:
+            # Generate the new map and write that to the pbo buffer
+            self.tao.transform(self.pbo, vertices=self.width * self.height)
+            # Copy the pbo into the texture
+            self.texture.write(self.pbo)
+            self.last_updated = time
 
         # Render the texture
         self.vao.render(moderngl.TRIANGLE_STRIP)
