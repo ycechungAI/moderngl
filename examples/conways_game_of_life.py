@@ -52,9 +52,12 @@ class Conway(Example):
             fragment_shader='''
                 #version 330
 
+                // Will read from texture bound to channel / locaton 0 by default
                 uniform sampler2D Texture;
 
+                // Interpolated texture coordinate from vertex shader
                 in vec2 v_text;
+                // The fragment ending up on the screen
                 out vec4 f_color;
 
                 void main() {
@@ -63,13 +66,12 @@ class Conway(Example):
             ''',
         )
 
+        # Program calculating the next state of the map
         self.transform_prog = self.ctx.program(
             vertex_shader='''
                 #version 330
 
                 uniform sampler2D Texture;
-                uniform int Width;
-                uniform int Height;
 
                 out float out_vert;
 
@@ -79,7 +81,8 @@ class Conway(Example):
                 bool cell(int x, int y) {
                     // get the texture size
                     ivec2 tSize = textureSize(Texture, 0).xy;
-                    // Ensure lookups are not going outside the texture area
+                    // Ensure lookups are not going outside the texture area because
+                    // texelFetch do not support texture repeat / wrap modes
                     return texelFetch(Texture, ivec2((x + tSize.x) % tSize.x, (y + tSize.y) % tSize.y), 0).r < 0.5;
                 }
 
@@ -120,7 +123,7 @@ class Conway(Example):
             -1.0,  1.0,  0, 1,  # upper left
             1.0,  -1.0,  1, 0,  # lower right
             1.0,   1.0,  1, 1,  # upper right
-        ]).astype('f4'))
+        ], dtype="f4"))
         self.vao = self.ctx.simple_vertex_array(self.display_prog, self.vbo, 'in_vert', 'in_texcoord')
 
         # Transform vertex array to generate new map state
