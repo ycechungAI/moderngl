@@ -310,6 +310,11 @@ class Texture:
         '''
             Read the pixel data as bytes into system memory.
 
+            The texture can also be attached to a :py:class:`Framebuffer`
+            to gain access to :py:meth:`Framebuffer.read` for additional
+            features such ad reading a subsection or converting to
+            another ``dtype``.
+
             Keyword Args:
                 level (int): The mipmap level.
                 alignment (int): The byte alignment of the pixels.
