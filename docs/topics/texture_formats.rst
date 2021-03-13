@@ -31,10 +31,25 @@ Texture contents can be passed in using the ``data`` parameter during
 creation or by using the ``write()`` method. The object passed in
 ``data`` can be bytes or any object supporting the buffer protocol.
 
+When writing data to texture the data type can be derived from
+the internal format in the tables below. ``f1`` textures takes
+unsigned bytes (``u1`` or ``numpy.uint8`` in numpy) while
+``f2`` textures takes 16 bit floats (``f2`` or ``numpy.float16`` in numpy).
+
+
 Float Textures
 --------------
 
 ``f1`` textures are just unsigned bytes (8 bits per component) (``GL_UNSIGNED_BYTE``)
+
+The ``f1`` texture is the most commonly used textures in OpenGL
+and is currently the default. Each component takes 1 byte (4 bytes for RGBA).
+This is not really a "real" float format, but a shader will read
+normalized values from these textures. ``0-255`` (byte rage) is read
+as a value from ``0.0`` to ``1.0`` in shaders.
+
+In shaders the sampler type should be ``sampler2D``, ``sampler2DArray``
+``sampler3D``, ``samplerCube`` etc.
 
 +----------+---------------+---------------+-------------------+
 | **dtype**|  *Components* | *Base Format* | *Internal Format* |
@@ -48,7 +63,7 @@ Float Textures
 | f1       |  4            | GL_RGBA       | GL_RGBA8          |
 +----------+---------------+---------------+-------------------+
 
-``f2`` textures stores 16 bit float values (``GL_HALF_FLOAT```).
+``f2`` textures stores 16 bit float values (``GL_HALF_FLOAT``).
 
 +----------+---------------+---------------+-------------------+
 | **dtype**|  *Components* | *Base Format* | *Internal Format* |
@@ -82,13 +97,18 @@ Integer Textures
 
 Integer textures come in a signed and unsigned version. The advantage
 with integer textures is that shader can read the raw integer values
-from them using for example ``usampler2D`` (unsigned) or ``isampler2D``
+from them using for example ``usampler*`` (unsigned) or ``isampler*``
 (signed).
+
+Integer textures do not support ``LINEAR`` filtering (only ``NEAREST``).
 
 Unsigned
 ~~~~~~~~
 
 ``u1`` textures store unsigned byte values (``GL_UNSIGNED_BYTE``).
+
+In shaders the sampler type should be ``usampler2D``, ``usampler2DArray``
+``usampler3D``, ``usamplerCube`` etc.
 
 +----------+---------------+-----------------+-------------------+
 | **dtype**|  *Components* | *Base Format*   | *Internal Format* |
@@ -135,6 +155,9 @@ Signed
 
 ``i1`` textures store signed byte values (``GL_BYTE``).
 
+In shaders the sampler type should be ``isampler2D``, ``isampler2DArray``
+``isampler3D``, ``isamplerCube`` etc.
+
 +----------+---------------+-----------------+-------------------+
 | **dtype**|  *Components* | *Base Format*   | *Internal Format* |
 +==========+===============+=================+===================+
@@ -180,7 +203,7 @@ Overriding internalformat
 
 :py:meth:`Context.texture` supports overriding the internalformat
 of the texture. This is only necessary when needing a different
-internalformats from the tables above. This can for
+internal formats from the tables above. This can for
 example be ``GL_SRGB8 = 0x8C41`` or some compressed format.
 You may also need to look up in :py:attr:`Context.extensions`
 to ensure the context supports internalformat you are using.
