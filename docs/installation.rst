@@ -75,8 +75,9 @@ ___________
 +++++++++++++
 
 If you have 32-bit python, then open ``C:\msys64\mingw32.exe`` and type the following
+
 .. code-block:: sh
-    
+
     pacman -S mingw-w64-i686-mesa
 
 It will install mesa and it's dependencies. Then you can add ``C:\msys64\mingw32\bin`` to PATH before ``C:\Windows`` and moderngl
@@ -86,8 +87,9 @@ should be working.
 +++++++++++++
 
 If you have 64-bit python, then open ``C:\msys64\mingw64.exe`` and type the following
+
 .. code-block:: sh
-    
+
     pacman -S mingw-w64-x86_64-mesa
 
 It will install mesa and it's dependencies. Then you can add ``C:\msys64\mingw64\bin`` to PATH before ``C:\Windows`` and moderngl
