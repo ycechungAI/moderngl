@@ -114,6 +114,9 @@ be able to use the most of the ModernGL functions, even on integrated
 graphics cards. _(Compute Shaders will likely not work
 depending on how old your PC is.)_
 
+You can still try [using Mesa](https://moderngl.readthedocs.io/en/latest/installation.html#using-with-mesa-3d-on-windows) 
+but performance would be limited.
+
 ### Where can I use ModernGL?
 
 **Anywhere where OpenGL is supported.** ModernGL is capable of rendering
@@ -220,6 +223,7 @@ https://github.com/moderngl/moderngl/releases
 - [Einar Forselv](https://github.com/einarf)
 - [Jonathan Hartley](https://github.com/tartley)
 - [yoyonel](https://github.com/yoyonel)
+- [Naveen M K](https://github.com/naveen521kk)
 
 and [many others](https://github.com/cprogrammer1994/ModernGL/graphs/contributors)
 
