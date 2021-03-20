@@ -54,3 +54,43 @@ Package and dev dependencies:
 
 * Install ``requirements.txt``, ``tests/requirements.txt`` and ``docs/requirements.txt``
 * Install the package in editable mode: ``pip install -e .``
+
+Using with Mesa 3D on Windows
+-----------------------------
+
+If you have an old Graphics Card that raises errors when running moderngl, you can try using
+this method, to make Moderngl work.
+
+There are essentially two ways, 
+* Compling Mesa yourselves see https://docs.mesa3d.org/install.html.
+* Using msys2, which provids pre-compiled Mesa binaries.
+
+Using MSYS2
+___________
+
+* Download and Install https://www.msys2.org/#installation
+* Check whether you have 32-bit or 64-bit python.
+
+32-bit python
++++++++++++++
+
+If you have 32-bit python, then open ``C:\msys64\mingw32.exe`` and type the following
+
+.. code-block:: sh
+
+    pacman -S mingw-w64-i686-mesa
+
+It will install mesa and it's dependencies. Then you can add ``C:\msys64\mingw32\bin`` to PATH before ``C:\Windows`` and moderngl
+should be working.
+
+64-bit python
++++++++++++++
+
+If you have 64-bit python, then open ``C:\msys64\mingw64.exe`` and type the following
+
+.. code-block:: sh
+
+    pacman -S mingw-w64-x86_64-mesa
+
+It will install mesa and it's dependencies. Then you can add ``C:\msys64\mingw64\bin`` to PATH before ``C:\Windows`` and moderngl
+should be working.
