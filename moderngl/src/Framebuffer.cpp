@@ -504,17 +504,19 @@ PyObject * MGLFramebuffer_read(MGLFramebuffer * self, PyObject * args) {
 	int components;
 	int alignment;
 	int attachment;
+	int clamp;
 
 	const char * dtype;
 	Py_ssize_t dtype_size;
 
 	int args_ok = PyArg_ParseTuple(
 		args,
-		"OIIIs#",
+		"OIIIps#",
 		&viewport,
 		&components,
 		&attachment,
 		&alignment,
+		&clamp,
 		&dtype,
 		&dtype_size
 	);
@@ -595,6 +597,12 @@ PyObject * MGLFramebuffer_read(MGLFramebuffer * self, PyObject * args) {
 	char * data = PyBytes_AS_STRING(result);
 
 	const GLMethods & gl = self->context->gl;
+
+	if (clamp) {
+		gl.ClampColor(GL_CLAMP_READ_COLOR, GL_TRUE);
+	} else {
+		gl.ClampColor(GL_CLAMP_READ_COLOR, GL_FIXED_ONLY);
+	}
 
 	gl.BindFramebuffer(GL_FRAMEBUFFER, self->framebuffer_obj);
 	// if (self->framebuffer_obj) {

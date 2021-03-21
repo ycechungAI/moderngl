@@ -267,7 +267,7 @@ class Framebuffer:
         self.ctx.fbo = self
         self.mglo.use()
 
-    def read(self, viewport=None, components=3, *, attachment=0, alignment=1, dtype='f1') -> bytes:
+    def read(self, viewport=None, components=3, *, attachment=0, alignment=1, dtype='f1', clamp=False) -> bytes:
         '''
             Read the content of the framebuffer.
 
@@ -279,12 +279,13 @@ class Framebuffer:
                 attachment (int): The color attachment.
                 alignment (int): The byte alignment of the pixels.
                 dtype (str): Data type.
+                clamp (bool): Clamps floating point values to ``[0.0, 1.0]``
 
             Returns:
                 bytes
         '''
 
-        return self.mglo.read(viewport, components, attachment, alignment, dtype)
+        return self.mglo.read(viewport, components, attachment, alignment, clamp, dtype)
 
     def read_into(self, buffer, viewport=None, components=3, *,
                   attachment=0, alignment=1, dtype='f1', write_offset=0) -> None:
