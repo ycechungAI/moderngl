@@ -88,15 +88,14 @@ items_fragment_shader_code = """
     out vec4 out_color;
     void main()
     {
-        if (length(vec2(0.5, 0.5) - uv.xy) > 0.25)
+        // Calculate the length from the center of the "quad"
+        // using texture coordinates discarding fragments
+        // further away than 0.5 creating a circle.
+        if (length(vec2(0.5, 0.5) - uv.xy) > 0.5)
         {
             discard;
         }
-
-        vec3 c = color;
-        c.xy += uv.xy * 0.05;
-        // c.xy += v_pos.xy * 0.75;
-        out_color = vec4(c, 1.0);
+        out_color = vec4(color, 1.0);
     }
 """
 
@@ -172,14 +171,14 @@ void main()
 
 class ComputeShaderSSBO(Example):
     title = "Compute Shader SSBO"
-    gl_version = 4, 3
-    window_size = 600, 600
-    aspect_ratio = 1.0
+    gl_version = 4, 3  # Required opengl version
+    window_size = 600, 600  # Initial window size
+    aspect_ratio = 1.0  # Force viewport aspect ratio (regardless of window size)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.COUNT = 256  # number of balls
-        self.STRUCT_SIZE = 12  # number of floats
+        self.STRUCT_SIZE = 12  # number of floats per item/ball
 
         # Program for drawing the balls / items
         self.program = self.ctx.program(
@@ -197,7 +196,7 @@ class ComputeShaderSSBO(Example):
         for i in range(self.COUNT):
             _angle = (i / self.COUNT) * math.pi * 2.0
             _dist = 0.125
-            radius = random.random() * 0.02 + 0.02
+            radius = random.random() * 0.01 + 0.01
             x = math.cos(_angle) * _dist
             y = math.sin(_angle) * _dist
             z = 0.0
@@ -215,10 +214,10 @@ class ComputeShaderSSBO(Example):
             compute_data.append(
                 [[x, y, z, w], [vx, vy, vz, vw], [r, g, b, a]])
 
+        # Create the two buffers the compute shader will write and read from
         compute_data = np.array(compute_data, dtype="f4")
         self.compute_buffer_a = self.ctx.buffer(compute_data)
         self.compute_buffer_b = self.ctx.buffer(compute_data)
-        self.target_buffer = self.compute_buffer_b
 
         # Prepare vertex arrays to drawing balls using the compute shader buffers are input
         # We use 4x4 (padding format) to skip the velocity date (not needed for drawing the balls)
