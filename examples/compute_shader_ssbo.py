@@ -26,12 +26,12 @@ items_vertex_shader_code = """
     in vec4 in_vert;
     in vec4 in_col;
 
-    out vec3 v_color;
+    out vec4 v_color;
 
     void main()
     {
-        gl_Position = vec4(in_vert.xyzw); // x, y, 0, radius
-        v_color = in_col.xyz;
+        gl_Position = in_vert; // x, y, 0, radius
+        v_color = in_col;
     }
     """
 
@@ -43,9 +43,9 @@ items_geo_shader = """
     layout(points) in;
     layout(triangle_strip, max_vertices=4) out;
 
-    in vec3 v_color[];
+    in vec4 v_color[];
     out vec2 uv;
-    out vec3 color;
+    out vec4 color;
 
     void main() {
         float radius = gl_in[0].gl_Position.w;
@@ -84,7 +84,7 @@ items_fragment_shader_code = """
     #version 430
 
     in vec2 uv;
-    in vec3 color;
+    in vec4 color;
     out vec4 out_color;
     void main()
     {
@@ -95,7 +95,7 @@ items_fragment_shader_code = """
         {
             discard;
         }
-        out_color = vec4(color, 1.0);
+        out_color = color;
     }
 """
 
@@ -106,7 +106,9 @@ compute_worker_shader_code = """
 
 layout(local_size_x=GROUP_SIZE) in;
 
-// All values are vec4s because of block alignment rules (keep it simple)
+// All values are vec4s because of block alignment rules (keep it simple).
+// We could also declare all values as floats to make it tightly packed.
+// See : https://www.khronos.org/opengl/wiki/Interface_Block_(GLSL)#Memory_layout
 struct Ball
 {
     vec4 pos; // x, y, 0, radius
@@ -191,42 +193,43 @@ class ComputeShaderSSBO(Example):
         compute_shader_code_parsed = compute_worker_shader_code.replace("%COMPUTE_SIZE%", str(self.COUNT))
         self.compute_shader = self.ctx.compute_shader(compute_shader_code_parsed)
 
-        # Generate initial data
-        compute_data = []
-        for i in range(self.COUNT):
-            _angle = (i / self.COUNT) * math.pi * 2.0
-            _dist = 0.125
-            radius = random.random() * 0.01 + 0.01
-            x = math.cos(_angle) * _dist
-            y = math.sin(_angle) * _dist
-            z = 0.0
-            w = radius
-            _v = random.random() * 0.005 + 0.01
-            vx = math.cos(_angle) * _v
-            vy = math.sin(_angle) * _v
-            vz = 0.0
-            vw = 0.0
-            r = 1.0 * random.random()
-            g = 1.0 * random.random()
-            b = 1.0 * random.random()
-            a = 1.0
-
-            compute_data.append(
-                [[x, y, z, w], [vx, vy, vz, vw], [r, g, b, a]])
-
         # Create the two buffers the compute shader will write and read from
-        compute_data = np.array(compute_data, dtype="f4")
+        compute_data = np.fromiter(self.gen_initial_data(), dtype="f4")
         self.compute_buffer_a = self.ctx.buffer(compute_data)
         self.compute_buffer_b = self.ctx.buffer(compute_data)
 
         # Prepare vertex arrays to drawing balls using the compute shader buffers are input
-        # We use 4x4 (padding format) to skip the velocity date (not needed for drawing the balls)
+        # We use 4x4 (padding format) to skip the velocity data (not needed for drawing the balls)
         self.balls_a = self.ctx.vertex_array(
             self.program, [(self.compute_buffer_a, '4f 4x4 4f', 'in_vert', 'in_col')],
         )
         self.balls_b = self.ctx.vertex_array(
             self.program, [(self.compute_buffer_b, '4f 4x4 4f', 'in_vert', 'in_col')],
         )
+
+    def gen_initial_data(self):
+        """Generator function creating the initial buffer data"""
+        for i in range(self.COUNT):
+            _angle = (i / self.COUNT) * math.pi * 2.0
+            _dist = 0.125
+            radius = random.random() * 0.01 + 0.01
+            # position and radius (vec4)
+            yield math.cos(_angle) * _dist
+            yield math.sin(_angle) * _dist
+            yield 0.0
+            yield radius
+            # velocity (vec4)
+            _v = random.random() * 0.005 + 0.01
+            yield math.cos(_angle) * _v
+            yield math.sin(_angle) * _v
+            yield 0.0
+            yield 0.0
+            # color (vec4)
+            yield 1.0 * random.random()
+            yield 1.0 * random.random()
+            yield 1.0 * random.random()
+            yield 1.0
+
 
     def render(self, time, frame_time):
         # Calculate the next position of the balls with compute shader
