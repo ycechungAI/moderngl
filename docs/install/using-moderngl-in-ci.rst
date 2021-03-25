@@ -1,4 +1,5 @@
-Using Moderngl in CI
+
+Using ModernGL in CI
 ====================
 
 Windows CI Configuration
@@ -16,7 +17,7 @@ _____
 
 2. Then login through bash and enter ``pacman -S --noconfirm mingw-w64-x86_64-mesa``.
     
-   .. code-block:: pwsh
+   .. code-block:: shell
       
        C:\msys64\usr\bin\bash -lc "pacman -S --noconfirm mingw-w64-x86_64-mesa"
    
@@ -24,11 +25,11 @@ _____
     
 3. Then add ``C:\msys64\mingw64\bin`` to ``PATH``, keeping it at top.
     
-   .. code-block:: pwsh
+  .. code-block:: powershell
    
-       $env:PATH = "C:\msys64\mingw64\bin;$env:PATH"
+    $env:PATH = "C:\msys64\mingw64\bin;$env:PATH"
 
-    .. warning::
+  .. warning::
     
         Make sure to delete ``C:\msys64\mingw64\bin\python.exe`` if it exists because the python provided
         by them would then be added to Global and some unexpected things may happen.
@@ -63,7 +64,7 @@ _____________________
 
 A example configuration for Github Actions:
 
-.. code-block:: yml
+.. code-block:: yaml
 
     name: Hello World
     on: [push, pull_request]
@@ -117,7 +118,7 @@ _____________________
 
 A example configuration for Github Actions:
 
-.. code-block:: yml
+.. code-block:: yaml
 
     name: Hello World
     on: [push, pull_request]
