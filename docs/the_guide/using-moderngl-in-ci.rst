@@ -108,7 +108,7 @@ _____
 
    .. code-block:: bash
     
-        sudo /usr/bin/Xvfb $DISPLAY -screen 0 1280x1024x24 &
+        sudo /usr/bin/Xvfb :0 -screen 0 1280x1024x24 &
 
 3. You can run ModernGL now.
 
@@ -134,7 +134,7 @@ A example configuration for Github Actions:
           - name: Prepare
             run: |
                 sudo apt-get -y install xvfb
-                sudo /usr/bin/Xvfb $DISPLAY -screen 0 1280x1024x24 &            
+                sudo /usr/bin/Xvfb :0 -screen 0 1280x1024x24 &            
           - name: Test using ModernGL
             run: |
               python -m pip install -r requirements.txt
