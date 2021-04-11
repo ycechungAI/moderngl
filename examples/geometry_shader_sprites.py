@@ -13,7 +13,6 @@ Other optimizations that can be done:
 """
 import math
 
-from moderngl import vertex_array
 import moderngl
 from ported._example import Example
 
@@ -135,9 +134,6 @@ class GeoSprites(Example):
             ]
         )
 
-        w, h = self.ctx.screen.size
-        self.projection = Matrix44.orthogonal_projection(0, w, h, 0, 1, 0, dtype="f4")
-
     def render(self, time, frame_time):
         self.ctx.clear()
         self.ctx.enable(moderngl.BLEND)
@@ -164,12 +160,13 @@ class GeoSprites(Example):
 
         self.sprite_data.write(array("f", gen_sprites(time)))
 
-        # calculate some offset. We truncate to intergers here.
+        # calculate scroll offsets. We truncate to intergers here.
         # This depends what "look" you want for your game.
         scroll_x, scroll_y = int(math.sin(time) * 100), int(math.cos(time) * 100)
 
-        # Let's also modify the viewport to scroll the entire screen.
-        self.projection = Matrix44.orthogonal_projection(
+        # Create a orthogonal projection matrix
+        # Let's also modify the projection to scroll the entire screen.
+        projection = Matrix44.orthogonal_projection(
             scroll_x,   # left
             width + scroll_x,   # right
             height + scroll_y,   # top
@@ -179,7 +176,11 @@ class GeoSprites(Example):
             dtype="f4",  # ensure we create 32 bit value (64 bit is default)
         )
 
-        self.program["projection"].write(self.projection)
+        # Update the projection uniform
+        self.program["projection"].write(projection)
+        # Configure the sprite_texture uniform to read from texture channel 0
+        self.program["sprite_texture"] = 0
+        # Bind the texture to channel 0
         self.ball_texture.use(0)
         # Since we have overallocated the buffer (room for 1000 sprites) we 
         # need to specify how many we actually want to render passing number of vertices.
