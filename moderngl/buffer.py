@@ -80,7 +80,7 @@ class Buffer:
                 data (bytes): The data.
 
             Keyword Args:
-                offset (int): The offset.
+                offset (int): The offset in bytes.
         '''
 
         self.mglo.write(data, offset)
@@ -93,8 +93,8 @@ class Buffer:
 
             Args:
                 data (bytes): The data.
-                start (int): First offset.
-                step (int): Offset increment.
+                start (int): First offset in bytes.
+                step (int): Offset increment in bytes.
                 count (int): The number of offsets.
         '''
 
@@ -105,10 +105,10 @@ class Buffer:
             Read the content.
 
             Args:
-                size (int): The size. Value ``-1`` means all.
+                size (int): The size in bytes. Value ``-1`` means all.
 
             Keyword Args:
-                offset (int): The offset.
+                offset (int): The offset in bytes.
 
             Returns:
                 bytes
@@ -122,11 +122,11 @@ class Buffer:
 
             Args:
                 buffer (bytearray): The buffer that will receive the content.
-                size (int): The size. Value ``-1`` means all.
+                size (int): The size in bytes. Value ``-1`` means all.
 
             Keyword Args:
-                offset (int): The read offset.
-                write_offset (int): The write offset.
+                offset (int): The read offset in bytes.
+                write_offset (int): The write offset in bytes.
         '''
 
         return self.mglo.read_into(buffer, size, offset, write_offset)
@@ -139,9 +139,9 @@ class Buffer:
             using offsets calculated from start, step and stop.
 
             Args:
-                chunk_size (int): The chunk size.
-                start (int): First offset.
-                step (int): Offset increment.
+                chunk_size (int): The chunk size in bytes.
+                start (int): First offset in bytes.
+                step (int): Offset increment  in bytes.
                 count (int): The number of offsets.
 
             Returns:
