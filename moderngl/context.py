@@ -380,6 +380,11 @@ class Context:
                 moderngl.DST_ALPHA
                 moderngl.ONE_MINUS_DST_ALPHA
 
+                # Shortcuts
+                moderngl.DEFAULT_BLENDING     # (SRC_ALPHA, ONE_MINUS_SRC_ALPHA)
+                moderngl.ADDITIVE_BLENDING    # (ONE, ONE)
+                moderngl.PREMULTIPLIED_ALPHA  # (SRC_ALPHA, ONE)
+
             Example::
 
                 # For both rgb and alpha
