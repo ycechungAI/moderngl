@@ -22,7 +22,10 @@ class Framebuffer:
         Create a :py:class:`Framebuffer` using :py:meth:`Context.framebuffer`.
     '''
 
-    __slots__ = ['mglo', '_color_attachments', '_depth_attachment', '_size', '_samples', '_glo', 'ctx', 'extra']
+    __slots__ = [
+        'mglo', '_color_attachments', '_depth_attachment', '_size', '_samples', '_glo',
+        'ctx', '_is_reference', 'extra'
+    ]
 
     def __init__(self):
         self.mglo = None  #: Internal representation for debug purposes only.
@@ -32,6 +35,7 @@ class Framebuffer:
         self._samples: int = None
         self._glo: int = None
         self.ctx: Context = None  #: The context this object belongs to
+        self._is_reference = None  #: Detected framebuffers we should not delete
         self.extra: Any = None  #: Attribute for storing user defined objects
         raise TypeError()
 
@@ -53,7 +57,7 @@ class Framebuffer:
         # If object was initialized properly (ctx present) and gc_mode is auto
         if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
             # We should never destroy the default framebuffer
-            if self._glo == 0:
+            if self._is_reference:
                 LOG.debug("Attempting to deleted the default framebuffer")
             else:
                 self.release()

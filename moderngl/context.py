@@ -1010,6 +1010,7 @@ class Context:
         res._color_attachments = None
         res._depth_attachment = None
         res.ctx = self
+        res._is_reference = True
         res.extra = None
         return res
 
@@ -1475,6 +1476,7 @@ class Context:
         res._color_attachments = tuple(color_attachments)
         res._depth_attachment = depth_attachment
         res.ctx = self
+        res._is_reference = False
         res.extra = None
         return res
 
