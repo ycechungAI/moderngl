@@ -377,7 +377,9 @@ class Texture:
 
             Args:
                 data (Union[bytes, Buffer]): The pixel data.
-                viewport (tuple): The sub-section if the texture to affect
+                viewport (tuple): The sub-section of the texture to update
+                                  in viewport coordinates. The data size
+                                  must match the size of the area.
 
             Keyword Args:
                 level (int): The mipmap level.
