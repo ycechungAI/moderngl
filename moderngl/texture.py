@@ -370,9 +370,14 @@ class Texture:
                 texture = ctx.texture((2, 2), 1)
                 texture.write(data)
 
+                # Write to a sub-section of the texture using viewport
+                texture = ctx.texture((100, 100), 4)
+                # Fill the lower left 50x50 pixels with new data
+                texture.write(data, viewport=(0, 0, 50, 50))
+
             Args:
                 data (Union[bytes, Buffer]): The pixel data.
-                viewport (tuple): The viewport.
+                viewport (tuple): The sub-section if the texture to affect
 
             Keyword Args:
                 level (int): The mipmap level.
