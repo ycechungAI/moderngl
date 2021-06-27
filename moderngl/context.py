@@ -424,10 +424,10 @@ class Context:
             Example::
 
                 # For both rgb and alpha channel
-                ctx.blend_func = moderngl.FUNC_ADD
+                ctx.blend_equation = moderngl.FUNC_ADD
 
                 # Separate for rgb and alpha channel
-                ctx.blend_func = moderngl.FUNC_ADD, moderngl.MAX
+                ctx.blend_equation = moderngl.FUNC_ADD, moderngl.MAX
         '''
 
         raise NotImplementedError()
