@@ -331,9 +331,9 @@ class Context:
             float: Set/get the default point size.
 
         Point size limitations are found in ``ctx.info["GL_POINT_SIZE_RANGE"]``.
-        It can normall be expected to be 1 to 256 or greater.
+        It can normally be expected to be 1 to 256 or greater.
         Using a geometry shader is often a safer way to convert points into
-        triangle strip on the fly with no restrictions.
+        triangle strips on the fly with no restrictions.
 
         .. Warning:: Enabling this context flag requires
                      the shader to assign size to ``gl_PointSize``.
