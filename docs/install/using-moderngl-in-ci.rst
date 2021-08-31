@@ -23,7 +23,7 @@ _____
    
    This will install Mesa binary, which moderngl would be using.
     
-3. Then add ``C:\msys64\mingw64\bin`` to ``PATH``, keeping it at top.
+3. Then add ``C:\msys64\mingw64\bin`` to ``PATH``.
     
   .. code-block:: powershell
    
@@ -34,25 +34,8 @@ _____
         Make sure to delete ``C:\msys64\mingw64\bin\python.exe`` if it exists because the python provided
         by them would then be added to Global and some unexpected things may happen.
      
-4. Finally use below script before running moderngl, possibly in ``__init__.py`` of ``tests``, to make sure
-   that the ``C:\msys64\mingw64\bin\opengl32.dll`` it loaded correctly. The below script is in the assumption
-   that when running in CI the environment variable `CI` is set.
-   
-   .. code-block:: py
-   
-        import os
-        if os.getenv("CI") and os.name == "nt":
-            import ctypes
-            # Change the statement to the location of MSYS2 installation.
-            location = r"C:\msys64\mingw64\bin"
-            # add the in front of PATH. Usually usefull for python<3.8
-            os.environ["PATH"] = location + os.pathsep + os.getenv("PATH")
-            # Load the `dll` first so that it is saved in memory
-            ctypes.CDLL(f"{location}\\opengl32.dll")
-            if hasattr(os, "add_dll_directory"):
-                # this is so that moderngl loads the correct file
-                # only applicable for python>3.8
-                os.add_dll_directory(location)
+4. Then set an environment variable ``GLCONTEXT_WIN_LIBGL=C:\msys64\mingw64\bin\opengl32.dll``. This will
+   make glcontext use ``C:\msys64\mingw64\bin\opengl32.dll`` for opengl drivers.
 
 5. Then you can run moderngl as you want to.
 
@@ -87,6 +70,7 @@ A example configuration for Github Actions:
             shell: pwsh
             run: |
               Remove-Item C:\msys64\mingw64\bin\python.exe -Force
+              $env:GLCONTEXT_WIN_LIBGL = "C:\msys64\mingw64\bin\opengl32.dll"
               python -m pip install -r requirements.txt
               python -m pytest
               
