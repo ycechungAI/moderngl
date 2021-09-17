@@ -275,12 +275,23 @@ class Framebuffer:
         '''
             Read the content of the framebuffer.
 
+            .. code:: python
+
+                # Read the first color attachment's RGBA data
+                data = fbo.read(components=4)
+                # Read the second color attachment's RGB data
+                data = fbo.read(attachment=1)
+                # Read the depth attachment
+                data = fbo.read(attachment=-1)
+                # Read the lower left 10 x 10 pixels from the first color attachment
+                data = fbo.read(viewport=(0, 0, 10, 10))
+
             Args:
                 viewport (tuple): The viewport.
                 components (int): The number of components to read.
 
             Keyword Args:
-                attachment (int): The color attachment.
+                attachment (int): The color attachment number. -1 for the depth attachment
                 alignment (int): The byte alignment of the pixels.
                 dtype (str): Data type.
                 clamp (bool): Clamps floating point values to ``[0.0, 1.0]``
