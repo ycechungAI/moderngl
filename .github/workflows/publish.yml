@@ -73,9 +73,12 @@ jobs:
         with:
           path: dist/*.tar.gz
 
-  # upload_pypi:
-  #   needs: [build_wheels_win_mac, build_wheels_manylinux, build_sdist]
-  #   runs-on: ubuntu-latest
+  upload_pypi:
+    needs: [build_wheels_win_mac, build_wheels_manylinux, build_sdist]
+    runs-on: ubuntu-latest
+    steps:
+      - name: List wheels
+        run: ls wheelhouse
     
   #   #if: github.event_name == 'release' && github.event.action == 'published'
     
