@@ -1,8 +1,7 @@
 name: Publish (PyPI)
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
 
 env:
   CIBW_BUILD: cp3?-*
