@@ -87,8 +87,7 @@ vbo2 = ctx.buffer(reserve=1024, dynamic=True)
 
 ## Build
 
-[![build](https://img.shields.io/travis/moderngl/moderngl/master.svg?label=build)](https://travis-ci.org/moderngl/moderngl)
-[![build](https://img.shields.io/appveyor/ci/cprogrammer1994/moderngl-hbi4t/master.svg?label=build)](https://ci.appveyor.com/project/moderngl/moderngl)
+[![build](https://github.com/moderngl/moderngl/actions/workflows/build.yml/badge.svg)](https://github.com/moderngl/moderngl/actions/workflows/build.yml)
 
 ```sh
 python setup.py build_ext --inplace
