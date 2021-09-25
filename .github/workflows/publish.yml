@@ -9,13 +9,12 @@ env:
   CIBW_PRERELEASE_PYTHONS: true
 
 jobs:
-  build_wheels_win_mac:
+  build_wheels_win:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest]
-
+        os: windows-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -30,7 +29,22 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           path: ./wheelhouse/*.whl
-          
+  
+  build_wheels_macos:
+    name: Build wheels on macos-10.15
+    runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.1.2
+        env:
+          CIBW_ARCHS_MACOS: x86_64 universal2
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./wheelhouse/*.whl
+
   build_wheels_manylinux:
     name: Build wheels on ${{ matrix.distro }}
     runs-on: ubuntu-latest
@@ -76,7 +90,7 @@ jobs:
           path: dist/*.tar.gz
 
   upload_pypi:
-    needs: [build_wheels_win_mac, build_wheels_manylinux, build_sdist]
+    needs: [build_wheels_win_mac, build_wheels_macos, build_wheels_manylinux, build_sdist]
     runs-on: ubuntu-latest
     steps:
       - name: List wheels
