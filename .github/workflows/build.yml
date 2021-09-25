@@ -33,4 +33,10 @@ jobs:
         run: python -m pip install -U pip wheel setuptools
 
       - name: wheel
-        run: python setup.py bdist_wheel
+        run: 
+          python setup.py install
+      
+      - name: test
+        run:
+          pip install -r test/requirements.txt
+          PYTHONPATH=. pytest
