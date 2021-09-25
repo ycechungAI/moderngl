@@ -1,12 +1,8 @@
 name: Publish (PyPI)
 
-# on:
-#   release:
-#     types: [published]
-
 on:
-  push:
-    branches: [moderngl-5.6.4]
+  release:
+    types: [published]
 
 env:
   CIBW_BUILD: cp3?-*
