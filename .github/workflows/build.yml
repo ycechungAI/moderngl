@@ -37,6 +37,6 @@ jobs:
           python setup.py install
       
       - name: test
-        run:
+        run: |
           pip install -r test/requirements.txt
           PYTHONPATH=. pytest
