@@ -5,6 +5,8 @@ on:
 
 env:
   CIBW_BUILD: cp3?-*
+  # Don't publish these since they might not be compatible with final 3.10 ABI
+  CIBW_PRERELEASE_PYTHONS: true
 
 jobs:
   build_wheels_win_mac:
@@ -78,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: List wheels
-        run: ls ./wheelhouse/
+        run: ls -la
     
   #   #if: github.event_name == 'release' && github.event.action == 'published'
     
