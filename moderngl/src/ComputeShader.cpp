@@ -340,6 +340,6 @@ void MGLComputeShader_Invalidate(MGLComputeShader * compute_shader) {
 	gl.DeleteProgram(compute_shader->program_obj);
 
 	Py_DECREF(compute_shader->context);
-	Py_TYPE(compute_shader) = &MGLInvalidObject_Type;
+	Py_SET_TYPE(compute_shader, &MGLInvalidObject_Type);
 	Py_DECREF(compute_shader);
 }

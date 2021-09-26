@@ -267,6 +267,6 @@ void MGLQuery_Invalidate(MGLQuery * query) {
 	// TODO: release
 
 	Py_DECREF(query->context);
-	Py_TYPE(query) = &MGLInvalidObject_Type;
+	Py_SET_TYPE(query, &MGLInvalidObject_Type);
 	Py_DECREF(query);
 }

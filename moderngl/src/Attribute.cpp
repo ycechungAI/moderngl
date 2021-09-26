@@ -61,7 +61,7 @@ void MGLAttribute_Invalidate(MGLAttribute * attribute) {
 
 	// TODO: decref
 
-	Py_TYPE(attribute) = &MGLInvalidObject_Type;
+	Py_SET_TYPE(attribute, &MGLInvalidObject_Type);
 	Py_DECREF(attribute);
 }
 

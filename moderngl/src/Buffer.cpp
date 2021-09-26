@@ -667,7 +667,7 @@ void MGLBuffer_Invalidate(MGLBuffer * buffer) {
 	const GLMethods & gl = buffer->context->gl;
 	gl.DeleteBuffers(1, (GLuint *)&buffer->buffer_obj);
 
-	Py_TYPE(buffer) = &MGLInvalidObject_Type;
+	Py_SET_TYPE(buffer, &MGLInvalidObject_Type);
 	Py_DECREF(buffer->context);
 	Py_DECREF(buffer);
 }

@@ -685,6 +685,6 @@ void MGLProgram_Invalidate(MGLProgram * program) {
 	const GLMethods & gl = program->context->gl;
 	gl.DeleteProgram(program->program_obj);
 
-	Py_TYPE(program) = &MGLInvalidObject_Type;
+	Py_SET_TYPE(program, &MGLInvalidObject_Type);
 	Py_DECREF(program);
 }
