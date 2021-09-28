@@ -707,7 +707,7 @@ void MGLVertexArray_Invalidate(MGLVertexArray * array) {
 	const GLMethods & gl = array->context->gl;
 	gl.DeleteVertexArrays(1, (GLuint *)&array->vertex_array_obj);
 
-	Py_TYPE(array) = &MGLInvalidObject_Type;
+	Py_SET_TYPE(array, &MGLInvalidObject_Type);
 	Py_DECREF(array->program);
 	Py_XDECREF(array->index_buffer);
 	Py_DECREF(array);

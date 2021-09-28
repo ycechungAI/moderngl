@@ -1148,6 +1148,6 @@ void MGLFramebuffer_Invalidate(MGLFramebuffer * framebuffer) {
 		delete[] framebuffer->color_mask;
 	}
 
-	Py_TYPE(framebuffer) = &MGLInvalidObject_Type;
+	Py_SET_TYPE(framebuffer, &MGLInvalidObject_Type);
 	Py_DECREF(framebuffer);
 }

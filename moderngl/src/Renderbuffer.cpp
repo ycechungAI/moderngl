@@ -225,6 +225,6 @@ void MGLRenderbuffer_Invalidate(MGLRenderbuffer * renderbuffer) {
 	const GLMethods & gl = renderbuffer->context->gl;
 	gl.DeleteRenderbuffers(1, (GLuint *)&renderbuffer->renderbuffer_obj);
 
-	Py_TYPE(renderbuffer) = &MGLInvalidObject_Type;
+	Py_SET_TYPE(renderbuffer, &MGLInvalidObject_Type);
 	Py_DECREF(renderbuffer);
 }

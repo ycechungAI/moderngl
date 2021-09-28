@@ -5,9 +5,13 @@
 void MGLError_SetTrace(const char * filename, const char * function, int line, const char * format, ...) {
 	// MGLError * error = (MGLError *)MGLError_tp_new(&MGLError_Type, 0, 0);
 
+	// Discard any old exception -- we'll raise a new one here.
+	// (todo: when PyErr_ChainExceptions is added to Python's API, use that
+	// to show both exceptions to the user.)
+	PyErr_Clear();
+
 	PyObject * moderngl = PyImport_ImportModule("moderngl");
 	if (!moderngl) {
-		PyErr_Clear();
 		return;
 	}
 
@@ -30,9 +34,11 @@ void MGLError_SetTrace(const char * filename, const char * function, int line, c
 void MGLError_SetTrace(const char * filename, const char * function, int line, PyObject * message) {
 	// MGLError * error = (MGLError *)MGLError_tp_new(&MGLError_Type, 0, 0);
 
+	// Discard any old exception -- we'll raise a new one here.
+	PyErr_Clear();
+
 	PyObject * moderngl = PyImport_ImportModule("moderngl");
 	if (!moderngl) {
-		PyErr_Clear();
 		return;
 	}
 

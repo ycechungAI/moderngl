@@ -696,6 +696,6 @@ void MGLTexture3D_Invalidate(MGLTexture3D * texture) {
 	gl.DeleteTextures(1, (GLuint *)&texture->texture_obj);
 
 	Py_DECREF(texture->context);
-	Py_TYPE(texture) = &MGLInvalidObject_Type;
+	Py_SET_TYPE(texture, &MGLInvalidObject_Type);
 	Py_DECREF(texture);
 }

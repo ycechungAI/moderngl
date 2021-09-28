@@ -331,6 +331,6 @@ void MGLScope_Invalidate(MGLScope * scope) {
 	Py_DECREF(scope->old_framebuffer);
 
 	Py_DECREF(scope->context);
-	Py_TYPE(scope) = &MGLInvalidObject_Type;
+	Py_SET_TYPE(scope, &MGLInvalidObject_Type);
 	Py_DECREF(scope);
 }

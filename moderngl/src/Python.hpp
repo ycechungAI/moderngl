@@ -14,3 +14,7 @@ struct PyArrayInterface {
 	void * data;            // A pointer to the first element of the array
 	PyObject * descr;       // NULL or data-description (same as descr key of __array_interface__) -- must set ARR_HAS_DESCR flag or this will be ignored.
 };
+
+#if PY_VERSION_HEX < 0x03090000
+#define Py_SET_TYPE(obj, newtype) (Py_TYPE(obj) = (newtype))
+#endif
