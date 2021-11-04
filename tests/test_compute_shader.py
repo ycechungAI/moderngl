@@ -1,3 +1,4 @@
+from array import array
 import struct
 import unittest
 
@@ -66,6 +67,34 @@ class TestCase(unittest.TestCase):
         texture.bind_to_image(0, read=True, write=True, format=13371337)
         self.assertEqual(self.ctx.error, 'GL_INVALID_VALUE')
         texture.release()
+
+    def test_3d_image(self):
+        program = self.program = self.ctx.compute_shader(
+            """
+            #version 430
+            
+            layout(local_size_x=4, local_size_y=4, local_size_z=4) in;
+
+            layout(rgba32f, binding=0) uniform image3D img_in;
+            layout(rgba32f, binding=1) uniform image3D img_out;
+
+            void main() {
+                vec4 fragment = imageLoad(img_in, ivec3(gl_LocalInvocationID.xyz));
+                imageStore(img_out, ivec3(gl_LocalInvocationID.xyz), fragment);
+            }
+            """
+        )
+        tex_in = self.ctx.texture3d((4, 4, 4), 4, data=array('f', [v for v in range(4 * 4 * 4 * 4)]), dtype="f4")
+        tex_out = self.ctx.texture3d((4, 4, 4), 4, dtype="f4")
+
+        tex_in.bind_to_image(0, read=True, write=False)
+        tex_out.bind_to_image(1, read=False, write=True)
+        program.run(group_x=1)
+
+        data_in = struct.unpack("256f", tex_in.read())
+        data_out = struct.unpack("256f", tex_out.read())
+
+        self.assertEqual(data_in, data_out)
 
 
 if __name__ == '__main__':

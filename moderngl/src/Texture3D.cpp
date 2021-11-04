@@ -387,6 +387,43 @@ PyObject * MGLTexture3D_write(MGLTexture3D * self, PyObject * args) {
 	Py_RETURN_NONE;
 }
 
+PyObject * MGLTexture3D_meth_bind(MGLTexture * self, PyObject * args) {
+	int unit;
+	int read;
+	int write;
+	int level;
+	int format;
+
+	int args_ok = PyArg_ParseTuple(
+		args,
+		"IppII",
+		&unit,
+		&read,
+		&write,
+		&level,
+		&format
+	);
+
+	if (!args_ok) {
+		return NULL;
+	}
+
+	int access = GL_READ_WRITE;
+	if (read && !write) access = GL_READ_ONLY;
+	else if (!read && write) access = GL_WRITE_ONLY;
+	else if (!read && !write) {
+		MGLError_Set("Illegal access mode. Read or write needs to be enabled.");
+		return NULL;
+	}
+
+	int frmt = format ? format : self->data_type->internal_format[self->components];
+
+    const GLMethods & gl = self->context->gl;
+	// NOTE: 3D textures must be bound as layered to access the outside z=0
+	gl.BindImageTexture(unit, self->texture_obj, level, GL_TRUE, 0, access, frmt);
+    Py_RETURN_NONE;
+}
+
 PyObject * MGLTexture3D_use(MGLTexture3D * self, PyObject * args) {
 	int index;
 
@@ -454,6 +491,7 @@ PyObject * MGLTexture3D_release(MGLTexture3D * self) {
 
 PyMethodDef MGLTexture3D_tp_methods[] = {
 	{"write", (PyCFunction)MGLTexture3D_write, METH_VARARGS, 0},
+	{"bind", (PyCFunction)MGLTexture3D_meth_bind, METH_VARARGS, 0},
 	{"use", (PyCFunction)MGLTexture3D_use, METH_VARARGS, 0},
 	{"build_mipmaps", (PyCFunction)MGLTexture3D_build_mipmaps, METH_VARARGS, 0},
 	{"read", (PyCFunction)MGLTexture3D_read, METH_VARARGS, 0},

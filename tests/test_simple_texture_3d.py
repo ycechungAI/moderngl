@@ -112,6 +112,10 @@ class TestCase(unittest.TestCase):
             texture = self.ctx.texture3d((10, 10, 10), 4, dtype=dtype)
             self.assertEqual(texture.filter, (moderngl.NEAREST, moderngl.NEAREST))
 
+    def test_bind_to_image(self):
+        tex = self.ctx.texture3d((4, 4, 4), 4)
+        tex.bind_to_image(0, read=True, write=False)
+        tex.bind_to_image(1, read=False, write=True)
 
 
 if __name__ == '__main__':
