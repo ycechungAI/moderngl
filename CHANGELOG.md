@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 # 5.7.0
 
 * Added `Texture3D.bind_to_image` so we can easily access 3D textures in compute shaders
+* Added `TextureArray.bind_to_image` so we can easily access texture arrays in compute shaders
 * Integer textures now use `NEAREST` interpolation by default. This was causing
   issues with some drivers.
 * Added `Program.is_transform` exposing if the program has a fragment shader or not
