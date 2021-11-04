@@ -124,6 +124,37 @@ class TestCase(unittest.TestCase):
 
         self.assertEqual(data_in, data_out)
 
+    def test_texture_cube_image(self):
+        program = self.ctx.compute_shader(
+            """
+            #version 450
+            
+            layout(local_size_x=4, local_size_y=4) in;
+
+            layout(rgba8, binding=0) uniform imageCube img_in;
+            layout(rgba8, binding=1) uniform imageCube img_out;
+
+            void main() {
+                for (int i = 0; i < 6; i++) {
+                    vec4 fragment = imageLoad(img_in, ivec3(gl_LocalInvocationID.xy, i));
+                    imageStore(img_out, ivec3(gl_LocalInvocationID.xy, i), fragment);
+                }
+            }
+            """
+        )
+        data = ([1] * 64) + ([2] * 64) + ([3] * 64) + ([4] * 64) + ([5] * 64) + ([6] * 64)
+        tex_in = self.ctx.texture_cube((4, 4), 4, data=array('B', data), dtype="f1")
+        tex_out = self.ctx.texture_cube((4, 4), 4, data=array('B', [0] * 64 * 6), dtype="f1")
+        tex_in.bind_to_image(0, read=True, write=False)
+        tex_out.bind_to_image(1, read=False, write=True)
+        program.run(group_x=1)
+
+        for face in range(0, 6):
+            self.assertEqual(
+                struct.unpack("64B", tex_in.read(face)),
+                struct.unpack("64B", tex_out.read(face)),
+            )
+
 
 if __name__ == '__main__':
     unittest.main()

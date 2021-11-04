@@ -419,6 +419,43 @@ PyObject * MGLTextureCube_write(MGLTextureCube * self, PyObject * args) {
 	Py_RETURN_NONE;
 }
 
+PyObject * MGLTextureCube_meth_bind(MGLTextureCube * self, PyObject * args) {
+	int unit;
+	int read;
+	int write;
+	int level;
+	int format;
+
+	int args_ok = PyArg_ParseTuple(
+		args,
+		"IppII",
+		&unit,
+		&read,
+		&write,
+		&level,
+		&format
+	);
+
+	if (!args_ok) {
+		return NULL;
+	}
+
+	int access = GL_READ_WRITE;
+	if (read && !write) access = GL_READ_ONLY;
+	else if (!read && write) access = GL_WRITE_ONLY;
+	else if (!read && !write) {
+		MGLError_Set("Illegal access mode. Read or write needs to be enabled.");
+		return NULL;
+	}
+
+	int frmt = format ? format : self->data_type->internal_format[self->components];
+
+    const GLMethods & gl = self->context->gl;
+	// NOTE: Texture cube must be bound as layered to expose all layers
+	gl.BindImageTexture(unit, self->texture_obj, level, GL_TRUE, 0, access, frmt);
+    Py_RETURN_NONE;
+}
+
 PyObject * MGLTextureCube_use(MGLTextureCube * self, PyObject * args) {
 	int index;
 
@@ -447,6 +484,7 @@ PyObject * MGLTextureCube_release(MGLTextureCube * self) {
 PyMethodDef MGLTextureCube_tp_methods[] = {
 	{"write", (PyCFunction)MGLTextureCube_write, METH_VARARGS, 0},
 	{"use", (PyCFunction)MGLTextureCube_use, METH_VARARGS, 0},
+	{"bind", (PyCFunction)MGLTextureCube_meth_bind, METH_VARARGS, 0},
 //	{"build_mipmaps", (PyCFunction)MGLTextureCube_build_mipmaps, METH_VARARGS, 0},
 	{"read", (PyCFunction)MGLTextureCube_read, METH_VARARGS, 0},
 	{"read_into", (PyCFunction)MGLTextureCube_read_into, METH_VARARGS, 0},

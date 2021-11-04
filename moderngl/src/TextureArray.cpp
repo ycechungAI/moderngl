@@ -408,7 +408,7 @@ PyObject * MGLTextureArray_write(MGLTextureArray * self, PyObject * args) {
 	Py_RETURN_NONE;
 }
 
-PyObject * MGLTextureArray_meth_bind(MGLTexture * self, PyObject * args) {
+PyObject * MGLTextureArray_meth_bind(MGLTextureArray * self, PyObject * args) {
 	int unit;
 	int read;
 	int write;

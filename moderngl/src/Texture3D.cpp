@@ -387,7 +387,7 @@ PyObject * MGLTexture3D_write(MGLTexture3D * self, PyObject * args) {
 	Py_RETURN_NONE;
 }
 
-PyObject * MGLTexture3D_meth_bind(MGLTexture * self, PyObject * args) {
+PyObject * MGLTexture3D_meth_bind(MGLTexture3D * self, PyObject * args) {
 	int unit;
 	int read;
 	int write;
