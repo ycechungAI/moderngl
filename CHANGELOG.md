@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 # 5.7.0
 
-* Integer textures is not using `NEAREST` interpolation by default
+* Added `Texture3D.bind_to_image` so we can easily access 3D textures in compute shaders
+* Integer textures now use `NEAREST` interpolation by default. This was causing
+  issues with some drivers.
 * Added `Program.is_transform` exposing if the program has a fragment shader or not
 * Added `VertexArray.mode` and a `mode` argument in `Context.vertex_array`.
   This is now the default rendering mode when no mode parameter is passed
