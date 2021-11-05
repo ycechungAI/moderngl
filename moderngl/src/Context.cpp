@@ -1107,6 +1107,9 @@ PyObject * MGLContext_get_info(MGLContext * self, void * closure) {
 		int gl_max_geometry_uniform_components = 0;
 		gl.GetIntegerv(GL_MAX_GEOMETRY_UNIFORM_COMPONENTS, &gl_max_geometry_uniform_components);
 
+		int gl_max_geometry_output_vertices = 0;
+		gl.GetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &gl_max_geometry_output_vertices);
+
 		int gl_max_integer_samples = 0;
 		gl.GetIntegerv(GL_MAX_INTEGER_SAMPLES, &gl_max_integer_samples);
 
@@ -1198,6 +1201,7 @@ PyObject * MGLContext_get_info(MGLContext * self, void * closure) {
 		PyDict_SetItemString(info, "GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS", PyLong_FromLong(gl_max_geometry_texture_image_units));
 		PyDict_SetItemString(info, "GL_MAX_GEOMETRY_UNIFORM_BLOCKS", PyLong_FromLong(gl_max_geometry_uniform_blocks));
 		PyDict_SetItemString(info, "GL_MAX_GEOMETRY_UNIFORM_COMPONENTS", PyLong_FromLong(gl_max_geometry_uniform_components));
+		PyDict_SetItemString(info, "GL_MAX_GEOMETRY_OUTPUT_VERTICES", PyLong_FromLong(gl_max_geometry_output_vertices));
 		PyDict_SetItemString(info, "GL_MAX_INTEGER_SAMPLES", PyLong_FromLong(gl_max_integer_samples));
 		PyDict_SetItemString(info, "GL_MAX_SAMPLES", PyLong_FromLong(gl_max_samples));
 		PyDict_SetItemString(info, "GL_MAX_RECTANGLE_TEXTURE_SIZE", PyLong_FromLong(gl_max_rectangle_texture_size));

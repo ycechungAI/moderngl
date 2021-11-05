@@ -155,3 +155,9 @@ class ContextTests(TestCase):
 
         ctx.disable_direct(GL_PROGRAM_POINT_SIZE)
         self.assertEqual(ctx.error, "GL_NO_ERROR")
+
+    def test_info(self):
+        ctx = moderngl.create_context(standalone=True)
+        self.assertIsInstance(ctx.info, dict)
+        self.assertTrue(len(ctx.info) > 50)
+        self.assertTrue(ctx.info["GL_MAX_GEOMETRY_OUTPUT_VERTICES"] >= 256)
