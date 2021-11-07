@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 # 5.7.0
 
+* Added support for normalized signed and unsigned integer textures. `ni1`, `nu1`, `ni2` and `nu2`
+  are the new dtypes for these.
 * Added `TextureCube.bind_to_image` so we can easily access cube textures in compute shaders
 * Added `Texture3D.bind_to_image` so we can easily access 3D textures in compute shaders
 * Added `TextureArray.bind_to_image` so we can easily access texture arrays in compute shaders
