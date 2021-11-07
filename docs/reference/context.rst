@@ -1,7 +1,6 @@
 Context
 =======
 
-.. py:module:: moderngl
 .. py:currentmodule:: moderngl
 
 .. autoclass:: moderngl.Context
@@ -190,7 +189,7 @@ Examples
 --------
 
 ModernGL Context
-^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -200,7 +199,7 @@ ModernGL Context
     print(ctx.version_code)
 
 Standalone ModernGL Context
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -209,7 +208,7 @@ Standalone ModernGL Context
     print(ctx.version_code)
 
 ContextManager
-^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~
 
 .. rubric:: context_manager.py
 
