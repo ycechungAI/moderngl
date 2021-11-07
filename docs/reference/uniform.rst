@@ -1,7 +1,6 @@
 Uniform
 =======
 
-.. py:module:: moderngl
 .. py:currentmodule:: moderngl
 
 .. autoclass:: moderngl.Uniform

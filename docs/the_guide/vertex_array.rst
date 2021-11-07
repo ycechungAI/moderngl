@@ -1,7 +1,6 @@
 VertexArray
 ===========
 
-.. py:module:: moderngl
 .. py:currentmodule:: moderngl
 
 .. literalinclude:: first.3.py

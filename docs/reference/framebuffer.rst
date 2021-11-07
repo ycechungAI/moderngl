@@ -1,7 +1,6 @@
 Framebuffer
 ===========
 
-.. py:module:: moderngl
 .. py:currentmodule:: moderngl
 
 .. autoclass:: moderngl.Framebuffer

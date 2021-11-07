@@ -1,4 +1,4 @@
-Sphinx
-sphinx-rtd-theme
-sphinxcontrib-napoleon
-sphinx-copybutton
+Sphinx==3.4.3
+sphinx-rtd-theme==0.5.1
+sphinxcontrib-napoleon==0.7
+sphinx-copybutton==0.3.1

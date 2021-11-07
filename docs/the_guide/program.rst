@@ -1,7 +1,6 @@
 Program
 =======
 
-.. py:module:: moderngl
 .. py:currentmodule:: moderngl
 
 ModernGL is different from standard plotting libraries.

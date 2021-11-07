@@ -1,6 +1,5 @@
-
-.. py:currentmodule:: moderngl
 .. py:module:: moderngl
+.. py:currentmodule:: moderngl
 
 moderngl
 ========

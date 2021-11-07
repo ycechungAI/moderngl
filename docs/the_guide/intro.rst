@@ -1,4 +1,3 @@
-.. py:module:: moderngl
 .. py:currentmodule:: moderngl
 
 An introduction to OpenGL

@@ -3,7 +3,6 @@
 Buffer Format
 =============
 
-.. py:module:: moderngl
 .. py:currentmodule:: moderngl
 
 Description
