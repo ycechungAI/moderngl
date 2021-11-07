@@ -91,4 +91,5 @@ MGLDataType * from_dtype(const char * dtype, Py_ssize_t size) {
 				return 0;		
 		}
 	}
+	return 0;
 }
