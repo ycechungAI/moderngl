@@ -417,7 +417,7 @@ struct MGLSampler {
 	float max_lod;
 };
 
-MGLDataType * from_dtype(const char * dtype);
+MGLDataType * from_dtype(const char * dtype, Py_ssize_t size);
 
 void MGLAttribute_Invalidate(MGLAttribute * attribute);
 void MGLBuffer_Invalidate(MGLBuffer * buffer);

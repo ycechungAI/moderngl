@@ -55,12 +55,7 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
 		return 0;
 	}
 
-	if (dtype_size != 2) {
-		MGLError_Set("invalid dtype");
-		return 0;
-	}
-
-	MGLDataType * data_type = from_dtype(dtype);
+	MGLDataType * data_type = from_dtype(dtype, dtype_size);
 
 	if (!data_type) {
 		MGLError_Set("invalid dtype");
@@ -259,7 +254,7 @@ PyObject * MGLContext_depth_texture(MGLContext * self, PyObject * args) {
 	texture->height = height;
 	texture->components = 1;
 	texture->samples = samples;
-	texture->data_type = from_dtype("f4");
+	texture->data_type = from_dtype("f4", 2);
 
 	texture->compare_func = GL_LEQUAL;
 	texture->depth = true;

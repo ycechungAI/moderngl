@@ -198,6 +198,87 @@ In shaders the sampler type should be ``isampler2D``, ``isampler2DArray``
 | i4       |  4            | GL_RGBA_INTEGER | GL_RGBA32I        |
 +----------+---------------+-----------------+-------------------+
 
+Normalized Integer Textures
+---------------------------
+
+Normalized integers are integer texture, but texel reads in a shader
+returns normalized values (``[0.0, 1.0]``). For example an unsigned 16
+bit fragment with the value ``2**16-1`` will be read as ``1.0``.
+
+Normalized integer textures should use the `sampler2D` sampler
+type. Also note that there's no standard for normalized 32 bit
+integer textures because a float32 doesn't have enough precision
+to express a 32 bit integer as a number between 0.0 and 1.0.
+
+Unsigned
+~~~~~~~~
+
+``nu1`` textures is really the same as an ``f1``. Each component
+is a ``GL_UNSIGNED_BYTE``, but are read by the shader in normalized
+form ``[0.0, 1.0]``.
+
++----------+---------------+-----------------+-------------------+
+| **dtype**|  *Components* | *Base Format*   | *Internal Format* |
++==========+===============+=================+===================+
+| nu1      |  1            | GL_RED          | GL_R8             |
++----------+---------------+-----------------+-------------------+
+| nu1      |  2            | GL_RG           | GL_RG8            |
++----------+---------------+-----------------+-------------------+
+| nu1      |  3            | GL_RGB          | GL_RGB8           |
++----------+---------------+-----------------+-------------------+
+| nu1      |  4            | GL_RGBA         | GL_RGBA8          |
++----------+---------------+-----------------+-------------------+
+
+``nu2`` textures store 16 bit unsigned integers (``GL_UNSIGNED_SHORT``).
+The value range ``[0, 2**16-1]`` will be normalized into ``[0.0, 1.0]``.
+
++----------+---------------+-----------------+-------------------+
+| **dtype**|  *Components* | *Base Format*   | *Internal Format* |
++==========+===============+=================+===================+
+| nu2      |  1            | GL_RED          | GL_R16            |
++----------+---------------+-----------------+-------------------+
+| nu2      |  2            | GL_RG           | GL_RG16           |
++----------+---------------+-----------------+-------------------+
+| nu2      |  3            | GL_RGB          | GL_RGB16          |
++----------+---------------+-----------------+-------------------+
+| nu2      |  4            | GL_RGBA         | GL_RGBA16         |
++----------+---------------+-----------------+-------------------+
+
+Signed
+~~~~~~
+
+``ni1`` textures store 8 bit signed integers (``GL_BYTE``).
+The value range ``[0, 127]`` will be normalized into ``[0.0, 1.0]``.
+Negative values will be clamped.
+
++----------+---------------+-----------------+-------------------+
+| **dtype**|  *Components* | *Base Format*   | *Internal Format* |
++==========+===============+=================+===================+
+| ni1      |  1            | GL_RED          | GL_R8             |
++----------+---------------+-----------------+-------------------+
+| ni1      |  2            | GL_RG           | GL_RG8            |
++----------+---------------+-----------------+-------------------+
+| ni1      |  3            | GL_RGB          | GL_RGB8           |
++----------+---------------+-----------------+-------------------+
+| ni1      |  4            | GL_RGBA         | GL_RGBA8          |
++----------+---------------+-----------------+-------------------+
+
+``ni2`` textures store 16 bit signed integers (``GL_SHORT``).
+The value range ``[0, 2**15-1]`` will be normalized into ``[0.0, 1.0]``.
+Negative values will be clamped.
+
++----------+---------------+-----------------+-------------------+
+| **dtype**|  *Components* | *Base Format*   | *Internal Format* |
++==========+===============+=================+===================+
+| ni2      |  1            | GL_RED          | GL_R16            |
++----------+---------------+-----------------+-------------------+
+| ni2      |  2            | GL_RG           | GL_RG16           |
++----------+---------------+-----------------+-------------------+
+| ni2      |  3            | GL_RGB          | GL_RGB16          |
++----------+---------------+-----------------+-------------------+
+| ni2      |  4            | GL_RGBA         | GL_RGBA16         |
++----------+---------------+-----------------+-------------------+
+
 Overriding internalformat
 -------------------------
 

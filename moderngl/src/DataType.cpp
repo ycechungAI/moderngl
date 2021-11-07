@@ -13,6 +13,9 @@ static int i1_internal_format[5] = {0, GL_R8I, GL_RG8I, GL_RGB8I, GL_RGBA8I};
 static int i2_internal_format[5] = {0, GL_R16I, GL_RG16I, GL_RGB16I, GL_RGBA16I};
 static int i4_internal_format[5] = {0, GL_R32I, GL_RG32I, GL_RGB32I, GL_RGBA32I};
 
+static int n1_internal_format[5] = {0, GL_R8, GL_RG8, GL_RGB8, GL_RGBA8};
+static int n2_internal_format[5] = {0, GL_R16, GL_RG16, GL_RGB16, GL_RGBA16};
+
 static MGLDataType f1 = {float_base_format, f1_internal_format, GL_UNSIGNED_BYTE, 1, true};
 static MGLDataType f2 = {float_base_format, f2_internal_format, GL_HALF_FLOAT, 2, true};
 static MGLDataType f4 = {float_base_format, f4_internal_format, GL_FLOAT, 4, true};
@@ -23,40 +26,69 @@ static MGLDataType i1 = {int_base_format, i1_internal_format, GL_BYTE, 1, false}
 static MGLDataType i2 = {int_base_format, i2_internal_format, GL_SHORT, 2, false};
 static MGLDataType i4 = {int_base_format, i4_internal_format, GL_INT, 4, false};
 
-MGLDataType * from_dtype(const char * dtype) {
-	if (!dtype[0] || (dtype[1] && dtype[2])) {
-		return 0;
+static MGLDataType nu1 = {float_base_format, n1_internal_format, GL_UNSIGNED_BYTE, 1, false};
+static MGLDataType nu2 = {float_base_format, n2_internal_format, GL_UNSIGNED_SHORT, 2, false};
+static MGLDataType ni1 = {float_base_format, n1_internal_format, GL_BYTE, 1, false};
+static MGLDataType ni2 = {float_base_format, n2_internal_format, GL_SHORT, 2, false};
+
+MGLDataType * from_dtype(const char * dtype, Py_ssize_t size) {
+	if (size < 2 || size > 3) return 0;
+
+	// if (!dtype[0] || (dtype[1] && dtype[2])) {
+	// 	return 0;
+	// }
+
+	if (size == 2) {
+		switch (dtype[0] * 256 + dtype[1]) {
+			case ('f' * 256 + '1'):
+				return &f1;
+
+			case ('f' * 256 + '2'):
+				return &f2;
+
+			case ('f' * 256 + '4'):
+				return &f4;
+
+			case ('u' * 256 + '1'):
+				return &u1;
+
+			case ('u' * 256 + '2'):
+				return &u2;
+
+			case ('u' * 256 + '4'):
+				return &u4;
+
+			case ('i' * 256 + '1'):
+				return &i1;
+
+			case ('i' * 256 + '2'):
+				return &i2;
+
+			case ('i' * 256 + '4'):
+				return &i4;
+
+			default:
+				return 0;
+		}
 	}
+	else if (size == 3)
+	{
+		switch (dtype[0] * 65536 + dtype[1] * 256 + dtype[2])
+		{
+			case ('n' * 65536 + 'i' * 256 + '1'):
+				return &ni1;
 
-	switch (dtype[0] * 256 + dtype[1]) {
-		case ('f' * 256 + '1'):
-			return &f1;
+			case ('n' * 65536 + 'i' * 256 + '2'):
+				return &ni2;
 
-		case ('f' * 256 + '2'):
-			return &f2;
+			case ('n' * 65536 + 'u' * 256 + '1'):
+				return &nu1;
 
-		case ('f' * 256 + '4'):
-			return &f4;
+			case ('n' * 65536 + 'u' * 256 + '2'):
+				return &nu2;
 
-		case ('u' * 256 + '1'):
-			return &u1;
-
-		case ('u' * 256 + '2'):
-			return &u2;
-
-		case ('u' * 256 + '4'):
-			return &u4;
-
-		case ('i' * 256 + '1'):
-			return &i1;
-
-		case ('i' * 256 + '2'):
-			return &i2;
-
-		case ('i' * 256 + '4'):
-			return &i4;
-
-		default:
-			return 0;
+			default:
+				return 0;		
+		}
 	}
 }

@@ -36,12 +36,7 @@ PyObject * MGLContext_renderbuffer(MGLContext * self, PyObject * args) {
 		return 0;
 	}
 
-	if (dtype_size != 2) {
-		MGLError_Set("invalid dtype");
-		return 0;
-	}
-
-	MGLDataType * data_type = from_dtype(dtype);
+	MGLDataType * data_type = from_dtype(dtype, dtype_size);
 
 	if (!data_type) {
 		MGLError_Set("invalid dtype");
@@ -137,7 +132,7 @@ PyObject * MGLContext_depth_renderbuffer(MGLContext * self, PyObject * args) {
 	renderbuffer->height = height;
 	renderbuffer->components = 1;
 	renderbuffer->samples = samples;
-	renderbuffer->data_type = from_dtype("f4");
+	renderbuffer->data_type = from_dtype("f4", 2);
 	renderbuffer->depth = true;
 
 	Py_INCREF(self);

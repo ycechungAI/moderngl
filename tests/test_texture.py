@@ -1,5 +1,6 @@
 import struct
 import unittest
+from array import array
 import platform
 
 import moderngl
@@ -160,6 +161,52 @@ class TestCase(unittest.TestCase):
         texture = self.ctx.texture((2, 2), 4, pixels, internal_format=GL_SRGB8)
         data = texture.read()
         self.assertEqual(self.ctx.error, "GL_NO_ERROR")
+
+    def test_normalized_textures(self):
+        """8 and 16 bit normalized integer textures"""
+        ni1 = self.ctx.texture((4, 4), 4, dtype="ni1")
+        ni2 = self.ctx.texture((4, 4), 4, dtype="ni2")
+        nu1 = self.ctx.texture((4, 4), 4, dtype="nu1")
+        nu2 = self.ctx.texture((4, 4), 4, dtype="nu2")
+
+        nu1_data = array('B', [255] * 16 * 4).tobytes()
+        nu2_data = array('H', [65535] * 16 * 4).tobytes()
+        ni1_data = array('b', [127] * 16 * 4).tobytes()
+        ni2_data = array('h', [32767] * 16 * 4).tobytes()
+
+        nu1.write(nu1_data)
+        nu2.write(nu2_data)
+        ni1.write(ni1_data)
+        ni2.write(ni2_data)
+
+        self.assertEqual(nu1.read(), nu1_data)
+        self.assertEqual(nu2.read(), nu2_data)
+        self.assertEqual(ni1.read(), ni1_data)
+        self.assertEqual(ni2.read(), ni2_data)
+
+        fbo = self.ctx.simple_framebuffer((4, 4))
+        fbo.use()
+
+        # Render these textures to an RGBA8 framebuffer and ensure the result is a pure white color (FF)
+        fbo.clear()
+        nu1.use()
+        self.vao.render()
+        self.assertEqual(fbo.read(viewport=(0, 0, 1, 1), components=4, dtype="f1"), b'\xff\xff\xff\xff')
+
+        fbo.clear()
+        nu2.use()
+        self.vao.render()
+        self.assertEqual(fbo.read(viewport=(0, 0, 1, 1), components=4, dtype="f1"), b'\xff\xff\xff\xff')
+
+        fbo.clear()
+        ni1.use()
+        self.vao.render()
+        self.assertEqual(fbo.read(viewport=(0, 0, 1, 1), components=4, dtype="f1"), b'\xff\xff\xff\xff')
+
+        fbo.clear()
+        ni2.use()
+        self.vao.render()
+        self.assertEqual(fbo.read(viewport=(0, 0, 1, 1), components=4, dtype="f1"), b'\xff\xff\xff\xff')
 
 
 if __name__ == '__main__':

@@ -43,12 +43,7 @@ PyObject * MGLContext_texture3d(MGLContext * self, PyObject * args) {
 		return 0;
 	}
 
-	if (dtype_size != 2) {
-		MGLError_Set("invalid dtype");
-		return 0;
-	}
-
-	MGLDataType * data_type = from_dtype(dtype);
+	MGLDataType * data_type = from_dtype(dtype, dtype_size);
 
 	if (!data_type) {
 		MGLError_Set("invalid dtype");
