@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Added support for 1D sampler in `Uniform`
 * Added direct access to `glEnable` / `glDisable` in `Context.enable_direct` / `Context.disable_direct`.
   This can be used to enabled capabilities not supported by ModernGL.
+* `Framebuffer.read()` now has a `clamp` (bool) parameter. If enabled, floating point data
+  will clamp to `[0.0, 1.0]`. Clamping is disabled by default.
 * Docstring improvements
 * Documentation improvements
 
