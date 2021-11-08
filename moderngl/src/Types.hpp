@@ -136,6 +136,9 @@ struct MGLContext {
 
 	int provoking_vertex;
 
+	float polygon_offset_factor;
+	float polygon_offset_units;
+
 	GLMethods gl;
 };
 
