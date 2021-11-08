@@ -73,11 +73,6 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 			return 0;
 		}
 
-		if (i == 0 && format_info.divisor) {
-			MGLError_Set("the first vertex attribute must not be a per instance attribute");
-			return 0;
-		}
-
 		int attributes_len = (int)PyTuple_GET_SIZE(tuple) - 2;
 
 		if (!attributes_len) {
