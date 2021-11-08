@@ -699,8 +699,8 @@ int MGLContext_set_multisample(MGLContext * self, PyObject * value) {
 	return -1;
 }
 
-int MGLContext_get_provoking_vertex(MGLContext * self) {
-	return self->provoking_vertex;
+PyObject * MGLContext_get_provoking_vertex(MGLContext * self) {
+	return PyLong_FromLong(self->provoking_vertex);
 }
 
 int MGLContext_set_provoking_vertex(MGLContext * self, PyObject * value) {
