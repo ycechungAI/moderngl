@@ -5,8 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-# 5.7.0
+# 5.7.0 [NOT RELEASED YET]
 
+* Added support for `glPolygonOffset`. The factors and units can be set using `Context.polygon_offset`
 * Added support for normalized signed and unsigned integer textures. `ni1`, `nu1`, `ni2` and `nu2`
   are the new dtypes for these.
 * Added `TextureCube.bind_to_image` so we can easily access cube textures in compute shaders
@@ -23,6 +24,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   This can be used to enabled capabilities not supported by ModernGL.
 * `Framebuffer.read()` now has a `clamp` (bool) parameter. If enabled, floating point data
   will clamp to `[0.0, 1.0]`. Clamping is disabled by default.
+* VertexArray: Removed "the first vertex attribute must not be a per instance attribute" limitation
+* Fixed a crash when reading `ctx.provoking_vertex`
 * Docstring improvements
 * Documentation improvements
 
