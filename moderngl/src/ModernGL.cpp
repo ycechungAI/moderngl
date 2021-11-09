@@ -284,6 +284,10 @@ PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
 	ctx->multisample = true;
 
 	ctx->provoking_vertex = GL_LAST_VERTEX_CONVENTION;
+
+    ctx->polygon_offset_factor = 0.0f;
+    ctx->polygon_offset_units = 0.0f;
+
 	gl.GetError(); // clear errors
 
 	if (PyErr_Occurred()) {
