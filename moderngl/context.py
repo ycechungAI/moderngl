@@ -498,6 +498,15 @@ class Context:
         self.mglo.provoking_vertex = value
 
     @property
+    def polygon_offset(self):
+        return self.mglo.polygon_offset
+
+    @polygon_offset.setter
+    def polygon_offset(self, value):
+        factor, units = value
+        self.mglo.polygon_offset = (float(factor), float(units))
+
+    @property
     def viewport(self) -> Tuple[int, int, int, int]:
         '''
             tuple: Get or set the viewport of the active framebuffer.
