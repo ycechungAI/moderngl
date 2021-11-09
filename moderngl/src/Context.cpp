@@ -727,6 +727,15 @@ int MGLContext_set_polygon_offset(MGLContext * self, PyObject * value) {
     float polygon_offset_units = (float)PyFloat_AsDouble(PyTuple_GetItem(value, 1));
 
 	const GLMethods & gl = self->gl;
+    if (polygon_offset_factor || polygon_offset_units) {
+        gl.Enable(GL_POLYGON_OFFSET_POINT);
+        gl.Enable(GL_POLYGON_OFFSET_LINE);
+        gl.Enable(GL_POLYGON_OFFSET_FILL);
+    } else {
+        gl.Disable(GL_POLYGON_OFFSET_POINT);
+        gl.Disable(GL_POLYGON_OFFSET_LINE);
+        gl.Disable(GL_POLYGON_OFFSET_FILL);
+    }
     gl.PolygonOffset(polygon_offset_factor, polygon_offset_units);
     self->polygon_offset_factor = polygon_offset_factor;
     self->polygon_offset_units = polygon_offset_units;
