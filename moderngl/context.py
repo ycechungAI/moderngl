@@ -498,7 +498,54 @@ class Context:
         self.mglo.provoking_vertex = value
 
     @property
-    def polygon_offset(self):
+    def polygon_offset(self) -> Tuple[float, float]:
+        """
+        tuple: Get or set the current polygon offset.
+
+        The tuple values represents two float values: ``unit`` and a ``factor``::
+
+            ctx.polygon_offset = unit, factor
+
+        When drawing polygons, lines or points directly on top of
+        exiting geometry the result is often not visually pleasant.
+        We can experience z-fighting or partially fading fragments
+        due to different primitives not being rasterized in the exact
+        same way or simply depth buffer precision issues.
+
+        For example when visualizing polygons drawing a wireframe
+        version on top of the original mesh, these issues are
+        immediately apparent. Applying decals to surfaces is
+        another common example.
+
+        The official documentation states the following::
+
+            When enabled, the depth value of each fragment is added
+            to a calculated offset value. The offset is added before
+            the depth test is performed and before the depth value
+            is written into the depth buffer. The offset value o is calculated by: 
+            o = m * factor + r * units 
+            where m is the maximum depth slope of the polygon and r is the smallest
+            value guaranteed to produce a resolvable difference in window coordinate
+            depth values. The value r is an implementation-specific constant. 
+
+        In simpler terms: We use polygon offset to either add a positive offset to
+        the geometry (push it away from you) or a negative offset to geometry
+        (pull it towards you).
+
+        * ``units`` is a constant offset to depth and will do the job alone
+          if we are working with geometry parallel to the near/far plane.
+        * The ``factor`` helps you handle sloped geometry (not parallel to near/far plane).
+
+        In most cases you can get away with ``[-1.0, 1.0]`` for both factor and units,
+        but definitely play around with the values.
+
+        To just get started with something you can try::
+
+            # Either push the geomtry away or pull it towards you
+            # with support for handling small to medium sloped geometry
+            ctx.polygon_offset = 1.0, 1.0
+            ctx.polygon_offset = -1.0, -1.0
+        """
         return self.mglo.polygon_offset
 
     @polygon_offset.setter
