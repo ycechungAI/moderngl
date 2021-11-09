@@ -76,6 +76,7 @@ Attributes
 .. autoattribute:: Context.multisample
 .. autoattribute:: Context.patch_vertices
 .. autoattribute:: Context.provoking_vertex
+.. autoattribute:: Context.polygon_offset
 .. autoattribute:: Context.error
 .. autoattribute:: Context.extensions
 .. autoattribute:: Context.info
