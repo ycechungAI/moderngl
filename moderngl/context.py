@@ -537,7 +537,8 @@ class Context:
         * The ``factor`` helps you handle sloped geometry (not parallel to near/far plane).
 
         In most cases you can get away with ``[-1.0, 1.0]`` for both factor and units,
-        but definitely play around with the values.
+        but definitely play around with the values. When both values are set to ``0``
+        polygon offset is disabled internally.
 
         To just get started with something you can try::
 
@@ -545,6 +546,9 @@ class Context:
             # with support for handling small to medium sloped geometry
             ctx.polygon_offset = 1.0, 1.0
             ctx.polygon_offset = -1.0, -1.0
+
+            # Disable polygon offset
+            ctx.polygon_offset = 0, 0
         """
         return self.mglo.polygon_offset
 
