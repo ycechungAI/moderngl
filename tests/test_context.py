@@ -161,3 +161,12 @@ class ContextTests(TestCase):
         self.assertIsInstance(ctx.info, dict)
         self.assertTrue(len(ctx.info) > 50)
         self.assertTrue(ctx.info["GL_MAX_GEOMETRY_OUTPUT_VERTICES"] >= 256)
+
+    def test_polyon_offset(self):
+        ctx = moderngl.create_context(standalone=True)
+        ctx.polygon_offset = 0.0, 1.0
+        self.assertEqual(ctx.polygon_offset, (0.0, 1.0))
+        ctx.polygon_offset = 1.0, 0.0
+        self.assertEqual(ctx.polygon_offset, (1.0, 0.0))
+        ctx.polygon_offset = -1.0, -1.0
+        self.assertEqual(ctx.polygon_offset, (-1.0, -1.0))
