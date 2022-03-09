@@ -10,10 +10,13 @@ LOG = logging.getLogger(__name__)
 
 class TextureCube:
     '''
-        A Texture is an OpenGL object that contains one or more images that all
-        have the same image format. A texture can be used in two ways. It can
-        be the source of a texture access from a Shader, or it can be used
-        as a render target.
+        Cubemaps are a texture type, using the type GL_TEXTURE_CUBE_MAP.
+        They are similar to 2D textures in that they have two dimensions.
+        However, each mipmap level has 6 faces, with each face having the
+        same size as the other faces.
+
+        The width and height of a cubemap must be the same (ie: cubemaps are squares),
+        but these sizes need not be powers of two.
 
         .. Note:: ModernGL enables ``GL_TEXTURE_CUBE_MAP_SEAMLESS`` globally
                   to ensure filtering will be done across the cube faces.

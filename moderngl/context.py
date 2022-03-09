@@ -1202,6 +1202,9 @@ class Context:
         '''
             Create a :py:class:`TextureCube` object.
 
+            Note that the width and height of the cubemap must be the same
+            unless you are using a non-standard extension.
+
             Args:
                 size (tuple): The width, height of the texture. Each side of
                               the cube will have this size.
