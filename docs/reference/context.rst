@@ -48,6 +48,7 @@ Methods
 .. automethod:: Context.copy_buffer(dst, src, size=-1, read_offset=0, write_offset=0)
 .. automethod:: Context.copy_framebuffer(dst, src)
 .. automethod:: Context.detect_framebuffer(glo=None) -> Framebuffer
+.. automethod:: Context.gc() -> int
 .. automethod:: Context.__enter__()
 .. automethod:: Context.__exit__(exc_type, exc_val, exc_tb)
 
@@ -55,6 +56,7 @@ Attributes
 ----------
 
 .. autoattribute:: Context.gc_mode
+.. autoattribute:: Context.objects
 .. autoattribute:: Context.line_width
 .. autoattribute:: Context.point_size
 .. autoattribute:: Context.depth_func

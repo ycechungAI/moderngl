@@ -1,6 +1,7 @@
+from collections import deque
 import logging
 import warnings
-from typing import Any, Dict, Optional, Set, Tuple
+from typing import Any, Deque, Dict, List, Optional, Set, Tuple
 
 from moderngl.mgl import InvalidObject  # type: ignore
 from .buffer import Buffer
@@ -105,6 +106,7 @@ class Context:
         Class exposing OpenGL features.
         ModernGL objects can be created from this class.
     '''
+    _valid_gc_modes = [None, "context_gc", "auto"]
     # Context Flags
     #: Represents no states. Can be used with :py:meth:`Context.enable_only` to disable all states.
     NOTHING = 0
@@ -253,7 +255,7 @@ class Context:
     #: Used with :py:attr:`Context.provoking_vertex`.
     LAST_VERTEX_CONVENTION = 0x8E4E
 
-    __slots__ = ['mglo', '_screen', '_info', '_extensions', 'version_code', 'fbo', '_gc_mode', 'extra']
+    __slots__ = ['mglo', '_screen', '_info', '_extensions', 'version_code', 'fbo', '_gc_mode', '_objects', 'extra']
 
     def __init__(self):
         self.mglo = None  #: Internal representation for debug purposes only.
@@ -266,6 +268,7 @@ class Context:
         self.fbo = None
         self.extra = None  #: Any - Attribute for storing user defined objects
         self._gc_mode = None
+        self._objects: Deque[Any] = deque()
         raise TypeError()
 
     def __repr__(self):
@@ -286,28 +289,52 @@ class Context:
     def gc_mode(self) -> Optional[str]:
         """Optional[str]: The garbage collection mode
 
-        WARNING: This is a highly experimental feature.
-
-        The default mode is `auto` acting as we would expect by default
-        in the python language. There are cases were this is not desirable.
-        Only alter this mode if you know exactly what you are doing.
+        The default mode is ``None`` meaning no automatic
+        garbage collection is done. Other modes are ``auto``
+        and ``context_gc``. Please see documentation for
+        the appropriate configuration.
 
         Examples:
 
             # Disable automatic garbage collection
             ctx.gc_mode = None
+
+            # Enable collection of dead objects with manual release
+            ctx.gc_mode = "context_gc"
+            ctx.gc()  # Deletes the collected objects
+
             # Enable automatic garbage collection
             ctx.gc_mode = "auto"
-
         """
         return self._gc_mode
 
     @gc_mode.setter
     def gc_mode(self, value: Optional[str]):
-        modes = ["auto", None]
-        if value not in modes:
-            raise ValueError("Valid modes:", modes)
+        if value not in self._valid_gc_modes:
+            raise ValueError("Valid  gc modes:", self._valid_gc_modes)
+
         self._gc_mode = value
+
+    @property
+    def objects(self) -> List[Any]:
+        """
+        Moderngl objects scheduled for deletion.
+        These are deleted when calling :py:meth:`Context.gc`.
+        """
+        return self._objects
+
+    def gc(self) -> int:
+        """
+        Deletes OpenGL objects.
+        This method must be called to garbage collect
+        OpenGL resources when ``gc_mode`` is ``"context_gc"```.
+
+        Returns:
+            int: Number of objects deleted
+        """
+        count = 0
+        while self._objects:
+            obj = self._objects
 
     @property
     def line_width(self) -> float:
@@ -1806,7 +1833,8 @@ def create_context(require=None, standalone=False, share=False, **settings) -> C
     ctx._info = None
     ctx._extensions = None
     ctx.extra = None
-    ctx._gc_mode = "auto"
+    ctx._gc_mode = None
+    ctx._objects = deque()
 
     if ctx.version_code < require:
         raise ValueError('Requested OpenGL version {}, got version {}'.format(
@@ -1854,7 +1882,8 @@ def create_standalone_context(require=None, share=False, **settings) -> 'Context
     ctx._info = None
     ctx._extensions = None
     ctx.extra = None
-    ctx._gc_mode = "auto"
+    ctx._gc_mode = None
+    ctx._objects = deque()
 
     if require is not None and ctx.version_code < require:
         raise ValueError('Requested OpenGL version {}, got version {}'.format(
