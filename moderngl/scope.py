@@ -1,10 +1,6 @@
-import logging
-
 from moderngl.mgl import InvalidObject  # type: ignore
 
 __all__ = ['Scope']
-
-LOG = logging.getLogger(__name__)
 
 
 class Scope:
@@ -53,9 +49,13 @@ class Scope:
         self.mglo.end()
 
     def __del__(self):
-        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
-        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+        if not hasattr(self, "ctx"):
+            return
+
+        if self.ctx.gc_mode == "auto":
             self.release()
+        elif self.ctx.gc_mode == "context_gc":
+            self.ctx.objects.append(self.mglo)
 
     def release(self):
         LOG.debug(f"{self.__class__.__name__}.release() {self}")

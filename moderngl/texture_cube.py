@@ -1,11 +1,7 @@
-import logging
-
 from moderngl.mgl import InvalidObject  # type: ignore
 from .buffer import Buffer
 
 __all__ = ['TextureCube']
-
-LOG = logging.getLogger(__name__)
 
 
 class TextureCube:
@@ -50,9 +46,13 @@ class TextureCube:
         return id(self)
 
     def __del__(self):
-        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
-        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+        if not hasattr(self, "ctx"):
+            return
+
+        if self.ctx.gc_mode == "auto":
             self.release()
+        elif self.ctx.gc_mode == "context_gc":
+            self.ctx.objects.append(self.mglo)
 
     @property
     def size(self):
@@ -314,6 +314,5 @@ class TextureCube:
         '''
             Release the ModernGL object.
         '''
-        LOG.debug(f"{self.__class__.__name__}.release() {self}")
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()

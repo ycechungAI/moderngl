@@ -52,15 +52,18 @@ class Framebuffer:
         return id(self)
 
     def __del__(self):
-        LOG.debug("Framebuffer.__del__ %s", self)
+        if not hasattr(self, "ctx"):
+            return
+
+        # Don't delete default framebuffer or a reference
+        if self._is_reference:
+            return
 
         # If object was initialized properly (ctx present) and gc_mode is auto
-        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
-            # We should never destroy the default framebuffer
-            if self._is_reference:
-                LOG.debug("Attempting to deleted the default framebuffer")
-            else:
-                self.release()
+        if self.ctx.gc_mode == "auto":
+            self.release()
+        elif self.ctx.gc_mode == "context_gc":
+            self.ctx.objects.append(self.mglo)
 
     @property
     def viewport(self) -> Tuple[int, int, int, int]:

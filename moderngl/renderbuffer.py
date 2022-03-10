@@ -1,9 +1,6 @@
-import logging
 from moderngl.mgl import InvalidObject  # type: ignore
 
 __all__ = ['Renderbuffer']
-
-LOG = logging.getLogger(__name__)
 
 
 class Renderbuffer:
@@ -47,9 +44,13 @@ class Renderbuffer:
         return id(self)
 
     def __del__(self):
-        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
-        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+        if not hasattr(self, "ctx"):
+            return
+
+        if self.ctx.gc_mode == "auto":
             self.release()
+        elif self.ctx.gc_mode == "context_gc":
+            self.ctx.objects.append(self.mglo)
 
     @property
     def width(self) -> int:
@@ -120,6 +121,5 @@ class Renderbuffer:
         '''
             Release the ModernGL object.
         '''
-        LOG.debug(f"{self.__class__.__name__}.release() {self}")
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()

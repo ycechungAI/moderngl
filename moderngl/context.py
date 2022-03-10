@@ -1,5 +1,4 @@
 from collections import deque
-import logging
 import warnings
 from typing import Any, Deque, Dict, List, Optional, Set, Tuple
 
@@ -26,7 +25,6 @@ try:
 except ImportError:
     pass
 
-LOG = logging.getLogger(__name__)
 
 __all__ = ['Context', 'create_context', 'create_standalone_context',
            'NOTHING', 'BLEND', 'DEPTH_TEST', 'CULL_FACE', 'RASTERIZER_DISCARD', 'PROGRAM_POINT_SIZE',
@@ -281,7 +279,6 @@ class Context:
         return id(self)
 
     def __del__(self):
-        LOG.info(f"{self.__class__.__name__}.__del__ %s", self)
         if hasattr(self, "_gc_mode") and self._gc_mode == "auto":
             self.release()
 
@@ -316,7 +313,7 @@ class Context:
         self._gc_mode = value
 
     @property
-    def objects(self) -> List[Any]:
+    def objects(self) -> Deque[Any]:
         """
         Moderngl objects scheduled for deletion.
         These are deleted when calling :py:meth:`Context.gc`.
@@ -333,8 +330,15 @@ class Context:
             int: Number of objects deleted
         """
         count = 0
+        # Keep iterating until there are no more objects.
+        # An object deletion can trigger new objects to be added
         while self._objects:
-            obj = self._objects
+            # Remove the oldest objects first
+            obj = self._objects.popleft()
+            obj.release()
+            count += 1
+        
+        return count
 
     @property
     def line_width(self) -> float:
@@ -1789,7 +1793,6 @@ class Context:
 
             Standalone contexts can normally be released.
         '''
-        LOG.debug(f"{self.__class__.__name__}.release() {self}")
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
 

@@ -1,5 +1,3 @@
-import logging
-from moderngl.buffer import LOG
 from typing import Tuple, TYPE_CHECKING
 
 from moderngl.mgl import InvalidObject  # type: ignore
@@ -101,9 +99,14 @@ class VertexArray:
         return id(self)
 
     def __del__(self):
-        LOG.debug("VertexArray.__del__: %s", self)
-        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
+        if not hasattr(self, "ctx"):
+            return
+
+        if self.ctx.gc_mode == "auto":
             self.release()
+        elif self.ctx.gc_mode == "context_gc":
+            self.ctx.objects.append(self.mglo)
 
     @property
     def mode(self) -> int:
@@ -289,7 +292,6 @@ class VertexArray:
         '''
             Release the ModernGL object.
         '''
-        LOG.debug("VertexArray.release: %s", self)
         if not isinstance(self, InvalidObject) and hasattr(self, "ctx"):
             self._program = None
             self._index_buffer = None

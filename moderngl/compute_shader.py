@@ -1,4 +1,3 @@
-import logging
 from typing import Generator, Tuple, Union
 
 from moderngl.mgl import InvalidObject  # type: ignore
@@ -6,8 +5,6 @@ from .program_members import (Attribute, Subroutine, Uniform, UniformBlock,
                               Varying)
 
 __all__ = ['ComputeShader']
-
-LOG = logging.getLogger(__name__)
 
 
 class ComputeShader:
@@ -47,9 +44,13 @@ class ComputeShader:
         return id(self)
 
     def __del__(self):
-        LOG.debug(f"{self.__class__.__name__}.__del__ {self}")
-        if hasattr(self, "ctx") and self.ctx.gc_mode == "auto":
+        if not hasattr(self, "ctx"):
+            return
+
+        if self.ctx.gc_mode == "auto":
             self.release()
+        elif self.ctx.gc_mode == "context_gc":
+            self.ctx.objects.append(self.mglo)
 
     def __getitem__(self, key) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
         """Get a member such as uniforms, uniform blocks, subroutines,
@@ -139,6 +140,5 @@ class ComputeShader:
         '''
             Release the ModernGL object.
         '''
-        LOG.debug(f"{self.__class__.__name__}.release() {self}")
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
