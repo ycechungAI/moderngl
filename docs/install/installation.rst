@@ -80,9 +80,12 @@ If you have 32-bit python, then open ``C:\msys64\mingw32.exe`` and type the foll
 
     pacman -S mingw-w64-i686-mesa
 
-It will install mesa and it's dependencies. Then you can add ``C:\msys64\mingw32\bin`` to PATH before ``C:\Windows`` and moderngl
-should be working. Also, you should set an environment variable called ``GLCONTEXT_WIN_LIBGL`` which contains the path to opengl32
-dll from mesa. In this case it should be ``GLCONTEXT_WIN_LIBGL=C:\msys64\mingw32\bin\opengl32.dll`
+
+
+It will install mesa and its dependencies. Then you can add ``C:\msys64\mingw32\bin``
+to PATH before ``C:\Windows`` and moderngl should be working. Also, you should set
+an environment variable called ``GLCONTEXT_WIN_LIBGL`` which contains the path to opengl32
+dll from mesa. In this case it should be ``GLCONTEXT_WIN_LIBGL=C:\msys64\mingw32\bin\opengl32.dll``.
 
 
 64-bit python
@@ -94,6 +97,7 @@ If you have 64-bit python, then open ``C:\msys64\mingw64.exe`` and type the foll
 
     pacman -S mingw-w64-x86_64-mesa
 
-It will install mesa and it's dependencies. Then you can add ``C:\msys64\mingw64\bin`` to PATH before ``C:\Windows`` and moderngl
-should be working. Also, you should set an environment variable called ``GLCONTEXT_WIN_LIBGL`` which contains the path to opengl32
-dll from mesa. In this case it should be ``GLCONTEXT_WIN_LIBGL=C:\msys64\mingw64\bin\opengl32.dll`
+It will install mesa and it's dependencies. Then you can add ``C:\msys64\mingw64\bin`` to PATH before
+``C:\Windows`` and moderngl should be working. Also, you should set an environment variable called
+``GLCONTEXT_WIN_LIBGL`` which contains the path to opengl32
+dll from mesa. In this case it should be ``GLCONTEXT_WIN_LIBGL=C:\msys64\mingw64\bin\opengl32.dll``
