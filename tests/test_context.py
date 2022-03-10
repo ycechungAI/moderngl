@@ -267,4 +267,4 @@ class ContextTests(TestCase):
         # cs = None
         # self.assertEqual(ctx.gc(), 1)
 
-        # ctx.release()
+        ctx.release()
