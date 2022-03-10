@@ -23,10 +23,10 @@ Create
 Methods
 -------
 
-.. automethod:: VertexArray.render(mode=None, vertices=-1, first=0, instances=-1)
-.. automethod:: VertexArray.render_indirect(buffer, mode=None, count=-1, first=0)
-.. automethod:: VertexArray.transform(buffer, mode=None, vertices=-1, first=0, instances=-1, buffer_offset=0)
-.. automethod:: VertexArray.bind(attribute, cls, buffer, fmt, offset=0, stride=0, divisor=0, normalize=False)
+.. automethod:: VertexArray.render(mode: Optional[int] = None, vertices: int = -1, first: int = 0, instances: int = -1)
+.. automethod:: VertexArray.render_indirect(buffer: 'Buffer', mode: Optional[int] = None, count: int = -1, first: int = 0)
+.. automethod:: VertexArray.transform(buffer: 'Buffer', mode: int = None, vertices: int = -1, first: int = 0, instances: int = -1, buffer_offset: int = 0)
+.. automethod:: VertexArray.bind(attribute: int, cls: str, buffer: 'Buffer', fmt: str, offset: int = 0, stride: int = 0, divisor: int = 0, normalize: bool = False)
 .. automethod:: VertexArray.release()
 
 Attributes

@@ -9,7 +9,7 @@ Methods
 -------
 
 .. automethod:: Uniform.read() -> bytes
-.. automethod:: Uniform.write(data)
+.. automethod:: Uniform.write(data: Any)
 
 Attributes
 ----------
