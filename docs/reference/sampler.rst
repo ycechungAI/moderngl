@@ -13,9 +13,9 @@ Create
 Methods
 -------
 
-.. automethod:: Sampler.use(location=0)
-.. automethod:: Sampler.clear(location=0)
-.. automethod:: Sampler.assign(index)
+.. automethod:: Sampler.use(location: int = 0)
+.. automethod:: Sampler.clear(location: int = 0)
+.. automethod:: Sampler.assign(index: int) -> Tuple[ForwardRef('Sampler'), int]
 .. automethod:: Sampler.release()
 
 Attributes
