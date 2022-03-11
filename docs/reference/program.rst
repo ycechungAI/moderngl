@@ -14,11 +14,11 @@ Create
 Methods
 -------
 
-.. automethod:: Program.get(key, default) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]
-.. automethod:: Program.__getitem__(key) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]
-.. automethod:: Program.__setitem__(key, value)
+.. automethod:: Program.get(key: str, default: Any) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]
+.. automethod:: Program.__getitem__(key: str) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]
+.. automethod:: Program.__setitem__(key: str, value: Any)
 .. automethod:: Program.__iter__() -> Generator[str, NoneType, NoneType]
-.. automethod:: Program.__eq__(other) -> bool
+.. automethod:: Program.__eq__(other: 'Program') -> bool
 .. automethod:: Program.release()
 
 
