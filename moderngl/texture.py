@@ -305,7 +305,7 @@ class Texture:
 
     def read_into(
         self,
-        buffer: "Buffer",
+        buffer: Any,
         *,
         level: int = 0,
         alignment: int = 1,

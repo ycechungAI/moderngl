@@ -15,7 +15,7 @@ Methods
 -------
 
 .. automethod:: Texture3D.read(alignment: int = 1) -> bytes
-.. automethod:: Texture3D.read_into(buffer: 'Buffer', alignment: int = 1, write_offset: int = 0)
+.. automethod:: Texture3D.read_into(buffer: Any, alignment: int = 1, write_offset: int = 0)
 .. automethod:: Texture3D.write(data: Any, viewport: Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int], NoneType] = None, alignment: int = 1)
 .. automethod:: Texture3D.build_mipmaps(base: int = 0, max_level: int = 1000)
 .. automethod:: Texture3D.bind_to_image(unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0)

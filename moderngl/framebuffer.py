@@ -300,7 +300,7 @@ class Framebuffer:
 
     def read_into(
         self,
-        buffer: Buffer,
+        buffer: Any,
         viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
         components: int = 3,
         *,

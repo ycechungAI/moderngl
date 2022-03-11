@@ -15,7 +15,7 @@ Methods
 -------
 
 .. automethod:: TextureCube.read(face: int, alignment: int = 1) -> bytes
-.. automethod:: TextureCube.read_into(buffer: 'Buffer', face: int, alignment: int = 1, write_offset: int = 0)
+.. automethod:: TextureCube.read_into(buffer: Any, face: int, alignment: int = 1, write_offset: int = 0)
 .. automethod:: TextureCube.write(face: int, data: Any, viewport: Union[Tuple[int, int], Tuple[int, int, int, int], NoneType] = None, alignment: int = 1)
 .. automethod:: TextureCube.bind_to_image(unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0)
 .. automethod:: TextureCube.use(location: int = 0)

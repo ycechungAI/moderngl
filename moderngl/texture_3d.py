@@ -205,7 +205,7 @@ class Texture3D:
 
     def read_into(
         self,
-        buffer: "Buffer",
+        buffer: Any,
         *,
         alignment: int = 1,
         write_offset: int = 0,

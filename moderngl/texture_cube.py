@@ -179,7 +179,7 @@ class TextureCube:
 
     def read_into(
         self,
-        buffer: "Buffer",
+        buffer: Any,
         face: int,
         *,
         alignment: int = 1,

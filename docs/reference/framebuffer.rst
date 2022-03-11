@@ -19,7 +19,7 @@ Methods
 
 .. automethod:: Framebuffer.clear(red: float = 0.0, green: float = 0.0, blue: float = 0.0, alpha: float = 0.0, depth: float = 1.0, viewport: Union[Tuple[int, int], Tuple[int, int, int, int], NoneType] = None, color: Optional[Tuple[float, float, float, float]] = None)
 .. automethod:: Framebuffer.read(viewport: Union[Tuple[int, int], Tuple[int, int, int, int], NoneType] = None, components: int = 3, attachment: int = 0, alignment: int = 1, dtype: str = 'f1', clamp: bool = False) -> bytes
-.. automethod:: Framebuffer.read_into(buffer: Buffer, viewport: Union[Tuple[int, int], Tuple[int, int, int, int], NoneType] = None, components: int = 3, attachment: int = 0, alignment: int = 1, dtype: str = 'f1', write_offset: int = 0)
+.. automethod:: Framebuffer.read_into(buffer: Any, viewport: Union[Tuple[int, int], Tuple[int, int, int, int], NoneType] = None, components: int = 3, attachment: int = 0, alignment: int = 1, dtype: str = 'f1', write_offset: int = 0)
 .. automethod:: Framebuffer.use()
 .. automethod:: Framebuffer.release()
 
