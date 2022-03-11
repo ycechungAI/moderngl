@@ -8,7 +8,7 @@ Scope
 Create
 ------
 
-.. automethod:: Context.scope(framebuffer=None, enable_only=None, textures=(), uniform_buffers=(), storage_buffers=(), samplers=(), enable=None) -> Scope
+.. automethod:: Context.scope(framebuffer: Optional[Framebuffer] = None, enable_only: Optional[int] = None, textures: Tuple[Tuple[Texture, int]] = (), uniform_buffers: Tuple[Tuple[Buffer, int]] = (), storage_buffers: Tuple[Tuple[Buffer, int]] = (), samplers: Tuple[Tuple[Sampler, int]] = (), enable: Optional[int] = None) -> Scope
     :noindex:
 
 Methods

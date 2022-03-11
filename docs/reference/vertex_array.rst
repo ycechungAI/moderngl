@@ -14,7 +14,7 @@ VertexArray
 Create
 ------
 
-.. automethod:: Context.simple_vertex_array(program, buffer, *attributes, index_buffer=None, index_element_size=4, mode=None) -> VertexArray
+.. automethod:: Context.simple_vertex_array(program: Program, buffer: Buffer, *attributes: Union[List[str], Tuple[str, ...]], index_buffer: Optional[Buffer] = None, index_element_size: int = 4, mode: Optional[int] = None) -> VertexArray
     :noindex:
 
 .. automethod:: Context.vertex_array(*args, **kwargs) -> VertexArray

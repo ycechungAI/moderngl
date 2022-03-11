@@ -8,7 +8,7 @@ TextureCube
 Create
 ------
 
-.. automethod:: Context.texture_cube(size, components, data=None, alignment=1, dtype='f1') -> TextureCube
+.. automethod:: Context.texture_cube(size: Tuple[int, int], components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> TextureCube
     :noindex:
 
 Methods

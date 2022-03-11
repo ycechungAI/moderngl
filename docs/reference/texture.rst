@@ -8,10 +8,10 @@ Texture
 Create
 ------
 
-.. automethod:: Context.texture(size, components, data=None, samples=0, alignment=1, dtype='f1', internal_format=None) -> Texture
+.. automethod:: Context.texture(size: Tuple[int, int], components: int, data: Optional[Any] = None, samples: int = 0, alignment: int = 1, dtype: str = 'f1', internal_format: int = None) -> Texture
     :noindex:
 
-.. automethod:: Context.depth_texture(size, data=None, samples=0, alignment=4) -> Texture
+.. automethod:: Context.depth_texture(size: Tuple[int, int], data: Optional[Any] = None, samples: int = 0, alignment: int = 4) -> Texture
     :noindex:
 
 Methods

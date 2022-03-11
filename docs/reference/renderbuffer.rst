@@ -8,10 +8,10 @@ Renderbuffer
 Create
 ------
 
-.. automethod:: Context.renderbuffer(size, components=4, samples=0, dtype='f1') -> Renderbuffer
+.. automethod:: Context.renderbuffer(size: Tuple[int, int], components: int = 4, samples: int = 0, dtype: str = 'f1') -> Renderbuffer
     :noindex:
 
-.. automethod:: Context.depth_renderbuffer(size, samples=0) -> Renderbuffer
+.. automethod:: Context.depth_renderbuffer(size: Tuple[int, int], samples: int = 0) -> Renderbuffer
     :noindex:
 
 Methods

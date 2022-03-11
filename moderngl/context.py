@@ -1632,7 +1632,7 @@ class Context:
 
     def framebuffer(
         self,
-        color_attachments: Any,
+        color_attachments: Any = (),
         depth_attachment: Optional[Union[Texture, Renderbuffer]] = None,
     ) -> 'Framebuffer':
         """

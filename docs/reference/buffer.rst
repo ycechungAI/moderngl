@@ -9,7 +9,7 @@ Buffer
 Create
 ------
 
-.. automethod:: Context.buffer(data=None, reserve=0, dynamic=False) -> Buffer
+.. automethod:: Context.buffer(data: Optional[Any] = None, reserve: int = 0, dynamic: bool = False) -> Buffer
     :noindex:
 
 Methods

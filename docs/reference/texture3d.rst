@@ -8,7 +8,7 @@ Texture3D
 Create
 ------
 
-.. automethod:: Context.texture3d(size, components, data=None, alignment=1, dtype='f1') -> Texture3D
+.. automethod:: Context.texture3d(size: Tuple[int, int, int], components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> Texture3D
     :noindex:
 
 Methods

@@ -14,40 +14,40 @@ Create
 ModernGL Objects
 ----------------
 
-.. automethod:: Context.program(vertex_shader, fragment_shader=None, geometry_shader=None, tess_control_shader=None, tess_evaluation_shader=None, varyings=()) -> Program
-.. automethod:: Context.simple_vertex_array(program, buffer, *attributes, index_buffer=None, index_element_size=4, mode=None) -> VertexArray
+.. automethod:: Context.program(vertex_shader: str, fragment_shader: Optional[str] = None, geometry_shader: Optional[str] = None, tess_control_shader: Optional[str] = None, tess_evaluation_shader: Optional[str] = None, varyings: Tuple[str, ...] = ()) -> Program
+.. automethod:: Context.simple_vertex_array(program: Program, buffer: Buffer, *attributes: Union[List[str], Tuple[str, ...]], index_buffer: Optional[Buffer] = None, index_element_size: int = 4, mode: Optional[int] = None) -> VertexArray
 .. automethod:: Context.vertex_array(*args, **kwargs) -> VertexArray
-.. automethod:: Context.buffer(data=None, reserve=0, dynamic=False) -> Buffer
-.. automethod:: Context.texture(size, components, data=None, samples=0, alignment=1, dtype='f1', internal_format=None) -> Texture
-.. automethod:: Context.depth_texture(size, data=None, samples=0, alignment=4) -> Texture
-.. automethod:: Context.texture3d(size, components, data=None, alignment=1, dtype='f1') -> Texture3D
-.. automethod:: Context.texture_array(size, components, data=None, alignment=1, dtype='f1') -> TextureArray
-.. automethod:: Context.texture_cube(size, components, data=None, alignment=1, dtype='f1') -> TextureCube
-.. automethod:: Context.simple_framebuffer(size, components=4, samples=0, dtype='f1') -> Framebuffer
-.. automethod:: Context.framebuffer(color_attachments=(), depth_attachment=None) -> Framebuffer
-.. automethod:: Context.renderbuffer(size, components=4, samples=0, dtype='f1') -> Renderbuffer
-.. automethod:: Context.depth_renderbuffer(size, samples=0) -> Renderbuffer
-.. automethod:: Context.scope(framebuffer=None, enable_only=None, textures=(), uniform_buffers=(), storage_buffers=(), samplers=(), enable=None) -> Scope
-.. automethod:: Context.query(samples=False, any_samples=False, time=False, primitives=False) -> Query
-.. automethod:: Context.compute_shader(source) -> ComputeShader
-.. automethod:: Context.sampler(repeat_x=True, repeat_y=True, repeat_z=True, filter=None, anisotropy=1.0, compare_func='?', border_color=None, min_lod=-1000.0, max_lod=1000.0, texture=None) -> Sampler
-.. automethod:: Context.clear_samplers(start=0, end=-1)
+.. automethod:: Context.buffer(data: Optional[Any] = None, reserve: int = 0, dynamic: bool = False) -> Buffer
+.. automethod:: Context.texture(size: Tuple[int, int], components: int, data: Optional[Any] = None, samples: int = 0, alignment: int = 1, dtype: str = 'f1', internal_format: int = None) -> Texture
+.. automethod:: Context.depth_texture(size: Tuple[int, int], data: Optional[Any] = None, samples: int = 0, alignment: int = 4) -> Texture
+.. automethod:: Context.texture3d(size: Tuple[int, int, int], components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> Texture3D
+.. automethod:: Context.texture_array(size: tuple, components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> TextureArray
+.. automethod:: Context.texture_cube(size: Tuple[int, int], components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> TextureCube
+.. automethod:: Context.simple_framebuffer(size: Tuple[int, int], components: int = 4, samples: int = 0, dtype: str = 'f1') -> Framebuffer
+.. automethod:: Context.framebuffer(color_attachments: Any = (), depth_attachment: Union[Texture, Renderbuffer, NoneType] = None) -> Framebuffer
+.. automethod:: Context.renderbuffer(size: Tuple[int, int], components: int = 4, samples: int = 0, dtype: str = 'f1') -> Renderbuffer
+.. automethod:: Context.depth_renderbuffer(size: Tuple[int, int], samples: int = 0) -> Renderbuffer
+.. automethod:: Context.scope(framebuffer: Optional[Framebuffer] = None, enable_only: Optional[int] = None, textures: Tuple[Tuple[Texture, int]] = (), uniform_buffers: Tuple[Tuple[Buffer, int]] = (), storage_buffers: Tuple[Tuple[Buffer, int]] = (), samplers: Tuple[Tuple[Sampler, int]] = (), enable: Optional[int] = None) -> Scope
+.. automethod:: Context.query(samples: bool = False, any_samples: bool = False, time: bool = False, primitives: bool = False) -> Query
+.. automethod:: Context.compute_shader(source: str) -> ComputeShader
+.. automethod:: Context.sampler(repeat_x: bool = True, repeat_y: bool = True, repeat_z: bool = True, filter: Tuple[int, int] = None, anisotropy: float = 1.0, compare_func: str = '?', border_color: Tuple[float, float, float, float] = None, min_lod: float = -1000.0, max_lod: float = 1000.0, texture: Optional[Texture] = None) -> Sampler
+.. automethod:: Context.clear_samplers(start: int = 0, end: int = -1)
 .. automethod:: Context.release()
 
 
 Methods
 -------
 
-.. automethod:: Context.clear(red=0.0, green=0.0, blue=0.0, alpha=0.0, depth=1.0, viewport=None, color=None)
-.. automethod:: Context.enable_only(flags)
+.. automethod:: Context.clear(red: float = 0.0, green: float = 0.0, blue: float = 0.0, alpha: float = 0.0, depth: float = 1.0, viewport: Union[Tuple[int, int], Tuple[int, int, int, int], NoneType] = None, color: Optional[Tuple[float, float, float, float]] = None)
+.. automethod:: Context.enable_only(flags: int)
 .. automethod:: Context.enable(flags: int)
 .. automethod:: Context.disable(flags: int)
 .. automethod:: Context.enable_direct(enum: int)
 .. automethod:: Context.disable_direct(enum: int)
 .. automethod:: Context.finish()
-.. automethod:: Context.copy_buffer(dst, src, size=-1, read_offset=0, write_offset=0)
-.. automethod:: Context.copy_framebuffer(dst, src)
-.. automethod:: Context.detect_framebuffer(glo=None) -> Framebuffer
+.. automethod:: Context.copy_buffer(dst: Buffer, src: Buffer, size: int = -1, read_offset: int = 0, write_offset: int = 0)
+.. automethod:: Context.copy_framebuffer(dst: Union[Framebuffer, Texture], src: Framebuffer)
+.. automethod:: Context.detect_framebuffer(glo: Optional[int] = None) -> Framebuffer
 .. automethod:: Context.gc() -> int
 .. automethod:: Context.__enter__()
 .. automethod:: Context.__exit__(exc_type, exc_val, exc_tb)

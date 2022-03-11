@@ -8,10 +8,10 @@ Framebuffer
 Create
 ------
 
-.. automethod:: Context.simple_framebuffer(size, components=4, samples=0, dtype='f1') -> Framebuffer
+.. automethod:: Context.simple_framebuffer(size: Tuple[int, int], components: int = 4, samples: int = 0, dtype: str = 'f1') -> Framebuffer
     :noindex:
 
-.. automethod:: Context.framebuffer(color_attachments=(), depth_attachment=None) -> Framebuffer
+.. automethod:: Context.framebuffer(color_attachments: Any = (), depth_attachment: Union[Texture, Renderbuffer, NoneType] = None) -> Framebuffer
     :noindex:
 
 Methods

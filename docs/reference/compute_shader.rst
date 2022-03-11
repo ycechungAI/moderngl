@@ -9,7 +9,7 @@ ComputeShader
 Create
 ------
 
-.. automethod:: Context.compute_shader(source) -> ComputeShader
+.. automethod:: Context.compute_shader(source: str) -> ComputeShader
     :noindex:
 
 Methods
