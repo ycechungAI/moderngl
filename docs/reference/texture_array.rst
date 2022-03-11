@@ -14,12 +14,12 @@ Create
 Methods
 -------
 
-.. automethod:: TextureArray.read(alignment=1) -> bytes
-.. automethod:: TextureArray.read_into(buffer, alignment=1, write_offset=0)
-.. automethod:: TextureArray.write(data, viewport=None, alignment=1)
+.. automethod:: TextureArray.read(alignment: int = 1) -> bytes
+.. automethod:: TextureArray.read_into(buffer: 'Buffer', alignment: int = 1, write_offset: int = 0)
+.. automethod:: TextureArray.write(data: Any, viewport: Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int], NoneType] = None, alignment: int = 1)
 .. automethod:: TextureArray.bind_to_image(unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0)
-.. automethod:: TextureArray.build_mipmaps(base=0, max_level=1000)
-.. automethod:: TextureArray.use(location=0)
+.. automethod:: TextureArray.build_mipmaps(base: int = 0, max_level: int = 1000)
+.. automethod:: TextureArray.use(location: int = 0)
 .. automethod:: TextureArray.release()
 
 Attributes
