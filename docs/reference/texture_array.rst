@@ -8,7 +8,7 @@ TextureArray
 Create
 ------
 
-.. automethod:: Context.texture_array(size: tuple, components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> TextureArray
+.. automethod:: Context.texture_array(size: Tuple[int, int, int], components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> TextureArray
     :noindex:
 
 Methods

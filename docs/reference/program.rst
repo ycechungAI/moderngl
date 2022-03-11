@@ -18,7 +18,7 @@ Methods
 .. automethod:: Program.__getitem__(key: str) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]
 .. automethod:: Program.__setitem__(key: str, value: Any)
 .. automethod:: Program.__iter__() -> Generator[str, NoneType, NoneType]
-.. automethod:: Program.__eq__(other: 'Program') -> bool
+.. automethod:: Program.__eq__(other: Any) -> bool
 .. automethod:: Program.release()
 
 

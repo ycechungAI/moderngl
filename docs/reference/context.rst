@@ -21,7 +21,7 @@ ModernGL Objects
 .. automethod:: Context.texture(size: Tuple[int, int], components: int, data: Optional[Any] = None, samples: int = 0, alignment: int = 1, dtype: str = 'f1', internal_format: int = None) -> Texture
 .. automethod:: Context.depth_texture(size: Tuple[int, int], data: Optional[Any] = None, samples: int = 0, alignment: int = 4) -> Texture
 .. automethod:: Context.texture3d(size: Tuple[int, int, int], components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> Texture3D
-.. automethod:: Context.texture_array(size: tuple, components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> TextureArray
+.. automethod:: Context.texture_array(size: Tuple[int, int, int], components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> TextureArray
 .. automethod:: Context.texture_cube(size: Tuple[int, int], components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> TextureCube
 .. automethod:: Context.simple_framebuffer(size: Tuple[int, int], components: int = 4, samples: int = 0, dtype: str = 'f1') -> Framebuffer
 .. automethod:: Context.framebuffer(color_attachments: Any = (), depth_attachment: Union[Texture, Renderbuffer, NoneType] = None) -> Framebuffer
