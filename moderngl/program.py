@@ -1,4 +1,4 @@
-from typing import Any, Generator, List, Tuple, Union
+from typing import Any, Generator, Tuple, Union
 
 from moderngl.mgl import InvalidObject  # type: ignore
 
@@ -226,7 +226,11 @@ class Program:
             self.mglo.release()
 
 
-def detect_format(program: Program, attributes: List[Attribute], mode: str = 'mgl') -> str:
+def detect_format(
+    program: Program,
+    attributes: Any,
+    mode: str = 'mgl',
+) -> str:
     """
     Detect format for vertex attributes.
 
@@ -239,7 +243,7 @@ def detect_format(program: Program, attributes: List[Attribute], mode: str = 'mg
     Returns:
         str
     """
-    def fmt(attr: Attribute) -> str:
+    def fmt(attr: Any) -> Tuple[int, str]:
         """For internal use only."""
         # Translate shape format into attribute format
         mgl_fmt = {

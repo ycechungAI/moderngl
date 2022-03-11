@@ -1560,10 +1560,10 @@ class Context:
         framebuffer: Optional[Framebuffer] = None,
         enable_only: Optional[int] = None,
         *,
-        textures: Tuple[Tuple[Texture, int]] = (),
-        uniform_buffers: Tuple[Tuple[Buffer, int]] = (),
-        storage_buffers: Tuple[Tuple[Buffer, int]] = (),
-        samplers: Tuple[Tuple[Sampler, int]] = (),
+        textures: Tuple[Tuple[Texture, int], ...] = (),
+        uniform_buffers: Tuple[Tuple[Buffer, int], ...] = (),
+        storage_buffers: Tuple[Tuple[Buffer, int], ...] = (),
+        samplers: Tuple[Tuple[Sampler, int], ...] = (),
         enable: Optional[int] = None,
     ) -> 'Scope':
         """

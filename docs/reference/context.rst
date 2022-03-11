@@ -27,7 +27,7 @@ ModernGL Objects
 .. automethod:: Context.framebuffer(color_attachments: Any = (), depth_attachment: Union[Texture, Renderbuffer, NoneType] = None) -> Framebuffer
 .. automethod:: Context.renderbuffer(size: Tuple[int, int], components: int = 4, samples: int = 0, dtype: str = 'f1') -> Renderbuffer
 .. automethod:: Context.depth_renderbuffer(size: Tuple[int, int], samples: int = 0) -> Renderbuffer
-.. automethod:: Context.scope(framebuffer: Optional[Framebuffer] = None, enable_only: Optional[int] = None, textures: Tuple[Tuple[Texture, int]] = (), uniform_buffers: Tuple[Tuple[Buffer, int]] = (), storage_buffers: Tuple[Tuple[Buffer, int]] = (), samplers: Tuple[Tuple[Sampler, int]] = (), enable: Optional[int] = None) -> Scope
+.. automethod:: Context.scope(framebuffer: Optional[Framebuffer] = None, enable_only: Optional[int] = None, textures: Tuple[Tuple[Texture, int], ...] = (), uniform_buffers: Tuple[Tuple[Buffer, int], ...] = (), storage_buffers: Tuple[Tuple[Buffer, int], ...] = (), samplers: Tuple[Tuple[Sampler, int], ...] = (), enable: Optional[int] = None) -> Scope
 .. automethod:: Context.query(samples: bool = False, any_samples: bool = False, time: bool = False, primitives: bool = False) -> Query
 .. automethod:: Context.compute_shader(source: str) -> ComputeShader
 .. automethod:: Context.sampler(repeat_x: bool = True, repeat_y: bool = True, repeat_z: bool = True, filter: Tuple[int, int] = None, anisotropy: float = 1.0, compare_func: str = '?', border_color: Tuple[float, float, float, float] = None, min_lod: float = -1000.0, max_lod: float = 1000.0, texture: Optional[Texture] = None) -> Sampler

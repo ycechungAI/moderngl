@@ -9,6 +9,7 @@ import moderngl
 
 class TestCase(unittest.TestCase):
     root = os.path.dirname(os.path.dirname(__file__))
+    maxDiff = 10000
 
     def validate_cls(self, filename, classname, ignore, include=None):
         docs = self._read_rst_file(filename)
