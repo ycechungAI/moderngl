@@ -15,7 +15,7 @@ Methods
 -------
 
 .. automethod:: Scope.__enter__()
-.. automethod:: Scope.__exit__(*args)
+.. automethod:: Scope.__exit__(*args: Tuple[Any])
 .. automethod:: Scope.release()
 
 Attributes
