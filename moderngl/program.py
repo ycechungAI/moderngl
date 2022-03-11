@@ -51,7 +51,7 @@ class Program:
         else:
             return f"<{self.__class__.__name__}: INCOMPLETE>"
 
-    def __eq__(self, other: "Program") -> bool:
+    def __eq__(self, other: Any) -> bool:
         """
         Compares two programs opengl names (mglo).
 

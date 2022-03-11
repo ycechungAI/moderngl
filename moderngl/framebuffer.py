@@ -43,7 +43,7 @@ class Framebuffer:
         else:
             return "<Framebuffer: INCOMPLETE>"
 
-    def __eq__(self, other: "Framebuffer") -> bool:
+    def __eq__(self, other: Any) -> bool:
         return type(self) is type(other) and self.mglo is other.mglo
 
     def __hash__(self) -> int:

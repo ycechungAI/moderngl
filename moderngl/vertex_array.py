@@ -1,4 +1,4 @@
-from typing import Optional, TYPE_CHECKING, Tuple
+from typing import Any, Optional, TYPE_CHECKING, Tuple
 
 from moderngl.mgl import InvalidObject  # type: ignore
 
@@ -97,7 +97,7 @@ class VertexArray:
         else:
             return '<VertexArray: INCOMPLETE>'
 
-    def __eq__(self, other: "VertexArray") -> bool:
+    def __eq__(self, other: Any) -> bool:
         return type(self) is type(other) and self.mglo is other.mglo
 
     def __hash__(self) -> int:

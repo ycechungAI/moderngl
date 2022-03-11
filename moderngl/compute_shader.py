@@ -44,7 +44,7 @@ class ComputeShader:
         else:
             return f"<{self.__class__.__name__}: INCOMPLETE>"
 
-    def __eq__(self, other: "ComputeShader"):
+    def __eq__(self, other: Any):
         """Compares to compute shaders ensuring the internal opengl name/id is the same."""
         return type(self) is type(other) and self.mglo is other.mglo
 

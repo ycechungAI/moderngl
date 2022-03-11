@@ -279,7 +279,7 @@ class Context:
     def __repr__(self) -> str:
         return f"<Context {id(self)} version_code={self.version_code}>"
 
-    def __eq__(self, other: "Context"):
+    def __eq__(self, other: Any):
         return type(self) is type(other) and self.mglo is other.mglo
 
     def __hash__(self) -> int:
@@ -1187,7 +1187,7 @@ class Context:
 
     def texture_array(
         self,
-        size: tuple[int, int, int],
+        size: Tuple[int, int, int],
         components: int,
         data: Optional[Any] = None,
         *,

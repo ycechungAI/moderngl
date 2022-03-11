@@ -38,7 +38,7 @@ class Texture3D:
         else:
             return f"<{self.__class__.__name__}: INCOMPLETE>"
 
-    def __eq__(self, other: "Texture3D"):
+    def __eq__(self, other: Any):
         return type(self) is type(other) and self.mglo is other.mglo
 
     def __hash__(self) -> int:
