@@ -52,7 +52,14 @@ DEPTH_TEST = 2
 CULL_FACE = 4
 #: Enable/disable rasterization
 RASTERIZER_DISCARD = 8
-#: When enabled we can write to ``gl_PointSize`` in the vertex shader to specify the point size.
+#: Context flag: Enables ``gl_PointSize`` in vertex or geometry shaders.
+#:
+#: When enabled we can write to ``gl_PointSize`` in the vertex shader to specify the point size
+#: for each individual point.
+#:
+#: If this value is not set in the shader the behavior is undefined. This means the points may
+#: or may not appear depending if the drivers enforce some default value for ``gl_PointSize``.
+#:
 #: When disabled :py:attr:`Context.point_size` is used.
 PROGRAM_POINT_SIZE = 16
 
@@ -124,7 +131,14 @@ class Context:
     CULL_FACE = 4
     #: Enable/disable rasterization
     RASTERIZER_DISCARD = 8
-    #: When enabled we can write to ``gl_PointSize`` in the vertex shader to specify the point size.
+    #: Context flag: Enables ``gl_PointSize`` in vertex or geometry shaders.
+    #:
+    #: When enabled we can write to ``gl_PointSize`` in the vertex shader to specify the point size
+    #: for each individual point.
+    #:
+    #: If this value is not set in the shader the behavior is undefined. This means the points may
+    #: or may not appear depending if the drivers enforce some default value for ``gl_PointSize``.
+    #:
     #: When disabled :py:attr:`Context.point_size` is used.
     PROGRAM_POINT_SIZE = 16
 
@@ -369,19 +383,19 @@ class Context:
     @property
     def point_size(self) -> float:
         """
-        float: Set/get the default point size.
+        float: Set/get the point size.
 
-        Point size limitations are found in ``ctx.info["GL_POINT_SIZE_RANGE"]``.
-        It can normally be expected to be 1 to 256 or greater.
-        Using a geometry shader is often a safer way to convert points into
-        triangle strips on the fly with no restrictions.
+        Point size changes the pixel size of rendered points. The min and max values
+        are limited by ``POINT_SIZE_RANGE``.
+        This value usually at least ``(1, 100)``, but this depends on the drivers/vendors.
 
-        .. Warning:: Enabling this context flag requires
-                     the shader to assign size to ``gl_PointSize``.
-                     If this value is not set in the shader the behavior
-                     is undefined. This means the points may or may not
-                     appear depending if the drivers enforce some default
-                     value for `gl_PointSize`.
+        If variable point size is needed you can enable ``PROGRAM_POINT_SIZE``
+        and write to ``gl_PointSize`` in the vertex or geometry shader.
+
+        .. Note::
+
+            Using a geometry shader to create triangle strips from points is often a safer
+            way to render large points since you don't have have any size restrictions.
         """
         return self.mglo.point_size
 
