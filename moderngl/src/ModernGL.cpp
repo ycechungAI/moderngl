@@ -213,6 +213,18 @@ PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
 	int bound_framebuffer = 0;
 	gl.GetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &bound_framebuffer);
 
+	if (!gl.IsFramebuffer(bound_framebuffer)) {
+		int renderbuffer = 0;
+		gl.GenRenderbuffers(1, (GLuint *)&renderbuffer);
+		gl.BindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+		gl.RenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, 4, 4);
+		int framebuffer = 0;
+		gl.GenFramebuffers(1, (GLuint *)&framebuffer);
+		gl.BindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+		gl.FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+		bound_framebuffer = framebuffer;
+	}
+
 	{
 		MGLFramebuffer * framebuffer = (MGLFramebuffer *)MGLFramebuffer_Type.tp_alloc(&MGLFramebuffer_Type, 0);
 
