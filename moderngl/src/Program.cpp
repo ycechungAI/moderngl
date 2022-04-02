@@ -5,16 +5,18 @@
 PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 	PyObject * shaders[5];
 	PyObject * outputs;
+	PyObject * fragment_outputs;
 
 	int args_ok = PyArg_ParseTuple(
 		args,
-		"OOOOOO",
+		"OOOOOOO",
 		&shaders[0],
 		&shaders[1],
 		&shaders[2],
 		&shaders[3],
 		&shaders[4],
-		&outputs
+		&outputs,
+		&fragment_outputs
 	);
 
 	if (!args_ok) {
@@ -116,6 +118,16 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 		gl.TransformFeedbackVaryings(program_obj, num_outputs, varyings_array, GL_INTERLEAVED_ATTRIBS);
 
 		delete[] varyings_array;
+	}
+
+	{
+		PyObject * key = NULL;
+		PyObject * value = NULL;
+		Py_ssize_t pos = 0;
+
+		while (PyDict_Next(fragment_outputs, &pos, &key, &value)) {
+			gl.BindFragDataLocation(program_obj, PyLong_AsLong(value), PyUnicode_AsUTF8(key));
+		}
 	}
 
 	gl.LinkProgram(program_obj);

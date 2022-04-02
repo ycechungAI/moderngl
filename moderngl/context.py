@@ -1480,6 +1480,7 @@ class Context:
         tess_control_shader: Optional[str] = None,
         tess_evaluation_shader: Optional[str] = None,
         varyings: Tuple[str, ...] = (),
+        fragment_outputs: Optional[Dict[str, int]] = None,
     ) -> 'Program':
         """
         Create a :py:class:`Program` object.
@@ -1501,10 +1502,13 @@ class Context:
 
         varyings = tuple(varyings)
 
+        if fragment_outputs is None:
+            fragment_outputs = {}
+
         res = Program.__new__(Program)
         res.mglo, ls1, ls2, ls3, ls4, ls5, res._subroutines, res._geom, res._glo = self.mglo.program(
             vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader,
-            varyings
+            varyings, fragment_outputs,
         )
 
         members = {}
