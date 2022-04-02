@@ -179,7 +179,7 @@ class Program:
 
         The GeometryShader's output primitive if the GeometryShader exists.
         This can only be ``POINTS``, ``LINE_STRIP`` and ``TRIANGLE_STRIP``
-        (from ``layout(output_primitive​, max_vertices = vert_count) out;``)
+        (from ``layout(output_primitive, max_vertices = vert_count) out;``)
         """
         return self._geom[1]
 
@@ -189,7 +189,7 @@ class Program:
         int: The maximum number of vertices that.
 
         the geometry shader will output.
-        (from ``layout(output_primitive​, max_vertices = vert_count) out;``)
+        (from ``layout(output_primitive, max_vertices = vert_count) out;``)
         """
         return self._geom[2]
 
