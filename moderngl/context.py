@@ -628,7 +628,8 @@ class Context:
 
     @viewport.setter
     def viewport(self, value: Tuple[int, int, int, int]) -> None:
-        self.mglo.fbo.viewport = tuple(value)
+        x, y, w, h = value
+        self.mglo.fbo.viewport = (int(x), int(y), int(w), int(h))
 
     @property
     def scissor(self) -> Optional[Tuple[int, int, int, int]]:
@@ -659,7 +660,8 @@ class Context:
         if value is None:
             self.mglo.fbo.scissor = None
         else:
-            self.mglo.fbo.scissor = tuple(value)
+            x, y, w, h = value
+            self.mglo.fbo.scissor = (int(x), int(y), int(w), int(h))
 
     @property
     def max_samples(self) -> int:
