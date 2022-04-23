@@ -152,6 +152,12 @@ classifiers = [
     'Programming Language :: Python :: 3 :: Only',
 ]
 
+project_urls = {
+    'Documentation': 'https://moderngl.readthedocs.io/',
+    'Source': 'https://github.com/moderngl/moderngl/',
+    'Bug Tracker': 'https://github.com/moderngl/moderngl/issues/',
+}
+
 setup(
     name='moderngl',
     version='5.7.0',
@@ -162,6 +168,7 @@ setup(
     author='Szabolcs Dombi',
     author_email='cprogrammer1994@gmail.com',
     license='MIT',
+    project_urls=project_urls,
     classifiers=classifiers,
     keywords=keywords,
     packages=['moderngl', 'moderngl.program_members'],
