@@ -54,9 +54,9 @@ class CrateExample(Example):
                 }
             ''',
             fragment_outputs={
-                'f_color_a': 1,
-                'f_color_b': 0,
-                'f_color_c': 2,
+                'f_color_a': 2,
+                'f_color_b': 1,
+                'f_color_c': 0,
             },
         )
 
