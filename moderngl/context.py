@@ -1156,6 +1156,36 @@ class Context:
         res.extra = None
         return res
 
+    def external_texture(
+        self,
+        glo: int,
+        size: Tuple[int, int],
+        components: int,
+        samples: int,
+        dtype: str,
+    ) -> 'Texture':
+        """
+        Create a :py:class:`Texture` object from an existing OpenGL texture object.
+
+        Args:
+            glo (int): External OpenGL texture object.
+            size (tuple): The width and height of the texture.
+            components (int): The number of components 1, 2, 3 or 4.
+            samples (int): The number of samples. Value 0 means no multisample format.
+            dtype (str): Data type.
+        """
+
+        res = Texture.__new__(Texture)
+        res.mglo, res._glo = self.mglo.external_texture(glo, size, components, samples, dtype)
+        res._size = size
+        res._components = components
+        res._samples = samples
+        res._dtype = dtype
+        res._depth = False
+        res.ctx = self
+        res.extra = None
+        return res
+
     def texture(
         self,
         size: Tuple[int, int],

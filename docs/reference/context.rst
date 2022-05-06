@@ -23,6 +23,7 @@ ModernGL Objects
 .. automethod:: Context.texture3d(size: Tuple[int, int, int], components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> Texture3D
 .. automethod:: Context.texture_array(size: Tuple[int, int, int], components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> TextureArray
 .. automethod:: Context.texture_cube(size: Tuple[int, int], components: int, data: Optional[Any] = None, alignment: int = 1, dtype: str = 'f1') -> TextureCube
+.. automethod:: Context.external_texture(glo: int, size: Tuple[int, int], components: int, samples: int, dtype: str) -> Texture
 .. automethod:: Context.simple_framebuffer(size: Tuple[int, int], components: int = 4, samples: int = 0, dtype: str = 'f1') -> Framebuffer
 .. automethod:: Context.framebuffer(color_attachments: Any = (), depth_attachment: Union[Texture, Renderbuffer, NoneType] = None) -> Framebuffer
 .. automethod:: Context.renderbuffer(size: Tuple[int, int], components: int = 4, samples: int = 0, dtype: str = 'f1') -> Renderbuffer
