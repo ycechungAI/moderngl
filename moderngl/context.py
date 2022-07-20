@@ -1515,15 +1515,21 @@ class Context:
         """
         Create a :py:class:`Program` object.
 
-        Only linked programs will be returned.
+        The ``varyings`` are only used when a transform program is created
+        to specify the names of the output varyings to capture in the output buffer.
 
-        A single shader in the `shaders` parameter is also accepted.
-        The varyings are only used when a transform program is created.
+        ``fragment_outputs`` can be used to programmatically map named fragment
+        shader outputs to a framebuffer attachment numbers. This can also be done
+        by using ``layout(location=N)`` in the fragment shader.
 
         Args:
-            shaders (list): A list of :py:class:`Shader` objects.
-            varyings (list): A list of varying names.
-
+            vertex_shader (str): The vertex shader source.
+            fragment_shader (str): The fragment shader source.
+            geometry_shader (str): The geometry shader source.
+            tess_control_shader (str): The tessellation control shader source.
+            tess_evaluation_shader (str): The tessellation evaluation shader source.
+            varyings (list): A list of varyings.
+            fragment_outputs (dict): A dictionary of fragment outputs.
         Returns:
             :py:class:`Program` object
         """
