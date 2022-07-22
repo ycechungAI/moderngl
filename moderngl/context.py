@@ -313,16 +313,19 @@ class Context:
         and ``context_gc``. Please see documentation for
         the appropriate configuration.
 
-        Examples:
+        Examples::
 
-            # Disable automatic garbage collection
+            # Disable automatic garbage collection.
+            # Each objects needs to be explicitly released.
             ctx.gc_mode = None
 
-            # Enable collection of dead objects with manual release
+            # Collect all dead objects in the context and
+            # release them by calling Context.gc()
             ctx.gc_mode = "context_gc"
             ctx.gc()  # Deletes the collected objects
 
-            # Enable automatic garbage collection
+            # Enable automatic garbage collection like
+            # we normally expect in python.
             ctx.gc_mode = "auto"
         """
         return self._gc_mode
