@@ -9,7 +9,7 @@ Create
 ------
 
 .. automethod:: Context.texture_array
-    :noindex:
+   :noindex:
 
 Methods
 -------

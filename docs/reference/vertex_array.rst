@@ -15,10 +15,10 @@ Create
 ------
 
 .. automethod:: Context.simple_vertex_array
-    :noindex:
+   :noindex:
 
 .. automethod:: Context.vertex_array
-    :noindex:
+   :noindex:
 
 Methods
 -------

@@ -9,10 +9,10 @@ Create
 ------
 
 .. automethod:: Context.renderbuffer
-    :noindex:
+   :noindex:
 
 .. automethod:: Context.depth_renderbuffer
-    :noindex:
+   :noindex:
 
 Methods
 -------

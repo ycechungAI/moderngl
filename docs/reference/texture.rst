@@ -9,10 +9,10 @@ Create
 ------
 
 .. automethod:: Context.texture
-    :noindex:
+   :noindex:
 
 .. automethod:: Context.depth_texture
-    :noindex:
+   :noindex:
 
 Methods
 -------

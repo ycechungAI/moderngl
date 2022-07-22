@@ -9,7 +9,7 @@ Create
 ------
 
 .. automethod:: Context.texture3d
-    :noindex:
+   :noindex:
 
 Methods
 -------

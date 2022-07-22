@@ -9,6 +9,7 @@ Create
 ------
 
 .. automethod:: Context.sampler
+   :noindex:
 
 Methods
 -------

@@ -9,7 +9,7 @@ Create
 ------
 
 .. automethod:: Context.scope
-    :noindex:
+   :noindex:
 
 Methods
 -------

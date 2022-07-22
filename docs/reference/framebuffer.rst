@@ -9,10 +9,10 @@ Create
 ------
 
 .. automethod:: Context.simple_framebuffer
-    :noindex:
+   :noindex:
 
 .. automethod:: Context.framebuffer
-    :noindex:
+   :noindex:
 
 Methods
 -------

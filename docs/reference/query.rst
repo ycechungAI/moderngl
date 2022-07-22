@@ -9,7 +9,7 @@ Create
 ------
 
 .. automethod:: Context.query
-    :noindex:
+   :noindex:
 
 Attributes
 ----------

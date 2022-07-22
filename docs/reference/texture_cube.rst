@@ -9,7 +9,7 @@ Create
 ------
 
 .. automethod:: Context.texture_cube
-    :noindex:
+   :noindex:
 
 Methods
 -------
