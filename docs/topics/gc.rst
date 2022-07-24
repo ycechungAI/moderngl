@@ -17,11 +17,11 @@ The current supported modes are:
 * ``"auto"``: Dead objects are destroyed automatically like we would
   expect in python.
 
-It's important to realize here that garbage collections here is not about
+It's important to realize here that garbage collection is not about
 the python objects itself, but the underlying OpenGL objects. ModernGL
-operates in many different environments were garbage collection cab be
+operates in many different environments were garbage collection can be
 a challenge. This depends on factors like who is controlling the existence
-of the OpenGL context and challenges around use of threading in python.
+of the OpenGL context and challenges around threading in python.
 
 Standalone / Headless Context
 -----------------------------
@@ -40,11 +40,15 @@ The window and context is destroyed and closed, then moderngl will
 try to destroy resources in a context that no longer exists.
 Use ``"context_gc"`` mode to avoid this.
 
+It can be possible to switch the ``gc_mode`` to ``None`` when
+the window is closed. This can still be a problem if you have
+race conditions due to resources being created in the render loop.
+
 The Threading Issue
 -------------------
 
 When using threads in python the garbage collector can run in any thread.
-This this is a problem for OpenGL because only the main thread is allowed
+This is a problem for OpenGL because only the main thread is allowed
 to interact with the context. When using threads in your application
 you should be using ``"context_gc"`` mode and periodically call ``Context.gc``
 for example during every frame swap.
