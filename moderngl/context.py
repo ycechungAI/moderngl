@@ -353,6 +353,9 @@ class Context:
         This method must be called to garbage collect
         OpenGL resources when ``gc_mode`` is ``"context_gc"```.
 
+        Calling this method with any other ``gc_mode`` configuration
+        has no effect and is perfectly safe.
+
         Returns:
             int: Number of objects deleted
         """
