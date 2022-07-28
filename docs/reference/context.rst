@@ -35,7 +35,6 @@ ModernGL Objects
 .. automethod:: Context.clear_samplers
 .. automethod:: Context.release
 
-
 Methods
 -------
 
