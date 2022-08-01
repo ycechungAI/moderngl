@@ -275,19 +275,19 @@ PyObject * MGLContext_copy_framebuffer(MGLContext * self, PyObject * args) {
 			return 0;
 		}
 
+
 		int prev_read_buffer = -1;
 		int prev_draw_buffer = -1;
+		int color_attachment_len = dst_framebuffer->draw_buffers_len;
 		gl.GetIntegerv(GL_READ_BUFFER, &prev_read_buffer);
 		gl.GetIntegerv(GL_DRAW_BUFFER, &prev_draw_buffer);
+		gl.BindFramebuffer(GL_READ_FRAMEBUFFER, src->framebuffer_obj);
+		gl.BindFramebuffer(GL_DRAW_FRAMEBUFFER, dst_framebuffer->framebuffer_obj);
 
-		int color_attachment_len = dst_framebuffer->draw_buffers_len;
 		for (int i = 0; i < color_attachment_len; ++i)
 		{
 			gl.ReadBuffer(src->draw_buffers[i]);
 			gl.DrawBuffer(dst_framebuffer->draw_buffers[i]);
-
-			gl.BindFramebuffer(GL_READ_FRAMEBUFFER, src->framebuffer_obj);
-			gl.BindFramebuffer(GL_DRAW_FRAMEBUFFER, dst_framebuffer->framebuffer_obj);
 			gl.BlitFramebuffer(
 				0, 0, width, height,
 				0, 0, width, height,
