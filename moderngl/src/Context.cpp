@@ -288,6 +288,7 @@ PyObject * MGLContext_copy_framebuffer(MGLContext * self, PyObject * args) {
 		{
 			gl.ReadBuffer(src->draw_buffers[i]);
 			gl.DrawBuffer(dst_framebuffer->draw_buffers[i]);
+
 			gl.BlitFramebuffer(
 				0, 0, width, height,
 				0, 0, width, height,
@@ -298,6 +299,7 @@ PyObject * MGLContext_copy_framebuffer(MGLContext * self, PyObject * args) {
 		gl.BindFramebuffer(GL_FRAMEBUFFER, self->bound_framebuffer->framebuffer_obj);
 		gl.ReadBuffer(prev_read_buffer);
 		gl.DrawBuffer(prev_draw_buffer);
+		gl.DrawBuffers(self->bound_framebuffer->draw_buffers_len, self->bound_framebuffer->draw_buffers);
 
 	} else if (Py_TYPE(dst) == &MGLTexture_Type) {
 
