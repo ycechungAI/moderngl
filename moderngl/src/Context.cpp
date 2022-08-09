@@ -269,15 +269,37 @@ PyObject * MGLContext_copy_framebuffer(MGLContext * self, PyObject * args) {
 			height = src->height < dst_framebuffer->height ? src->height : dst_framebuffer->height;
 		}
 
+		if (dst_framebuffer->draw_buffers_len != src->draw_buffers_len)
+		{
+			MGLError_Set("Destination and source framebuffers have different number of color attachments!");
+			return 0;
+		}
+
+
+		int prev_read_buffer = -1;
+		int prev_draw_buffer = -1;
+		int color_attachment_len = dst_framebuffer->draw_buffers_len;
+		gl.GetIntegerv(GL_READ_BUFFER, &prev_read_buffer);
+		gl.GetIntegerv(GL_DRAW_BUFFER, &prev_draw_buffer);
 		gl.BindFramebuffer(GL_READ_FRAMEBUFFER, src->framebuffer_obj);
 		gl.BindFramebuffer(GL_DRAW_FRAMEBUFFER, dst_framebuffer->framebuffer_obj);
-		gl.BlitFramebuffer(
-			0, 0, width, height,
-			0, 0, width, height,
-			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
-			GL_NEAREST
-		);
+
+		for (int i = 0; i < color_attachment_len; ++i)
+		{
+			gl.ReadBuffer(src->draw_buffers[i]);
+			gl.DrawBuffer(dst_framebuffer->draw_buffers[i]);
+
+			gl.BlitFramebuffer(
+				0, 0, width, height,
+				0, 0, width, height,
+				GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
+				GL_NEAREST
+			);
+		}
 		gl.BindFramebuffer(GL_FRAMEBUFFER, self->bound_framebuffer->framebuffer_obj);
+		gl.ReadBuffer(prev_read_buffer);
+		gl.DrawBuffer(prev_draw_buffer);
+		gl.DrawBuffers(self->bound_framebuffer->draw_buffers_len, self->bound_framebuffer->draw_buffers);
 
 	} else if (Py_TYPE(dst) == &MGLTexture_Type) {
 
