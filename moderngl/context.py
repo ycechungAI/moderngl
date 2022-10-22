@@ -1201,7 +1201,7 @@ class Context:
         samples: int = 0,
         alignment: int = 1,
         dtype: str = 'f1',
-        internal_format: int = None,
+        internal_format: Optional[int] = None,
     ) -> 'Texture':
         """
         Create a :py:class:`Texture` object.
@@ -1307,6 +1307,7 @@ class Context:
         *,
         alignment: int = 1,
         dtype: str = 'f1',
+        internal_format: Optional[int] = None,
     ) -> 'TextureCube':
         """
         Create a :py:class:`TextureCube` object.
@@ -1324,12 +1325,13 @@ class Context:
         Keyword Args:
             alignment (int): The byte alignment 1, 2, 4 or 8.
             dtype (str): Data type.
+            internal_format (int): Override the internalformat of the texture (IF needed)
 
         Returns:
             :py:class:`TextureCube` object
         """
         res = TextureCube.__new__(TextureCube)
-        res.mglo, res._glo = self.mglo.texture_cube(size, components, data, alignment, dtype)
+        res.mglo, res._glo = self.mglo.texture_cube(size, components, data, alignment, dtype, internal_format or 0)
         res._size = size
         res._components = components
         res._dtype = dtype
