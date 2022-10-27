@@ -5,16 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-# 5.7.0 [NOT RELEASED YET]
+# [5.7.0]
 
+* Python 3.11 support
+* Added support for configurable garbage collection mode. ``Context.gc_mode`` controls this.
+  * ``None``: (default) No garbage collection is performed. Objects needs to to be
+    manually released like in previous versions of moderngl.
+  * ``"context_gc"``: Dead objects are collected in ``Context.objects``.
+    These can periodically be released using ``Context.gc()``.
+  * ``"auto"``: Dead objects are destroyed automatically like we would expect in python.
 * Added support for `glPolygonOffset`. The factors and units can be set using `Context.polygon_offset`
 * Added support for normalized signed and unsigned integer textures. `ni1`, `nu1`, `ni2` and `nu2`
   are the new dtypes for these.
+* Added ``Context.external_texture`` for creating textures from existing OpenGL textures.
 * Added `TextureCube.bind_to_image` so we can easily access cube textures in compute shaders
 * Added `Texture3D.bind_to_image` so we can easily access 3D textures in compute shaders
 * Added `TextureArray.bind_to_image` so we can easily access texture arrays in compute shaders
+* Added support for specifying a custom internalformat for cube maps. This can be used
+  for sRGB and texture compression formats.
 * Integer textures now use `NEAREST` interpolation by default. This was causing
   issues with some drivers.
+* Added support for writing to multiple buffers in transforms.
+* ``Context.program`` now accepts a dictionary for mapping sampler names to specific texture units.
 * Added `Program.is_transform` exposing if the program has a fragment shader or not
 * Added `VertexArray.mode` and a `mode` argument in `Context.vertex_array`.
   This is now the default rendering mode when no mode parameter is passed
@@ -24,8 +36,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   This can be used to enabled capabilities not supported by ModernGL.
 * `Framebuffer.read()` now has a `clamp` (bool) parameter. If enabled, floating point data
   will clamp to `[0.0, 1.0]`. Clamping is disabled by default.
+* Fixed a bug causing ``copy_framebuffer`` to not work with multisampled framebuffers
+  with multiple color attachments.
+* Fixed a bug in ``copy_framebuffer`` that caused the draw buffers to be permanently
+  changed.
 * VertexArray: Removed "the first vertex attribute must not be a per instance attribute" limitation
 * Fixed a crash when reading `ctx.provoking_vertex`
+* Added workaround for MacOS requiring a framebuffer to be bound in headless mode even for
+  transform shaders. We simply create and bind a framebuffer internally.
+* Added ``GL_MAX_GEOMETRY_OUTPUT_VERTICES`` to ``Context.info``
 * Docstring improvements
 * Documentation improvements
 
@@ -609,6 +628,7 @@ For more information please see: [Differences between ModernGL5 and ModernGL4](h
 
 - It was a tool for me to develop games in python
 
+[5.7.0]: https://github.com/moderngl/moderngl/compare/5.6.4...5.7.0
 [5.6.4]: https://github.com/moderngl/moderngl/compare/5.6.3...5.6.4
 [5.6.3]: https://github.com/moderngl/moderngl/compare/5.6.2...5.6.3
 [5.6.2]: https://github.com/moderngl/moderngl/compare/5.6.1...5.6.2
