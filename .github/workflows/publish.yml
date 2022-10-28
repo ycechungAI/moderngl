@@ -4,7 +4,7 @@ on:
   # push:
   release:
     types: [created]
-  workflow_dispatch:
+  # workflow_dispatch:
 
 jobs:
   build_wheels:
@@ -80,7 +80,7 @@ jobs:
           mkdir dist
           cp temp-dist/*/*.whl dist/
           cp temp-dist/*/*.tar.gz dist/
-      # - uses: pypa/gh-action-pypi-publish@v1.4.2
-      #   with:
-      #     user: __token__
-      #     password: ${{ secrets.PYPI_API_TOKEN }}
+      - uses: pypa/gh-action-pypi-publish@v1.4.2
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
