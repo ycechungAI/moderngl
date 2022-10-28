@@ -9,8 +9,8 @@ from setuptools import Extension, setup
 
 # pylint: disable=C0103, W0212
 
-if sys.version_info < (3, 6):
-    raise Exception('Python 3.6 or higher is required')
+if sys.version_info < (3, 7):
+    raise Exception('Python 3.7 or higher is required')
 
 PLATFORMS = {'windows', 'linux', 'darwin', 'cygwin', 'android'}
 
