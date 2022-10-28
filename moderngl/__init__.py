@@ -18,4 +18,4 @@ from .texture_cube import *  # noqa
 from .vertex_array import *  # noqa
 from .sampler import *  # noqa
 
-__version__ = '5.7.0'
+__version__ = '5.7.1'
