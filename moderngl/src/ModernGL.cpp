@@ -1,5 +1,4 @@
 #include "Types.hpp"
-#include "Error.hpp"
 
 #include "BufferFormat.hpp"
 
@@ -124,7 +123,8 @@ PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
 		}
 	}
 
-	MGLContext * ctx = (MGLContext *)MGLContext_Type.tp_alloc(&MGLContext_Type, 0);
+    MGLContext * ctx = PyObject_New(MGLContext, MGLContext_type);
+    ctx->released = false;
 
 	ctx->wireframe = false;
 
@@ -228,7 +228,8 @@ PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
     #endif
 
 	{
-		MGLFramebuffer * framebuffer = (MGLFramebuffer *)MGLFramebuffer_Type.tp_alloc(&MGLFramebuffer_Type, 0);
+        MGLFramebuffer * framebuffer = PyObject_New(MGLFramebuffer, MGLFramebuffer_type);
+        framebuffer->released = false;
 
 		framebuffer->framebuffer_obj = 0;
 
@@ -323,207 +324,613 @@ PyMethodDef MGL_module_methods[] = {
 	{0},
 };
 
-bool MGL_InitializeModule(PyObject * module) {
-	{
-		if (PyType_Ready(&MGLAttribute_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Attribute in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
+PyObject * MGLContext_buffer(MGLContext * self, PyObject * args);
+PyObject * MGLBuffer_write(MGLBuffer * self, PyObject * args);
+PyObject * MGLBuffer_read(MGLBuffer * self, PyObject * args);
+PyObject * MGLBuffer_read_into(MGLBuffer * self, PyObject * args);
+PyObject * MGLBuffer_write_chunks(MGLBuffer * self, PyObject * args);
+PyObject * MGLBuffer_read_chunks(MGLBuffer * self, PyObject * args);
+PyObject * MGLBuffer_read_chunks_into(MGLBuffer * self, PyObject * args);
+PyObject * MGLBuffer_clear(MGLBuffer * self, PyObject * args);
+PyObject * MGLBuffer_orphan(MGLBuffer * self, PyObject * args);
+PyObject * MGLBuffer_bind_to_uniform_block(MGLBuffer * self, PyObject * args);
+PyObject * MGLBuffer_bind_to_storage_buffer(MGLBuffer * self, PyObject * args);
+PyObject * MGLBuffer_release(MGLBuffer * self);
+PyObject * MGLBuffer_size(MGLBuffer * self);
+int MGLBuffer_tp_as_buffer_get_view(MGLBuffer * self, Py_buffer * view, int flags);
+void MGLBuffer_tp_as_buffer_release_view(MGLBuffer * self, Py_buffer * view);
+void MGLBuffer_Invalidate(MGLBuffer * buffer);
+PyObject * MGLContext_compute_shader(MGLContext * self, PyObject * args);
+PyObject * MGLComputeShader_run(MGLComputeShader * self, PyObject * args);
+PyObject * MGLComputeShader_release(MGLComputeShader * self);
+void MGLComputeShader_Invalidate(MGLComputeShader * compute_shader);
+PyObject * MGLContext_enable_only(MGLContext * self, PyObject * args);
+PyObject * MGLContext_enable(MGLContext * self, PyObject * args);
+PyObject * MGLContext_disable(MGLContext * self, PyObject * args);
+PyObject * MGLContext_enable_direct(MGLContext * self, PyObject * args);
+PyObject * MGLContext_disable_direct(MGLContext * self, PyObject * args);
+PyObject * MGLContext_finish(MGLContext * self);
+PyObject * MGLContext_copy_buffer(MGLContext * self, PyObject * args);
+PyObject * MGLContext_copy_framebuffer(MGLContext * self, PyObject * args);
+PyObject * MGLContext_detect_framebuffer(MGLContext * self, PyObject * args);
+PyObject * MGLContext_clear_samplers(MGLContext * self, PyObject * args);
+PyObject * MGLContext_enter(MGLContext * self);
+PyObject * MGLContext_exit(MGLContext * self);
+PyObject * MGLContext_release(MGLContext * self);
+PyObject * MGLContext_get_ubo_binding(MGLContext * self, PyObject * args);
+PyObject * MGLContext_set_ubo_binding(MGLContext * self, PyObject * args);
+PyObject * MGLContext_read_uniform(MGLContext * self, PyObject * args);
+PyObject * MGLContext_write_uniform(MGLContext * self, PyObject * args);
+PyObject * MGLContext_get_line_width(MGLContext * self);
+int MGLContext_set_line_width(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_point_size(MGLContext * self);
+int MGLContext_set_point_size(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_blend_func(MGLContext * self);
+int MGLContext_set_blend_func(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_blend_equation(MGLContext * self);
+int MGLContext_set_blend_equation(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_depth_func(MGLContext * self);
+int MGLContext_set_depth_func(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_multisample(MGLContext * self);
+int MGLContext_set_multisample(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_provoking_vertex(MGLContext * self);
+int MGLContext_set_provoking_vertex(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_polygon_offset(MGLContext * self);
+int MGLContext_set_polygon_offset(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_default_texture_unit(MGLContext * self);
+int MGLContext_set_default_texture_unit(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_max_samples(MGLContext * self);
+PyObject * MGLContext_get_max_integer_samples(MGLContext * self);
+PyObject * MGLContext_get_max_texture_units(MGLContext * self);
+PyObject * MGLContext_get_max_anisotropy(MGLContext * self);
+MGLFramebuffer * MGLContext_get_fbo(MGLContext * self);
+int MGLContext_set_fbo(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_wireframe(MGLContext * self);
+int MGLContext_set_wireframe(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_front_face(MGLContext * self);
+int MGLContext_set_front_face(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_cull_face(MGLContext * self);
+int MGLContext_set_cull_face(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_patch_vertices(MGLContext * self);
+int MGLContext_set_patch_vertices(MGLContext * self, PyObject * value);
+PyObject * MGLContext_get_error(MGLContext * self, void * closure);
+PyObject * MGLContext_get_version_code(MGLContext * self, void * closure);
+PyObject * MGLContext_get_extensions(MGLContext * self, void * closure);
+PyObject * MGLContext_get_info(MGLContext * self, void * closure);
+void MGLContext_Invalidate(MGLContext * context);
+PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args);
+PyObject * MGLFramebuffer_release(MGLFramebuffer * self);
+PyObject * MGLFramebuffer_clear(MGLFramebuffer * self, PyObject * args);
+PyObject * MGLFramebuffer_use(MGLFramebuffer * self);
+PyObject * MGLFramebuffer_read(MGLFramebuffer * self, PyObject * args);
+PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args);
+PyObject * MGLFramebuffer_get_viewport(MGLFramebuffer * self, void * closure);
+int MGLFramebuffer_set_viewport(MGLFramebuffer * self, PyObject * value, void * closure);
+PyObject * MGLFramebuffer_get_scissor(MGLFramebuffer * self, void * closure);
+int MGLFramebuffer_set_scissor(MGLFramebuffer * self, PyObject * value, void * closure);
+PyObject * MGLFramebuffer_get_color_mask(MGLFramebuffer * self, void * closure);
+int MGLFramebuffer_set_color_mask(MGLFramebuffer * self, PyObject * value, void * closure);
+PyObject * MGLFramebuffer_get_depth_mask(MGLFramebuffer * self, void * closure);
+int MGLFramebuffer_set_depth_mask(MGLFramebuffer * self, PyObject * value, void * closure);
+PyObject * MGLFramebuffer_get_bits(MGLFramebuffer * self, void * closure);
+void MGLFramebuffer_Invalidate(MGLFramebuffer * framebuffer);
+PyObject * MGLContext_program(MGLContext * self, PyObject * args);
+PyObject * MGLProgram_release(MGLProgram * self);
+void MGLProgram_Invalidate(MGLProgram * program);
+PyObject * MGLContext_query(MGLContext * self, PyObject * args);
+PyObject * MGLQuery_begin(MGLQuery * self, PyObject * args);
+PyObject * MGLQuery_end(MGLQuery * self, PyObject * args);
+PyObject * MGLQuery_begin_render(MGLQuery * self, PyObject * args);
+PyObject * MGLQuery_end_render(MGLQuery * self, PyObject * args);
+PyObject * MGLQuery_get_samples(MGLQuery * self);
+PyObject * MGLQuery_get_primitives(MGLQuery * self);
+PyObject * MGLQuery_get_elapsed(MGLQuery * self);
+void MGLQuery_Invalidate(MGLQuery * query);
+PyObject * MGLContext_renderbuffer(MGLContext * self, PyObject * args);
+PyObject * MGLContext_depth_renderbuffer(MGLContext * self, PyObject * args);
+PyObject * MGLRenderbuffer_release(MGLRenderbuffer * self);
+void MGLRenderbuffer_Invalidate(MGLRenderbuffer * renderbuffer);
+PyObject * MGLContext_sampler(MGLContext * self, PyObject * args);
+PyObject * MGLSampler_use(MGLSampler * self, PyObject * args);
+PyObject * MGLSampler_clear(MGLSampler * self, PyObject * args);
+PyObject * MGLSampler_release(MGLSampler * self);
+PyObject * MGLSampler_get_repeat_x(MGLSampler * self);
+int MGLSampler_set_repeat_x(MGLSampler * self, PyObject * value);
+PyObject * MGLSampler_get_repeat_y(MGLSampler * self);
+int MGLSampler_set_repeat_y(MGLSampler * self, PyObject * value);
+PyObject * MGLSampler_get_repeat_z(MGLSampler * self);
+int MGLSampler_set_repeat_z(MGLSampler * self, PyObject * value);
+PyObject * MGLSampler_get_filter(MGLSampler * self);
+int MGLSampler_set_filter(MGLSampler * self, PyObject * value);
+PyObject * MGLSampler_get_compare_func(MGLSampler * self);
+int MGLSampler_set_compare_func(MGLSampler * self, PyObject * value);
+PyObject * MGLSampler_get_anisotropy(MGLSampler * self);
+int MGLSampler_set_anisotropy(MGLSampler * self, PyObject * value);
+PyObject * MGLSampler_get_border_color(MGLSampler * self);
+int MGLSampler_set_border_color(MGLSampler * self, PyObject * value);
+PyObject * MGLSampler_get_min_lod(MGLSampler * self);
+int MGLSampler_set_min_lod(MGLSampler * self, PyObject * value);
+PyObject * MGLSampler_get_max_lod(MGLSampler * self);
+int MGLSampler_set_max_lod(MGLSampler * self, PyObject * value);
+void MGLSampler_Invalidate(MGLSampler * sampler);
+PyObject * MGLContext_scope(MGLContext * self, PyObject * args);
+PyObject * MGLScope_begin(MGLScope * self, PyObject * args);
+PyObject * MGLScope_end(MGLScope * self, PyObject * args);
+PyObject * MGLScope_release(MGLScope * self);
+void MGLScope_Invalidate(MGLScope * scope);
+PyObject * MGLContext_texture(MGLContext * self, PyObject * args);
+PyObject * MGLContext_depth_texture(MGLContext * self, PyObject * args);
+PyObject * MGLContext_external_texture(MGLContext * self, PyObject * args);
+PyObject * MGLTexture_read(MGLTexture * self, PyObject * args);
+PyObject * MGLTexture_read_into(MGLTexture * self, PyObject * args);
+PyObject * MGLTexture_write(MGLTexture * self, PyObject * args);
+PyObject * MGLTexture_meth_bind(MGLTexture * self, PyObject * args);
+PyObject * MGLTexture_use(MGLTexture * self, PyObject * args);
+PyObject * MGLTexture_build_mipmaps(MGLTexture * self, PyObject * args);
+PyObject * MGLTexture_release(MGLTexture * self);
+PyObject * MGLTexture_get_repeat_x(MGLTexture * self);
+int MGLTexture_set_repeat_x(MGLTexture * self, PyObject * value);
+PyObject * MGLTexture_get_repeat_y(MGLTexture * self);
+int MGLTexture_set_repeat_y(MGLTexture * self, PyObject * value);
+PyObject * MGLTexture_get_filter(MGLTexture * self);
+int MGLTexture_set_filter(MGLTexture * self, PyObject * value);
+PyObject * MGLTexture_get_swizzle(MGLTexture * self, void * closure);
+int MGLTexture_set_swizzle(MGLTexture * self, PyObject * value, void * closure);
+PyObject * MGLTexture_get_compare_func(MGLTexture * self);
+int MGLTexture_set_compare_func(MGLTexture * self, PyObject * value);
+PyObject * MGLTexture_get_anisotropy(MGLTexture * self);
+int MGLTexture_set_anisotropy(MGLTexture * self, PyObject * value);
+void MGLTexture_Invalidate(MGLTexture * texture);
+PyObject * MGLContext_texture3d(MGLContext * self, PyObject * args);
+PyObject * MGLTexture3D_read(MGLTexture3D * self, PyObject * args);
+PyObject * MGLTexture3D_read_into(MGLTexture3D * self, PyObject * args);
+PyObject * MGLTexture3D_write(MGLTexture3D * self, PyObject * args);
+PyObject * MGLTexture3D_meth_bind(MGLTexture3D * self, PyObject * args);
+PyObject * MGLTexture3D_use(MGLTexture3D * self, PyObject * args);
+PyObject * MGLTexture3D_build_mipmaps(MGLTexture3D * self, PyObject * args);
+PyObject * MGLTexture3D_release(MGLTexture3D * self);
+PyObject * MGLTexture3D_get_repeat_x(MGLTexture3D * self);
+int MGLTexture3D_set_repeat_x(MGLTexture3D * self, PyObject * value);
+PyObject * MGLTexture3D_get_repeat_y(MGLTexture3D * self);
+int MGLTexture3D_set_repeat_y(MGLTexture3D * self, PyObject * value);
+PyObject * MGLTexture3D_get_repeat_z(MGLTexture3D * self);
+int MGLTexture3D_set_repeat_z(MGLTexture3D * self, PyObject * value);
+PyObject * MGLTexture3D_get_filter(MGLTexture3D * self);
+int MGLTexture3D_set_filter(MGLTexture3D * self, PyObject * value);
+PyObject * MGLTexture3D_get_swizzle(MGLTexture3D * self, void * closure);
+int MGLTexture3D_set_swizzle(MGLTexture3D * self, PyObject * value, void * closure);
+void MGLTexture3D_Invalidate(MGLTexture3D * texture);
+PyObject * MGLContext_texture_array(MGLContext * self, PyObject * args);
+PyObject * MGLTextureArray_read(MGLTextureArray * self, PyObject * args);
+PyObject * MGLTextureArray_read_into(MGLTextureArray * self, PyObject * args);
+PyObject * MGLTextureArray_write(MGLTextureArray * self, PyObject * args);
+PyObject * MGLTextureArray_meth_bind(MGLTextureArray * self, PyObject * args);
+PyObject * MGLTextureArray_use(MGLTextureArray * self, PyObject * args);
+PyObject * MGLTextureArray_build_mipmaps(MGLTextureArray * self, PyObject * args);
+PyObject * MGLTextureArray_release(MGLTextureArray * self);
+PyObject * MGLTextureArray_get_repeat_x(MGLTextureArray * self);
+int MGLTextureArray_set_repeat_x(MGLTextureArray * self, PyObject * value);
+PyObject * MGLTextureArray_get_repeat_y(MGLTextureArray * self);
+int MGLTextureArray_set_repeat_y(MGLTextureArray * self, PyObject * value);
+PyObject * MGLTextureArray_get_filter(MGLTextureArray * self);
+int MGLTextureArray_set_filter(MGLTextureArray * self, PyObject * value);
+PyObject * MGLTextureArray_get_swizzle(MGLTextureArray * self, void * closure);
+int MGLTextureArray_set_swizzle(MGLTextureArray * self, PyObject * value, void * closure);
+PyObject * MGLTextureArray_get_anisotropy(MGLTextureArray * self);
+int MGLTextureArray_set_anisotropy(MGLTextureArray * self, PyObject * value);
+void MGLTextureArray_Invalidate(MGLTextureArray * texture);
+PyObject * MGLContext_texture_cube(MGLContext * self, PyObject * args);
+PyObject * MGLTextureCube_read(MGLTextureCube * self, PyObject * args);
+PyObject * MGLTextureCube_read_into(MGLTextureCube * self, PyObject * args);
+PyObject * MGLTextureCube_write(MGLTextureCube * self, PyObject * args);
+PyObject * MGLTextureCube_meth_bind(MGLTextureCube * self, PyObject * args);
+PyObject * MGLTextureCube_use(MGLTextureCube * self, PyObject * args);
+PyObject * MGLTextureCube_release(MGLTextureCube * self);
+PyObject * MGLTextureCube_get_filter(MGLTextureCube * self);
+int MGLTextureCube_set_filter(MGLTextureCube * self, PyObject * value);
+PyObject * MGLTextureCube_get_swizzle(MGLTextureCube * self, void * closure);
+int MGLTextureCube_set_swizzle(MGLTextureCube * self, PyObject * value, void * closure);
+PyObject * MGLTextureCube_get_anisotropy(MGLTextureCube * self);
+int MGLTextureCube_set_anisotropy(MGLTextureCube * self, PyObject * value);
+void MGLTextureCube_Invalidate(MGLTextureCube * texture);
+PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args);
+PyObject * MGLVertexArray_render(MGLVertexArray * self, PyObject * args);
+PyObject * MGLVertexArray_render_indirect(MGLVertexArray * self, PyObject * args);
+PyObject * MGLVertexArray_transform(MGLVertexArray * self, PyObject * args);
+PyObject * MGLVertexArray_bind(MGLVertexArray * self, PyObject * args);
+PyObject * MGLVertexArray_release(MGLVertexArray * self);
+int MGLVertexArray_set_index_buffer(MGLVertexArray * self, PyObject * value, void * closure);
+PyObject * MGLVertexArray_get_vertices(MGLVertexArray * self, void * closure);
+int MGLVertexArray_set_vertices(MGLVertexArray * self, PyObject * value, void * closure);
+PyObject * MGLVertexArray_get_instances(MGLVertexArray * self, void * closure);
+int MGLVertexArray_set_instances(MGLVertexArray * self, PyObject * value, void * closure);
+int MGLVertexArray_set_subroutines(MGLVertexArray * self, PyObject * value, void * closure);
+void MGLVertexArray_Invalidate(MGLVertexArray * array);
+void MGLVertexArray_Complete(MGLVertexArray * vertex_array);
+void MGLVertexArray_SET_SUBROUTINES(MGLVertexArray * self, const GLMethods & gl);
 
-		Py_INCREF(&MGLAttribute_Type);
-
-		PyModule_AddObject(module, "Attribute", (PyObject *)&MGLAttribute_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLBuffer_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Buffer in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLBuffer_Type);
-
-		PyModule_AddObject(module, "Buffer", (PyObject *)&MGLBuffer_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLComputeShader_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register ComputeShader in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLComputeShader_Type);
-
-		PyModule_AddObject(module, "ComputeShader", (PyObject *)&MGLComputeShader_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLContext_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Context in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLContext_Type);
-
-		PyModule_AddObject(module, "Context", (PyObject *)&MGLContext_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLFramebuffer_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Framebuffer in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLFramebuffer_Type);
-
-		PyModule_AddObject(module, "Framebuffer", (PyObject *)&MGLFramebuffer_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLInvalidObject_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register InvalidObject in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLInvalidObject_Type);
-
-		PyModule_AddObject(module, "InvalidObject", (PyObject *)&MGLInvalidObject_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLProgram_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Program in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLProgram_Type);
-
-		PyModule_AddObject(module, "Program", (PyObject *)&MGLProgram_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLQuery_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Query in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLQuery_Type);
-
-		PyModule_AddObject(module, "Query", (PyObject *)&MGLQuery_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLRenderbuffer_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Renderbuffer in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLRenderbuffer_Type);
-
-		PyModule_AddObject(module, "Renderbuffer", (PyObject *)&MGLRenderbuffer_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLScope_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Scope in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLScope_Type);
-
-		PyModule_AddObject(module, "Scope", (PyObject *)&MGLScope_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLTexture_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Texture in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLTexture_Type);
-
-		PyModule_AddObject(module, "Texture", (PyObject *)&MGLTexture_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLTextureArray_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register TextureArray in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLTextureArray_Type);
-
-		PyModule_AddObject(module, "TextureArray", (PyObject *)&MGLTextureArray_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLTextureCube_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register TextureCube in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLTextureCube_Type);
-
-		PyModule_AddObject(module, "TextureCube", (PyObject *)&MGLTextureCube_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLTexture3D_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Texture3D in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLTexture3D_Type);
-
-		PyModule_AddObject(module, "Texture3D", (PyObject *)&MGLTexture3D_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLUniform_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Uniform in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLUniform_Type);
-
-		PyModule_AddObject(module, "Uniform", (PyObject *)&MGLUniform_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLUniformBlock_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register UniformBlock in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLUniformBlock_Type);
-
-		PyModule_AddObject(module, "UniformBlock", (PyObject *)&MGLUniformBlock_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLVertexArray_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register VertexArray in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLVertexArray_Type);
-
-		PyModule_AddObject(module, "VertexArray", (PyObject *)&MGLVertexArray_Type);
-	}
-
-	{
-		if (PyType_Ready(&MGLSampler_Type) < 0) {
-			PyErr_Format(PyExc_ImportError, "Cannot register Sampler in %s (%s:%d)", __FUNCTION__, __FILE__, __LINE__);
-			return false;
-		}
-
-		Py_INCREF(&MGLSampler_Type);
-
-		PyModule_AddObject(module, "Sampler", (PyObject *)&MGLSampler_Type);
-	}
-
-	return true;
+void default_dealloc(PyObject * self) {
+    Py_TYPE(self)->tp_free(self);
 }
+
+PyMethodDef MGLBuffer_methods[] = {
+	{"write", (PyCFunction)MGLBuffer_write, METH_VARARGS, 0},
+	{"read", (PyCFunction)MGLBuffer_read, METH_VARARGS, 0},
+	{"read_into", (PyCFunction)MGLBuffer_read_into, METH_VARARGS, 0},
+	{"write_chunks", (PyCFunction)MGLBuffer_write_chunks, METH_VARARGS, 0},
+	{"read_chunks", (PyCFunction)MGLBuffer_read_chunks, METH_VARARGS, 0},
+	{"read_chunks_into", (PyCFunction)MGLBuffer_read_chunks_into, METH_VARARGS, 0},
+	{"clear", (PyCFunction)MGLBuffer_clear, METH_VARARGS, 0},
+	{"orphan", (PyCFunction)MGLBuffer_orphan, METH_VARARGS, 0},
+	{"bind_to_uniform_block", (PyCFunction)MGLBuffer_bind_to_uniform_block, METH_VARARGS, 0},
+	{"bind_to_storage_buffer", (PyCFunction)MGLBuffer_bind_to_storage_buffer, METH_VARARGS, 0},
+	{"release", (PyCFunction)MGLBuffer_release, METH_NOARGS, 0},
+	{"size", (PyCFunction)MGLBuffer_size, METH_NOARGS, 0},
+	{0},
+};
+
+PyMethodDef MGLComputeShader_methods[] = {
+	{"run", (PyCFunction)MGLComputeShader_run, METH_VARARGS, 0},
+	{"release", (PyCFunction)MGLComputeShader_release, METH_VARARGS, 0},
+	{0},
+};
+
+PyMethodDef MGLContext_methods[] = {
+	{"enable_only", (PyCFunction)MGLContext_enable_only, METH_VARARGS, 0},
+	{"enable", (PyCFunction)MGLContext_enable, METH_VARARGS, 0},
+	{"disable", (PyCFunction)MGLContext_disable, METH_VARARGS, 0},
+	{"enable_direct", (PyCFunction)MGLContext_enable_direct, METH_VARARGS, 0},
+	{"disable_direct", (PyCFunction)MGLContext_disable_direct, METH_VARARGS, 0},
+	{"finish", (PyCFunction)MGLContext_finish, METH_NOARGS, 0},
+	{"copy_buffer", (PyCFunction)MGLContext_copy_buffer, METH_VARARGS, 0},
+	{"copy_framebuffer", (PyCFunction)MGLContext_copy_framebuffer, METH_VARARGS, 0},
+	{"detect_framebuffer", (PyCFunction)MGLContext_detect_framebuffer, METH_VARARGS, 0},
+	{"clear_samplers", (PyCFunction)MGLContext_clear_samplers, METH_VARARGS, 0},
+
+	{"buffer", (PyCFunction)MGLContext_buffer, METH_VARARGS, 0},
+	{"texture", (PyCFunction)MGLContext_texture, METH_VARARGS, 0},
+	{"texture3d", (PyCFunction)MGLContext_texture3d, METH_VARARGS, 0},
+	{"texture_array", (PyCFunction)MGLContext_texture_array, METH_VARARGS, 0},
+	{"texture_cube", (PyCFunction)MGLContext_texture_cube, METH_VARARGS, 0},
+	{"depth_texture", (PyCFunction)MGLContext_depth_texture, METH_VARARGS, 0},
+	{"external_texture", (PyCFunction)MGLContext_external_texture, METH_VARARGS, 0},
+	{"vertex_array", (PyCFunction)MGLContext_vertex_array, METH_VARARGS, 0},
+	{"program", (PyCFunction)MGLContext_program, METH_VARARGS, 0},
+	{"framebuffer", (PyCFunction)MGLContext_framebuffer, METH_VARARGS, 0},
+	{"renderbuffer", (PyCFunction)MGLContext_renderbuffer, METH_VARARGS, 0},
+	{"depth_renderbuffer", (PyCFunction)MGLContext_depth_renderbuffer, METH_VARARGS, 0},
+	{"compute_shader", (PyCFunction)MGLContext_compute_shader, METH_VARARGS, 0},
+	{"query", (PyCFunction)MGLContext_query, METH_VARARGS, 0},
+	{"scope", (PyCFunction)MGLContext_scope, METH_VARARGS, 0},
+	{"sampler", (PyCFunction)MGLContext_sampler, METH_VARARGS, 0},
+
+	{"__enter__", (PyCFunction)MGLContext_enter, METH_NOARGS, 0},
+	{"__exit__", (PyCFunction)MGLContext_exit, METH_VARARGS, 0},
+	{"release", (PyCFunction)MGLContext_release, METH_NOARGS, 0},
+
+	{"_get_ubo_binding", (PyCFunction)MGLContext_get_ubo_binding, METH_VARARGS, 0},
+	{"_set_ubo_binding", (PyCFunction)MGLContext_set_ubo_binding, METH_VARARGS, 0},
+	{"_write_uniform", (PyCFunction)MGLContext_write_uniform, METH_VARARGS, 0},
+	{"_read_uniform", (PyCFunction)MGLContext_read_uniform, METH_VARARGS, 0},
+	{0},
+};
+
+PyGetSetDef MGLContext_getset[] = {
+	{(char *)"line_width", (getter)MGLContext_get_line_width, (setter)MGLContext_set_line_width, 0, 0},
+	{(char *)"point_size", (getter)MGLContext_get_point_size, (setter)MGLContext_set_point_size, 0, 0},
+
+	{(char *)"depth_func", (getter)MGLContext_get_depth_func, (setter)MGLContext_set_depth_func, 0, 0},
+	{(char *)"blend_func", (getter)MGLContext_get_blend_func, (setter)MGLContext_set_blend_func, 0, 0},
+	{(char *)"blend_equation", (getter)MGLContext_get_blend_equation, (setter)MGLContext_set_blend_equation, 0, 0},
+	{(char *)"multisample", (getter)MGLContext_get_multisample, (setter)MGLContext_set_multisample, 0, 0},
+
+	{(char *)"provoking_vertex", (getter)MGLContext_get_provoking_vertex, (setter)MGLContext_set_provoking_vertex, 0, 0},
+	{(char *)"polygon_offset", (getter)MGLContext_get_polygon_offset, (setter)MGLContext_set_polygon_offset, 0, 0},
+
+	{(char *)"default_texture_unit", (getter)MGLContext_get_default_texture_unit, (setter)MGLContext_set_default_texture_unit, 0, 0},
+	{(char *)"max_samples", (getter)MGLContext_get_max_samples, 0, 0, 0},
+	{(char *)"max_integer_samples", (getter)MGLContext_get_max_integer_samples, 0, 0, 0},
+	{(char *)"max_texture_units", (getter)MGLContext_get_max_texture_units, 0, 0, 0},
+	{(char *)"max_anisotropy", (getter)MGLContext_get_max_anisotropy, 0, 0, 0},
+
+	{(char *)"fbo", (getter)MGLContext_get_fbo, (setter)MGLContext_set_fbo, 0, 0},
+
+	{(char *)"wireframe", (getter)MGLContext_get_wireframe, (setter)MGLContext_set_wireframe, 0, 0},
+	{(char *)"front_face", (getter)MGLContext_get_front_face, (setter)MGLContext_set_front_face, 0, 0},
+	{(char *)"cull_face", (getter)MGLContext_get_cull_face, (setter)MGLContext_set_cull_face, 0, 0},
+
+	{(char *)"patch_vertices", (getter)MGLContext_get_patch_vertices, (setter)MGLContext_set_patch_vertices, 0, 0},
+
+	{(char *)"extensions", (getter)MGLContext_get_extensions, 0, 0, 0},
+	{(char *)"info", (getter)MGLContext_get_info, 0, 0, 0},
+	{(char *)"error", (getter)MGLContext_get_error, 0, 0, 0},
+	{0},
+};
+
+PyGetSetDef MGLFramebuffer_getset[] = {
+	{(char *)"viewport", (getter)MGLFramebuffer_get_viewport, (setter)MGLFramebuffer_set_viewport, 0, 0},
+	{(char *)"scissor", (getter)MGLFramebuffer_get_scissor, (setter)MGLFramebuffer_set_scissor, 0, 0},
+	{(char *)"color_mask", (getter)MGLFramebuffer_get_color_mask, (setter)MGLFramebuffer_set_color_mask, 0, 0},
+	{(char *)"depth_mask", (getter)MGLFramebuffer_get_depth_mask, (setter)MGLFramebuffer_set_depth_mask, 0, 0},
+
+	{(char *)"bits", (getter)MGLFramebuffer_get_bits, 0, 0, 0},
+	{0},
+};
+
+PyMethodDef MGLFramebuffer_methods[] = {
+	{"clear", (PyCFunction)MGLFramebuffer_clear, METH_VARARGS, 0},
+	{"use", (PyCFunction)MGLFramebuffer_use, METH_NOARGS, 0},
+	{"read", (PyCFunction)MGLFramebuffer_read, METH_VARARGS, 0},
+	{"read_into", (PyCFunction)MGLFramebuffer_read_into, METH_VARARGS, 0},
+	{"release", (PyCFunction)MGLFramebuffer_release, METH_NOARGS, 0},
+	{0},
+};
+
+PyMethodDef MGLProgram_methods[] = {
+	{"release", (PyCFunction)MGLProgram_release, METH_NOARGS, 0},
+	{0},
+};
+
+PyGetSetDef MGLQuery_getset[] = {
+	{(char *)"samples", (getter)MGLQuery_get_samples, 0, 0, 0},
+	{(char *)"primitives", (getter)MGLQuery_get_primitives, 0, 0, 0},
+	{(char *)"elapsed", (getter)MGLQuery_get_elapsed, 0, 0, 0},
+	{0},
+};
+
+PyMethodDef MGLQuery_methods[] = {
+	{"begin", (PyCFunction)MGLQuery_begin, METH_VARARGS, 0},
+	{"end", (PyCFunction)MGLQuery_end, METH_VARARGS, 0},
+	{"begin_render", (PyCFunction)MGLQuery_begin_render, METH_VARARGS, 0},
+	{"end_render", (PyCFunction)MGLQuery_end_render, METH_VARARGS, 0},
+	// {"release", (PyCFunction)MGLQuery_release, METH_NOARGS, 0},
+	{0},
+};
+
+PyMethodDef MGLRenderbuffer_methods[] = {
+	{"release", (PyCFunction)MGLRenderbuffer_release, METH_NOARGS, 0},
+	{0},
+};
+
+PyGetSetDef MGLSampler_getset[] = {
+	{(char *)"repeat_x", (getter)MGLSampler_get_repeat_x, (setter)MGLSampler_set_repeat_x, 0, 0},
+	{(char *)"repeat_y", (getter)MGLSampler_get_repeat_y, (setter)MGLSampler_set_repeat_y, 0, 0},
+	{(char *)"repeat_z", (getter)MGLSampler_get_repeat_z, (setter)MGLSampler_set_repeat_z, 0, 0},
+	{(char *)"filter", (getter)MGLSampler_get_filter, (setter)MGLSampler_set_filter, 0, 0},
+	{(char *)"compare_func", (getter)MGLSampler_get_compare_func, (setter)MGLSampler_set_compare_func, 0, 0},
+	{(char *)"anisotropy", (getter)MGLSampler_get_anisotropy, (setter)MGLSampler_set_anisotropy, 0, 0},
+	{(char *)"border_color", (getter)MGLSampler_get_border_color, (setter)MGLSampler_set_border_color, 0, 0},
+	{(char *)"min_lod", (getter)MGLSampler_get_min_lod, (setter)MGLSampler_set_min_lod, 0, 0},
+	{(char *)"max_lod", (getter)MGLSampler_get_max_lod, (setter)MGLSampler_set_max_lod, 0, 0},
+	{0},
+};
+
+PyMethodDef MGLSampler_methods[] = {
+	{"use", (PyCFunction)MGLSampler_use, METH_VARARGS, 0},
+	{"clear", (PyCFunction)MGLSampler_clear, METH_VARARGS, 0},
+	{"release", (PyCFunction)MGLSampler_release, METH_NOARGS, 0},
+	{0},
+};
+
+PyMethodDef MGLScope_methods[] = {
+	{"begin", (PyCFunction)MGLScope_begin, METH_VARARGS, 0},
+	{"end", (PyCFunction)MGLScope_end, METH_VARARGS, 0},
+	{"release", (PyCFunction)MGLScope_release, METH_NOARGS, 0},
+	{0},
+};
+
+PyGetSetDef MGLScope_getset[] = {
+	{0},
+};
+
+PyGetSetDef MGLTexture_getset[] = {
+	{(char *)"repeat_x", (getter)MGLTexture_get_repeat_x, (setter)MGLTexture_set_repeat_x, 0, 0},
+	{(char *)"repeat_y", (getter)MGLTexture_get_repeat_y, (setter)MGLTexture_set_repeat_y, 0, 0},
+	{(char *)"filter", (getter)MGLTexture_get_filter, (setter)MGLTexture_set_filter, 0, 0},
+	{(char *)"swizzle", (getter)MGLTexture_get_swizzle, (setter)MGLTexture_set_swizzle, 0, 0},
+	{(char *)"compare_func", (getter)MGLTexture_get_compare_func, (setter)MGLTexture_set_compare_func, 0, 0},
+	{(char *)"anisotropy", (getter)MGLTexture_get_anisotropy, (setter)MGLTexture_set_anisotropy, 0, 0},
+	{0},
+};
+
+PyMethodDef MGLTexture_methods[] = {
+	{"write", (PyCFunction)MGLTexture_write, METH_VARARGS, 0},
+	{"bind", (PyCFunction)MGLTexture_meth_bind, METH_VARARGS, 0},
+	{"use", (PyCFunction)MGLTexture_use, METH_VARARGS, 0},
+	{"build_mipmaps", (PyCFunction)MGLTexture_build_mipmaps, METH_VARARGS, 0},
+	{"read", (PyCFunction)MGLTexture_read, METH_VARARGS, 0},
+	{"read_into", (PyCFunction)MGLTexture_read_into, METH_VARARGS, 0},
+	{"release", (PyCFunction)MGLTexture_release, METH_NOARGS, 0},
+	{0},
+};
+
+PyGetSetDef MGLTexture3D_getset[] = {
+	{(char *)"repeat_x", (getter)MGLTexture3D_get_repeat_x, (setter)MGLTexture3D_set_repeat_x, 0, 0},
+	{(char *)"repeat_y", (getter)MGLTexture3D_get_repeat_y, (setter)MGLTexture3D_set_repeat_y, 0, 0},
+	{(char *)"repeat_z", (getter)MGLTexture3D_get_repeat_z, (setter)MGLTexture3D_set_repeat_z, 0, 0},
+	{(char *)"filter", (getter)MGLTexture3D_get_filter, (setter)MGLTexture3D_set_filter, 0, 0},
+	{(char *)"swizzle", (getter)MGLTexture3D_get_swizzle, (setter)MGLTexture3D_set_swizzle, 0, 0},
+	{0},
+};
+
+PyMethodDef MGLTexture3D_methods[] = {
+	{"write", (PyCFunction)MGLTexture3D_write, METH_VARARGS, 0},
+	{"bind", (PyCFunction)MGLTexture3D_meth_bind, METH_VARARGS, 0},
+	{"use", (PyCFunction)MGLTexture3D_use, METH_VARARGS, 0},
+	{"build_mipmaps", (PyCFunction)MGLTexture3D_build_mipmaps, METH_VARARGS, 0},
+	{"read", (PyCFunction)MGLTexture3D_read, METH_VARARGS, 0},
+	{"read_into", (PyCFunction)MGLTexture3D_read_into, METH_VARARGS, 0},
+	{"release", (PyCFunction)MGLTexture3D_release, METH_NOARGS, 0},
+	{0},
+};
+
+PyGetSetDef MGLTextureArray_getset[] = {
+	{(char *)"repeat_x", (getter)MGLTextureArray_get_repeat_x, (setter)MGLTextureArray_set_repeat_x, 0, 0},
+	{(char *)"repeat_y", (getter)MGLTextureArray_get_repeat_y, (setter)MGLTextureArray_set_repeat_y, 0, 0},
+	{(char *)"filter", (getter)MGLTextureArray_get_filter, (setter)MGLTextureArray_set_filter, 0, 0},
+	{(char *)"swizzle", (getter)MGLTextureArray_get_swizzle, (setter)MGLTextureArray_set_swizzle, 0, 0},
+	{(char *)"anisotropy", (getter)MGLTextureArray_get_anisotropy, (setter)MGLTextureArray_set_anisotropy, 0, 0},
+	{0},
+};
+
+PyMethodDef MGLTextureArray_methods[] = {
+	{"write", (PyCFunction)MGLTextureArray_write, METH_VARARGS, 0},
+	{"bind", (PyCFunction)MGLTextureArray_meth_bind, METH_VARARGS, 0},
+	{"use", (PyCFunction)MGLTextureArray_use, METH_VARARGS, 0},
+	{"build_mipmaps", (PyCFunction)MGLTextureArray_build_mipmaps, METH_VARARGS, 0},
+	{"read", (PyCFunction)MGLTextureArray_read, METH_VARARGS, 0},
+	{"read_into", (PyCFunction)MGLTextureArray_read_into, METH_VARARGS, 0},
+	{"release", (PyCFunction)MGLTextureArray_release, METH_NOARGS, 0},
+	{0},
+};
+
+PyGetSetDef MGLTextureCube_getset[] = {
+	{(char *)"filter", (getter)MGLTextureCube_get_filter, (setter)MGLTextureCube_set_filter, 0, 0},
+	{(char *)"swizzle", (getter)MGLTextureCube_get_swizzle, (setter)MGLTextureCube_set_swizzle, 0, 0},
+	{(char *)"anisotropy", (getter)MGLTextureCube_get_anisotropy, (setter)MGLTextureCube_set_anisotropy, 0, 0},
+	{0},
+};
+
+PyMethodDef MGLTextureCube_methods[] = {
+	{"write", (PyCFunction)MGLTextureCube_write, METH_VARARGS, 0},
+	{"use", (PyCFunction)MGLTextureCube_use, METH_VARARGS, 0},
+	{"bind", (PyCFunction)MGLTextureCube_meth_bind, METH_VARARGS, 0},
+//	{"build_mipmaps", (PyCFunction)MGLTextureCube_build_mipmaps, METH_VARARGS, 0},
+	{"read", (PyCFunction)MGLTextureCube_read, METH_VARARGS, 0},
+	{"read_into", (PyCFunction)MGLTextureCube_read_into, METH_VARARGS, 0},
+	{"release", (PyCFunction)MGLTextureCube_release, METH_NOARGS, 0},
+	{0},
+};
+
+PyMethodDef MGLVertexArray_methods[] = {
+	{"render", (PyCFunction)MGLVertexArray_render, METH_VARARGS, 0},
+	{"render_indirect", (PyCFunction)MGLVertexArray_render_indirect, METH_VARARGS, 0},
+	{"transform", (PyCFunction)MGLVertexArray_transform, METH_VARARGS, 0},
+	{"bind", (PyCFunction)MGLVertexArray_bind, METH_VARARGS, 0},
+	{"release", (PyCFunction)MGLVertexArray_release, METH_NOARGS, 0},
+	{0},
+};
+
+PyGetSetDef MGLVertexArray_getset[] = {
+	{(char *)"index_buffer", 0, (setter)MGLVertexArray_set_index_buffer, 0, 0},
+	{(char *)"vertices", (getter)MGLVertexArray_get_vertices, (setter)MGLVertexArray_set_vertices, 0, 0},
+	{(char *)"instances", (getter)MGLVertexArray_get_instances, (setter)MGLVertexArray_set_instances, 0, 0},
+	{(char *)"subroutines", 0, (setter)MGLVertexArray_set_subroutines, 0, 0},
+	{0},
+};
+
+PyType_Slot MGLBuffer_slots[] = {
+    #if PY_VERSION_HEX >= 0x03090000
+    {Py_bf_getbuffer, MGLBuffer_tp_as_buffer_get_view},
+    {Py_bf_releasebuffer, MGLBuffer_tp_as_buffer_release_view},
+    #endif
+    {Py_tp_methods, MGLBuffer_methods},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Slot MGLComputeShader_slots[] = {
+    {Py_tp_methods, MGLComputeShader_methods},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Slot MGLContext_slots[] = {
+    {Py_tp_methods, MGLContext_methods},
+    {Py_tp_getset, MGLContext_getset},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Slot MGLFramebuffer_slots[] = {
+    {Py_tp_methods, MGLFramebuffer_methods},
+    {Py_tp_getset, MGLFramebuffer_getset},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Slot MGLProgram_slots[] = {
+    {Py_tp_methods, MGLProgram_methods},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Slot MGLQuery_slots[] = {
+    {Py_tp_methods, MGLQuery_methods},
+    {Py_tp_getset, MGLQuery_getset},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Slot MGLRenderbuffer_slots[] = {
+    {Py_tp_methods, MGLRenderbuffer_methods},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Slot MGLScope_slots[] = {
+    {Py_tp_methods, MGLScope_methods},
+    {Py_tp_getset, MGLScope_getset},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Slot MGLTexture_slots[] = {
+    {Py_tp_methods, MGLTexture_methods},
+    {Py_tp_getset, MGLTexture_getset},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Slot MGLTextureArray_slots[] = {
+    {Py_tp_methods, MGLTextureArray_methods},
+    {Py_tp_getset, MGLTextureArray_getset},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Slot MGLTextureCube_slots[] = {
+    {Py_tp_methods, MGLTextureCube_methods},
+    {Py_tp_getset, MGLTextureCube_getset},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Slot MGLTexture3D_slots[] = {
+    {Py_tp_methods, MGLTexture3D_methods},
+    {Py_tp_getset, MGLTexture3D_getset},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Slot MGLVertexArray_slots[] = {
+    {Py_tp_methods, MGLVertexArray_methods},
+    {Py_tp_getset, MGLVertexArray_getset},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Slot MGLSampler_slots[] = {
+    {Py_tp_methods, MGLSampler_methods},
+    {Py_tp_getset, MGLSampler_getset},
+    {Py_tp_dealloc, (void *)default_dealloc},
+    {},
+};
+
+PyType_Spec MGLBuffer_spec = {"mgl.Buffer", sizeof(MGLBuffer), 0, Py_TPFLAGS_DEFAULT, MGLBuffer_slots};
+PyType_Spec MGLComputeShader_spec = {"mgl.ComputeShader", sizeof(MGLComputeShader), 0, Py_TPFLAGS_DEFAULT, MGLComputeShader_slots};
+PyType_Spec MGLContext_spec = {"mgl.Context", sizeof(MGLContext), 0, Py_TPFLAGS_DEFAULT, MGLContext_slots};
+PyType_Spec MGLFramebuffer_spec = {"mgl.Framebuffer", sizeof(MGLFramebuffer), 0, Py_TPFLAGS_DEFAULT, MGLFramebuffer_slots};
+PyType_Spec MGLProgram_spec = {"mgl.Program", sizeof(MGLProgram), 0, Py_TPFLAGS_DEFAULT, MGLProgram_slots};
+PyType_Spec MGLQuery_spec = {"mgl.Query", sizeof(MGLQuery), 0, Py_TPFLAGS_DEFAULT, MGLQuery_slots};
+PyType_Spec MGLRenderbuffer_spec = {"mgl.Renderbuffer", sizeof(MGLRenderbuffer), 0, Py_TPFLAGS_DEFAULT, MGLRenderbuffer_slots};
+PyType_Spec MGLScope_spec = {"mgl.Scope", sizeof(MGLScope), 0, Py_TPFLAGS_DEFAULT, MGLScope_slots};
+PyType_Spec MGLTexture_spec = {"mgl.Texture", sizeof(MGLTexture), 0, Py_TPFLAGS_DEFAULT, MGLTexture_slots};
+PyType_Spec MGLTextureArray_spec = {"mgl.TextureArray", sizeof(MGLTextureArray), 0, Py_TPFLAGS_DEFAULT, MGLTextureArray_slots};
+PyType_Spec MGLTextureCube_spec = {"mgl.TextureCube", sizeof(MGLTextureCube), 0, Py_TPFLAGS_DEFAULT, MGLTextureCube_slots};
+PyType_Spec MGLTexture3D_spec = {"mgl.Texture3D", sizeof(MGLTexture3D), 0, Py_TPFLAGS_DEFAULT, MGLTexture3D_slots};
+PyType_Spec MGLVertexArray_spec = {"mgl.VertexArray", sizeof(MGLVertexArray), 0, Py_TPFLAGS_DEFAULT, MGLVertexArray_slots};
+PyType_Spec MGLSampler_spec = {"mgl.Sampler", sizeof(MGLSampler), 0, Py_TPFLAGS_DEFAULT, MGLSampler_slots};
 
 PyModuleDef MGL_moduledef = {
 	PyModuleDef_HEAD_INIT,
@@ -537,12 +944,51 @@ PyModuleDef MGL_moduledef = {
 	0,
 };
 
+PyObject * helper;
+PyObject * moderngl_error;
+PyTypeObject * MGLBuffer_type;
+PyTypeObject * MGLComputeShader_type;
+PyTypeObject * MGLContext_type;
+PyTypeObject * MGLFramebuffer_type;
+PyTypeObject * MGLProgram_type;
+PyTypeObject * MGLQuery_type;
+PyTypeObject * MGLRenderbuffer_type;
+PyTypeObject * MGLScope_type;
+PyTypeObject * MGLTexture_type;
+PyTypeObject * MGLTextureArray_type;
+PyTypeObject * MGLTextureCube_type;
+PyTypeObject * MGLTexture3D_type;
+PyTypeObject * MGLVertexArray_type;
+PyTypeObject * MGLSampler_type;
+
 extern "C" PyObject * PyInit_mgl() {
 	PyObject * module = PyModule_Create(&MGL_moduledef);
 
-	if (!MGL_InitializeModule(module)) {
-		return 0;
-	}
+    helper = PyImport_ImportModule("_moderngl");
+    if (!helper) {
+        return NULL;
+    }
+
+    moderngl_error = PyObject_GetAttrString(helper, "Error");
+
+    MGLBuffer_type = (PyTypeObject *)PyType_FromSpec(&MGLBuffer_spec);
+    MGLComputeShader_type = (PyTypeObject *)PyType_FromSpec(&MGLComputeShader_spec);
+    MGLContext_type = (PyTypeObject *)PyType_FromSpec(&MGLContext_spec);
+    MGLFramebuffer_type = (PyTypeObject *)PyType_FromSpec(&MGLFramebuffer_spec);
+    MGLProgram_type = (PyTypeObject *)PyType_FromSpec(&MGLProgram_spec);
+    MGLQuery_type = (PyTypeObject *)PyType_FromSpec(&MGLQuery_spec);
+    MGLRenderbuffer_type = (PyTypeObject *)PyType_FromSpec(&MGLRenderbuffer_spec);
+    MGLScope_type = (PyTypeObject *)PyType_FromSpec(&MGLScope_spec);
+    MGLTexture_type = (PyTypeObject *)PyType_FromSpec(&MGLTexture_spec);
+    MGLTextureArray_type = (PyTypeObject *)PyType_FromSpec(&MGLTextureArray_spec);
+    MGLTextureCube_type = (PyTypeObject *)PyType_FromSpec(&MGLTextureCube_spec);
+    MGLTexture3D_type = (PyTypeObject *)PyType_FromSpec(&MGLTexture3D_spec);
+    MGLVertexArray_type = (PyTypeObject *)PyType_FromSpec(&MGLVertexArray_spec);
+    MGLSampler_type = (PyTypeObject *)PyType_FromSpec(&MGLSampler_spec);
+
+    PyObject * InvalidObject = PyObject_GetAttrString(helper, "InvalidObject");
+    PyModule_AddObject(module, "InvalidObject", InvalidObject);
+    Py_INCREF(InvalidObject);
 
 	return module;
 }

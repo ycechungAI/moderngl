@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional, TYPE_CHECKING, Tuple, Union
 
-from moderngl.mgl import InvalidObject  # type: ignore
+from _moderngl import InvalidObject
 
 from .buffer import Buffer
 from .renderbuffer import Renderbuffer
@@ -330,7 +330,8 @@ class Framebuffer:
 
     def release(self) -> None:
         """Release the ModernGL object."""
-        if not isinstance(self.mglo, InvalidObject):
+        if self.mglo is not None:
             self._color_attachments = None
             self._depth_attachment = None
             self.mglo.release()
+            self.mglo = InvalidObject()

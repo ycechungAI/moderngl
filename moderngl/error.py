@@ -1,4 +1,3 @@
-class Error(Exception):
-    """Generic moderngl error."""
+# stub file for temporary backward compatibility
 
-    pass
+from _moderngl import Error  # noqa

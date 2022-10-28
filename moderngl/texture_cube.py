@@ -1,6 +1,6 @@
 from typing import Any, Optional, Tuple, Union
 
-from moderngl.mgl import InvalidObject  # type: ignore
+from _moderngl import InvalidObject
 
 from .buffer import Buffer
 
@@ -321,5 +321,6 @@ class TextureCube:
 
     def release(self) -> None:
         """Release the ModernGL object."""
-        if not isinstance(self.mglo, InvalidObject):
+        if self.mglo is not None:
             self.mglo.release()
+            self.mglo = InvalidObject()

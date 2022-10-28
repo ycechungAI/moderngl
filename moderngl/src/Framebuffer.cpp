@@ -39,7 +39,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 	for (int i = 0; i < color_attachments_len; ++i) {
 		PyObject * item = PyTuple_GET_ITEM(color_attachments, i);
 
-		if (Py_TYPE(item) == &MGLTexture_Type) {
+		if (Py_TYPE(item) == MGLTexture_type) {
 			MGLTexture * texture = (MGLTexture *)item;
 
 			if (texture->depth) {
@@ -62,7 +62,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 				MGLError_Set("color_attachments[%d] belongs to a different context", i);
 				return 0;
 			}
-		} else if (Py_TYPE(item) == &MGLRenderbuffer_Type) {
+		} else if (Py_TYPE(item) == MGLRenderbuffer_type) {
 			MGLRenderbuffer * renderbuffer = (MGLRenderbuffer *)item;
 
 			if (renderbuffer->depth) {
@@ -95,7 +95,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 
 	if (depth_attachment != Py_None) {
 
-		if (Py_TYPE(depth_attachment) == &MGLTexture_Type) {
+		if (Py_TYPE(depth_attachment) == MGLTexture_type) {
 			MGLTexture * texture = (MGLTexture *)depth_attachment;
 
 			if (!texture->depth) {
@@ -119,7 +119,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 				height = texture->height;
 				samples = texture->samples;
 			}
-		} else if (Py_TYPE(depth_attachment) == &MGLRenderbuffer_Type) {
+		} else if (Py_TYPE(depth_attachment) == MGLRenderbuffer_type) {
 			MGLRenderbuffer * renderbuffer = (MGLRenderbuffer *)depth_attachment;
 
 			if (!renderbuffer->depth) {
@@ -149,7 +149,8 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 		}
 	}
 
-	MGLFramebuffer * framebuffer = (MGLFramebuffer *)MGLFramebuffer_Type.tp_alloc(&MGLFramebuffer_Type, 0);
+    MGLFramebuffer * framebuffer = PyObject_New(MGLFramebuffer, MGLFramebuffer_type);
+    framebuffer->released = false;
 
 	framebuffer->framebuffer_obj = 0;
 	gl.GenFramebuffers(1, (GLuint *)&framebuffer->framebuffer_obj);
@@ -169,7 +170,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 	for (int i = 0; i < color_attachments_len; ++i) {
 		PyObject * item = PyTuple_GET_ITEM(color_attachments, i);
 
-		if (Py_TYPE(item) == &MGLTexture_Type) {
+		if (Py_TYPE(item) == MGLTexture_type) {
 
 			MGLTexture * texture = (MGLTexture *)item;
 
@@ -181,7 +182,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 				0
 			);
 
-		} else if (Py_TYPE(item) == &MGLRenderbuffer_Type) {
+		} else if (Py_TYPE(item) == MGLRenderbuffer_type) {
 
 			MGLRenderbuffer * renderbuffer = (MGLRenderbuffer *)item;
 
@@ -194,7 +195,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 		}
 	}
 
-	if (Py_TYPE(depth_attachment) == &MGLTexture_Type) {
+	if (Py_TYPE(depth_attachment) == MGLTexture_type) {
 		MGLTexture * texture = (MGLTexture *)depth_attachment;
 
 		gl.FramebufferTexture2D(
@@ -205,7 +206,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 			0
 		);
 
-	} else if (Py_TYPE(depth_attachment) == &MGLRenderbuffer_Type) {
+	} else if (Py_TYPE(depth_attachment) == MGLRenderbuffer_type) {
 		MGLRenderbuffer * renderbuffer = (MGLRenderbuffer *)depth_attachment;
 
 		gl.FramebufferRenderbuffer(
@@ -272,13 +273,13 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 
 	for (int i = 0; i < color_attachments_len; ++i) {
 		PyObject * item = PyTuple_GET_ITEM(color_attachments, i);
-		if (Py_TYPE(item) == &MGLTexture_Type) {
+		if (Py_TYPE(item) == MGLTexture_type) {
 			MGLTexture * texture = (MGLTexture *)item;
 			framebuffer->color_mask[i * 4 + 0] = texture->components >= 1;
 			framebuffer->color_mask[i * 4 + 1] = texture->components >= 2;
 			framebuffer->color_mask[i * 4 + 2] = texture->components >= 3;
 			framebuffer->color_mask[i * 4 + 3] = texture->components >= 4;
-		} else if (Py_TYPE(item) == &MGLRenderbuffer_Type) {
+		} else if (Py_TYPE(item) == MGLRenderbuffer_type) {
 			MGLTexture * renderbuffer = (MGLTexture *)item;
 			framebuffer->color_mask[i * 4 + 0] = renderbuffer->components >= 1;
 			framebuffer->color_mask[i * 4 + 1] = renderbuffer->components >= 2;
@@ -321,19 +322,6 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 	PyTuple_SET_ITEM(result, 2, PyLong_FromLong(framebuffer->samples));
 	PyTuple_SET_ITEM(result, 3, PyLong_FromLong(framebuffer->framebuffer_obj));
 	return result;
-}
-
-PyObject * MGLFramebuffer_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLFramebuffer * self = (MGLFramebuffer *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLFramebuffer_tp_dealloc(MGLFramebuffer * self) {
-	MGLFramebuffer_Type.tp_free((PyObject *)self);
 }
 
 PyObject * MGLFramebuffer_release(MGLFramebuffer * self) {
@@ -704,7 +692,7 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
 	int pixel_type = data_type->gl_type;
 	int base_format = read_depth ? GL_DEPTH_COMPONENT : data_type->base_format[components];
 
-	if (Py_TYPE(data) == &MGLBuffer_Type) {
+	if (Py_TYPE(data) == MGLBuffer_type) {
 
 		MGLBuffer * buffer = (MGLBuffer *)data;
 
@@ -751,15 +739,6 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
 
 	return PyLong_FromLong(expected_size);
 }
-
-PyMethodDef MGLFramebuffer_tp_methods[] = {
-	{"clear", (PyCFunction)MGLFramebuffer_clear, METH_VARARGS, 0},
-	{"use", (PyCFunction)MGLFramebuffer_use, METH_NOARGS, 0},
-	{"read", (PyCFunction)MGLFramebuffer_read, METH_VARARGS, 0},
-	{"read_into", (PyCFunction)MGLFramebuffer_read_into, METH_VARARGS, 0},
-	{"release", (PyCFunction)MGLFramebuffer_release, METH_NOARGS, 0},
-	{0},
-};
 
 PyObject * MGLFramebuffer_get_viewport(MGLFramebuffer * self, void * closure) {
 	PyObject * x = PyLong_FromLong(self->viewport_x);
@@ -1075,61 +1054,11 @@ PyObject * MGLFramebuffer_get_bits(MGLFramebuffer * self, void * closure) {
 	return result;
 }
 
-PyGetSetDef MGLFramebuffer_tp_getseters[] = {
-	{(char *)"viewport", (getter)MGLFramebuffer_get_viewport, (setter)MGLFramebuffer_set_viewport, 0, 0},
-	{(char *)"scissor", (getter)MGLFramebuffer_get_scissor, (setter)MGLFramebuffer_set_scissor, 0, 0},
-	{(char *)"color_mask", (getter)MGLFramebuffer_get_color_mask, (setter)MGLFramebuffer_set_color_mask, 0, 0},
-	{(char *)"depth_mask", (getter)MGLFramebuffer_get_depth_mask, (setter)MGLFramebuffer_set_depth_mask, 0, 0},
-
-	{(char *)"bits", (getter)MGLFramebuffer_get_bits, 0, 0, 0},
-	{0},
-};
-
-PyTypeObject MGLFramebuffer_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.Framebuffer",                                      // tp_name
-	sizeof(MGLFramebuffer),                                 // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLFramebuffer_tp_dealloc,                  // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLFramebuffer_tp_methods,                              // tp_methods
-	0,                                                      // tp_members
-	MGLFramebuffer_tp_getseters,                            // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLFramebuffer_tp_new,                                  // tp_new
-};
-
 void MGLFramebuffer_Invalidate(MGLFramebuffer * framebuffer) {
-	if (Py_TYPE(framebuffer) == &MGLInvalidObject_Type) {
+	if (framebuffer->released) {
 		return;
 	}
+	framebuffer->released = true;
 
 	if (framebuffer->framebuffer_obj) {
 		framebuffer->context->gl.DeleteFramebuffers(1, (GLuint *)&framebuffer->framebuffer_obj);
@@ -1138,6 +1067,5 @@ void MGLFramebuffer_Invalidate(MGLFramebuffer * framebuffer) {
 		delete[] framebuffer->color_mask;
 	}
 
-	Py_SET_TYPE(framebuffer, &MGLInvalidObject_Type);
 	Py_DECREF(framebuffer);
 }

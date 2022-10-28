@@ -1,6 +1,6 @@
 from typing import Any, Tuple
 
-from moderngl.mgl import InvalidObject  # type: ignore
+from _moderngl import InvalidObject
 
 __all__ = ['Scope']
 
@@ -64,10 +64,11 @@ class Scope:
 
     def release(self) -> None:
         """Destroy the Scope object."""
-        if not isinstance(self.mglo, InvalidObject):
+        if self.mglo is not None:
             self._framebuffer = None
             self._textures = None
             self._uniform_buffers = None
             self._storage_buffers = None
             self._samplers = None
             self.mglo.release()
+            self.mglo = InvalidObject()

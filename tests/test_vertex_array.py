@@ -1,5 +1,4 @@
 from array import array
-from moderngl.program_members import varying
 import unittest
 
 import moderngl

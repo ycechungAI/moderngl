@@ -35,7 +35,8 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 		}
 	}
 
-	MGLProgram * program = (MGLProgram *)MGLProgram_Type.tp_alloc(&MGLProgram_Type, 0);
+    MGLProgram * program = PyObject_New(MGLProgram, MGLProgram_type);
+    program->released = false;
 
 	Py_INCREF(self);
 	program->context = self;
@@ -436,12 +437,8 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 
 	program->num_varyings = num_varyings;
 
-	PyObject * attributes_lst = PyTuple_New(num_attributes);
-	PyObject * varyings_lst = PyTuple_New(num_varyings);
-	PyObject * uniforms_lst = PyTuple_New(num_uniforms);
-	PyObject * uniform_blocks_lst = PyTuple_New(num_uniform_blocks);
-	PyObject * subroutines_lst = PyTuple_New(num_subroutines);
 	PyObject * subroutine_uniforms_lst = PyTuple_New(num_subroutine_uniforms);
+	PyObject * members_dict = PyDict_New();
 
 	for (int i = 0; i < num_attributes; ++i) {
 		int type = 0;
@@ -454,22 +451,13 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 
 		clean_glsl_name(name, name_len);
 
-		MGLAttribute * mglo = (MGLAttribute *)MGLAttribute_Type.tp_alloc(&MGLAttribute_Type, 0);
-		mglo->type = type;
-		mglo->location = location;
-		mglo->array_length = array_length;
-		mglo->program_obj = program->program_obj;
-		MGLAttribute_Complete(mglo, gl);
+        PyObject * item = PyObject_CallMethod(
+            helper, "make_attribute", "(siiii)",
+            name, type, program->program_obj, location, array_length
+        );
 
-		PyObject * item = PyTuple_New(6);
-		PyTuple_SET_ITEM(item, 0, (PyObject *)mglo);
-		PyTuple_SET_ITEM(item, 1, PyLong_FromLong(location));
-		PyTuple_SET_ITEM(item, 2, PyLong_FromLong(array_length));
-		PyTuple_SET_ITEM(item, 3, PyLong_FromLong(mglo->dimension));
-		PyTuple_SET_ITEM(item, 4, PyUnicode_FromFormat("%c", mglo->shape));
-		PyTuple_SET_ITEM(item, 5, PyUnicode_FromStringAndSize(name, name_len));
-
-		PyTuple_SET_ITEM(attributes_lst, i, item);
+        PyDict_SetItemString(members_dict, name, item);
+        Py_DECREF(item);
 	}
 
 	for (int i = 0; i < num_varyings; ++i) {
@@ -481,16 +469,11 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 
 		gl.GetTransformFeedbackVarying(program->program_obj, i, 256, &name_len, &array_length, (GLenum *)&type, name);
 
-		PyObject * item = PyTuple_New(4);
-		PyTuple_SET_ITEM(item, 0, PyLong_FromLong(i));
-		PyTuple_SET_ITEM(item, 1, PyLong_FromLong(array_length));
-		PyTuple_SET_ITEM(item, 2, PyLong_FromLong(dimension));
-		PyTuple_SET_ITEM(item, 3, PyUnicode_FromStringAndSize(name, name_len));
-
-		PyTuple_SET_ITEM(varyings_lst, i, item);
+        PyObject * item = PyObject_CallMethod(helper, "make_varying", "(siii)", name, i, array_length, dimension);
+        PyDict_SetItemString(members_dict, name, item);
+        Py_DECREF(item);
 	}
 
-	int uniform_counter = 0;
 	for (int i = 0; i < num_uniforms; ++i) {
 		int type = 0;
 		int array_length = 0;
@@ -506,26 +489,13 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 			continue;
 		}
 
-		MGLUniform * mglo = (MGLUniform *)MGLUniform_Type.tp_alloc(&MGLUniform_Type, 0);
-		mglo->type = type;
-		mglo->location = location;
-		mglo->array_length = array_length;
-		mglo->program_obj = program->program_obj;
-		MGLUniform_Complete(mglo, gl);
+        PyObject * item = PyObject_CallMethod(
+            helper, "make_uniform", "(siiiiO)",
+            name, type, program->program_obj, location, array_length, self
+        );
 
-		PyObject * item = PyTuple_New(5);
-		PyTuple_SET_ITEM(item, 0, (PyObject *)mglo);
-		PyTuple_SET_ITEM(item, 1, PyLong_FromLong(location));
-		PyTuple_SET_ITEM(item, 2, PyLong_FromLong(array_length));
-		PyTuple_SET_ITEM(item, 3, PyLong_FromLong(mglo->dimension));
-		PyTuple_SET_ITEM(item, 4, PyUnicode_FromStringAndSize(name, name_len));
-
-		PyTuple_SET_ITEM(uniforms_lst, uniform_counter, item);
-		++uniform_counter;
-	}
-
-	if (uniform_counter != num_uniforms) {
-		_PyTuple_Resize(&uniforms_lst, uniform_counter);
+        PyDict_SetItemString(members_dict, name, item);
+        Py_DECREF(item);
 	}
 
 	for (int i = 0; i < num_uniform_blocks; ++i) {
@@ -539,20 +509,13 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 
 		clean_glsl_name(name, name_len);
 
-		MGLUniformBlock * mglo = (MGLUniformBlock *)MGLUniformBlock_Type.tp_alloc(&MGLUniformBlock_Type, 0);
+        PyObject * item = PyObject_CallMethod(
+            helper, "make_uniform_block", "(siiiO)",
+            name, program->program_obj, index, size, self
+        );
 
-		mglo->index = index;
-		mglo->size = size;
-		mglo->program_obj = program->program_obj;
-		mglo->gl = &gl;
-
-		PyObject * item = PyTuple_New(4);
-		PyTuple_SET_ITEM(item, 0, (PyObject *)mglo);
-		PyTuple_SET_ITEM(item, 1, PyLong_FromLong(index));
-		PyTuple_SET_ITEM(item, 2, PyLong_FromLong(size));
-		PyTuple_SET_ITEM(item, 3, PyUnicode_FromStringAndSize(name, name_len));
-
-		PyTuple_SET_ITEM(uniform_blocks_lst, i, item);
+        PyDict_SetItemString(members_dict, name, item);
+        Py_DECREF(item);
 	}
 
 	int subroutine_uniforms_base = 0;
@@ -581,10 +544,9 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 				gl.GetActiveSubroutineName(program_obj, shader_type[st], i, 256, &name_len, name);
 				int index = gl.GetSubroutineIndex(program_obj, shader_type[st], name);
 
-				PyObject * item = PyTuple_New(2);
-				PyTuple_SET_ITEM(item, 0, PyLong_FromLong(index));
-				PyTuple_SET_ITEM(item, 1, PyUnicode_FromStringAndSize(name, name_len));
-				PyTuple_SET_ITEM(subroutines_lst, subroutines_base + i, item);
+                PyObject * item = PyObject_CallMethod(helper, "make_subroutine", "(si)", name, index);
+                PyDict_SetItemString(members_dict, name, item);
+                Py_DECREF(item);
 			}
 
 			for (int i = 0; i < num_subroutine_uniforms; ++i) {
@@ -616,30 +578,13 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 	}
 	PyTuple_SET_ITEM(geom_info, 2, PyLong_FromLong(program->geometry_vertices));
 
-	PyObject * result = PyTuple_New(9);
+	PyObject * result = PyTuple_New(5);
 	PyTuple_SET_ITEM(result, 0, (PyObject *)program);
-	PyTuple_SET_ITEM(result, 1, attributes_lst);
-	PyTuple_SET_ITEM(result, 2, varyings_lst);
-	PyTuple_SET_ITEM(result, 3, uniforms_lst);
-	PyTuple_SET_ITEM(result, 4, uniform_blocks_lst);
-	PyTuple_SET_ITEM(result, 5, subroutines_lst);
-	PyTuple_SET_ITEM(result, 6, subroutine_uniforms_lst);
-	PyTuple_SET_ITEM(result, 7, geom_info);
-	PyTuple_SET_ITEM(result, 8, PyLong_FromLong(program->program_obj));
+	PyTuple_SET_ITEM(result, 1, members_dict);
+	PyTuple_SET_ITEM(result, 2, subroutine_uniforms_lst);
+	PyTuple_SET_ITEM(result, 3, geom_info);
+	PyTuple_SET_ITEM(result, 4, PyLong_FromLong(program->program_obj));
 	return result;
-}
-
-PyObject * MGLProgram_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLProgram * self = (MGLProgram *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLProgram_tp_dealloc(MGLProgram * self) {
-	MGLProgram_Type.tp_free((PyObject *)self);
 }
 
 PyObject * MGLProgram_release(MGLProgram * self) {
@@ -647,60 +592,14 @@ PyObject * MGLProgram_release(MGLProgram * self) {
 	Py_RETURN_NONE;
 }
 
-PyMethodDef MGLProgram_tp_methods[] = {
-	{"release", (PyCFunction)MGLProgram_release, METH_NOARGS, 0},
-	{0},
-};
-
-PyTypeObject MGLProgram_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.Program",                                          // tp_name
-	sizeof(MGLProgram),                                     // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLProgram_tp_dealloc,                      // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLProgram_tp_methods,                                  // tp_methods
-	0,                                                      // tp_members
-	0,                                                      // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLProgram_tp_new,                                      // tp_new
-};
-
 void MGLProgram_Invalidate(MGLProgram * program) {
-	if (Py_TYPE(program) == &MGLInvalidObject_Type) {
+	if (program->released) {
 		return;
 	}
+	program->released = true;
 
 	const GLMethods & gl = program->context->gl;
 	gl.DeleteProgram(program->program_obj);
 
-	Py_SET_TYPE(program, &MGLInvalidObject_Type);
 	Py_DECREF(program);
 }

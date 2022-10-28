@@ -59,11 +59,11 @@ libraries = {
 }
 
 extra_compile_args = {
-    'windows': [],
-    'linux': [],
-    'cygwin': [],
+    'windows': ['-fpermissive'],
+    'linux': ['-fpermissive'],
+    'cygwin': ['-fpermissive'],
     'darwin': ['-Wno-deprecated-declarations'],
-    'android': [],
+    'android': ['-fpermissive'],
 }
 
 extra_linker_args = {
@@ -77,21 +77,20 @@ extra_linker_args = {
 mgl = Extension(
     name='moderngl.mgl',
     include_dirs=['src', 'moderngl', 'moderngl/mgl'],
-    define_macros=[],
+    define_macros=[
+        ('PY_SSIZE_T_CLEAN', None),
+    ],
     libraries=libraries[target],
     extra_compile_args=extra_compile_args[target],
     extra_link_args=extra_linker_args[target],
     sources=[
         'moderngl/src/Sampler.cpp',
-        'moderngl/src/Attribute.cpp',
         'moderngl/src/Buffer.cpp',
         'moderngl/src/BufferFormat.cpp',
         'moderngl/src/ComputeShader.cpp',
         'moderngl/src/Context.cpp',
         'moderngl/src/DataType.cpp',
-        'moderngl/src/Error.cpp',
         'moderngl/src/Framebuffer.cpp',
-        'moderngl/src/InvalidObject.cpp',
         'moderngl/src/ModernGL.cpp',
         'moderngl/src/Program.cpp',
         'moderngl/src/Query.cpp',
@@ -101,23 +100,7 @@ mgl = Extension(
         'moderngl/src/Texture3D.cpp',
         'moderngl/src/TextureArray.cpp',
         'moderngl/src/TextureCube.cpp',
-        'moderngl/src/Uniform.cpp',
-        'moderngl/src/UniformBlock.cpp',
-        'moderngl/src/UniformGetters.cpp',
-        'moderngl/src/UniformSetters.cpp',
         'moderngl/src/VertexArray.cpp',
-    ],
-    depends=[
-        'moderngl/src/gl_methods.hpp',
-        'moderngl/src/OpenGL.hpp',
-
-        'moderngl/src/BufferFormat.hpp',
-        'moderngl/src/Error.hpp',
-        'moderngl/src/InlineMethods.hpp',
-        'moderngl/src/OpenGL.hpp',
-        'moderngl/src/Python.hpp',
-        'moderngl/src/Types.hpp',
-        'moderngl/src/UniformGetSetters.hpp',
     ],
 )
 
@@ -171,7 +154,8 @@ setup(
     project_urls=project_urls,
     classifiers=classifiers,
     keywords=keywords,
-    packages=['moderngl', 'moderngl.program_members'],
+    packages=['moderngl'],
+    py_modules=['_moderngl'],
     ext_modules=[mgl],
     platforms=['any'],
     install_requires=['glcontext>=2.3.6,<3'],

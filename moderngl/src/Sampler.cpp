@@ -13,7 +13,8 @@ PyObject * MGLContext_sampler(MGLContext * self, PyObject * args) {
 
 	const GLMethods & gl = self->gl;
 
-	MGLSampler * sampler = (MGLSampler *)MGLSampler_Type.tp_alloc(&MGLSampler_Type, 0);
+    MGLSampler * sampler = PyObject_New(MGLSampler, MGLSampler_type);
+    sampler->released = false;
 
 	gl.GenSamplers(1, (GLuint *)&sampler->sampler_obj);
 
@@ -40,19 +41,6 @@ PyObject * MGLContext_sampler(MGLContext * self, PyObject * args) {
 	PyTuple_SET_ITEM(result, 0, (PyObject *)sampler);
 	PyTuple_SET_ITEM(result, 1, PyLong_FromLong(sampler->sampler_obj));
 	return result;
-}
-
-PyObject * MGLSampler_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLSampler * self = (MGLSampler *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLSampler_tp_dealloc(MGLSampler * self) {
-	MGLSampler_Type.tp_free((PyObject *)self);
 }
 
 PyObject * MGLSampler_use(MGLSampler * self, PyObject * args) {
@@ -97,13 +85,6 @@ PyObject * MGLSampler_release(MGLSampler * self) {
 	MGLSampler_Invalidate(self);
 	Py_RETURN_NONE;
 }
-
-PyMethodDef MGLSampler_tp_methods[] = {
-	{"use", (PyCFunction)MGLSampler_use, METH_VARARGS, 0},
-	{"clear", (PyCFunction)MGLSampler_clear, METH_VARARGS, 0},
-	{"release", (PyCFunction)MGLSampler_release, METH_NOARGS, 0},
-	{0},
-};
 
 PyObject * MGLSampler_get_repeat_x(MGLSampler * self) {
 	return PyBool_FromLong(self->repeat_x);
@@ -288,69 +269,15 @@ int MGLSampler_set_max_lod(MGLSampler * self, PyObject * value) {
 	return 0;
 }
 
-PyGetSetDef MGLSampler_tp_getseters[] = {
-	{(char *)"repeat_x", (getter)MGLSampler_get_repeat_x, (setter)MGLSampler_set_repeat_x, 0, 0},
-	{(char *)"repeat_y", (getter)MGLSampler_get_repeat_y, (setter)MGLSampler_set_repeat_y, 0, 0},
-	{(char *)"repeat_z", (getter)MGLSampler_get_repeat_z, (setter)MGLSampler_set_repeat_z, 0, 0},
-	{(char *)"filter", (getter)MGLSampler_get_filter, (setter)MGLSampler_set_filter, 0, 0},
-	{(char *)"compare_func", (getter)MGLSampler_get_compare_func, (setter)MGLSampler_set_compare_func, 0, 0},
-	{(char *)"anisotropy", (getter)MGLSampler_get_anisotropy, (setter)MGLSampler_set_anisotropy, 0, 0},
-	{(char *)"border_color", (getter)MGLSampler_get_border_color, (setter)MGLSampler_set_border_color, 0, 0},
-	{(char *)"min_lod", (getter)MGLSampler_get_min_lod, (setter)MGLSampler_set_min_lod, 0, 0},
-	{(char *)"max_lod", (getter)MGLSampler_get_max_lod, (setter)MGLSampler_set_max_lod, 0, 0},
-	{0},
-};
-
-PyTypeObject MGLSampler_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.Sampler",                                          // tp_name
-	sizeof(MGLSampler),                                     // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLSampler_tp_dealloc,                      // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLSampler_tp_methods,                                  // tp_methods
-	0,                                                      // tp_members
-	MGLSampler_tp_getseters,                                // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLSampler_tp_new,                                      // tp_new
-};
-
 void MGLSampler_Invalidate(MGLSampler * sampler) {
-	if (Py_TYPE(sampler) == &MGLInvalidObject_Type) {
+	if (sampler->released) {
 		return;
 	}
+	sampler->released = true;
 
 	const GLMethods & gl = sampler->context->gl;
 	gl.DeleteSamplers(1, (GLuint *)&sampler->sampler_obj);
 
-	Py_SET_TYPE(sampler, &MGLInvalidObject_Type);
 	Py_DECREF(sampler);
 	Py_DECREF(sampler->context);
 }

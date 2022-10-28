@@ -22,7 +22,8 @@ PyObject * MGLContext_compute_shader(MGLContext * self, PyObject * args) {
 
 	const char * source_str = PyUnicode_AsUTF8(source);
 
-	MGLComputeShader * compute_shader = (MGLComputeShader *)MGLComputeShader_Type.tp_alloc(&MGLComputeShader_Type, 0);
+    MGLComputeShader * compute_shader = PyObject_New(MGLComputeShader, MGLComputeShader_type);
+    compute_shader->released = false;
 
 	Py_INCREF(self);
 	compute_shader->context = self;
@@ -100,20 +101,12 @@ PyObject * MGLContext_compute_shader(MGLContext * self, PyObject * args) {
 
 	int num_uniforms = 0;
 	int num_uniform_blocks = 0;
-	int num_subroutines = 0;
-	int num_subroutine_uniforms = 0;
 
 	gl.GetProgramiv(program_obj, GL_ACTIVE_UNIFORMS, &num_uniforms);
 	gl.GetProgramiv(program_obj, GL_ACTIVE_UNIFORM_BLOCKS, &num_uniform_blocks);
-	gl.GetProgramStageiv(program_obj, GL_COMPUTE_SHADER, GL_ACTIVE_SUBROUTINES, &num_subroutines);
-	gl.GetProgramStageiv(program_obj, GL_COMPUTE_SHADER, GL_ACTIVE_SUBROUTINE_UNIFORMS, &num_subroutine_uniforms);
 
-	PyObject * uniforms_lst = PyTuple_New(num_uniforms);
-	PyObject * uniform_blocks_lst = PyTuple_New(num_uniform_blocks);
-	PyObject * subroutines_lst = PyTuple_New(num_subroutines);
-	PyObject * subroutine_uniforms_lst = PyTuple_New(num_subroutine_uniforms);
+	PyObject * members_dict = PyDict_New();
 
-	int uniform_counter = 0;
 	for (int i = 0; i < num_uniforms; ++i) {
 		int type = 0;
 		int array_length = 0;
@@ -129,26 +122,13 @@ PyObject * MGLContext_compute_shader(MGLContext * self, PyObject * args) {
 			continue;
 		}
 
-		MGLUniform * mglo = (MGLUniform *)MGLUniform_Type.tp_alloc(&MGLUniform_Type, 0);
-		mglo->type = type;
-		mglo->location = location;
-		mglo->array_length = array_length;
-		mglo->program_obj = program_obj;
-		MGLUniform_Complete(mglo, gl);
+        PyObject * item = PyObject_CallMethod(
+            helper, "make_uniform", "(siiiiO)",
+            name, type, program_obj, location, array_length, self
+        );
 
-		PyObject * item = PyTuple_New(5);
-		PyTuple_SET_ITEM(item, 0, (PyObject *)mglo);
-		PyTuple_SET_ITEM(item, 1, PyLong_FromLong(location));
-		PyTuple_SET_ITEM(item, 2, PyLong_FromLong(array_length));
-		PyTuple_SET_ITEM(item, 3, PyLong_FromLong(mglo->dimension));
-		PyTuple_SET_ITEM(item, 4, PyUnicode_FromStringAndSize(name, name_len));
-
-		PyTuple_SET_ITEM(uniforms_lst, uniform_counter, item);
-		++uniform_counter;
-	}
-
-	if (uniform_counter != num_uniforms) {
-		_PyTuple_Resize(&uniforms_lst, uniform_counter);
+        PyDict_SetItemString(members_dict, name, item);
+        Py_DECREF(item);
 	}
 
 	for (int i = 0; i < num_uniform_blocks; ++i) {
@@ -162,89 +142,20 @@ PyObject * MGLContext_compute_shader(MGLContext * self, PyObject * args) {
 
 		clean_glsl_name(name, name_len);
 
-		MGLUniformBlock * mglo = (MGLUniformBlock *)MGLUniformBlock_Type.tp_alloc(&MGLUniformBlock_Type, 0);
+        PyObject * item = PyObject_CallMethod(
+            helper, "make_uniform_block", "(siiiO)",
+            name, program_obj, index, size, self
+        );
 
-		mglo->index = index;
-		mglo->size = size;
-		mglo->program_obj = program_obj;
-		mglo->gl = &gl;
-
-		PyObject * item = PyTuple_New(4);
-		PyTuple_SET_ITEM(item, 0, (PyObject *)mglo);
-		PyTuple_SET_ITEM(item, 1, PyLong_FromLong(index));
-		PyTuple_SET_ITEM(item, 2, PyLong_FromLong(size));
-		PyTuple_SET_ITEM(item, 3, PyUnicode_FromStringAndSize(name, name_len));
-
-		PyTuple_SET_ITEM(uniform_blocks_lst, i, item);
+        PyDict_SetItemString(members_dict, name, item);
+        Py_DECREF(item);
 	}
 
-	int subroutine_uniforms_base = 0;
-	int subroutines_base = 0;
-
-	if (self->version_code >= 400) {
-		const int shader_type[5] = {
-			GL_VERTEX_SHADER,
-			GL_FRAGMENT_SHADER,
-			GL_GEOMETRY_SHADER,
-			GL_TESS_EVALUATION_SHADER,
-			GL_TESS_CONTROL_SHADER,
-		};
-
-		for (int st = 0; st < 5; ++st) {
-			int num_subroutines = 0;
-			gl.GetProgramStageiv(program_obj, shader_type[st], GL_ACTIVE_SUBROUTINES, &num_subroutines);
-
-			int num_subroutine_uniforms = 0;
-			gl.GetProgramStageiv(program_obj, shader_type[st], GL_ACTIVE_SUBROUTINE_UNIFORMS, &num_subroutine_uniforms);
-
-			for (int i = 0; i < num_subroutines; ++i) {
-				int name_len = 0;
-				char name[256];
-
-				gl.GetActiveSubroutineName(program_obj, shader_type[st], i, 256, &name_len, name);
-				int index = gl.GetSubroutineIndex(program_obj, shader_type[st], name);
-
-				PyObject * item = PyTuple_New(2);
-				PyTuple_SET_ITEM(item, 0, PyLong_FromLong(index));
-				PyTuple_SET_ITEM(item, 1, PyUnicode_FromStringAndSize(name, name_len));
-				PyTuple_SET_ITEM(subroutines_lst, subroutines_base + i, item);
-			}
-
-			for (int i = 0; i < num_subroutine_uniforms; ++i) {
-				int name_len = 0;
-				char name[256];
-
-				gl.GetActiveSubroutineUniformName(program_obj, shader_type[st], i, 256, &name_len, name);
-				int location = subroutine_uniforms_base + gl.GetSubroutineUniformLocation(program_obj, shader_type[st], name);
-				PyTuple_SET_ITEM(subroutine_uniforms_lst, location, PyUnicode_FromStringAndSize(name, name_len));
-			}
-
-			subroutine_uniforms_base += num_subroutine_uniforms;
-			subroutines_base += num_subroutines;
-		}
-	}
-
-	PyObject * result = PyTuple_New(6);
+	PyObject * result = PyTuple_New(3);
 	PyTuple_SET_ITEM(result, 0, (PyObject *)compute_shader);
-	PyTuple_SET_ITEM(result, 1, uniforms_lst);
-	PyTuple_SET_ITEM(result, 2, uniform_blocks_lst);
-	PyTuple_SET_ITEM(result, 3, subroutines_lst);
-	PyTuple_SET_ITEM(result, 4, subroutine_uniforms_lst);
-	PyTuple_SET_ITEM(result, 5, PyLong_FromLong(compute_shader->program_obj));
+	PyTuple_SET_ITEM(result, 1, members_dict);
+	PyTuple_SET_ITEM(result, 2, PyLong_FromLong(compute_shader->program_obj));
 	return result;
-}
-
-PyObject * MGLComputeShader_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLComputeShader * self = (MGLComputeShader *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLComputeShader_tp_dealloc(MGLComputeShader * self) {
-	Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 PyObject * MGLComputeShader_run(MGLComputeShader * self, PyObject * args) {
@@ -277,61 +188,11 @@ PyObject * MGLComputeShader_release(MGLComputeShader * self) {
 	Py_RETURN_NONE;
 }
 
-PyMethodDef MGLComputeShader_tp_methods[] = {
-	{"run", (PyCFunction)MGLComputeShader_run, METH_VARARGS, 0},
-	{"release", (PyCFunction)MGLComputeShader_release, METH_VARARGS, 0},
-	{0},
-};
-
-PyGetSetDef MGLComputeShader_tp_getseters[] = {
-	{0},
-};
-
-PyTypeObject MGLComputeShader_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.ComputeShader",                                    // tp_name
-	sizeof(MGLComputeShader),                               // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLComputeShader_tp_dealloc,                // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLComputeShader_tp_methods,                            // tp_methods
-	0,                                                      // tp_members
-	MGLComputeShader_tp_getseters,                          // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLComputeShader_tp_new,                                // tp_new
-};
-
 void MGLComputeShader_Invalidate(MGLComputeShader * compute_shader) {
-	if (Py_TYPE(compute_shader) == &MGLInvalidObject_Type) {
+	if (compute_shader->released) {
 		return;
 	}
+	compute_shader->released = true;
 
 	// TODO: decref
 
@@ -340,6 +201,5 @@ void MGLComputeShader_Invalidate(MGLComputeShader * compute_shader) {
 	gl.DeleteProgram(compute_shader->program_obj);
 
 	Py_DECREF(compute_shader->context);
-	Py_SET_TYPE(compute_shader, &MGLInvalidObject_Type);
 	Py_DECREF(compute_shader);
 }

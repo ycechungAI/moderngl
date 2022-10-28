@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Python.hpp"
+#include <Python.h>
 #include "gl_methods.hpp"
-#include "Error.hpp"
 
 typedef void (* MGLProc)();
 
@@ -33,20 +32,16 @@ static const int SHADER_TYPE[] = {
 	GL_TESS_EVALUATION_SHADER,
 };
 
-struct MGLAttribute;
 struct MGLBuffer;
 struct MGLComputeShader;
 struct MGLContext;
 struct MGLFramebuffer;
-struct MGLInvalidObject;
 struct MGLProgram;
 struct MGLRenderbuffer;
 struct MGLTexture;
 struct MGLTexture3D;
 struct MGLTextureArray;
 struct MGLTextureCube;
-struct MGLUniform;
-struct MGLUniformBlock;
 struct MGLVertexArray;
 struct MGLSampler;
 
@@ -58,29 +53,6 @@ struct MGLDataType {
 	bool float_type;
 };
 
-struct MGLAttribute {
-	PyObject_HEAD
-
-	void * gl_attrib_ptr_proc;
-
-	int program_obj;
-
-	int number;
-	int location;
-	int type;
-
-	int scalar_type;
-
-	int dimension;
-	int array_length;
-
-	int rows_length;
-	int row_length;
-
-	char shape;
-	bool normalizable;
-};
-
 struct MGLBuffer {
 	PyObject_HEAD
 
@@ -90,6 +62,8 @@ struct MGLBuffer {
 
 	Py_ssize_t size;
 	bool dynamic;
+
+    bool released;
 };
 
 struct MGLComputeShader {
@@ -99,6 +73,8 @@ struct MGLComputeShader {
 
 	int program_obj;
 	int shader_obj;
+
+    bool released;
 };
 
 struct MGLContext {
@@ -140,6 +116,8 @@ struct MGLContext {
 	float polygon_offset_units;
 
 	GLMethods gl;
+
+    bool released;
 };
 
 struct MGLFramebuffer {
@@ -172,10 +150,8 @@ struct MGLFramebuffer {
 	int samples;
 
 	bool depth_mask;
-};
 
-struct MGLInvalidObject {
-	PyObject_HEAD
+    bool released;
 };
 
 struct MGLProgram {
@@ -196,6 +172,8 @@ struct MGLProgram {
 
 	int geometry_vertices;
 	int num_varyings;
+
+    bool released;
 };
 
 enum MGLQueryKeys {
@@ -211,6 +189,8 @@ struct MGLQuery {
 	MGLContext * context;
 
 	int query_obj[4];
+
+    bool released;
 };
 
 struct MGLRenderbuffer {
@@ -230,6 +210,8 @@ struct MGLRenderbuffer {
 
 	int samples;
 	bool depth;
+
+    bool released;
 };
 
 struct MGLScope {
@@ -248,6 +230,8 @@ struct MGLScope {
 
 	int enable_flags;
 	int old_enable_flags;
+
+    bool released;
 };
 
 struct MGLTexture {
@@ -280,6 +264,8 @@ struct MGLTexture {
 	bool repeat_y;
 
     bool external;
+
+    bool released;
 };
 
 struct MGLTexture3D {
@@ -303,6 +289,8 @@ struct MGLTexture3D {
 	bool repeat_x;
 	bool repeat_y;
 	bool repeat_z;
+
+    bool released;
 };
 
 struct MGLTextureArray {
@@ -328,6 +316,8 @@ struct MGLTextureArray {
 	bool repeat_x;
 	bool repeat_y;
 	float anisotropy;
+
+    bool released;
 };
 
 struct MGLTextureCube {
@@ -348,38 +338,8 @@ struct MGLTextureCube {
 	int mag_filter;
 	int max_level;
 	float anisotropy;
-};
 
-struct MGLUniform {
-	PyObject_HEAD
-
-	MGLProc value_getter;
-	MGLProc value_setter;
-	MGLProc gl_value_reader_proc;
-	MGLProc gl_value_writer_proc;
-
-	int program_obj;
-
-	int number;
-	int location;
-	int type;
-
-	int dimension;
-	int element_size;
-	int array_length;
-
-	bool matrix;
-};
-
-struct MGLUniformBlock {
-	PyObject_HEAD
-
-	const GLMethods * gl;
-
-	int program_obj;
-
-	int index;
-	int size;
+    bool released;
 };
 
 struct MGLVertexArray {
@@ -398,6 +358,8 @@ struct MGLVertexArray {
 	int vertex_array_obj;
 	int num_vertices;
 	int num_instances;
+
+    bool released;
 };
 
 struct MGLSampler {
@@ -420,11 +382,12 @@ struct MGLSampler {
 
 	float min_lod;
 	float max_lod;
+
+    bool released;
 };
 
 MGLDataType * from_dtype(const char * dtype, Py_ssize_t size);
 
-void MGLAttribute_Invalidate(MGLAttribute * attribute);
 void MGLBuffer_Invalidate(MGLBuffer * buffer);
 void MGLComputeShader_Invalidate(MGLComputeShader * program);
 void MGLContext_Invalidate(MGLContext * context);
@@ -435,33 +398,30 @@ void MGLTexture3D_Invalidate(MGLTexture3D * texture);
 void MGLTextureCube_Invalidate(MGLTextureCube * texture);
 void MGLTexture_Invalidate(MGLTexture * texture);
 void MGLTextureArray_Invalidate(MGLTextureArray * texture);
-void MGLUniform_Invalidate(MGLUniform * uniform);
 void MGLVertexArray_Invalidate(MGLVertexArray * vertex_array);
 void MGLSampler_Invalidate(MGLSampler * sampler);
 void MGLScope_Invalidate(MGLScope * scope);
 
-void MGLAttribute_Complete(MGLAttribute * attribute, const GLMethods & gl);
-void MGLUniform_Complete(MGLUniform * self, const GLMethods & gl);
-void MGLUniformBlock_Complete(MGLUniformBlock * uniform_block, const GLMethods & gl);
 void MGLVertexArray_Complete(MGLVertexArray * vertex_array);
 
 void MGLContext_Initialize(MGLContext * self);
 
-extern PyTypeObject MGLAttribute_Type;
-extern PyTypeObject MGLBuffer_Type;
-extern PyTypeObject MGLComputeShader_Type;
-extern PyTypeObject MGLContext_Type;
-extern PyTypeObject MGLFramebuffer_Type;
-extern PyTypeObject MGLInvalidObject_Type;
-extern PyTypeObject MGLProgram_Type;
-extern PyTypeObject MGLQuery_Type;
-extern PyTypeObject MGLRenderbuffer_Type;
-extern PyTypeObject MGLScope_Type;
-extern PyTypeObject MGLTexture3D_Type;
-extern PyTypeObject MGLTextureCube_Type;
-extern PyTypeObject MGLTexture_Type;
-extern PyTypeObject MGLTextureArray_Type;
-extern PyTypeObject MGLUniformBlock_Type;
-extern PyTypeObject MGLUniform_Type;
-extern PyTypeObject MGLVertexArray_Type;
-extern PyTypeObject MGLSampler_Type;
+extern PyTypeObject * MGLBuffer_type;
+extern PyTypeObject * MGLComputeShader_type;
+extern PyTypeObject * MGLContext_type;
+extern PyTypeObject * MGLFramebuffer_type;
+extern PyTypeObject * MGLProgram_type;
+extern PyTypeObject * MGLQuery_type;
+extern PyTypeObject * MGLRenderbuffer_type;
+extern PyTypeObject * MGLScope_type;
+extern PyTypeObject * MGLTexture3D_type;
+extern PyTypeObject * MGLTextureCube_type;
+extern PyTypeObject * MGLTexture_type;
+extern PyTypeObject * MGLTextureArray_type;
+extern PyTypeObject * MGLVertexArray_type;
+extern PyTypeObject * MGLSampler_type;
+
+extern PyObject * helper;
+extern PyObject * moderngl_error;
+
+#define MGLError_Set(...) PyErr_Format(moderngl_error, __VA_ARGS__)

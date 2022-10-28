@@ -1,6 +1,6 @@
 from typing import Any, Tuple
 
-from moderngl.mgl import InvalidObject  # type: ignore
+from _moderngl import InvalidObject
 
 __all__ = ['Buffer']
 
@@ -263,8 +263,9 @@ class Buffer:
 
     def release(self) -> None:
         """Release the ModernGL object."""
-        if not isinstance(self.mglo, InvalidObject):
+        if self.mglo is not None:
             self.mglo.release()
+            self.mglo = InvalidObject()
 
     def bind(self, *attribs, layout=None):
         """

@@ -2,9 +2,6 @@
 
 #include "BufferFormat.hpp"
 
-typedef void (GLAPI * gl_attribute_normal_ptr_proc)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer);
-typedef void (GLAPI * gl_attribute_ptr_proc)(GLuint index, GLint size, GLenum type, GLsizei stride, const void * pointer);
-
 PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 	MGLProgram * program;
 	PyObject * content;
@@ -15,7 +12,7 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 	int args_ok = PyArg_ParseTuple(
 		args,
 		"O!OOIp",
-		&MGLProgram_Type,
+		MGLProgram_type,
 		&program,
 		&content,
 		&index_buffer,
@@ -50,7 +47,7 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 		PyObject * buffer = PyTuple_GET_ITEM(tuple, 0);
 		PyObject * format = PyTuple_GET_ITEM(tuple, 1);
 
-		if (Py_TYPE(buffer) != &MGLBuffer_Type) {
+		if (Py_TYPE(buffer) != MGLBuffer_type) {
 			MGLError_Set("content[%d][0] must be a Buffer not %s", i, Py_TYPE(buffer)->tp_name);
 			return 0;
 		}
@@ -84,31 +81,9 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 			MGLError_Set("content[%d][1] and content[%d][2] size mismatch %d != %d", i, i, format_info.nodes, attributes_len);
 			return 0;
 		}
-
-		for (int j = 0; j < attributes_len; ++j) {
-			FormatNode * node = it.next();
-
-			while (!node->type) {
-				node = it.next();
-			}
-
-			MGLAttribute * attribute = (MGLAttribute *)PyTuple_GET_ITEM(tuple, j + 2);
-
-			if (!skip_errors) {
-				if (Py_TYPE(attribute) != &MGLAttribute_Type) {
-					MGLError_Set("content[%d][%d] must be an attribute not %s", i, j + 2, Py_TYPE(attribute)->tp_name);
-					return 0;
-				}
-
-				if (node->count % attribute->rows_length) {
-					MGLError_Set("invalid format");
-					return 0;
-				}
-			}
-		}
 	}
 
-	if (index_buffer != (MGLBuffer *)Py_None && Py_TYPE(index_buffer) != &MGLBuffer_Type) {
+	if (index_buffer != (MGLBuffer *)Py_None && Py_TYPE(index_buffer) != MGLBuffer_type) {
 		MGLError_Set("the index_buffer must be a Buffer not %s", Py_TYPE(index_buffer)->tp_name);
 		return 0;
 	}
@@ -120,7 +95,8 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 
 	const GLMethods & gl = self->gl;
 
-	MGLVertexArray * array = (MGLVertexArray *)MGLVertexArray_Type.tp_alloc(&MGLVertexArray_Type, 0);
+    MGLVertexArray * array = PyObject_New(MGLVertexArray, MGLVertexArray_type);
+    array->released = false;
 
 	array->num_vertices = 0;
 	array->num_instances = 1;
@@ -182,28 +158,40 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 				node = it.next();
 			}
 
-			MGLAttribute * attribute = (MGLAttribute *)PyTuple_GET_ITEM(tuple, j + 2);
+			PyObject * attribute = PyTuple_GET_ITEM(tuple, j + 2);
 
-			if (attribute == (MGLAttribute *)Py_None) {
+			if (attribute == Py_None) {
 				ptr += node->size;
 				continue;
 			}
 
-			for (int r = 0; r < attribute->rows_length; ++r) {
-				int location = attribute->location + r;
-				int count = node->count / attribute->rows_length;
+            PyObject * attribute_location_py = PyObject_GetAttrString(attribute, "_location");
+            PyObject * attribute_rows_length_py = PyObject_GetAttrString(attribute, "_rows_length");
+            PyObject * attribute_scalar_type_py = PyObject_GetAttrString(attribute, "_scalar_type");
+            if (!attribute_location_py || !attribute_rows_length_py || !attribute_scalar_type_py) {
+                return NULL;
+            }
 
-				if (attribute->normalizable) {
-					((gl_attribute_normal_ptr_proc)attribute->gl_attrib_ptr_proc)(location, count, node->type, node->normalize, format_info.size, ptr);
-				} else {
-					((gl_attribute_ptr_proc)attribute->gl_attrib_ptr_proc)(location, count, node->type, format_info.size, ptr);
-				}
+            int attribute_location = PyLong_AsLong(attribute_location_py);
+            int attribute_rows_length = PyLong_AsLong(attribute_rows_length_py);
+            int attribute_scalar_type = PyLong_AsLong(attribute_scalar_type_py);
+
+			for (int r = 0; r < attribute_rows_length; ++r) {
+				int location = attribute_location + r;
+				int count = node->count / attribute_rows_length;
+
+                switch (attribute_scalar_type) {
+                    case GL_FLOAT: gl.VertexAttribPointer(location, count, node->type, node->normalize, format_info.size, ptr); break;
+                    case GL_DOUBLE: gl.VertexAttribLPointer(location, count, node->type, format_info.size, ptr); break;
+                    case GL_INT: gl.VertexAttribIPointer(location, count, node->type, format_info.size, ptr); break;
+                    case GL_UNSIGNED_INT: gl.VertexAttribIPointer(location, count, node->type, format_info.size, ptr); break;
+                }
 
 				gl.VertexAttribDivisor(location, format_info.divisor);
 
 				gl.EnableVertexAttribArray(location);
 
-				ptr += node->size / attribute->rows_length;
+				ptr += node->size / attribute_rows_length;
 			}
 		}
 	}
@@ -219,19 +207,6 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 	PyTuple_SET_ITEM(result, 0, (PyObject *)array);
 	PyTuple_SET_ITEM(result, 1, PyLong_FromLong(array->vertex_array_obj));
 	return result;
-}
-
-PyObject * MGLVertexArray_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLVertexArray * self = (MGLVertexArray *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLVertexArray_tp_dealloc(MGLVertexArray * self) {
-	MGLVertexArray_Type.tp_free((PyObject *)self);
 }
 
 inline void MGLVertexArray_SET_SUBROUTINES(MGLVertexArray * self, const GLMethods & gl);
@@ -294,7 +269,7 @@ PyObject * MGLVertexArray_render_indirect(MGLVertexArray * self, PyObject * args
 	int args_ok = PyArg_ParseTuple(
 		args,
 		"O!III",
-		&MGLBuffer_Type,
+		MGLBuffer_type,
 		&buffer,
 		&mode,
 		&count,
@@ -490,7 +465,7 @@ PyObject * MGLVertexArray_bind(MGLVertexArray * self, PyObject * args) {
 		"IsO!snIIp",
 		&location,
 		&type,
-		&MGLBuffer_Type,
+		MGLBuffer_type,
 		&buffer,
 		&format,
 		&offset,
@@ -557,17 +532,8 @@ PyObject * MGLVertexArray_release(MGLVertexArray * self) {
 	Py_RETURN_NONE;
 }
 
-PyMethodDef MGLVertexArray_tp_methods[] = {
-	{"render", (PyCFunction)MGLVertexArray_render, METH_VARARGS, 0},
-	{"render_indirect", (PyCFunction)MGLVertexArray_render_indirect, METH_VARARGS, 0},
-	{"transform", (PyCFunction)MGLVertexArray_transform, METH_VARARGS, 0},
-	{"bind", (PyCFunction)MGLVertexArray_bind, METH_VARARGS, 0},
-	{"release", (PyCFunction)MGLVertexArray_release, METH_NOARGS, 0},
-	{0},
-};
-
 int MGLVertexArray_set_index_buffer(MGLVertexArray * self, PyObject * value, void * closure) {
-	if (Py_TYPE(value) != &MGLBuffer_Type) {
+	if (Py_TYPE(value) != MGLBuffer_type) {
 		MGLError_Set("the index_buffer must be a Buffer not %s", Py_TYPE(value)->tp_name);
 		return -1;
 	}
@@ -643,66 +609,17 @@ int MGLVertexArray_set_subroutines(MGLVertexArray * self, PyObject * value, void
 	return 0;
 }
 
-PyGetSetDef MGLVertexArray_tp_getseters[] = {
-	{(char *)"index_buffer", 0, (setter)MGLVertexArray_set_index_buffer, 0, 0},
-	{(char *)"vertices", (getter)MGLVertexArray_get_vertices, (setter)MGLVertexArray_set_vertices, 0, 0},
-	{(char *)"instances", (getter)MGLVertexArray_get_instances, (setter)MGLVertexArray_set_instances, 0, 0},
-	{(char *)"subroutines", 0, (setter)MGLVertexArray_set_subroutines, 0, 0},
-	{0},
-};
-
-PyTypeObject MGLVertexArray_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.VertexArray",                                      // tp_name
-	sizeof(MGLVertexArray),                                 // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLVertexArray_tp_dealloc,                  // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLVertexArray_tp_methods,                              // tp_methods
-	0,                                                      // tp_members
-	MGLVertexArray_tp_getseters,                            // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLVertexArray_tp_new,                                  // tp_new
-};
-
 void MGLVertexArray_Invalidate(MGLVertexArray * array) {
-	if (Py_TYPE(array) == &MGLInvalidObject_Type) {
+	if (array->released) {
 		return;
 	}
+	array->released = true;
 
 	// TODO: decref
 
 	const GLMethods & gl = array->context->gl;
 	gl.DeleteVertexArrays(1, (GLuint *)&array->vertex_array_obj);
 
-	Py_SET_TYPE(array, &MGLInvalidObject_Type);
 	Py_DECREF(array->program);
 	Py_XDECREF(array->index_buffer);
 	Py_DECREF(array);

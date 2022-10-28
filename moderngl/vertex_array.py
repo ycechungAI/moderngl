@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
 
-from moderngl.mgl import InvalidObject  # type: ignore
+from _moderngl import InvalidObject
 
 if TYPE_CHECKING:
     from .program import Program
@@ -324,8 +324,9 @@ class VertexArray:
 
     def release(self) -> None:
         """Release the ModernGL object."""
-        if not isinstance(self, InvalidObject) and hasattr(self, "ctx"):
+        if self.mglo is not None:
             self._program = None
             self._index_buffer = None
             self._content = None
             self.mglo.release()
+            self.mglo = InvalidObject()

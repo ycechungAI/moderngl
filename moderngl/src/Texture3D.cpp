@@ -81,7 +81,8 @@ PyObject * MGLContext_texture3d(MGLContext * self, PyObject * args) {
 
 	const GLMethods & gl = self->gl;
 
-	MGLTexture3D * texture = (MGLTexture3D *)MGLTexture3D_Type.tp_alloc(&MGLTexture3D_Type, 0);
+    MGLTexture3D * texture = PyObject_New(MGLTexture3D, MGLTexture3D_type);
+    texture->released = false;
 
 	texture->texture_obj = 0;
 	gl.GenTextures(1, (GLuint *)&texture->texture_obj);
@@ -133,19 +134,6 @@ PyObject * MGLContext_texture3d(MGLContext * self, PyObject * args) {
 	PyTuple_SET_ITEM(result, 0, (PyObject *)texture);
 	PyTuple_SET_ITEM(result, 1, PyLong_FromLong(texture->texture_obj));
 	return result;
-}
-
-PyObject * MGLTexture3D_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLTexture3D * self = (MGLTexture3D *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLTexture3D_tp_dealloc(MGLTexture3D * self) {
-	MGLTexture3D_Type.tp_free((PyObject *)self);
 }
 
 PyObject * MGLTexture3D_read(MGLTexture3D * self, PyObject * args) {
@@ -217,7 +205,7 @@ PyObject * MGLTexture3D_read_into(MGLTexture3D * self, PyObject * args) {
 	int pixel_type = self->data_type->gl_type;
 	int format = self->data_type->base_format[self->components];
 
-	if (Py_TYPE(data) == &MGLBuffer_Type) {
+	if (Py_TYPE(data) == MGLBuffer_type) {
 
 		MGLBuffer * buffer = (MGLBuffer *)data;
 
@@ -336,7 +324,7 @@ PyObject * MGLTexture3D_write(MGLTexture3D * self, PyObject * args) {
 	int pixel_type = self->data_type->gl_type;
 	int format = self->data_type->base_format[self->components];
 
-	if (Py_TYPE(data) == &MGLBuffer_Type) {
+	if (Py_TYPE(data) == MGLBuffer_type) {
 
 		MGLBuffer * buffer = (MGLBuffer *)data;
 
@@ -483,17 +471,6 @@ PyObject * MGLTexture3D_release(MGLTexture3D * self) {
 	MGLTexture3D_Invalidate(self);
 	Py_RETURN_NONE;
 }
-
-PyMethodDef MGLTexture3D_tp_methods[] = {
-	{"write", (PyCFunction)MGLTexture3D_write, METH_VARARGS, 0},
-	{"bind", (PyCFunction)MGLTexture3D_meth_bind, METH_VARARGS, 0},
-	{"use", (PyCFunction)MGLTexture3D_use, METH_VARARGS, 0},
-	{"build_mipmaps", (PyCFunction)MGLTexture3D_build_mipmaps, METH_VARARGS, 0},
-	{"read", (PyCFunction)MGLTexture3D_read, METH_VARARGS, 0},
-	{"read_into", (PyCFunction)MGLTexture3D_read_into, METH_VARARGS, 0},
-	{"release", (PyCFunction)MGLTexture3D_release, METH_NOARGS, 0},
-	{0},
-};
 
 PyObject * MGLTexture3D_get_repeat_x(MGLTexture3D * self) {
 	return PyBool_FromLong(self->repeat_x);
@@ -668,60 +645,11 @@ int MGLTexture3D_set_swizzle(MGLTexture3D * self, PyObject * value, void * closu
 	return 0;
 }
 
-PyGetSetDef MGLTexture3D_tp_getseters[] = {
-	{(char *)"repeat_x", (getter)MGLTexture3D_get_repeat_x, (setter)MGLTexture3D_set_repeat_x, 0, 0},
-	{(char *)"repeat_y", (getter)MGLTexture3D_get_repeat_y, (setter)MGLTexture3D_set_repeat_y, 0, 0},
-	{(char *)"repeat_z", (getter)MGLTexture3D_get_repeat_z, (setter)MGLTexture3D_set_repeat_z, 0, 0},
-	{(char *)"filter", (getter)MGLTexture3D_get_filter, (setter)MGLTexture3D_set_filter, 0, 0},
-	{(char *)"swizzle", (getter)MGLTexture3D_get_swizzle, (setter)MGLTexture3D_set_swizzle, 0, 0},
-	{0},
-};
-
-PyTypeObject MGLTexture3D_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.Texture3D",                                        // tp_name
-	sizeof(MGLTexture3D),                                   // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLTexture3D_tp_dealloc,                    // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLTexture3D_tp_methods,                                // tp_methods
-	0,                                                      // tp_members
-	MGLTexture3D_tp_getseters,                              // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLTexture3D_tp_new,                                    // tp_new
-};
-
 void MGLTexture3D_Invalidate(MGLTexture3D * texture) {
-	if (Py_TYPE(texture) == &MGLInvalidObject_Type) {
+	if (texture->released) {
 		return;
 	}
+	texture->released = true;
 
 	// TODO: decref
 
@@ -729,6 +657,5 @@ void MGLTexture3D_Invalidate(MGLTexture3D * texture) {
 	gl.DeleteTextures(1, (GLuint *)&texture->texture_obj);
 
 	Py_DECREF(texture->context);
-	Py_SET_TYPE(texture, &MGLInvalidObject_Type);
 	Py_DECREF(texture);
 }

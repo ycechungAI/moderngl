@@ -1,7 +1,5 @@
 from typing import Any
 
-from moderngl.mgl import InvalidObject  # type: ignore
-
 __all__ = ['Renderbuffer']
 
 
@@ -101,5 +99,6 @@ class Renderbuffer:
 
     def release(self) -> None:
         """Release the ModernGL object."""
-        if not isinstance(self.mglo, InvalidObject):
+        if self.mglo is not None:
             self.mglo.release()
+            self.mglo = InvalidObject()

@@ -3,19 +3,6 @@
 #include "BufferFormat.hpp"
 #include "InlineMethods.hpp"
 
-PyObject * MGLContext_tp_new(PyTypeObject * type, PyObject * args, PyObject * kwargs) {
-	MGLContext * self = (MGLContext *)type->tp_alloc(type, 0);
-
-	if (self) {
-	}
-
-	return (PyObject *)self;
-}
-
-void MGLContext_tp_dealloc(MGLContext * self) {
-	MGLContext_Type.tp_free((PyObject *)self);
-}
-
 PyObject * MGLContext_enable_only(MGLContext * self, PyObject * args) {
 	int flags;
 
@@ -190,9 +177,9 @@ PyObject * MGLContext_copy_buffer(MGLContext * self, PyObject * args) {
 	int args_ok = PyArg_ParseTuple(
 		args,
 		"O!O!nnn",
-		&MGLBuffer_Type,
+		MGLBuffer_type,
 		&dst,
-		&MGLBuffer_Type,
+		MGLBuffer_type,
 		&src,
 		&size,
 		&read_offset,
@@ -234,7 +221,7 @@ PyObject * MGLContext_copy_framebuffer(MGLContext * self, PyObject * args) {
 		args,
 		"OO!",
 		&dst,
-		&MGLFramebuffer_Type,
+		MGLFramebuffer_type,
 		&src
 	);
 
@@ -251,7 +238,7 @@ PyObject * MGLContext_copy_framebuffer(MGLContext * self, PyObject * args) {
 	// GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT, no data is transferred and a
 	// GL_INVALID_OPERATION error is generated.
 
-	if (Py_TYPE(dst) == &MGLFramebuffer_Type) {
+	if (Py_TYPE(dst) == MGLFramebuffer_type) {
 
 		MGLFramebuffer * dst_framebuffer = (MGLFramebuffer *)dst;
 
@@ -301,7 +288,7 @@ PyObject * MGLContext_copy_framebuffer(MGLContext * self, PyObject * args) {
 		gl.DrawBuffer(prev_draw_buffer);
 		gl.DrawBuffers(self->bound_framebuffer->draw_buffers_len, self->bound_framebuffer->draw_buffers);
 
-	} else if (Py_TYPE(dst) == &MGLTexture_Type) {
+	} else if (Py_TYPE(dst) == MGLTexture_type) {
 
 		MGLTexture * dst_texture = (MGLTexture *)dst;
 
@@ -426,7 +413,8 @@ PyObject * MGLContext_detect_framebuffer(MGLContext * self, PyObject * args) {
 		}
 	}
 
-	MGLFramebuffer * framebuffer = (MGLFramebuffer *)MGLFramebuffer_Type.tp_alloc(&MGLFramebuffer_Type, 0);
+    MGLFramebuffer * framebuffer = PyObject_New(MGLFramebuffer, MGLFramebuffer_type);
+    framebuffer->released = false;
 
 	framebuffer->framebuffer_obj = framebuffer_obj;
 
@@ -541,41 +529,201 @@ PyObject * MGLContext_release(MGLContext * self) {
 	Py_RETURN_NONE;
 }
 
-PyMethodDef MGLContext_tp_methods[] = {
-	{"enable_only", (PyCFunction)MGLContext_enable_only, METH_VARARGS, 0},
-	{"enable", (PyCFunction)MGLContext_enable, METH_VARARGS, 0},
-	{"disable", (PyCFunction)MGLContext_disable, METH_VARARGS, 0},
-	{"enable_direct", (PyCFunction)MGLContext_enable_direct, METH_VARARGS, 0},
-	{"disable_direct", (PyCFunction)MGLContext_disable_direct, METH_VARARGS, 0},
-	{"finish", (PyCFunction)MGLContext_finish, METH_NOARGS, 0},
-	{"copy_buffer", (PyCFunction)MGLContext_copy_buffer, METH_VARARGS, 0},
-	{"copy_framebuffer", (PyCFunction)MGLContext_copy_framebuffer, METH_VARARGS, 0},
-	{"detect_framebuffer", (PyCFunction)MGLContext_detect_framebuffer, METH_VARARGS, 0},
-	{"clear_samplers", (PyCFunction)MGLContext_clear_samplers, METH_VARARGS, 0},
+PyObject * MGLContext_get_ubo_binding(MGLContext * self, PyObject * args) {
+	int program_obj;
+	int index;
+    if (!PyArg_ParseTuple(args, "II", &program_obj, &index)) {
+        return NULL;
+    }
+	int binding = 0;
+	self->gl.GetActiveUniformBlockiv(program_obj, index, GL_UNIFORM_BLOCK_BINDING, &binding);
+	return PyLong_FromLong(binding);
+}
 
-	{"buffer", (PyCFunction)MGLContext_buffer, METH_VARARGS, 0},
-	{"texture", (PyCFunction)MGLContext_texture, METH_VARARGS, 0},
-	{"texture3d", (PyCFunction)MGLContext_texture3d, METH_VARARGS, 0},
-	{"texture_array", (PyCFunction)MGLContext_texture_array, METH_VARARGS, 0},
-	{"texture_cube", (PyCFunction)MGLContext_texture_cube, METH_VARARGS, 0},
-	{"depth_texture", (PyCFunction)MGLContext_depth_texture, METH_VARARGS, 0},
-	{"external_texture", (PyCFunction)MGLContext_external_texture, METH_VARARGS, 0},
-	{"vertex_array", (PyCFunction)MGLContext_vertex_array, METH_VARARGS, 0},
-	{"program", (PyCFunction)MGLContext_program, METH_VARARGS, 0},
-	// {"shader", (PyCFunction)MGLContext_shader, METH_VARARGS, 0},
-	{"framebuffer", (PyCFunction)MGLContext_framebuffer, METH_VARARGS, 0},
-	{"renderbuffer", (PyCFunction)MGLContext_renderbuffer, METH_VARARGS, 0},
-	{"depth_renderbuffer", (PyCFunction)MGLContext_depth_renderbuffer, METH_VARARGS, 0},
-	{"compute_shader", (PyCFunction)MGLContext_compute_shader, METH_VARARGS, 0},
-	{"query", (PyCFunction)MGLContext_query, METH_VARARGS, 0},
-	{"scope", (PyCFunction)MGLContext_scope, METH_VARARGS, 0},
-	{"sampler", (PyCFunction)MGLContext_sampler, METH_VARARGS, 0},
+PyObject * MGLContext_set_ubo_binding(MGLContext * self, PyObject * args) {
+	int program_obj;
+	int index;
+	int binding;
+    if (!PyArg_ParseTuple(args, "III", &program_obj, &index, &binding)) {
+        return NULL;
+    }
+	self->gl.UniformBlockBinding(program_obj, index, binding);
+	Py_RETURN_NONE;
+}
 
-	{"__enter__", (PyCFunction)MGLContext_enter, METH_NOARGS, 0},
-	{"__exit__", (PyCFunction)MGLContext_exit, METH_VARARGS, 0},
-	{"release", (PyCFunction)MGLContext_release, METH_NOARGS, 0},
-	{0},
-};
+char uniform_value[65536];
+
+PyObject * MGLContext_read_uniform(MGLContext * self, PyObject * args) {
+    int program_obj;
+    int location;
+    int gl_type;
+    int array_length;
+    int element_size;
+
+    if (!PyArg_ParseTuple(args, "IIIII", &program_obj, &location, &gl_type, &array_length, &element_size)) {
+        return NULL;
+    }
+
+    int size = array_length * element_size;
+    PyObject * res = PyBytes_FromStringAndSize(NULL, size);
+    char * ptr = PyBytes_AsString(res);
+
+    const GLMethods & gl = self->gl;
+
+    for (int i = 0; i < array_length; ++i) {
+        switch (gl_type) {
+            case GL_BOOL: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_BOOL_VEC2: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_BOOL_VEC3: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_BOOL_VEC4: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_INT: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_INT_VEC2: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_INT_VEC3: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_INT_VEC4: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_UNSIGNED_INT: gl.GetUniformuiv(program_obj, location + i, (unsigned *)(ptr + i * element_size)); break;
+            case GL_UNSIGNED_INT_VEC2: gl.GetUniformuiv(program_obj, location + i, (unsigned *)(ptr + i * element_size)); break;
+            case GL_UNSIGNED_INT_VEC3: gl.GetUniformuiv(program_obj, location + i, (unsigned *)(ptr + i * element_size)); break;
+            case GL_UNSIGNED_INT_VEC4: gl.GetUniformuiv(program_obj, location + i, (unsigned *)(ptr + i * element_size)); break;
+            case GL_FLOAT: gl.GetUniformfv(program_obj, location + i, (float *)(ptr + i * element_size)); break;
+            case GL_FLOAT_VEC2: gl.GetUniformfv(program_obj, location + i, (float *)(ptr + i * element_size)); break;
+            case GL_FLOAT_VEC3: gl.GetUniformfv(program_obj, location + i, (float *)(ptr + i * element_size)); break;
+            case GL_FLOAT_VEC4: gl.GetUniformfv(program_obj, location + i, (float *)(ptr + i * element_size)); break;
+            case GL_DOUBLE: gl.GetUniformdv(program_obj, location + i, (double *)(ptr + i * element_size)); break;
+            case GL_DOUBLE_VEC2: gl.GetUniformdv(program_obj, location + i, (double *)(ptr + i * element_size)); break;
+            case GL_DOUBLE_VEC3: gl.GetUniformdv(program_obj, location + i, (double *)(ptr + i * element_size)); break;
+            case GL_DOUBLE_VEC4: gl.GetUniformdv(program_obj, location + i, (double *)(ptr + i * element_size)); break;
+            case GL_SAMPLER_1D: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_SAMPLER_1D_ARRAY: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_INT_SAMPLER_1D: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_INT_SAMPLER_1D_ARRAY: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_SAMPLER_2D: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_INT_SAMPLER_2D: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_UNSIGNED_INT_SAMPLER_2D: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_SAMPLER_2D_ARRAY: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_INT_SAMPLER_2D_ARRAY: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_SAMPLER_3D: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_INT_SAMPLER_3D: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_UNSIGNED_INT_SAMPLER_3D: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_SAMPLER_2D_SHADOW: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_SAMPLER_2D_MULTISAMPLE: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_INT_SAMPLER_2D_MULTISAMPLE: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_SAMPLER_2D_MULTISAMPLE_ARRAY: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_SAMPLER_CUBE: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_INT_SAMPLER_CUBE: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_UNSIGNED_INT_SAMPLER_CUBE: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_IMAGE_2D: gl.GetUniformiv(program_obj, location + i, (int *)(ptr + i * element_size)); break;
+            case GL_FLOAT_MAT2: gl.GetUniformfv(program_obj, location + i, (float *)(ptr + i * element_size)); break;
+            case GL_FLOAT_MAT2x3: gl.GetUniformfv(program_obj, location + i, (float *)(ptr + i * element_size)); break;
+            case GL_FLOAT_MAT2x4: gl.GetUniformfv(program_obj, location + i, (float *)(ptr + i * element_size)); break;
+            case GL_FLOAT_MAT3x2: gl.GetUniformfv(program_obj, location + i, (float *)(ptr + i * element_size)); break;
+            case GL_FLOAT_MAT3: gl.GetUniformfv(program_obj, location + i, (float *)(ptr + i * element_size)); break;
+            case GL_FLOAT_MAT3x4: gl.GetUniformfv(program_obj, location + i, (float *)(ptr + i * element_size)); break;
+            case GL_FLOAT_MAT4x2: gl.GetUniformfv(program_obj, location + i, (float *)(ptr + i * element_size)); break;
+            case GL_FLOAT_MAT4x3: gl.GetUniformfv(program_obj, location + i, (float *)(ptr + i * element_size)); break;
+            case GL_FLOAT_MAT4: gl.GetUniformfv(program_obj, location + i, (float *)(ptr + i * element_size)); break;
+            case GL_DOUBLE_MAT2: gl.GetUniformdv(program_obj, location + i, (double *)(ptr + i * element_size)); break;
+            case GL_DOUBLE_MAT2x3: gl.GetUniformdv(program_obj, location + i, (double *)(ptr + i * element_size)); break;
+            case GL_DOUBLE_MAT2x4: gl.GetUniformdv(program_obj, location + i, (double *)(ptr + i * element_size)); break;
+            case GL_DOUBLE_MAT3x2: gl.GetUniformdv(program_obj, location + i, (double *)(ptr + i * element_size)); break;
+            case GL_DOUBLE_MAT3: gl.GetUniformdv(program_obj, location + i, (double *)(ptr + i * element_size)); break;
+            case GL_DOUBLE_MAT3x4: gl.GetUniformdv(program_obj, location + i, (double *)(ptr + i * element_size)); break;
+            case GL_DOUBLE_MAT4x2: gl.GetUniformdv(program_obj, location + i, (double *)(ptr + i * element_size)); break;
+            case GL_DOUBLE_MAT4x3: gl.GetUniformdv(program_obj, location + i, (double *)(ptr + i * element_size)); break;
+            case GL_DOUBLE_MAT4: gl.GetUniformdv(program_obj, location + i, (double *)(ptr + i * element_size)); break;
+        }
+    }
+
+    return res;
+}
+
+PyObject * MGLContext_write_uniform(MGLContext * self, PyObject * args) {
+    int program_obj;
+    int location;
+    int gl_type;
+    int array_length;
+    Py_buffer view = {};
+
+    if (!PyArg_ParseTuple(args, "IIIIy*", &program_obj, &location, &gl_type, &array_length, &view)) {
+        return NULL;
+    }
+
+    const GLMethods & gl = self->gl;
+    char * ptr = (char *)view.buf;
+
+    gl.UseProgram(program_obj);
+
+    switch (gl_type) {
+        case GL_BOOL: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_BOOL_VEC2: gl.Uniform2iv(location, array_length, (int *)ptr); break;
+        case GL_BOOL_VEC3: gl.Uniform3iv(location, array_length, (int *)ptr); break;
+        case GL_BOOL_VEC4: gl.Uniform4iv(location, array_length, (int *)ptr); break;
+        case GL_INT: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_INT_VEC2: gl.Uniform2iv(location, array_length, (int *)ptr); break;
+        case GL_INT_VEC3: gl.Uniform3iv(location, array_length, (int *)ptr); break;
+        case GL_INT_VEC4: gl.Uniform4iv(location, array_length, (int *)ptr); break;
+        case GL_UNSIGNED_INT: gl.Uniform1uiv(location, array_length, (unsigned *)ptr); break;
+        case GL_UNSIGNED_INT_VEC2: gl.Uniform2uiv(location, array_length, (unsigned *)ptr); break;
+        case GL_UNSIGNED_INT_VEC3: gl.Uniform3uiv(location, array_length, (unsigned *)ptr); break;
+        case GL_UNSIGNED_INT_VEC4: gl.Uniform4uiv(location, array_length, (unsigned *)ptr); break;
+        case GL_FLOAT: gl.Uniform1fv(location, array_length, (float *)ptr); break;
+        case GL_FLOAT_VEC2: gl.Uniform2fv(location, array_length, (float *)ptr); break;
+        case GL_FLOAT_VEC3: gl.Uniform3fv(location, array_length, (float *)ptr); break;
+        case GL_FLOAT_VEC4: gl.Uniform4fv(location, array_length, (float *)ptr); break;
+        case GL_DOUBLE: gl.Uniform1dv(location, array_length, (double *)ptr); break;
+        case GL_DOUBLE_VEC2: gl.Uniform2dv(location, array_length, (double *)ptr); break;
+        case GL_DOUBLE_VEC3: gl.Uniform3dv(location, array_length, (double *)ptr); break;
+        case GL_DOUBLE_VEC4: gl.Uniform4dv(location, array_length, (double *)ptr); break;
+        case GL_SAMPLER_1D: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_SAMPLER_1D_ARRAY: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_INT_SAMPLER_1D: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_INT_SAMPLER_1D_ARRAY: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_SAMPLER_2D: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_INT_SAMPLER_2D: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_UNSIGNED_INT_SAMPLER_2D: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_SAMPLER_2D_ARRAY: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_INT_SAMPLER_2D_ARRAY: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_SAMPLER_3D: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_INT_SAMPLER_3D: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_UNSIGNED_INT_SAMPLER_3D: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_SAMPLER_2D_SHADOW: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_SAMPLER_2D_MULTISAMPLE: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_INT_SAMPLER_2D_MULTISAMPLE: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_SAMPLER_2D_MULTISAMPLE_ARRAY: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_SAMPLER_CUBE: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_INT_SAMPLER_CUBE: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_UNSIGNED_INT_SAMPLER_CUBE: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_IMAGE_2D: gl.Uniform1iv(location, array_length, (int *)ptr); break;
+        case GL_FLOAT_MAT2: gl.UniformMatrix2fv(location, array_length, false, (float *)ptr); break;
+        case GL_FLOAT_MAT2x3: gl.UniformMatrix2x3fv(location, array_length, false, (float *)ptr); break;
+        case GL_FLOAT_MAT2x4: gl.UniformMatrix2x4fv(location, array_length, false, (float *)ptr); break;
+        case GL_FLOAT_MAT3x2: gl.UniformMatrix3x2fv(location, array_length, false, (float *)ptr); break;
+        case GL_FLOAT_MAT3: gl.UniformMatrix3fv(location, array_length, false, (float *)ptr); break;
+        case GL_FLOAT_MAT3x4: gl.UniformMatrix3x4fv(location, array_length, false, (float *)ptr); break;
+        case GL_FLOAT_MAT4x2: gl.UniformMatrix4x2fv(location, array_length, false, (float *)ptr); break;
+        case GL_FLOAT_MAT4x3: gl.UniformMatrix4x3fv(location, array_length, false, (float *)ptr); break;
+        case GL_FLOAT_MAT4: gl.UniformMatrix4fv(location, array_length, false, (float *)ptr); break;
+        case GL_DOUBLE_MAT2: gl.UniformMatrix2dv(location, array_length, false, (double *)ptr); break;
+        case GL_DOUBLE_MAT2x3: gl.UniformMatrix2x3dv(location, array_length, false, (double *)ptr); break;
+        case GL_DOUBLE_MAT2x4: gl.UniformMatrix2x4dv(location, array_length, false, (double *)ptr); break;
+        case GL_DOUBLE_MAT3x2: gl.UniformMatrix3x2dv(location, array_length, false, (double *)ptr); break;
+        case GL_DOUBLE_MAT3: gl.UniformMatrix3dv(location, array_length, false, (double *)ptr); break;
+        case GL_DOUBLE_MAT3x4: gl.UniformMatrix3x4dv(location, array_length, false, (double *)ptr); break;
+        case GL_DOUBLE_MAT4x2: gl.UniformMatrix4x2dv(location, array_length, false, (double *)ptr); break;
+        case GL_DOUBLE_MAT4x3: gl.UniformMatrix4x3dv(location, array_length, false, (double *)ptr); break;
+        case GL_DOUBLE_MAT4: gl.UniformMatrix4dv(location, array_length, false, (double *)ptr); break;
+    }
+
+    PyBuffer_Release(&view);
+    Py_RETURN_NONE;
+}
 
 PyObject * MGLContext_get_line_width(MGLContext * self) {
 	float line_width = 0.0f;
@@ -804,7 +952,7 @@ MGLFramebuffer * MGLContext_get_fbo(MGLContext * self) {
 }
 
 int MGLContext_set_fbo(MGLContext * self, PyObject * value) {
-	if (Py_TYPE(value) != &MGLFramebuffer_Type) {
+	if (Py_TYPE(value) != MGLFramebuffer_type) {
 		return -1;
 	}
 	Py_INCREF(value);
@@ -1460,88 +1608,15 @@ PyObject * MGLContext_get_info(MGLContext * self, void * closure) {
 	return info;
 }
 
-PyGetSetDef MGLContext_tp_getseters[] = {
-	{(char *)"line_width", (getter)MGLContext_get_line_width, (setter)MGLContext_set_line_width, 0, 0},
-	{(char *)"point_size", (getter)MGLContext_get_point_size, (setter)MGLContext_set_point_size, 0, 0},
-
-	{(char *)"depth_func", (getter)MGLContext_get_depth_func, (setter)MGLContext_set_depth_func, 0, 0},
-	{(char *)"blend_func", (getter)MGLContext_get_blend_func, (setter)MGLContext_set_blend_func, 0, 0},
-	{(char *)"blend_equation", (getter)MGLContext_get_blend_equation, (setter)MGLContext_set_blend_equation, 0, 0},
-	{(char *)"multisample", (getter)MGLContext_get_multisample, (setter)MGLContext_set_multisample, 0, 0},
-
-	{(char *)"provoking_vertex", (getter)MGLContext_get_provoking_vertex, (setter)MGLContext_set_provoking_vertex, 0, 0},
-	{(char *)"polygon_offset", (getter)MGLContext_get_polygon_offset, (setter)MGLContext_set_polygon_offset, 0, 0},
-
-	{(char *)"default_texture_unit", (getter)MGLContext_get_default_texture_unit, (setter)MGLContext_set_default_texture_unit, 0, 0},
-	{(char *)"max_samples", (getter)MGLContext_get_max_samples, 0, 0, 0},
-	{(char *)"max_integer_samples", (getter)MGLContext_get_max_integer_samples, 0, 0, 0},
-	{(char *)"max_texture_units", (getter)MGLContext_get_max_texture_units, 0, 0, 0},
-	{(char *)"max_anisotropy", (getter)MGLContext_get_max_anisotropy, 0, 0, 0},
-
-	{(char *)"fbo", (getter)MGLContext_get_fbo, (setter)MGLContext_set_fbo, 0, 0},
-
-	{(char *)"wireframe", (getter)MGLContext_get_wireframe, (setter)MGLContext_set_wireframe, 0, 0},
-	{(char *)"front_face", (getter)MGLContext_get_front_face, (setter)MGLContext_set_front_face, 0, 0},
-	{(char *)"cull_face", (getter)MGLContext_get_cull_face, (setter)MGLContext_set_cull_face, 0, 0},
-
-	{(char *)"patch_vertices", (getter)MGLContext_get_patch_vertices, (setter)MGLContext_set_patch_vertices, 0, 0},
-
-	{(char *)"extensions", (getter)MGLContext_get_extensions, 0, 0, 0},
-	{(char *)"info", (getter)MGLContext_get_info, 0, 0, 0},
-	{(char *)"error", (getter)MGLContext_get_error, 0, 0, 0},
-	{0},
-};
-
-PyTypeObject MGLContext_Type = {
-	PyVarObject_HEAD_INIT(0, 0)
-	"mgl.Context",                                          // tp_name
-	sizeof(MGLContext),                                     // tp_basicsize
-	0,                                                      // tp_itemsize
-	(destructor)MGLContext_tp_dealloc,                      // tp_dealloc
-	0,                                                      // tp_print
-	0,                                                      // tp_getattr
-	0,                                                      // tp_setattr
-	0,                                                      // tp_reserved
-	0,                                                      // tp_repr
-	0,                                                      // tp_as_number
-	0,                                                      // tp_as_sequence
-	0,                                                      // tp_as_mapping
-	0,                                                      // tp_hash
-	0,                                                      // tp_call
-	0,                                                      // tp_str
-	0,                                                      // tp_getattro
-	0,                                                      // tp_setattro
-	0,                                                      // tp_as_buffer
-	Py_TPFLAGS_DEFAULT,                                     // tp_flags
-	0,                                                      // tp_doc
-	0,                                                      // tp_traverse
-	0,                                                      // tp_clear
-	0,                                                      // tp_richcompare
-	0,                                                      // tp_weaklistoffset
-	0,                                                      // tp_iter
-	0,                                                      // tp_iternext
-	MGLContext_tp_methods,                                  // tp_methods
-	0,                                                      // tp_members
-	MGLContext_tp_getseters,                                // tp_getset
-	0,                                                      // tp_base
-	0,                                                      // tp_dict
-	0,                                                      // tp_descr_get
-	0,                                                      // tp_descr_set
-	0,                                                      // tp_dictoffset
-	0,                                                      // tp_init
-	0,                                                      // tp_alloc
-	MGLContext_tp_new,                                      // tp_new
-};
-
 void MGLContext_Invalidate(MGLContext * context) {
-	if (Py_TYPE(context) == &MGLInvalidObject_Type) {
+	if (context->released) {
 		return;
 	}
+	context->released = true;
 
 	PyObject_CallMethod(context->ctx, "release", NULL);
 
 	// TODO: decref
 
-	Py_SET_TYPE(context, &MGLInvalidObject_Type);
 	Py_DECREF(context);
 }
