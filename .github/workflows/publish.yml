@@ -31,7 +31,7 @@ jobs:
           platforms: arm64
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.3.1
+        uses: pypa/cibuildwheel@v2.11.2
         with:
           output-dir: dist/
         env:
@@ -80,7 +80,7 @@ jobs:
           mkdir dist
           cp temp-dist/*/*.whl dist/
           cp temp-dist/*/*.tar.gz dist/
-      - uses: pypa/gh-action-pypi-publish@v1.4.2
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
+      # - uses: pypa/gh-action-pypi-publish@v1.4.2
+      #   with:
+      #     user: __token__
+      #     password: ${{ secrets.PYPI_API_TOKEN }}
