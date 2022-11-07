@@ -821,8 +821,8 @@ PyGetSetDef MGLVertexArray_getset[] = {
 
 PyType_Slot MGLBuffer_slots[] = {
     #if PY_VERSION_HEX >= 0x03090000
-    {Py_bf_getbuffer, MGLBuffer_tp_as_buffer_get_view},
-    {Py_bf_releasebuffer, MGLBuffer_tp_as_buffer_release_view},
+    {Py_bf_getbuffer, (void *)MGLBuffer_tp_as_buffer_get_view},
+    {Py_bf_releasebuffer, (void *)MGLBuffer_tp_as_buffer_release_view},
     #endif
     {Py_tp_methods, MGLBuffer_methods},
     {Py_tp_dealloc, (void *)default_dealloc},
