@@ -250,7 +250,7 @@ class Framebuffer:
             red, green, blue, alpha, *_ = tuple(color) + (0.0, 0.0, 0.0, 0.0)
 
         if viewport is not None:
-            viewport = tuple(viewport)
+            viewport = tuple(viewport)  # type: ignore
 
         self.mglo.clear(red, green, blue, alpha, depth, viewport)
 

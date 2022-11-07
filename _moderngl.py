@@ -118,7 +118,7 @@ class Attribute:
         return self._dimension
 
     @property
-    def shape(self) -> str:
+    def shape(self) -> int:
         """
         str: The shape is a single character, representing the scalar type of the attribute.
 
