@@ -1,5 +1,7 @@
 from typing import Any
 
+from _moderngl import InvalidObject
+
 __all__ = ['Renderbuffer']
 
 
