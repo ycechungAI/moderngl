@@ -1624,6 +1624,8 @@ class Context:
 
         if framebuffer is None:
             framebuffer = self.screen
+            if framebuffer is None:
+                raise RuntimeError('A framebuffer must be specified')
 
         mgl_textures = tuple((tex.mglo, idx) for tex, idx in textures)
         mgl_uniform_buffers = tuple((buf.mglo, idx) for buf, idx in uniform_buffers)
