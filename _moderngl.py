@@ -329,10 +329,16 @@ class Uniform:
         """
         data = self.read()
         if self._array_length > 1:
-            return [
-                struct.unpack(self._fmt, data[i * self._element_size : i * self._element_size + self._element_size])
-                for i in range(self._array_length)
-            ]
+            if self._dimension > 1:
+                return [
+                    struct.unpack(self._fmt, data[i * self._element_size : i * self._element_size + self._element_size])
+                    for i in range(self._array_length)
+                ]
+            else:
+                return [
+                    struct.unpack(self._fmt, data[i * self._element_size : i * self._element_size + self._element_size])[0]
+                    for i in range(self._array_length)
+                ]
         elif self._dimension > 1:
             return struct.unpack(self._fmt, data)
         else:
@@ -341,7 +347,10 @@ class Uniform:
     @value.setter
     def value(self, value: Any) -> None:
         if self._array_length > 1:
-            data = b''.join(struct.pack(self._fmt, *row) for row in value)
+            if self._dimension > 1:
+                data = b''.join(struct.pack(self._fmt, *row) for row in value)
+            else:
+                data = b''.join(struct.pack(self._fmt, item) for item in value)
         elif self._dimension > 1:
             data = struct.pack(self._fmt, *value)
         else:
