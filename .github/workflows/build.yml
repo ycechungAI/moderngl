@@ -37,4 +37,4 @@ jobs:
           python setup.py bdist_wheel
           python -m pip install dist/*.whl
           flake8 moderngl
-          mypy --check-untyped-defs moderngl
+          mypy moderngl
