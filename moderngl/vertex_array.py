@@ -255,7 +255,7 @@ class VertexArray:
     def transform(
         self,
         buffer: Union["Buffer", List["Buffer"]],
-        mode: int = None,
+        mode: Optional[int] = None,
         vertices: int = -1,
         *,
         first: int = 0,
