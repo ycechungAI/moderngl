@@ -396,6 +396,7 @@ int MGLContext_set_patch_vertices(MGLContext * self, PyObject * value);
 PyObject * MGLContext_get_error(MGLContext * self, void * closure);
 PyObject * MGLContext_get_version_code(MGLContext * self, void * closure);
 PyObject * MGLContext_get_extensions(MGLContext * self, void * closure);
+PyObject * MGLContext_get_context(MGLContext * self, void * closure);
 PyObject * MGLContext_get_info(MGLContext * self, void * closure);
 void MGLContext_Invalidate(MGLContext * context);
 PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args);
@@ -644,6 +645,8 @@ PyGetSetDef MGLContext_getset[] = {
 	{(char *)"extensions", (getter)MGLContext_get_extensions, 0, 0, 0},
 	{(char *)"info", (getter)MGLContext_get_info, 0, 0, 0},
 	{(char *)"error", (getter)MGLContext_get_error, 0, 0, 0},
+
+	{(char *)"_context", (getter)MGLContext_get_context, 0, 0, 0},
 	{0},
 };
 

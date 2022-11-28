@@ -1096,6 +1096,11 @@ PyObject * MGLContext_get_extensions(MGLContext * self, void * closure) {
 	return self->extensions;
 }
 
+PyObject * MGLContext_get_context(MGLContext * self, void * closure) {
+    Py_INCREF(self->ctx);
+	return self->ctx;
+}
+
 PyObject * MGLContext_get_info(MGLContext * self, void * closure) {
 	const GLMethods & gl = self->gl;
 
