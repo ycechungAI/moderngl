@@ -1,17 +1,20 @@
 from typing import Any, Deque, Dict, Generator, List, Optional, Set, Tuple, Union
 
-POINTS = 0x0000
+class Constant: ...
+
+
+POINTS: Constant
 '''
 Each vertex represents a point
 '''
 
-LINES = 0x0001
+LINES: Constant
 '''
 Vertices 0 and 1 are considered a line. Vertices 2 and 3 are considered a line.
 And so on. If the user specifies a non-even number of vertices, then the extra vertex is ignored.
 '''
 
-LINE_LOOP = 0x0002
+LINE_LOOP: Constant
 '''
 As line strips, except that the first and last vertices are also used as a line.
 Thus, you get n lines for n input vertices. If the user only specifies 1 vertex,
@@ -19,18 +22,18 @@ the drawing command is ignored. The line between the first and last vertices hap
 after all of the previous lines in the sequence.
 '''
 
-LINE_STRIP = 0x0003
+LINE_STRIP: Constant
 '''
 The adjacent vertices are considered lines. Thus, if you pass n vertices, you will get n-1 lines.
 If the user only specifies 1 vertex, the drawing command is ignored.
 '''
 
-TRIANGLES = 0x0004
+TRIANGLES: Constant
 '''
 Vertices 0, 1, and 2 form a triangle. Vertices 3, 4, and 5 form a triangle. And so on.
 '''
 
-TRIANGLE_STRIP = 0x0005
+TRIANGLE_STRIP: Constant
 '''
 Every group of 3 adjacent vertices forms a triangle. The face direction of the
 strip is determined by the winding of the first triangle. Each successive triangle
@@ -38,7 +41,7 @@ will have its effective face order reversed, so the system compensates for that
 by testing it in the opposite way. A vertex stream of n length will generate n-2 triangles.
 '''
 
-TRIANGLE_FAN = 0x0006
+TRIANGLE_FAN: Constant
 '''
 The first vertex is always held fixed. From there on, every group of 2 adjacent
 vertices form a triangle with the first. So with a vertex stream, you get a list
@@ -46,35 +49,35 @@ of triangles like so: (0, 1, 2) (0, 2, 3), (0, 3, 4), etc. A vertex stream of
 n length will generate n-2 triangles.
 '''
 
-LINES_ADJACENCY = 0x000A
+LINES_ADJACENCY: Constant
 '''
 These are special primitives that are expected to be used specifically with
 geomtry shaders. These primitives give the geometry shader more vertices
 to work with for each input primitive. Data needs to be duplicated in buffers.
 '''
 
-LINE_STRIP_ADJACENCY = 0x000B
+LINE_STRIP_ADJACENCY: Constant
 '''
 These are special primitives that are expected to be used specifically with
 geomtry shaders. These primitives give the geometry shader more vertices
 to work with for each input primitive. Data needs to be duplicated in buffers.
 '''
 
-TRIANGLES_ADJACENCY = 0x000C
+TRIANGLES_ADJACENCY: Constant
 '''
 These are special primitives that are expected to be used specifically with
 geomtry shaders. These primitives give the geometry shader more vertices
 to work with for each input primitive. Data needs to be duplicated in buffers.
 '''
 
-TRIANGLE_STRIP_ADJACENCY = 0x0000D
+TRIANGLE_STRIP_ADJACENCY: Constant
 '''
 These are special primitives that are expected to be used specifically with
 geomtry shaders. These primitives give the geometry shader more vertices
 to work with for each input primitive. Data needs to be duplicated in buffers.
 '''
 
-PATCHES = 0x000E
+PATCHES: Constant
 '''
 primitive type can only be used when Tessellation is active. It is a primitive
 with a user-defined number of vertices, which is then tessellated based on the
@@ -82,13 +85,13 @@ control and evaluation shaders into regular points, lines, or triangles, dependi
 on the TES's settings.
 '''
 
-NEAREST = 0x2600
+NEAREST: Constant
 '''
 Returns the value of the texture element that is nearest
 (in Manhattan distance) to the specified texture coordinates.
 '''
 
-LINEAR = 0x2601
+LINEAR: Constant
 '''
 Returns the weighted average of the four texture elements
 that are closest to the specified texture coordinates.
@@ -97,7 +100,7 @@ of a texture, depending on the values of texture repeat mode,
 and on the exact mapping.
 '''
 
-NEAREST_MIPMAP_NEAREST = 0x2700
+NEAREST_MIPMAP_NEAREST: Constant
 '''
 Chooses the mipmap that most closely matches the size of the
 pixel being textured and uses the ``NEAREST``` criterion (the texture
@@ -105,7 +108,7 @@ element closest to the specified texture coordinates) to produce
 a texture value.
 '''
 
-LINEAR_MIPMAP_NEAREST = 0x2701
+LINEAR_MIPMAP_NEAREST: Constant
 '''
 Chooses the mipmap that most closely matches the size of the pixel
 being textured and uses the ``LINEAR`` criterion (a weighted average
@@ -113,7 +116,7 @@ of the four texture elements that are closest to the specified
 texture coordinates) to produce a texture value.
 '''
 
-NEAREST_MIPMAP_LINEAR = 0x2702
+NEAREST_MIPMAP_LINEAR: Constant
 '''
 Chooses the two mipmaps that most closely match the size of the
 pixel being textured and uses the ``NEAREST`` criterion (the texture
@@ -122,7 +125,7 @@ a texture value from each mipmap. The final texture value is a
 weighted average of those two values.
 '''
 
-LINEAR_MIPMAP_LINEAR = 0x2703
+LINEAR_MIPMAP_LINEAR: Constant
 '''
 Chooses the two mipmaps that most closely match the size of the pixel
 being textured and uses the ``LINEAR`` criterion (a weighted average
@@ -131,22 +134,22 @@ coordinates) to produce a texture value from each mipmap.
 The final texture value is a weighted average of those two values.
 '''
 
-NOTHING = 0
+NOTHING: Constant
 '''Represents no states. Can be used with :py:meth:`Context.enable_only` to disable all states.'''
 
-BLEND = 1
+BLEND: Constant
 '''Enable/disable blending'''
 
-DEPTH_TEST = 2
+DEPTH_TEST: Constant
 '''Enable/disable depth testing'''
 
-CULL_FACE = 4
+CULL_FACE: Constant
 '''Enable/disable face culling'''
 
-RASTERIZER_DISCARD = 8
+RASTERIZER_DISCARD: Constant
 '''Enable/disable rasterization'''
 
-PROGRAM_POINT_SIZE = 16
+PROGRAM_POINT_SIZE: Constant
 '''
 Context flag: Enables ``gl_PointSize`` in vertex or geometry shaders.
 
@@ -159,67 +162,67 @@ or may not appear depending if the drivers enforce some default value for ``gl_P
 When disabled :py:attr:`Context.point_size` is used.
 '''
 
-ZERO = 0x0000
+ZERO: Constant
 '''(0,0,0,0)'''
 
-ONE = 0x0001
+ONE: Constant
 '''(1,1,1,1)'''
 
-SRC_COLOR = 0x0300
+SRC_COLOR: Constant
 '''(Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)'''
 
-ONE_MINUS_SRC_COLOR = 0x0301
+ONE_MINUS_SRC_COLOR: Constant
 '''(1,1,1,1) - (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)'''
 
-SRC_ALPHA = 0x0302
+SRC_ALPHA: Constant
 '''(As0/kA,As0/kA,As0/kA,As0/kA)'''
 
-ONE_MINUS_SRC_ALPHA = 0x0303
+ONE_MINUS_SRC_ALPHA: Constant
 '''(1,1,1,1) - (As0/kA,As0/kA,As0/kA,As0/kA)'''
 
-DST_ALPHA = 0x0304
+DST_ALPHA: Constant
 '''(Ad/kA,Ad/kA,Ad/kA,Ad/kA)'''
 
-ONE_MINUS_DST_ALPHA = 0x0305
+ONE_MINUS_DST_ALPHA: Constant
 '''(1,1,1,1) - (Ad/kA,Ad/kA,Ad/kA,Ad/kA)'''
 
-DST_COLOR = 0x0306
+DST_COLOR: Constant
 '''(Rd/kR,Gd/kG,Bd/kB,Ad/kA)'''
 
-ONE_MINUS_DST_COLOR = 0x0307
+ONE_MINUS_DST_COLOR: Constant
 '''(1,1,1,1) - (Rd/kR,Gd/kG,Bd/kB,Ad/kA)'''
 
-FUNC_ADD = 0x8006
+FUNC_ADD: Constant
 '''source + destination'''
 
-FUNC_SUBTRACT = 0x800A
+FUNC_SUBTRACT: Constant
 '''source - destination'''
 
-FUNC_REVERSE_SUBTRACT = 0x800B
+FUNC_REVERSE_SUBTRACT: Constant
 '''destination - source'''
 
-MIN = 0x8007
+MIN: Constant
 '''Minimum of source and destination'''
 
-MAX = 0x8008
+MAX: Constant
 '''Maximum of source and destination'''
 
-DEFAULT_BLENDING = (SRC_ALPHA, ONE_MINUS_SRC_ALPHA)
+DEFAULT_BLENDING: Constant
 '''Shotcut for the default blending ``SRC_ALPHA, ONE_MINUS_SRC_ALPHA``'''
 
-ADDITIVE_BLENDING = (ONE, ONE)
+ADDITIVE_BLENDING: Constant
 '''Shotcut for additive blending ``ONE, ONE``'''
 
-PREMULTIPLIED_ALPHA = (SRC_ALPHA, ONE)
+PREMULTIPLIED_ALPHA: Constant
 '''Shotcut for blend mode when using premultiplied alpha ``SRC_ALPHA, ONE``'''
 
-FIRST_VERTEX_CONVENTION = 0x8E4D
+FIRST_VERTEX_CONVENTION: Constant
 '''
 Specifies the first vertex should be used as the source of data for flat shaded varyings.
 Used with :py:attr:`Context.provoking_vertex`.
 '''
 
-LAST_VERTEX_CONVENTION = 0x8E4E
+LAST_VERTEX_CONVENTION: Constant
 '''
 Specifies the last vertex should be used as the source of data for flat shaded varyings.
 Used with :py:attr:`Context.provoking_vertex`.
@@ -962,19 +965,19 @@ class Context:
     ModernGL objects can be created from this class.
     '''
 
-    NOTHING = 0
+    NOTHING: Constant
     '''Represents no states. Can be used with :py:meth:`Context.enable_only` to disable all states.'''
 
-    BLEND = 1
+    BLEND: Constant
     '''Enable/disable blending'''
 
-    DEPTH_TEST = 2
+    DEPTH_TEST: Constant
     '''Enable/disable depth testing'''
 
-    CULL_FACE = 4
+    CULL_FACE: Constant
     '''Enable/disable face culling'''
 
-    RASTERIZER_DISCARD = 8
+    RASTERIZER_DISCARD: Constant
     '''Enable/disable rasterization
 
     Context flag: Enables ``gl_PointSize`` in vertex or geometry shaders.
@@ -985,163 +988,163 @@ class Context:
     If this value is not set in the shader the behavior is undefined. This means the points may
     or may not appear depending if the drivers enforce some default value for ``gl_PointSize``.'''
 
-    PROGRAM_POINT_SIZE = 16
+    PROGRAM_POINT_SIZE: Constant
     '''When disabled :py:attr:`Context.point_size` is used.'''
 
-    POINTS = 0x0000
+    POINTS: Constant
     '''Each vertex represents a point'''
 
-    LINES = 0x0001
+    LINES: Constant
     '''Vertices 0 and 1 are considered a line. Vertices 2 and 3 are considered a line.
     And so on. If the user specifies a non-even number of vertices, then the extra vertex is ignored.'''
 
-    LINE_LOOP = 0x0002
+    LINE_LOOP: Constant
     '''As line strips, except that the first and last vertices are also used as a line.
     Thus, you get n lines for n input vertices. If the user only specifies 1 vertex,
     the drawing command is ignored. The line between the first and last vertices happens
     after all of the previous lines in the sequence.'''
 
-    LINE_STRIP = 0x0003
+    LINE_STRIP: Constant
     '''The adjacent vertices are considered lines. Thus, if you pass n vertices, you will get n-1 lines.
     If the user only specifies 1 vertex, the drawing command is ignored.'''
 
-    TRIANGLES = 0x0004
+    TRIANGLES: Constant
     '''Vertices 0, 1, and 2 form a triangle. Vertices 3, 4, and 5 form a triangle. And so on.'''
 
-    TRIANGLE_STRIP = 0x0005
+    TRIANGLE_STRIP: Constant
     '''Every group of 3 adjacent vertices forms a triangle. The face direction of the
     strip is determined by the winding of the first triangle. Each successive triangle
     will have its effective face order reversed, so the system compensates for that
     by testing it in the opposite way. A vertex stream of n length will generate n-2 triangles.'''
 
-    TRIANGLE_FAN = 0x0006
+    TRIANGLE_FAN: Constant
     '''The first vertex is always held fixed. From there on, every group of 2 adjacent
     vertices form a triangle with the first. So with a vertex stream, you get a list
     of triangles like so: (0, 1, 2) (0, 2, 3), (0, 3, 4), etc. A vertex stream of
     n length will generate n-2 triangles.'''
 
-    LINES_ADJACENCY = 0x000A
+    LINES_ADJACENCY: Constant
     '''These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
     to work with for each input primitive. Data needs to be duplicated in buffers.'''
 
-    LINE_STRIP_ADJACENCY = 0x000B
+    LINE_STRIP_ADJACENCY: Constant
     '''These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
     to work with for each input primitive. Data needs to be duplicated in buffers.'''
 
-    TRIANGLES_ADJACENCY = 0x000C
+    TRIANGLES_ADJACENCY: Constant
     '''These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
     to work with for each input primitive. Data needs to be duplicated in buffers.'''
 
-    TRIANGLE_STRIP_ADJACENCY = 0x0000D
+    TRIANGLE_STRIP_ADJACENCY: Constant
     '''These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
     to work with for each input primitive. Data needs to be duplicated in buffers.'''
 
-    PATCHES = 0x000E
+    PATCHES: Constant
     '''primitive type can only be used when Tessellation is active. It is a primitive
     with a user-defined number of vertices, which is then tessellated based on the
     control and evaluation shaders into regular points, lines, or triangles, depending
     on the TES's settings.'''
 
-    NEAREST = 0x2600
+    NEAREST: Constant
     '''Returns the value of the texture element that is nearest
     (in Manhattan distance) to the specified texture coordinates.'''
 
-    LINEAR = 0x2601
+    LINEAR: Constant
     '''Returns the weighted average of the four texture elements
     that are closest to the specified texture coordinates.
     These can include items wrapped or repeated from other parts
     of a texture, depending on the values of texture repeat mode,
     and on the exact mapping.'''
 
-    NEAREST_MIPMAP_NEAREST = 0x2700
+    NEAREST_MIPMAP_NEAREST: Constant
     '''Chooses the mipmap that most closely matches the size of the
     pixel being textured and uses the ``NEAREST`` criterion (the texture
     element closest to the specified texture coordinates) to produce
     a texture value.'''
 
-    LINEAR_MIPMAP_NEAREST = 0x2701
+    LINEAR_MIPMAP_NEAREST: Constant
     '''Chooses the mipmap that most closely matches the size of the pixel
     being textured and uses the ``LINEAR`` criterion (a weighted average
     of the four texture elements that are closest to the specified
     texture coordinates) to produce a texture value.'''
 
-    NEAREST_MIPMAP_LINEAR = 0x2702
+    NEAREST_MIPMAP_LINEAR: Constant
     '''Chooses the two mipmaps that most closely match the size of the
     pixel being textured and uses the ``NEAREST`` criterion (the texture
     element closest to the specified texture coordinates ) to produce
     a texture value from each mipmap. The final texture value is a
     weighted average of those two values.'''
 
-    LINEAR_MIPMAP_LINEAR = 0x2703
+    LINEAR_MIPMAP_LINEAR: Constant
     '''Chooses the two mipmaps that most closely match the size of the pixel
     being textured and uses the ``LINEAR`` criterion (a weighted average
     of the texture elements that are closest to the specified texture
     coordinates) to produce a texture value from each mipmap.
     The final texture value is a weighted average of those two values.'''
 
-    ZERO = 0x0000
+    ZERO: Constant
     '''(0,0,0,0)'''
 
-    ONE = 0x0001
+    ONE: Constant
     '''(1,1,1,1)'''
 
-    SRC_COLOR = 0x0300
+    SRC_COLOR: Constant
     '''(Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)'''
 
-    ONE_MINUS_SRC_COLOR = 0x0301
+    ONE_MINUS_SRC_COLOR: Constant
     '''(1,1,1,1) - (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)'''
 
-    SRC_ALPHA = 0x0302
+    SRC_ALPHA: Constant
     '''(As0/kA,As0/kA,As0/kA,As0/kA)'''
 
-    ONE_MINUS_SRC_ALPHA = 0x0303
+    ONE_MINUS_SRC_ALPHA: Constant
     '''(1,1,1,1) - (As0/kA,As0/kA,As0/kA,As0/kA)'''
 
-    DST_ALPHA = 0x0304
+    DST_ALPHA: Constant
     '''(Ad/kA,Ad/kA,Ad/kA,Ad/kA)'''
 
-    ONE_MINUS_DST_ALPHA = 0x0305
+    ONE_MINUS_DST_ALPHA: Constant
     '''(1,1,1,1) - (Ad/kA,Ad/kA,Ad/kA,Ad/kA)'''
 
-    DST_COLOR = 0x0306
+    DST_COLOR: Constant
     '''(Rd/kR,Gd/kG,Bd/kB,Ad/kA)'''
 
-    ONE_MINUS_DST_COLOR = 0x0307
+    ONE_MINUS_DST_COLOR: Constant
     '''(1,1,1,1) - (Rd/kR,Gd/kG,Bd/kB,Ad/kA)'''
 
-    DEFAULT_BLENDING = (SRC_ALPHA, ONE_MINUS_SRC_ALPHA)
+    DEFAULT_BLENDING: Constant
     '''Shotcut for the default blending ``SRC_ALPHA, ONE_MINUS_SRC_ALPHA``'''
 
-    ADDITIVE_BLENDING = (ONE, ONE)
+    ADDITIVE_BLENDING: Constant
     '''Shotcut for additive blending ``ONE, ONE``'''
 
-    PREMULTIPLIED_ALPHA = (SRC_ALPHA, ONE)
+    PREMULTIPLIED_ALPHA: Constant
     '''Shotcut for blend mode when using premultiplied alpha ``SRC_ALPHA, ONE``'''
 
-    FUNC_ADD = 0x8006
+    FUNC_ADD: Constant
     '''source + destination'''
 
-    FUNC_SUBTRACT = 0x800A
+    FUNC_SUBTRACT: Constant
     '''source - destination'''
 
-    FUNC_REVERSE_SUBTRACT = 0x800B
+    FUNC_REVERSE_SUBTRACT: Constant
     '''destination - source'''
 
-    MIN = 0x8007
+    MIN: Constant
     '''Minimum of source and destination'''
 
-    MAX = 0x8008
+    MAX: Constant
     '''Maximum of source and destination'''
 
-    FIRST_VERTEX_CONVENTION = 0x8E4D
+    FIRST_VERTEX_CONVENTION: Constant
     '''Specifies the first vertex should be used as the source of data for flat shaded varyings.
     Used with :py:attr:`Context.provoking_vertex`.'''
 
-    LAST_VERTEX_CONVENTION = 0x8E4E
+    LAST_VERTEX_CONVENTION: Constant
     '''Specifies the last vertex should be used as the source of data for flat shaded varyings.
     Used with :py:attr:`Context.provoking_vertex`.'''
 
@@ -2364,7 +2367,6 @@ class Context:
 
         See :py:meth:`Context.__enter__`
         '''
-        self.mglo.__exit__(exc_type, exc_val, exc_tb)
 
     def release(self) -> None:
         '''
@@ -2750,7 +2752,6 @@ class Program:
             {'rotation': <Uniform: 0>, 'scale': <Uniform: 1>}
 
         '''
-        yield from self._members
 
     is_transform: bool
     '''bool: If this is a tranform program (no fragment shader).'''
@@ -4120,10 +4121,6 @@ class Texture:
             level (int): The mipmap level.
             alignment (int): The byte alignment of the pixels.
         '''
-        if type(data) is Buffer:
-            data = data.mglo
-
-        self.mglo.write(data, viewport, level, alignment)
 
     def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
         '''
@@ -4135,7 +4132,6 @@ class Texture:
             base (int): The base level
             max_level (int): The maximum levels to generate
         '''
-        self.mglo.build_mipmaps(base, max_level)
 
     def use(self, location: int = 0) -> None:
         '''
@@ -4156,7 +4152,6 @@ class Texture:
         Args:
             location (int): The texture location/unit.
         '''
-        self.mglo.use(location)
 
     def bind_to_image(self, unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0) -> None:
         '''
@@ -4197,13 +4192,9 @@ class Texture:
             level (int): Level of the texture to bind (default: ``0``).
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
         '''
-        self.mglo.bind(unit, read, write, level, format)
 
     def release(self) -> None:
         '''Release the ModernGL object.'''
-        if self.mglo is not None:
-            self.mglo.release()
-            self.mglo = InvalidObject()
 
 
 class VertexArray:
