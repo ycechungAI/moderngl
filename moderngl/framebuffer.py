@@ -70,7 +70,8 @@ class Framebuffer:
 
     @viewport.setter
     def viewport(self, value: Tuple[int, int, int, int]) -> None:
-        self.mglo.viewport = tuple(value)
+        x, y, w, h = value
+        self.mglo.viewport = (int(x), int(y), int(w), int(h))
 
     @property
     def scissor(self) -> Tuple[int, int, int, int]:
@@ -99,7 +100,8 @@ class Framebuffer:
         if value is None:
             self.mglo.scissor = None
         else:
-            self.mglo.scissor = tuple(value)
+            x, y, w, h = value
+            self.mglo.scissor = (int(x), int(y), int(w), int(h))
 
     @property
     def color_mask(self) -> Tuple[bool, bool, bool, bool]:
