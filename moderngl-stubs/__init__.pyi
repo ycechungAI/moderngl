@@ -638,7 +638,6 @@ class InvalidObject:
     '''
 
 
-
 class Buffer:
     '''
     Buffer objects are OpenGL objects that store an array of unformatted memory \
@@ -658,6 +657,15 @@ class Buffer:
 
     dynamic: bool
     '''bool: Is the buffer created with the dynamic flag?.'''
+
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    ctx: 'Context'
+    '''The context this object belongs to'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
 
     glo: int
     '''
@@ -872,6 +880,22 @@ class ComputeShader:
     - Images can be bound using :py:meth:`Texture.bind_to_image`.
     '''
 
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    ctx: 'Context'
+    '''The context this object belongs to'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
+
+    glo: int
+    '''
+    int: The internal OpenGL object.
+
+    This values is provided for debug purposes only.
+    '''
+
     def __getitem__(self, key: str) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
         '''
         Get a member such as uniforms, uniform blocks, subroutines, attributes and varyings by name.
@@ -913,13 +937,6 @@ class ComputeShader:
         This includes all members such as uniforms, attributes etc.
         '''
 
-    glo: int
-    '''
-    int: The internal OpenGL object.
-
-    This values is provided for debug purposes only.
-    '''
-
     def run(self, group_x: int = 1, group_y: int = 1, group_z: int = 1) -> None:
         '''
         Run the compute shader.
@@ -953,9 +970,14 @@ class ConditionalRender:
     ConditionalRender objects can only be accessed from :py:class:`Query` objects.
     '''
 
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
+
     def __enter__(self): ...
     def __exit__(self, *args): ...
-
 
 
 class Context:
@@ -1623,6 +1645,15 @@ class Context:
         }
     '''
 
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
+
+    fbo: 'Framebuffer'
+    '''Framebuffer: The active framebuffer. Set every time :py:meth:`Framebuffer.use()` is called.'''
+
     def clear(
         self,
         red: float = 0.0,
@@ -1785,7 +1816,7 @@ class Context:
             write_offset (int): The write offset.
         '''
 
-    def copy_framebuffer(self, dst: Union[Framebuffer, Texture], src: Framebuffer) -> None:
+    def copy_framebuffer(self, dst: Union['Framebuffer', 'Texture'], src: 'Framebuffer') -> None:
         '''
         Copy framebuffer content.
 
@@ -2044,7 +2075,7 @@ class Context:
 
     def _vertex_array(
         self,
-        program: Program,
+        program: 'Program',
         content: Any,
         index_buffer: Optional[Buffer] = None,
         index_element_size: int = 4,
@@ -2072,7 +2103,7 @@ class Context:
 
     def simple_vertex_array(
         self,
-        program: Program,
+        program: 'Program',
         buffer: Buffer,
         *attributes: Union[List[str], Tuple[str, ...]],
         index_buffer: Optional[Buffer] = None,
@@ -2154,13 +2185,13 @@ class Context:
 
     def scope(
         self,
-        framebuffer: Optional[Framebuffer] = None,
+        framebuffer: Optional['Framebuffer'] = None,
         enable_only: Optional[int] = None,
         *,
-        textures: Tuple[Tuple[Texture, int], ...] = (),
+        textures: Tuple[Tuple['Texture', int], ...] = (),
         uniform_buffers: Tuple[Tuple[Buffer, int], ...] = (),
         storage_buffers: Tuple[Tuple[Buffer, int], ...] = (),
-        samplers: Tuple[Tuple[Sampler, int], ...] = (),
+        samplers: Tuple[Tuple['Sampler', int], ...] = (),
         enable: Optional[int] = None,
     ) -> 'Scope':
         '''
@@ -2205,7 +2236,7 @@ class Context:
     def framebuffer(
         self,
         color_attachments: Any = (),
-        depth_attachment: Optional[Union[Texture, Renderbuffer]] = None,
+        depth_attachment: Optional[Union['Texture', 'Renderbuffer']] = None,
     ) -> 'Framebuffer':
         '''
         A :py:class:`Framebuffer` is a collection of buffers that can be \
@@ -2289,8 +2320,8 @@ class Context:
         border_color: Optional[Tuple[float, float, float, float]] = None,
         min_lod: float = -1000.0,
         max_lod: float = 1000.0,
-        texture: Optional[Texture] = None,
-    ) -> Sampler:
+        texture: Optional['Texture'] = None,
+    ) -> 'Sampler':
         '''
         Create a :py:class:`Sampler` object.
 
@@ -2536,11 +2567,20 @@ class Framebuffer:
     bits: Dict[str, str]
     '''dict: The bits of the framebuffer.'''
 
-    color_attachments: Tuple[Union[Texture, Renderbuffer], ...]
+    color_attachments: Tuple[Union['Texture', 'Renderbuffer'], ...]
     '''tuple: The color attachments of the framebuffer.'''
 
-    depth_attachment: Union[Texture, Renderbuffer]
+    depth_attachment: Union['Texture', 'Renderbuffer']
     '''Texture or Renderbuffer: The depth attachment of the framebuffer.'''
+
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    ctx: 'Context'
+    '''The context this object belongs to'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
 
     glo: int
     '''
@@ -2787,6 +2827,15 @@ class Program:
     subroutines: Tuple[str, ...]
     '''tuple: The subroutine uniforms.'''
 
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    ctx: 'Context'
+    '''The context this object belongs to'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
+
     glo: int
     '''
     int: The internal OpenGL object.
@@ -2832,9 +2881,8 @@ def detect_format(
 class Query:
     '''This class represents a Query object.'''
 
-    def __enter__(self): ...
-
-    def __exit__(self, *args: Tuple[Any]): ...
+    crender: Optional['ConditionalRender']
+    '''Can be used in a ``with`` statement.'''
 
     samples: int
     '''int: The number of samples passed.'''
@@ -2844,6 +2892,19 @@ class Query:
 
     elapsed: int
     '''int: The time elapsed in nanoseconds.'''
+
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    ctx: 'Context'
+    '''The context this object belongs to'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
+
+    def __enter__(self): ...
+
+    def __exit__(self, *args: Tuple[Any]): ...
 
 
 class Renderbuffer:
@@ -2882,6 +2943,15 @@ class Renderbuffer:
     dtype: str
     '''str: Data type.'''
 
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    ctx: 'Context'
+    '''The context this object belongs to'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
+
     glo: int
     '''
     int: The internal OpenGL object.
@@ -2911,25 +2981,6 @@ class Sampler:
     Sampler bindings do clear automatically between every frame so a texture unit
     need at least one bind/use per frame.
     '''
-
-    def use(self, location: int = 0) -> None:
-        '''
-        Bind the sampler to a texture unit.
-
-        Args:
-            location (int): The texture unit
-        '''
-
-    def clear(self, location: int = 0) -> None:
-        '''
-        Clear the sampler binding on a texture unit.
-
-        Args:
-            location (int): The texture unit
-        '''
-
-    def release(self) -> None:
-        '''Release/destroy the ModernGL object.'''
 
     repeat_x: bool
     '''
@@ -3052,6 +3103,44 @@ class Sampler:
     This floating-point value limits the selection of the lowest resolution mipmap (highest mipmap level)
     '''
 
+    texture: Any
+    '''texture'''
+
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    ctx: 'Context'
+    '''The context this object belongs to'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
+
+    glo: int
+    '''
+    int: The internal OpenGL object.
+
+    This values is provided for debug purposes only.
+    '''
+
+    def use(self, location: int = 0) -> None:
+        '''
+        Bind the sampler to a texture unit.
+
+        Args:
+            location (int): The texture unit
+        '''
+
+    def clear(self, location: int = 0) -> None:
+        '''
+        Clear the sampler binding on a texture unit.
+
+        Args:
+            location (int): The texture unit
+        '''
+
+    def release(self) -> None:
+        '''Release/destroy the ModernGL object.'''
+
     def assign(self, index: int) -> Tuple['Sampler', int]:
         '''
         Helper method for assigning samplers to scopes.
@@ -3090,6 +3179,15 @@ class Scope:
 
     def release(self) -> None:
         '''Destroy the Scope object.'''
+
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    ctx: 'Context'
+    '''The context this object belongs to'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
 
 
 class Texture3D:
@@ -3190,6 +3288,15 @@ class Texture3D:
 
     dtype: str
     '''str: Data type.'''
+
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    ctx: 'Context'
+    '''The context this object belongs to'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
 
     glo: int
     '''
@@ -3461,6 +3568,15 @@ class TextureArray:
     dtype: str
     '''str: Data type.'''
 
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    ctx: 'Context'
+    '''The context this object belongs to'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
+
     glo: int
     '''
     int: The internal OpenGL object.
@@ -3712,6 +3828,15 @@ class TextureCube:
         # Enable anisotropic filtering suggesting 16 samples as a maximum
         texture.anisotropy = 16.0
     '''
+
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    ctx: 'Context'
+    '''The context this object belongs to'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
 
     glo: int
     '''
@@ -4026,6 +4151,15 @@ class Texture:
     depth: bool
     '''bool: Is the texture a depth texture?.'''
 
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    ctx: 'Context'
+    '''The context this object belongs to'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
+
     glo: int
     '''
     int: The internal OpenGL object.
@@ -4212,6 +4346,9 @@ class VertexArray:
     to create one.
     '''
 
+    scope: Optional['Scope']
+    '''The scope to use while rendering.'''
+
     mode: int
     '''
     int: Get or set the default rendering mode.
@@ -4254,6 +4391,15 @@ class VertexArray:
 
     The subroutines used when rendering or transforming primitives.
     '''
+
+    mglo: Any
+    '''Internal representation for debug purposes only.'''
+
+    ctx: 'Context'
+    '''The context this object belongs to'''
+
+    extra: Any
+    '''Any - Attribute for storing user defined objects'''
 
     glo: int
     '''
