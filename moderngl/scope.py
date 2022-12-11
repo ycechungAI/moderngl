@@ -6,38 +6,16 @@ __all__ = ['Scope']
 
 
 class Scope:
-    """
-    This class represents a Scope object.
-
-    Responsibilities on enter:
-
-    - Set the enable flags.
-    - Bind the framebuffer.
-    - Assigning textures to texture locations.
-    - Assigning buffers to uniform buffers.
-    - Assigning buffers to shader storage buffers.
-
-    Responsibilities on exit:
-
-    - Restore the enable flags.
-    - Restore the framebuffer.
-    """
-
-    __slots__ = [
-        'mglo', 'ctx', '_framebuffer', '_textures', '_uniform_buffers',
-        '_storage_buffers', '_samplers', 'extra',
-    ]
-
     def __init__(self):
-        self.mglo = None  #: Internal representation for debug purposes only.
-        self.ctx = None  #: The context this object belongs to
+        self.mglo = None
+        self.ctx = None
         # Keep references to keep this objects alive
         self._framebuffer = None
         self._textures = None
         self._uniform_buffers = None
         self._storage_buffers = None
         self._samplers = None
-        self.extra = None  #: Any - Attribute for storing user defined objects
+        self.extra = None
         raise TypeError()
 
     def __repr__(self):
@@ -63,7 +41,6 @@ class Scope:
             self.ctx.objects.append(self.mglo)
 
     def release(self) -> None:
-        """Destroy the Scope object."""
         if self.mglo is not None:
             self._framebuffer = None
             self._textures = None

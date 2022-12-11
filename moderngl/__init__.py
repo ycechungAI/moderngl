@@ -1,5 +1,3 @@
-"""ModernGL: High performance rendering for Python 3."""
-
 from .error import *  # noqa
 from .buffer import *  # noqa
 from .compute_shader import *  # noqa
