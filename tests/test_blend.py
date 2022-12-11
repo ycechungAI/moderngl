@@ -238,7 +238,7 @@ class TestBlend(unittest.TestCase):
             self.ctx.blend_func = moderngl.ONE
 
         # Incorrect tuple size
-        with self.assertRaises(moderngl.error.Error):
+        with self.assertRaises(moderngl.Error):
             self.ctx.blend_func = moderngl.ONE,
 
         # TypeError: "Test" is not an integer
@@ -246,11 +246,11 @@ class TestBlend(unittest.TestCase):
             self.ctx.blend_func = moderngl.ONE, "Test"
 
         # Incorrect tuple size=3
-        with self.assertRaises(moderngl.error.Error):
+        with self.assertRaises(moderngl.Error):
             self.ctx.blend_func = moderngl.ONE, moderngl.ONE, moderngl.ONE
 
         # Incorrect tuple size=5
-        with self.assertRaises(moderngl.error.Error):
+        with self.assertRaises(moderngl.Error):
             self.ctx.blend_func = (
                 moderngl.ONE,
                 moderngl.ONE,
@@ -270,7 +270,7 @@ class TestBlend(unittest.TestCase):
         with self.assertRaises(TypeError):
             self.ctx.blend_equation = None
 
-        with self.assertRaises(moderngl.error.Error):
+        with self.assertRaises(moderngl.Error):
             self.ctx.blend_equation = moderngl.MAX, moderngl.MAX, moderngl.MAX
 
         self.ctx.blend_equation = moderngl.MAX
