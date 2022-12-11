@@ -1,10 +1,13 @@
 import warnings
-from queue import deque
+from collections import deque
 from typing import Any, Deque, Dict, Generator, List, Optional, Set, Tuple, Union
 
 from _moderngl import Attribute, Error, InvalidObject, Subroutine, Uniform, UniformBlock, Varying  # noqa
 
-from . import mgl
+try:
+    from moderngl import mgl  # type: ignore
+except ImportError:
+    pass
 
 __version__ = '5.8.0'
 
