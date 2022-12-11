@@ -70,19 +70,19 @@ ZERO = 0x0000
 ONE = 0x0001
 #: (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
 SRC_COLOR = 0x0300
-#: (1,1,1,1) − (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
+#: (1,1,1,1) - (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
 ONE_MINUS_SRC_COLOR = 0x0301
 #: (As0/kA,As0/kA,As0/kA,As0/kA)
 SRC_ALPHA = 0x0302
-#: (1,1,1,1) − (As0/kA,As0/kA,As0/kA,As0/kA)
+#: (1,1,1,1) - (As0/kA,As0/kA,As0/kA,As0/kA)
 ONE_MINUS_SRC_ALPHA = 0x0303
 #: (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
 DST_ALPHA = 0x0304
-#: (1,1,1,1) − (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
+#: (1,1,1,1) - (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
 ONE_MINUS_DST_ALPHA = 0x0305
 #: (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
 DST_COLOR = 0x0306
-#: (1,1,1,1) − (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
+#: (1,1,1,1) - (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
 ONE_MINUS_DST_COLOR = 0x0307
 
 # Blend equations
@@ -231,19 +231,19 @@ class Context:
     ONE = 0x0001
     #: (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
     SRC_COLOR = 0x0300
-    #: (1,1,1,1) − (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
+    #: (1,1,1,1) - (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
     ONE_MINUS_SRC_COLOR = 0x0301
     #: (As0/kA,As0/kA,As0/kA,As0/kA)
     SRC_ALPHA = 0x0302
-    #: (1,1,1,1) − (As0/kA,As0/kA,As0/kA,As0/kA)
+    #: (1,1,1,1) - (As0/kA,As0/kA,As0/kA,As0/kA)
     ONE_MINUS_SRC_ALPHA = 0x0303
     #: (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
     DST_ALPHA = 0x0304
-    #: (1,1,1,1) − (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
+    #: (1,1,1,1) - (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
     ONE_MINUS_DST_ALPHA = 0x0305
     #: (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
     DST_COLOR = 0x0306
-    #: (1,1,1,1) − (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
+    #: (1,1,1,1) - (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
     ONE_MINUS_DST_COLOR = 0x0307
 
     #: Shotcut for the default blending ``SRC_ALPHA, ONE_MINUS_SRC_ALPHA``
