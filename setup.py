@@ -150,7 +150,7 @@ if False:
 
 setup(
     name='moderngl',
-    version='5.7.3',
+    version='5.7.4',
     description=short_description,
     long_description=long_description,
     long_description_content_type='text/markdown',
