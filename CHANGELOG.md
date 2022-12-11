@@ -13,6 +13,7 @@ This version includes the following structural changes in moderngl:
 - The Python layer was concatenated but moderngl itself stays a package.
 - Most of the protected class members were removed.
 - Most of the property aliases became ordinary class members.
+- Slots were removed.
 
 ## [5.7.4](https://github.com/moderngl/moderngl/compare/5.7.3...5.7.4)
 
