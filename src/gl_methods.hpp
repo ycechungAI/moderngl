@@ -1,5 +1,6 @@
 #pragma once
-#include "OpenGL.hpp"
+
+#include "opengl.hpp"
 
 struct GLMethods {
     PFNGLCULLFACEPROC CullFace;

@@ -76,32 +76,13 @@ extra_linker_args = {
 
 mgl = Extension(
     name='moderngl.mgl',
-    include_dirs=['src', 'moderngl', 'moderngl/mgl'],
     define_macros=[
         ('PY_SSIZE_T_CLEAN', None),
     ],
     libraries=libraries[target],
     extra_compile_args=extra_compile_args[target],
     extra_link_args=extra_linker_args[target],
-    sources=[
-        'moderngl/src/Sampler.cpp',
-        'moderngl/src/Buffer.cpp',
-        'moderngl/src/BufferFormat.cpp',
-        'moderngl/src/ComputeShader.cpp',
-        'moderngl/src/Context.cpp',
-        'moderngl/src/DataType.cpp',
-        'moderngl/src/Framebuffer.cpp',
-        'moderngl/src/ModernGL.cpp',
-        'moderngl/src/Program.cpp',
-        'moderngl/src/Query.cpp',
-        'moderngl/src/Renderbuffer.cpp',
-        'moderngl/src/Scope.cpp',
-        'moderngl/src/Texture.cpp',
-        'moderngl/src/Texture3D.cpp',
-        'moderngl/src/TextureArray.cpp',
-        'moderngl/src/TextureCube.cpp',
-        'moderngl/src/VertexArray.cpp',
-    ],
+    sources=['src/moderngl.cpp'],
 )
 
 short_description = 'ModernGL: High performance rendering for Python 3'
