@@ -1,80 +1,65 @@
-import unittest
-
 import moderngl
 
-from common import get_context
+def test_1(ctx):
+    prog = ctx.program(
+        vertex_shader='''
+            #version 330
 
+            in vec2 in_vert;
+            out vec2 v_vert;
 
-class TestCase(unittest.TestCase):
+            uniform mat2 Mvp;
 
-    @classmethod
-    def setUpClass(cls):
-        cls.ctx = get_context()
+            uniform VertexShaderUniforms {
+                vec2 Position;
+                float Scale;
+            };
 
-    def test_1(self):
-        prog = self.ctx.program(
-            vertex_shader='''
-                #version 330
+            void main() {
+                v_vert = Position + in_vert * Scale;
+                gl_Position = vec4(Mvp * v_vert, 0.0, 1.0);
+            }
+        ''',
+        fragment_shader='''
+            #version 330
 
-                in vec2 in_vert;
-                out vec2 v_vert;
+            uniform bool UseTexture;
+            uniform sampler2D Texture;
 
-                uniform mat2 Mvp;
+            uniform FragmentShaderUniforms {
+                vec3 Color;
+                float Alpha;
+            };
 
-                uniform VertexShaderUniforms {
-                    vec2 Position;
-                    float Scale;
-                };
+            in vec2 v_vert;
+            out vec4 f_color;
 
-                void main() {
-                    v_vert = Position + in_vert * Scale;
-                    gl_Position = vec4(Mvp * v_vert, 0.0, 1.0);
+            void main() {
+                if (UseTexture) {
+                    f_color = texture(Texture, v_vert);
+                    f_color.rgb *= Color;
+                    f_color.a *= Alpha;
+                } else {
+                    f_color = vec4(Color, Alpha);
                 }
-            ''',
-            fragment_shader='''
-                #version 330
+            }
+        ''',
+    )
 
-                uniform bool UseTexture;
-                uniform sampler2D Texture;
+    assert 'in_vert' in prog
+    assert 'Position' not in prog
+    assert 'Scale' not in prog
+    assert 'Mvp' in prog
+    assert 'UseTexture' in prog
+    assert 'Texture' in prog
+    assert 'Color' not in prog
+    assert 'Alpha' not in prog
+    assert 'VertexShaderUniforms' in prog
+    assert 'FragmentShaderUniforms' in prog
 
-                uniform FragmentShaderUniforms {
-                    vec3 Color;
-                    float Alpha;
-                };
-
-                in vec2 v_vert;
-                out vec4 f_color;
-
-                void main() {
-                    if (UseTexture) {
-                        f_color = texture(Texture, v_vert);
-                        f_color.rgb *= Color;
-                        f_color.a *= Alpha;
-                    } else {
-                        f_color = vec4(Color, Alpha);
-                    }
-                }
-            ''',
-        )
-
-        self.assertIn('in_vert', prog)
-        self.assertNotIn('Position', prog)
-        self.assertNotIn('Scale', prog)
-        self.assertIn('Mvp', prog)
-        self.assertIn('UseTexture', prog)
-        self.assertIn('Texture', prog)
-        self.assertNotIn('Color', prog)
-        self.assertNotIn('Alpha', prog)
-        self.assertIn('VertexShaderUniforms', prog)
-        self.assertIn('FragmentShaderUniforms', prog)
-
-        self.assertIsInstance(prog['in_vert'], moderngl.Attribute)
-        self.assertIsInstance(prog['Mvp'], moderngl.Uniform)
-        self.assertIsInstance(prog['UseTexture'], moderngl.Uniform)
-        self.assertIsInstance(prog['Texture'], moderngl.Uniform)
-        self.assertIsInstance(prog['VertexShaderUniforms'], moderngl.UniformBlock)
-        self.assertIsInstance(prog['FragmentShaderUniforms'], moderngl.UniformBlock)
-
-
-if __name__ == '__main__':
-    unittest.main()
+    assert isinstance(prog['in_vert'], moderngl.Attribute)
+    assert isinstance(prog['Mvp'], moderngl.Uniform)
+    assert isinstance(prog['UseTexture'], moderngl.Uniform)
+    assert isinstance(prog['Texture'], moderngl.Uniform)
+    assert isinstance(prog['VertexShaderUniforms'], moderngl.UniformBlock)
+    assert isinstance(prog['FragmentShaderUniforms'], moderngl.UniformBlock)

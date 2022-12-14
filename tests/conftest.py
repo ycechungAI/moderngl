@@ -1,170 +1,150 @@
-# coding=utf-8
-import os
-import moderngl as mgl
-import numpy as np
+"""
+Global fixtures for moderngl tests.
+
+We rely on Context.gc_mode = "auto" to clean up resources.
+Mainly a global context is used it test, but some test needs a new context
+
+* ctx_static: A global context that is reused for all tests
+* ctx: Also a global context, but it is cleaned before and after each test
+* ctx_new: A new context for each test
+
+Context creation can be refined in _create_context if issues arise
+"""
 import pytest
+import numpy as np
+import moderngl
 
-# https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
-# https://en.wikipedia.org/wiki/Machine_epsilon
-# binary32	single precision	float	2	24 (one bit is implicit)	2−24 ≈ 5.96e-08	2−23 ≈ 1.19e-07
-EPSILON_IEEE_754 = 5.96e-08
+VERSION_CODES = 430, 410, 330
+_ctx = None
+_fbo = None  # Fake framebuffer to avoid errors during transforms
 
-
-@pytest.fixture(scope="session", autouse=True)
-def standalone_context():
-    # # HACK for CI
-    # if os.environ.get("CI"):
-    #     return None
-    return mgl.create_standalone_context()
+@pytest.fixture(scope="session")
+def ctx_static():
+    """Session context"""
+    return _get_context()
 
 
-@pytest.fixture
-def prog_render_depth_pass(standalone_context):
-    return standalone_context.program(
+@pytest.fixture(scope="function")
+def ctx():
+    """
+    Per function context.
+
+    The same context is reused, but the context is cleaned before and after each test.
+    """
+    ctx = _get_context()
+    error = ctx.error
+    if error != "GL_NO_ERROR":
+        raise RuntimeError("Context has error before use: {}".format(error))
+    _clean_ctx(ctx)
+    yield ctx
+    error = ctx.error
+    if error != "GL_NO_ERROR":
+        raise RuntimeError("Context has error after use: {}".format(error))
+    _clean_ctx(ctx)
+
+
+@pytest.fixture(scope="function")
+def ctx_new():
+    """Returns a new context for each test"""
+    ctx = _create_context()
+    yield ctx
+    ctx.release()
+
+
+def _get_context():
+    """Get the global test context"""
+    global _ctx, _fbo
+    if _ctx is None:
+        _ctx = _create_context()
+        _ctx.gc_mode = "auto"
+        _fbo = _ctx.simple_framebuffer((2, 2))
+
+    _ctx.__enter__()
+    _fbo.use()
+    return _ctx
+
+def _create_context():
+    """
+    Create a new context.
+
+    This is the only place context creation should happen.
+    For now we just brute force context creation.
+    """
+    # Attempt standard standalone context
+    try:
+        for VERSION_CODE in VERSION_CODES:
+            try:
+                return moderngl.create_context(
+                    require=VERSION_CODE,
+                    standalone=True,
+                )
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    # Attempt EGL standalone context
+    try:
+        for VERSION_CODE in VERSION_CODES:
+            return moderngl.create_context(
+                require=VERSION_CODE,
+                standalone=True,
+                backend="egl",
+            )
+    except Exception:
+        pass
+
+    raise RuntimeError("Unable to create a context")
+
+def _clean_ctx(ctx):
+    """Clean the context"""
+    # Reset the context
+    ctx.blend_func = moderngl.DEFAULT_BLENDING
+    ctx.blend_equation = moderngl.FUNC_ADD
+    ctx.enable_only(moderngl.NOTHING)
+    ctx.point_size = 1.0
+    ctx.line_width = 1.0
+    ctx.front_face = 'ccw'
+    ctx.cull_face = 'back'
+    ctx.wireframe = False
+    ctx.provoking_vertex = moderngl.FIRST_VERTEX_CONVENTION
+    ctx.polygon_offset = 0.0, 0.0    
+    ctx.gc()
+
+
+@pytest.fixture(scope="session")
+def color_prog(ctx_static):
+    """A simple program that renders a solid color."""
+    return ctx_static.program(
         vertex_shader='''
-                #version 330
+            #version 330
 
-                in vec3 in_vert;
+            in vec2 in_vert;
 
-                void main() {
-                    gl_Position = vec4(in_vert, 1.0);
-                }
-            ''',
-        fragment_shader='''
-                #version 330
-
-                void main() {
-                }
-            ''',
-    )
-
-
-@pytest.fixture
-def prog_draw_depth(standalone_context):
-    prog = standalone_context.program(
-        vertex_shader='''
-                    #version 330
-
-                    in vec2 in_vert;
-                    out vec2 uv;
-
-                    void main() {
-                        uv = in_vert;
-                        gl_Position = vec4(in_vert * 2.0 - 1.0, 0.0, 1.0);
-                    }
-                ''',
-        # from `texture.py`
-        fragment_shader='''
-                    #version 330
-
-                    uniform sampler2D depth;
-
-                    in vec2 uv;
-                    out float fragColor;
-
-                    void main() {
-                        float raw_depth_nonlinear = texture(depth, uv).r;
-                        fragColor = raw_depth_nonlinear;
-                    }
-                ''',
-    )
-    prog['depth'].value = 0
-    return prog
-
-
-@pytest.fixture
-def vbo_triangle(standalone_context):
-    vertices = np.array([[-1, 1, 0.], [-1, -1, 0.], [1, -1, 0.], ])
-    return standalone_context.buffer(vertices.astype('f4').tobytes())
-
-
-@pytest.fixture
-def vbo_quad(standalone_context):
-    canvas_fs_quad = np.array(
-        [0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0]).astype('f4')
-    return standalone_context.buffer(canvas_fs_quad.tobytes())
-
-
-@pytest.fixture
-def prog_shadow_test(standalone_context):
-    prog = standalone_context.program(
-        vertex_shader='''
-                #version 330
-
-                in vec2 in_vert;
-                out vec2 uv;
-
-                void main() {
-                    uv = in_vert;
-                    gl_Position = vec4(in_vert * 2.0 - 1.0, 0.0, 1.0);
-                }
+            void main() {
+                gl_Position = vec4(in_vert, 0.0, 1.0);
+            }
         ''',
         fragment_shader='''
-                #version 330
+            #version 330
 
-                uniform sampler2DShadow depth;
+            out vec4 fragColor;
+            uniform vec4 color;
 
-                uniform vec2 u_shadow_coord_offset;
-
-                uniform float u_depth_bias;
-                uniform float u_depth_triangle;
-
-                in vec2 uv;
-                out float fragColor;
-
-                void main() {
-                    // Compute depth caster
-                    float depth_shadow_caster = u_depth_triangle + u_depth_bias;
-                    // Compute shadow coordinates + depth of caster
-                    vec3 shadow_coord = vec3(uv, depth_shadow_caster);
-                    shadow_coord += vec3(u_shadow_coord_offset, 0.0);
-                    // Compute visibility:
-                    // -> shadow test: receiver (potential) vs caster
-                    float visibility = texture(depth, shadow_coord);
-                    // Output the visibility
-                    fragColor = visibility;
-                }
-            ''',
+            void main() {
+                fragColor = color;
+            }
+        ''',
     )
-    #
-    prog['u_depth_bias'].value = EPSILON_IEEE_754
-    depth_triangle_in_obj_space = 0
-    depth_triangle_in_view_space = (depth_triangle_in_obj_space + 1) * 0.5
-    prog['u_depth_triangle'].value = depth_triangle_in_view_space
-    #
-    return prog
 
 
-@pytest.fixture
-def fbo_with_rasterised_triangle(standalone_context, vbo_triangle):
-    def _build_fbo_with_rasterised_triangle(prog, size=(4, 4), depth_clear=1.0):
-        tex_depth = standalone_context.depth_texture(size)  # implicit -> dtype='f4', components=1
-        fbo_depth = standalone_context.framebuffer(depth_attachment=tex_depth)
-        fbo_depth.use()
-        fbo_depth.clear(depth=depth_clear)
-
-        # vertex array object of triangle with depth pass prog
-        vao_triangle = standalone_context.simple_vertex_array(prog, vbo_triangle, 'in_vert')
-        # Now we render a triangle in there
-        vao_triangle.render()
-
-        return fbo_depth, tex_depth
-
-    return _build_fbo_with_rasterised_triangle
-
-
-@pytest.fixture
-def np_triangle_rasterised():
-    def _build_np_triangle_rastised(size):
-        # It should have 0.5's where the triangle lies.
-        depth_value_from_triangle_vertices = 0.0
-        # Map [-1, +1] -> [0, 1]
-        depth_value_in_depthbuffer = (depth_value_from_triangle_vertices + 1) * 0.5
-        return np.array(
-            [
-                [depth_value_in_depthbuffer] * (size[0] - (j + 1)) + [1.0] * (j + 1)
-                for j in range(size[1])
-            ]
-        )
-
-    return _build_np_triangle_rastised
+@pytest.fixture(scope="session")
+def ndc_quad(ctx_static):
+    """Creates a buffer with an NDC quad."""
+    quad = [
+        -1.0,  1.0,
+        -1.0, -1.0,
+        1.0, 1.0,
+        1.0, -1.0,
+    ]
+    return ctx_static.buffer(np.array(quad, dtype='f4'))

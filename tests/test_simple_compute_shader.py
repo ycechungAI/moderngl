@@ -1,73 +1,58 @@
-import unittest
-
 import moderngl
-from common import get_context
+import pytest
 
+def test_compute_shader(ctx):
+    if ctx.version_code < 430:
+        pytest.skip('OpenGL 4.3 is not supported')
 
-class TestCase(unittest.TestCase):
+    src = '''
+        #version 430
+        layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
-    @classmethod
-    def setUpClass(cls):
-        cls.ctx = get_context(require=430)
-        if not cls.ctx:
-            raise unittest.SkipTest('Compute shader not supported')
+        struct Something
+        {
+            vec4 pos;
+        };
 
-    def test_compute_shader(self):
-        if self.ctx.version_code < 430:
-            self.skipTest('OpenGL 4.3 is not supported')
+        layout(std430, binding=0) buffer something_in
+        {
+            Something entries[];
+        } In;
 
-        src = '''
-            #version 430
-            layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+        // output into the buffer bound to 1
+        layout(std430, binding=1) buffer something_out
+        {
+            Something entries[];
+        } Out;
 
-            struct Something
-            {
-                vec4 pos;
-            };
+        uniform float multiplier;
 
-            layout(std430, binding=0) buffer something_in
-            {
-                Something entries[];
-            } In;
+        void main() {
+            int x = int(gl_GlobalInvocationID);
+            Something entry = In.entries[x];
 
-            // output into the buffer bound to 1
-            layout(std430, binding=1) buffer something_out
-            {
-                Something entries[];
-            } Out;
+            Out.entries[x] = Something(entry.pos * multiplier);
+        }
+    '''
 
-            uniform float multiplier;
+    buffer_in = ctx.buffer(reserve=16)
+    buffer_out = ctx.buffer(reserve=16)
 
-            void main() {
-                int x = int(gl_GlobalInvocationID);
-                Something entry = In.entries[x];
+    buffer_in.bind_to_storage_buffer(binding=0)
+    buffer_out.bind_to_storage_buffer(binding=1)
 
-                Out.entries[x] = Something(entry.pos * multiplier);
-            }
-        '''
+    compute_shader = ctx.compute_shader(src)
 
-        self.buffer_in = self.ctx.buffer(reserve=16)
-        self.buffer_out = self.ctx.buffer(reserve=16)
+    assert isinstance(compute_shader.glo, int)
+    assert compute_shader.mglo is not None
+    compute_shader.extra = {'name': 'test'}   
+    assert compute_shader.extra == {'name': 'test'}
+    assert isinstance(compute_shader.ctx, moderngl.Context)
 
-        self.buffer_in.bind_to_storage_buffer(binding=0)
-        self.buffer_out.bind_to_storage_buffer(binding=1)
-
-        compute_shader = self.ctx.compute_shader(src)
-
-        self.assertIsInstance(compute_shader.glo, int)
-        self.assertIsNotNone(compute_shader.mglo)
-        compute_shader.extra = {'name': 'test'}
-        self.assertEqual(compute_shader.extra, {'name': 'test'})
-        self.assertIsInstance(compute_shader.ctx, moderngl.Context)
-
-        compute_shader['multiplier'] = 1.0
-        compute_shader['multiplier'].value = 1.0
-        compute_shader.run()
-        self.assertIsNotNone(compute_shader.get('multiplier', None))
-        self.assertEqual(compute_shader, compute_shader)
-        self.assertEqual([i for i in compute_shader], ['multiplier'])
-        compute_shader.release()
-
-
-if __name__ == '__main__':
-    unittest.main()
+    compute_shader['multiplier'] = 1.0
+    compute_shader['multiplier'].value = 1.0
+    compute_shader.run()
+    assert compute_shader.get('multiplier', None) is not None
+    assert compute_shader == compute_shader
+    assert [i for i in compute_shader] == ['multiplier']
+    compute_shader.release()

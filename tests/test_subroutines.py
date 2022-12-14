@@ -1,82 +1,70 @@
 import struct
-import unittest
+import pytest
 
-from common import get_context
+def test_1(ctx):
+    if ctx.version_code < 400:
+        pytest.skip('Subroutines are not supported')
 
+    vbo1 = ctx.buffer(struct.pack('4f', 0.0, 0.0, 0.0, 0.0))
+    vbo2 = ctx.buffer(struct.pack('4f', 0.0, 0.0, 0.0, 0.0))
 
-class TestCase(unittest.TestCase):
+    prog = ctx.program(
+        vertex_shader='''
+            #version 400
 
-    @classmethod
-    def setUpClass(cls):
-        cls.ctx = get_context(require=400)
-        if not cls.ctx:
-            raise unittest.SkipTest("Subroutines not supported")
+            in vec4 vert;
+            out vec4 color;
 
-    def test_1(self):
-        vbo1 = self.ctx.buffer(struct.pack('4f', 0.0, 0.0, 0.0, 0.0))
-        vbo2 = self.ctx.buffer(struct.pack('4f', 0.0, 0.0, 0.0, 0.0))
+            subroutine vec4 color_t();
 
-        prog = self.ctx.program(
-            vertex_shader='''
-                #version 400
+            subroutine(color_t)
+            vec4 ColorRed() {
+                return vec4(1, 0, 0, 1);
+            }
 
-                in vec4 vert;
-                out vec4 color;
+            subroutine(color_t)
+            vec4 ColorBlue() {
+                return vec4(0, 0.5, 1, 1);
+            }
 
-                subroutine vec4 color_t();
+            subroutine(color_t)
+            vec4 ColorYellow() {
+                return vec4(1, 1, 0, 1);
+            }
 
-                subroutine(color_t)
-                vec4 ColorRed() {
-                    return vec4(1, 0, 0, 1);
-                }
+            subroutine uniform color_t Color;
 
-                subroutine(color_t)
-                vec4 ColorBlue() {
-                    return vec4(0, 0.5, 1, 1);
-                }
+            void main() {
+                color = vert + Color();
+            }
+        ''',
+        varyings=['color']
+    )
+    vao = ctx.simple_vertex_array(prog, vbo1, 'vert')
 
-                subroutine(color_t)
-                vec4 ColorYellow() {
-                    return vec4(1, 1, 0, 1);
-                }
+    vao.subroutines = [prog['ColorRed'].index]
+    vao.transform(vbo2)
 
-                subroutine uniform color_t Color;
+    x, y, z, w = struct.unpack('4f', vbo2.read())
+    assert pytest.approx(x) == 1.0
+    assert pytest.approx(y) == 0.0
+    assert pytest.approx(z) == 0.0
+    assert pytest.approx(w) == 1.0
 
-                void main() {
-                    color = vert + Color();
-                }
-            ''',
-            varyings=['color']
-        )
-        vao = self.ctx.simple_vertex_array(prog, vbo1, 'vert')
+    vao.subroutines = [prog['ColorBlue'].index]
+    vao.transform(vbo2)
 
-        vao.subroutines = [prog['ColorRed'].index]
-        vao.transform(vbo2)
+    x, y, z, w = struct.unpack('4f', vbo2.read())
+    assert pytest.approx(x) == 0.0
+    assert pytest.approx(y) == 0.5
+    assert pytest.approx(z) == 1.0
+    assert pytest.approx(w) == 1.0
 
-        x, y, z, w = struct.unpack('4f', vbo2.read())
-        self.assertAlmostEqual(x, 1.0)
-        self.assertAlmostEqual(y, 0.0)
-        self.assertAlmostEqual(z, 0.0)
-        self.assertAlmostEqual(w, 1.0)
+    vao.subroutines = [prog['ColorYellow'].index]
+    vao.transform(vbo2)
 
-        vao.subroutines = [prog['ColorBlue'].index]
-        vao.transform(vbo2)
-
-        x, y, z, w = struct.unpack('4f', vbo2.read())
-        self.assertAlmostEqual(x, 0.0)
-        self.assertAlmostEqual(y, 0.5)
-        self.assertAlmostEqual(z, 1.0)
-        self.assertAlmostEqual(w, 1.0)
-
-        vao.subroutines = [prog['ColorYellow'].index]
-        vao.transform(vbo2)
-
-        x, y, z, w = struct.unpack('4f', vbo2.read())
-        self.assertAlmostEqual(x, 1.0)
-        self.assertAlmostEqual(y, 1.0)
-        self.assertAlmostEqual(z, 0.0)
-        self.assertAlmostEqual(w, 1.0)
-
-
-if __name__ == '__main__':
-    unittest.main()
+    x, y, z, w = struct.unpack('4f', vbo2.read())
+    assert pytest.approx(x) == 1.0
+    assert pytest.approx(y) == 1.0
+    assert pytest.approx(z) == 0.0
+    assert pytest.approx(w) == 1.0

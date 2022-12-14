@@ -1,70 +1,32 @@
+"""
+Test blending and blend equations with float32 framebuffer.
+Emulate blend and equation values in python and compare with moderngl.
+"""
+import pytest
 import random
-import math
 import struct
-import unittest
-
 import moderngl
-import numpy as np
-
-from common import get_context
 
 
-class TestBlend(unittest.TestCase):
-    """
-    Test blending and blend equations with float32 framebuffer.
-    Emulate blend and equation values in python and compare with moderngl.
-    """
-    @classmethod
-    def setUpClass(cls):
-        """Set up program, vbo and fbo"""
-        cls.ctx = get_context()
-        cls.prog = cls.ctx.program(
-            vertex_shader='''
-                #version 330
+class TestBlend:
 
-                in vec2 in_vert;
+    @pytest.fixture(autouse=True)
+    def ctx_inject(self, ctx):
+        self.__class__.ctx = ctx
 
-                void main() {
-                    gl_Position = vec4(in_vert, 0.0, 1.0);
-                }
-            ''',
-            fragment_shader='''
-                #version 330
+    @pytest.fixture(autouse=True)
+    def vao_inject(self, ctx, color_prog, ndc_quad):
+        self.__class__.prog = color_prog
+        self.__class__.vao = ctx.simple_vertex_array(color_prog, ndc_quad, 'in_vert')
 
-                out vec4 fragColor;
-                uniform vec4 color;
-
-                void main() {
-                    fragColor = color;
-                }
-            ''',
-        )
-        quad = [
-            -1.0,  1.0,
-            -1.0, -1.0,
-            1.0, 1.0,
-            1.0, -1.0,
-        ]
-        vbo = cls.ctx.buffer(np.array(quad, dtype='f4').tobytes())
-        cls.vao = cls.ctx.simple_vertex_array(cls.prog, vbo, 'in_vert')
-        cls.fbo = cls.ctx.framebuffer(color_attachments=[
-            cls.ctx.texture((1, 1), 4, dtype='f4'),
+    @pytest.fixture(scope="class", autouse=True)
+    def fbo_inject(self, ctx_static):
+        self.__class__.fbo = ctx_static.framebuffer(color_attachments=[
+            ctx_static.texture((1, 1), 4, dtype='f4'),
         ])
-
-    @classmethod
-    def tearDownClass(cls):
-        """Set everything back to default"""
-        cls.ctx.disable(moderngl.BLEND)
-        cls.ctx.blend_equation = moderngl.FUNC_ADD, moderngl.FUNC_ADD
-        cls.ctx.blend_func = moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA
 
     def unpack_fbo(self):
         return struct.unpack('4f', self.fbo.read(components=4, dtype='f4')[:16])
-
-    def err(self):
-        e = self.ctx.error
-        if e != 'GL_NO_ERROR':
-            raise ValueError(e)
 
     def cf(self, blend_func, val, src, dst, src_a, dst_a):
         """Calculate factor
@@ -167,10 +129,8 @@ class TestBlend(unittest.TestCase):
         return self.unpack_fbo()
 
     def assertEqualColors(self, a, b):
-        self.assertAlmostEqual(a[0], b[0], places=2)
-        self.assertAlmostEqual(a[1], b[1], places=2)
-        self.assertAlmostEqual(a[2], b[2], places=2)
-        self.assertAlmostEqual(a[3], b[3], places=2)
+        for i in range(4):
+            assert pytest.approx(a[i], rel=0.001) == b[i]
 
     def test_blend_default(self):
         src = (0.0, 1.0, 0.0, 0.2)
@@ -223,7 +183,7 @@ class TestBlend(unittest.TestCase):
             moderngl.MIN, moderngl.MAX,
         ]
 
-        for _ in range(1000):
+        for _ in range(100):
             src = tuple([random.uniform(0, 1) for i in range(4)])
             dst = tuple([random.uniform(0, 1) for i in range(4)])
             blend_func = tuple([random.choice(bf) for i in range(4)])
@@ -234,23 +194,23 @@ class TestBlend(unittest.TestCase):
 
     def test_invalid_blend_func(self):
         # TypeError: Not iterable
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             self.ctx.blend_func = moderngl.ONE
 
         # Incorrect tuple size
-        with self.assertRaises(moderngl.Error):
+        with pytest.raises(moderngl.Error):
             self.ctx.blend_func = moderngl.ONE,
 
         # TypeError: "Test" is not an integer
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             self.ctx.blend_func = moderngl.ONE, "Test"
 
         # Incorrect tuple size=3
-        with self.assertRaises(moderngl.Error):
+        with pytest.raises(moderngl.Error):
             self.ctx.blend_func = moderngl.ONE, moderngl.ONE, moderngl.ONE
 
         # Incorrect tuple size=5
-        with self.assertRaises(moderngl.Error):
+        with pytest.raises(moderngl.Error):
             self.ctx.blend_func = (
                 moderngl.ONE,
                 moderngl.ONE,
@@ -267,18 +227,18 @@ class TestBlend(unittest.TestCase):
         )
 
     def test_invalid_blend_equation(self):
-        with self.assertRaises(TypeError):
+        with pytest.raises(TypeError):
             self.ctx.blend_equation = None
 
-        with self.assertRaises(moderngl.Error):
+        with pytest.raises(moderngl.Error):
             self.ctx.blend_equation = moderngl.MAX, moderngl.MAX, moderngl.MAX
 
         self.ctx.blend_equation = moderngl.MAX
         self.ctx.blend_equation = moderngl.MAX, moderngl.MAX
 
     def test_get_values(self):
-        with self.assertRaises(NotImplementedError):
+        with pytest.raises(NotImplementedError):
             self.ctx.blend_func
 
-        with self.assertRaises(NotImplementedError):
+        with pytest.raises(NotImplementedError):
             self.ctx.blend_equation

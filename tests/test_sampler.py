@@ -1,76 +1,65 @@
-import unittest
-
 import moderngl
 
-from common import get_context
+def test_create(ctx):
+    sampler = ctx.sampler()
+    sampler.use(location=0)
+    sampler.clear(location=0)
 
+def test_defaults(ctx):
+    sampler = ctx.sampler()
+    assert sampler.anisotropy <= 1.0
+    assert sampler.repeat_x is True
+    assert sampler.repeat_y is True
+    assert sampler.repeat_z is True
+    assert sampler.filter == (moderngl.LINEAR, moderngl.LINEAR)
+    assert sampler.compare_func == '?'
+    assert sampler.border_color == (0.0, 0.0, 0.0, 0.0)
+    assert sampler.min_lod == -1000.0
+    assert sampler.max_lod == 1000.0
 
-class TestCase(unittest.TestCase):
+def test_prop_changes(ctx):
+    sampler = ctx.sampler()
+    # Change values
+    sampler.anisotropy = ctx.max_anisotropy
+    sampler.filter = (moderngl.NEAREST_MIPMAP_NEAREST, moderngl.NEAREST)
+    sampler.compare_func = "<="
 
-    @classmethod
-    def setUpClass(cls):
-        cls.ctx = get_context()
+    assert sampler.anisotropy == ctx.max_anisotropy
+    assert sampler.filter == (moderngl.NEAREST_MIPMAP_NEAREST, moderngl.NEAREST)
+    assert sampler.compare_func == "<="
 
-    def test_create(self):
-        sampler = self.ctx.sampler()
-        sampler.use(location=0)
-        sampler.clear(location=0)
+    # Ensure repeat parameters are set correctly
+    sampler.repeat_x = False
+    assert (sampler.repeat_x, sampler.repeat_y, sampler.repeat_z) == (False, True, True)
+    sampler.repeat_y = False
+    assert (sampler.repeat_x, sampler.repeat_y, sampler.repeat_z) == (False, False, True)
+    sampler.repeat_z = False
+    assert (sampler.repeat_x, sampler.repeat_y, sampler.repeat_z) == (False, False, False)
 
-    def test_defaults(self):
-        sampler = self.ctx.sampler()
-        self.assertTrue(sampler.anisotropy <= 1.0)
-        self.assertTrue(sampler.repeat_x)
-        self.assertTrue(sampler.repeat_y)
-        self.assertTrue(sampler.repeat_z)
-        self.assertEqual(sampler.filter, (moderngl.LINEAR, moderngl.LINEAR))
-        self.assertEqual(sampler.compare_func, '?')
-        self.assertEqual(sampler.border_color, (0.0, 0.0, 0.0, 0.0))
-        self.assertEqual(sampler.min_lod, -1000.0)
-        self.assertEqual(sampler.max_lod, 1000.0)
+def test_border_color(ctx):
+    sampler = ctx.sampler()
 
-    def test_prop_changes(self):
-        sampler = self.ctx.sampler()
-        # Change values
-        sampler.anisotropy = self.ctx.max_anisotropy
-        sampler.filter = (moderngl.NEAREST_MIPMAP_NEAREST, moderngl.NEAREST)
-        sampler.compare_func = "<="
+    # Ensure border color values are set correctly
+    colors = [
+        (1.0, 0.0, 0.0, 0.0),
+        (0.0, 1.0, 0.0, 0.0),
+        (0.0, 0.0, 1.0, 0.0),
+        (0.0, 0.0, 0.0, 1.0),
+    ]
+    for color in colors:
+        sampler.border_color = color
+        assert sampler.border_color == color
 
-        self.assertEqual(sampler.anisotropy, self.ctx.max_anisotropy)
-        self.assertEqual(sampler.filter, (moderngl.NEAREST_MIPMAP_NEAREST, moderngl.NEAREST))
-        self.assertEqual(sampler.compare_func, "<=")
+def test_lod(ctx):
+    sampler = ctx.sampler()
 
-        # Ensure repeat parameters are set correctly
-        sampler.repeat_x = False
-        self.assertEqual((sampler.repeat_x, sampler.repeat_y, sampler.repeat_z), (False, True, True))
-        sampler.repeat_y = False
-        self.assertEqual((sampler.repeat_x, sampler.repeat_y, sampler.repeat_z), (False, False, True))
-        sampler.repeat_z = False
-        self.assertEqual((sampler.repeat_x, sampler.repeat_y, sampler.repeat_z), (False, False, False))
+    sampler.min_lod = 0.0
+    assert sampler.min_lod == 0.0
 
-    def test_border_color(self):
-        sampler = self.ctx.sampler()
+    sampler.max_lod = 500.0
+    assert sampler.max_lod == 500.0
 
-        # Ensure border color values are set correctly
-        colors = [
-            (1.0, 0.0, 0.0, 0.0),
-            (0.0, 1.0, 0.0, 0.0),
-            (0.0, 0.0, 1.0, 0.0),
-            (0.0, 0.0, 0.0, 1.0),
-        ]
-        for color in colors:
-            sampler.border_color = color
-            self.assertEqual(sampler.border_color, color)
-
-    def test_lod(self):
-        sampler = self.ctx.sampler()
-
-        sampler.min_lod = 0.0
-        self.assertEqual(sampler.min_lod, 0.0)
-
-        sampler.max_lod = 500.0
-        self.assertEqual(sampler.max_lod, 500.0)
-
-    def test_clear_samplers(self):
-        self.ctx.clear_samplers(start=0, end=5)
-        self.ctx.clear_samplers(start=5, end=10)
-        self.ctx.clear_samplers(start=10, end=100)
+def test_clear_samplers(ctx):
+    ctx.clear_samplers(start=0, end=5)
+    ctx.clear_samplers(start=5, end=10)
+    ctx.clear_samplers(start=10, end=100)
