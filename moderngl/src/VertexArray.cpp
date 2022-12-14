@@ -165,9 +165,9 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
 				continue;
 			}
 
-            PyObject * attribute_location_py = PyObject_GetAttrString(attribute, "_location");
-            PyObject * attribute_rows_length_py = PyObject_GetAttrString(attribute, "_rows_length");
-            PyObject * attribute_scalar_type_py = PyObject_GetAttrString(attribute, "_scalar_type");
+            PyObject * attribute_location_py = PyObject_GetAttrString(attribute, "location");
+            PyObject * attribute_rows_length_py = PyObject_GetAttrString(attribute, "rows_length");
+            PyObject * attribute_scalar_type_py = PyObject_GetAttrString(attribute, "scalar_type");
             if (!attribute_location_py || !attribute_rows_length_py || !attribute_scalar_type_py) {
                 return NULL;
             }

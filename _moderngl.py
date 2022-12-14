@@ -4,207 +4,148 @@ from typing import Any
 
 class Attribute:
     def __init__(self):
-        self._location: int = None
-        self._array_length: int = None
-        self._dimension: int = None
-        self._shape: int = None
-        self._name: str = None
-        self.extra: Any = None
+        self.gl_type = None
+        self.program_obj = None
+        self.scalar_type = None
+        self.rows_length = None
+        self.row_length = None
+        self.normalizable = None
+        self.location = None
+        self.array_length = None
+        self.dimension = None
+        self.shape = None
+        self.name = None
+        self.extra = None
 
-    def __repr__(self) -> str:
-        return '<Attribute: %d>' % self._location
+    def __repr__(self):
+        return f'<Attribute: {self.location}>'
 
     @property
     def mglo(self):
         return self
-
-    @property
-    def location(self) -> int:
-        return self._location
-
-    @property
-    def array_length(self) -> int:
-        return self._array_length
-
-    @property
-    def dimension(self) -> int:
-        return self._dimension
-
-    @property
-    def shape(self) -> int:
-        return self._shape
-
-    @property
-    def name(self) -> str:
-        return self._name
 
 
 class Uniform:
     def __init__(self):
-        self._program_obj = None
-        self._type = None
-        self._fmt = None
-        self._location = None
-        self._array_length = None
-        self._element_size = None
-        self._dimension = None
-        self._name = None
-        self._matrix = None
-        self._ctx = None
+        self.program_obj = None
+        self.gl_type = None
+        self.fmt = None
+        self.location = None
+        self.array_length = None
+        self.element_size = None
+        self.dimension = None
+        self.name = None
+        self.matrix = None
+        self.ctx = None
         self.extra = None
 
-    def __repr__(self) -> str:
-        return '<Uniform: %d>' % self._location
+    def __repr__(self):
+        return f'<Uniform: {self.location}>'
 
     @property
     def mglo(self):
         return self
 
     @property
-    def location(self) -> int:
-        return self._location
-
-    @property
-    def dimension(self) -> int:
-        return self._dimension
-
-    @property
-    def array_length(self) -> int:
-        return self._array_length
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def value(self) -> Any:
+    def value(self):
         data = self.read()
-        if self._array_length > 1:
-            if self._dimension > 1:
+        if self.array_length > 1:
+            if self.dimension > 1:
                 return [
-                    struct.unpack(self._fmt, data[i * self._element_size : i * self._element_size + self._element_size])
-                    for i in range(self._array_length)
+                    struct.unpack(self.fmt, data[i * self.element_size : i * self.element_size + self.element_size])
+                    for i in range(self.array_length)
                 ]
             else:
                 return [
-                    struct.unpack(self._fmt, data[i * self._element_size : i * self._element_size + self._element_size])[0]
-                    for i in range(self._array_length)
+                    struct.unpack(self.fmt, data[i * self.element_size : i * self.element_size + self.element_size])[0]
+                    for i in range(self.array_length)
                 ]
-        elif self._dimension > 1:
-            return struct.unpack(self._fmt, data)
+        elif self.dimension > 1:
+            return struct.unpack(self.fmt, data)
         else:
-            return struct.unpack(self._fmt, data)[0]
+            return struct.unpack(self.fmt, data)[0]
 
     @value.setter
-    def value(self, value: Any) -> None:
-        if self._array_length > 1:
-            if self._dimension > 1:
-                data = b''.join(struct.pack(self._fmt, *row) for row in value)
+    def value(self, value):
+        if self.array_length > 1:
+            if self.dimension > 1:
+                data = b''.join(struct.pack(self.fmt, *row) for row in value)
             else:
-                data = b''.join(struct.pack(self._fmt, item) for item in value)
-        elif self._dimension > 1:
-            data = struct.pack(self._fmt, *value)
+                data = b''.join(struct.pack(self.fmt, item) for item in value)
+        elif self.dimension > 1:
+            data = struct.pack(self.fmt, *value)
         else:
-            data = struct.pack(self._fmt, value)
+            data = struct.pack(self.fmt, value)
         self.write(data)
 
-    def read(self) -> bytes:
-        return self._ctx._read_uniform(self._program_obj, self._location, self._type, self._array_length, self._element_size)
+    def read(self):
+        return self.ctx._read_uniform(self.program_obj, self.location, self.gl_type, self.array_length, self.element_size)
 
-    def write(self, data: Any) -> None:
-        self._ctx._write_uniform(self._program_obj, self._location, self._type, self._array_length, data)
+    def write(self, data: Any):
+        self.ctx._write_uniform(self.program_obj, self.location, self.gl_type, self.array_length, data)
 
 
 class UniformBlock:
     def __init__(self):
-        self._program_obj = None
-        self._index = None
-        self._size = None
-        self._name = None
-        self._ctx = None
+        self.program_obj = None
+        self.index = None
+        self.size = None
+        self.name = None
+        self.ctx = None
         self.extra = None
 
     def __repr__(self):
-        return '<UniformBlock: %d>' % self._index
+        return f'<UniformBlock: {self.index}>'
 
     @property
     def mglo(self):
         return self
 
     @property
-    def binding(self) -> int:
-        return self._ctx._get_ubo_binding(self._program_obj, self._index)
+    def binding(self):
+        return self.ctx._get_ubo_binding(self.program_obj, self.index)
 
     @binding.setter
-    def binding(self, binding: int) -> None:
-        self._ctx._set_ubo_binding(self._program_obj, self._index, binding)
+    def binding(self, binding):
+        self.ctx._set_ubo_binding(self.program_obj, self.index, binding)
 
     @property
-    def value(self) -> int:
-        return self._ctx._get_ubo_binding(self._program_obj, self._index)
+    def value(self):
+        return self.ctx._get_ubo_binding(self.program_obj, self.index)
 
     @value.setter
-    def value(self, value: int) -> None:
-        self._ctx._set_ubo_binding(self._program_obj, self._index, value)
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def index(self) -> int:
-        return self._index
-
-    @property
-    def size(self) -> int:
-        return self._size
-
+    def value(self, value):
+        self.ctx._set_ubo_binding(self.program_obj, self.index, value)
 
 
 class Subroutine:
     def __init__(self):
-        self._index = None
-        self._name = None
+        self.index = None
+        self.name = None
         self.extra = None
 
-    def __repr__(self) -> str:
-        return '<Subroutine: %d>' % self._index
+    def __repr__(self):
+        return f'<Subroutine: {self.index}>'
 
     @property
     def mglo(self):
         return self
-
-    @property
-    def index(self) -> int:
-        return self._index
-
-    @property
-    def name(self) -> str:
-        return self._name
 
 
 class Varying:
     def __init__(self):
-        self._number = None
-        self._array_length = None
-        self._dimension = None
-        self._name = None
-        self.extra: Any = None  #: Attribute for storing user defined objects
+        self.number = None
+        self.array_length = None
+        self.dimension = None
+        self.name = None
+        self.extra = None
 
-    def __repr__(self) -> str:
-        return '<Varying: %d>' % self.number
+    def __repr__(self):
+        return f'<Varying: {self.number}>'
 
     @property
     def mglo(self):
         return self
-
-    @property
-    def number(self) -> int:
-        return self._number
-
-    @property
-    def name(self) -> str:
-        return self._name
 
 
 class Error(Exception):
@@ -319,17 +260,17 @@ def make_attribute(name, gl_type, program_obj, location, array_length):
     dimension, scalar_type, rows_length, row_length, normalizable, shape = tmp
     rows_length *= array_length
     res = Attribute()
-    res._type = gl_type
-    res._program_obj = program_obj
-    res._scalar_type = scalar_type
-    res._rows_length = rows_length
-    res._row_length = row_length
-    res._normalizable = normalizable
-    res._location = location
-    res._array_length = array_length
-    res._dimension = dimension
-    res._shape = shape
-    res._name = name
+    res.gl_type = gl_type
+    res.program_obj = program_obj
+    res.scalar_type = scalar_type
+    res.rows_length = rows_length
+    res.row_length = row_length
+    res.normalizable = normalizable
+    res.location = location
+    res.array_length = array_length
+    res.dimension = dimension
+    res.shape = shape
+    res.name = name
     return res
 
 
@@ -337,42 +278,42 @@ def make_uniform(name, gl_type, program_obj, location, array_length, ctx):
     tmp = UNIFORM_LOOKUP_TABLE.get(gl_type, (False, 1, 4, '1i'))
     matrix, dimension, element_size, fmt = tmp
     res = Uniform()
-    res._name = name
-    res._type = gl_type
-    res._fmt = fmt
-    res._program_obj = program_obj
-    res._location = location
-    res._array_length = array_length
-    res._matrix = matrix
-    res._dimension = dimension
-    res._element_size = element_size
-    res._ctx = ctx
+    res.name = name
+    res.gl_type = gl_type
+    res.fmt = fmt
+    res.program_obj = program_obj
+    res.location = location
+    res.array_length = array_length
+    res.matrix = matrix
+    res.dimension = dimension
+    res.element_size = element_size
+    res.ctx = ctx
     return res
 
 
 def make_uniform_block(name, program_obj, index, size, ctx):
     res = UniformBlock()
-    res._name = name
-    res._program_obj = program_obj
-    res._index = index
-    res._size = size
-    res._ctx = ctx
+    res.name = name
+    res.program_obj = program_obj
+    res.index = index
+    res.size = size
+    res.ctx = ctx
     return res
 
 
 def make_subroutine(name, index):
     res = Subroutine()
-    res._name = name
-    res._index = index
+    res.name = name
+    res.index = index
     return res
 
 
 def make_varying(name, number, array_length, dimension):
     res = Varying()
-    res._number = number
-    res._name = name
-    res._array_length = array_length
-    res._dimension = dimension
+    res.number = number
+    res.name = name
+    res.array_length = array_length
+    res.dimension = dimension
     return res
 
 
