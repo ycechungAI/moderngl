@@ -120,8 +120,8 @@ def test_arrays(ctx, v_type):
     vert_src = '''
         #version %(version)s
 
-        in %(type)s v_in[];
-        out %(type)s v_out[];
+        in %(type)s v_in[2];
+        out %(type)s v_out[2];
 
         void main() {
             v_out[0] = v_in[0] + v_in[0];
