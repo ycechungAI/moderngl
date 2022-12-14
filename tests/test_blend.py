@@ -130,7 +130,7 @@ class TestBlend:
 
     def assertEqualColors(self, a, b):
         for i in range(4):
-            assert pytest.approx(a[i], rel=0.001) == b[i]
+            assert pytest.approx(a[i], rel=0.01) == b[i]
 
     def test_blend_default(self):
         src = (0.0, 1.0, 0.0, 0.2)
