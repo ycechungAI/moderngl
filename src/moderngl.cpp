@@ -9114,52 +9114,57 @@ PyObject * fmtdebug(PyObject * self, PyObject * args) {
 }
 
 PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
-    PyObject * backend;
-    PyObject * backend_name = PyDict_GetItemString(kwargs, "backend");
-    PyErr_Clear();
+    PyObject * context = PyDict_GetItemString(kwargs, "context");
 
-    PyObject * glcontext = PyImport_ImportModule("glcontext");
-    if (!glcontext) {
-        // Displayed to user: ModuleNotFoundError: No module named 'glcontext'
-        return NULL;
-    }
-
-    // Use the specified backend
-    if (backend_name) {
-        backend = PyObject_CallMethod(glcontext, "get_backend_by_name", "O", backend_name);
-        if (backend == Py_None || backend == NULL) {
+    if (!context) {
+        PyObject * glcontext = PyImport_ImportModule("glcontext");
+        if (!glcontext) {
+            // Displayed to user: ModuleNotFoundError: No module named 'glcontext'
             return NULL;
         }
-    // Use default backend
-    } else {
-        backend = PyObject_CallMethod(glcontext, "default_backend", NULL);
-        if (backend == Py_None || backend == NULL) {
-            MGLError_Set("glcontext: Could not get a default backend");
+
+        PyObject * backend = NULL;
+        PyObject * backend_name = PyDict_GetItemString(kwargs, "backend");
+
+        // Use the specified backend
+        if (backend_name) {
+            backend = PyObject_CallMethod(glcontext, "get_backend_by_name", "O", backend_name);
+            if (backend == Py_None || backend == NULL) {
+                return NULL;
+            }
+        // Use default backend
+        } else {
+            backend = PyObject_CallMethod(glcontext, "default_backend", NULL);
+            if (backend == Py_None || backend == NULL) {
+                MGLError_Set("glcontext: Could not get a default backend");
+                return NULL;
+            }
+        }
+
+        // Ensure we have a callable
+        if (!PyCallable_Check(backend)) {
+            MGLError_Set("The returned glcontext is not a callable");
+            return NULL;
+        }
+        // Create context by simply forwarding all arguments
+        context = PyObject_Call(backend, args, kwargs);
+        if (!context) {
             return NULL;
         }
     }
 
     MGLContext * ctx = PyObject_New(MGLContext, MGLContext_type);
     ctx->released = false;
-
     ctx->wireframe = false;
+    ctx->ctx = context;
 
-    // Ensure we have a callable
-    if (!PyCallable_Check(backend)) {
-        MGLError_Set("The returned glcontext is not a callable");
-        return NULL;
-    }
-    // Create context by simply forwarding all arguments
-    ctx->ctx = PyObject_Call(backend, args, kwargs);
-    if (!ctx->ctx) {
-
-        return NULL;
-    }
+    bool modern_loader = PyObject_HasAttrString(ctx->ctx, "load_opengl_function");
+    const char * loader_method = modern_loader ? "load_opengl_function" : "load";
 
     // Map OpenGL functions
     void ** gl_function = (void **)&ctx->gl;
     for (int i = 0; GL_FUNCTIONS[i]; ++i) {
-        PyObject * val = PyObject_CallMethod(ctx->ctx, "load", "s", GL_FUNCTIONS[i]);
+        PyObject * val = PyObject_CallMethod(ctx->ctx, loader_method, "s", GL_FUNCTIONS[i]);
         if (!val) {
             return NULL;
         }
