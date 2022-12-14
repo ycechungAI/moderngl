@@ -9063,514 +9063,176 @@ PyObject * MGLContext_get_context(MGLContext * self, void * closure) {
     return self->ctx;
 }
 
-PyObject * MGLContext_get_info(MGLContext * self, void * closure) {
-    const GLMethods & gl = self->gl;
+void set_key(PyObject * dict, const char * key, PyObject * value) {
+    PyDict_SetItemString(dict, key, value);
+    Py_DECREF(value);
+}
 
+void set_info_str(MGLContext * self, PyObject * info, const char * name, GLenum param) {
+    const char * ptr = (const char *)self->gl.GetString(param);
+    set_key(info, name, PyUnicode_FromString(ptr ? ptr : ""));
+}
+
+void set_info_bool(MGLContext * self, PyObject * info, const char * name, GLenum param) {
+    int value = 0;
+    self->gl.GetBooleanv(param, (unsigned char *)&value);
+    PyDict_SetItemString(info, name, value ? Py_True : Py_False);
+}
+
+void set_info_float(MGLContext * self, PyObject * info, const char * name, GLenum param) {
+    float value = 0.0f;
+    self->gl.GetFloatv(param, &value);
+    set_key(info, name, PyFloat_FromDouble(value));
+}
+
+void set_info_int(MGLContext * self, PyObject * info, const char * name, GLenum param) {
+    int value = 0;
+    self->gl.GetIntegerv(param, &value);
+    set_key(info, name, PyLong_FromLong(value));
+}
+
+void set_info_int64(MGLContext * self, PyObject * info, const char * name, GLenum param) {
+    long long value = 0;
+    if (self->gl.GetInteger64v) {
+        self->gl.GetInteger64v(param, &value);
+    }
+    set_key(info, name, PyLong_FromLongLong(value));
+}
+
+void set_info_float_range(MGLContext * self, PyObject * info, const char * name, GLenum param) {
+    float value[2] = {};
+    self->gl.GetFloatv(param, value);
+    set_key(info, name, Py_BuildValue("(ff)", value[0], value[1]));
+}
+
+void set_info_int_range(MGLContext * self, PyObject * info, const char * name, GLenum param) {
+    int value[2] = {};
+    self->gl.GetIntegerv(param, value);
+    set_key(info, name, Py_BuildValue("(ii)", value[0], value[1]));
+}
+
+void set_info_int_xyz(MGLContext * self, PyObject * info, const char * name, GLenum param) {
+    int value[3] = {};
+    if (self->gl.GetIntegeri_v) {
+        self->gl.GetIntegeri_v(param, 0, &value[0]);
+        self->gl.GetIntegeri_v(param, 1, &value[1]);
+        self->gl.GetIntegeri_v(param, 2, &value[2]);
+    }
+    set_key(info, name, Py_BuildValue("(iii)", value[0], value[1], value[2]));
+}
+
+PyObject * MGLContext_get_info(MGLContext * self) {
     PyObject * info = PyDict_New();
 
-    const char * vendor = (const char *)gl.GetString(GL_VENDOR);
-    PyDict_SetItemString(
-        info,
-        "GL_VENDOR",
-        PyUnicode_FromString(vendor ? vendor : "")
-    );
-
-    const char * renderer = (const char *)gl.GetString(GL_RENDERER);
-    PyDict_SetItemString(
-        info,
-        "GL_RENDERER",
-        PyUnicode_FromString(renderer ? renderer : "")
-    );
-
-    const char * version = (const char *)gl.GetString(GL_VERSION);
-    PyDict_SetItemString(
-        info,
-        "GL_VERSION",
-        PyUnicode_FromString(version ? version : "")
-    );
-
-    {
-        float gl_point_size_range[2] = {};
-        gl.GetFloatv(GL_POINT_SIZE_RANGE, gl_point_size_range);
-
-        PyDict_SetItemString(
-            info,
-            "GL_POINT_SIZE_RANGE",
-            tuple2(
-                PyFloat_FromDouble(gl_point_size_range[0]),
-                PyFloat_FromDouble(gl_point_size_range[1])
-            )
-        );
-
-        float gl_smooth_line_width_range[2] = {};
-        gl.GetFloatv(GL_SMOOTH_LINE_WIDTH_RANGE, gl_smooth_line_width_range);
-
-        PyDict_SetItemString(
-            info,
-            "GL_SMOOTH_LINE_WIDTH_RANGE",
-            tuple2(
-                PyFloat_FromDouble(gl_smooth_line_width_range[0]),
-                PyFloat_FromDouble(gl_smooth_line_width_range[1])
-            )
-        );
-
-        float gl_aliased_line_width_range[2] = {};
-        gl.GetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, gl_aliased_line_width_range);
-
-        PyDict_SetItemString(
-            info,
-            "GL_ALIASED_LINE_WIDTH_RANGE",
-            tuple2(
-                PyFloat_FromDouble(gl_aliased_line_width_range[0]),
-                PyFloat_FromDouble(gl_aliased_line_width_range[1])
-            )
-        );
-
-        float gl_point_fade_threshold_size = 0.0f;
-        gl.GetFloatv(GL_POINT_FADE_THRESHOLD_SIZE, &gl_point_fade_threshold_size);
-
-        float gl_point_size_granularity = 0.0f;
-        gl.GetFloatv(GL_POINT_SIZE_GRANULARITY, &gl_point_size_granularity);
-
-        float gl_smooth_line_width_granularity = 0.0f;
-        gl.GetFloatv(GL_SMOOTH_LINE_WIDTH_GRANULARITY, &gl_smooth_line_width_granularity);
-
-        float gl_min_program_texel_offset = 0.0f;
-        gl.GetFloatv(GL_MIN_PROGRAM_TEXEL_OFFSET, &gl_min_program_texel_offset);
-
-        float gl_max_program_texel_offset = 0.0f;
-        gl.GetFloatv(GL_MAX_PROGRAM_TEXEL_OFFSET, &gl_max_program_texel_offset);
-
-        PyDict_SetItemString(info, "GL_POINT_FADE_THRESHOLD_SIZE", PyFloat_FromDouble(gl_point_fade_threshold_size));
-        PyDict_SetItemString(info, "GL_POINT_SIZE_GRANULARITY", PyFloat_FromDouble(gl_point_size_granularity));
-        PyDict_SetItemString(info, "GL_SMOOTH_LINE_WIDTH_GRANULARITY", PyFloat_FromDouble(gl_smooth_line_width_granularity));
-        PyDict_SetItemString(info, "GL_MIN_PROGRAM_TEXEL_OFFSET", PyFloat_FromDouble(gl_min_program_texel_offset));
-        PyDict_SetItemString(info, "GL_MAX_PROGRAM_TEXEL_OFFSET", PyFloat_FromDouble(gl_max_program_texel_offset));
-    }
-
-    {
-        int gl_minor_version = 0;
-        gl.GetIntegerv(GL_MINOR_VERSION, &gl_minor_version);
-
-        int gl_major_version = 0;
-        gl.GetIntegerv(GL_MAJOR_VERSION, &gl_major_version);
-
-        int gl_sample_buffers = 0;
-        gl.GetIntegerv(GL_SAMPLE_BUFFERS, &gl_sample_buffers);
-
-        int gl_subpixel_bits = 0;
-        gl.GetIntegerv(GL_SUBPIXEL_BITS, &gl_subpixel_bits);
-
-        int gl_context_profile_mask = 0;
-        gl.GetIntegerv(GL_CONTEXT_PROFILE_MASK, &gl_context_profile_mask);
-
-        int gl_uniform_buffer_offset_alignment = 0;
-        gl.GetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &gl_uniform_buffer_offset_alignment);
-
-        PyDict_SetItemString(info, "GL_MINOR_VERSION", PyLong_FromLong(gl_minor_version));
-        PyDict_SetItemString(info, "GL_MAJOR_VERSION", PyLong_FromLong(gl_major_version));
-        PyDict_SetItemString(info, "GL_SAMPLE_BUFFERS", PyLong_FromLong(gl_sample_buffers));
-        PyDict_SetItemString(info, "GL_SUBPIXEL_BITS", PyLong_FromLong(gl_subpixel_bits));
-        PyDict_SetItemString(info, "GL_CONTEXT_PROFILE_MASK", PyLong_FromLong(gl_context_profile_mask));
-        PyDict_SetItemString(info, "GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT", PyLong_FromLong(gl_uniform_buffer_offset_alignment));
-    }
-
-    {
-        unsigned char gl_doublebuffer = 0;
-        gl.GetBooleanv(GL_DOUBLEBUFFER, &gl_doublebuffer);
-
-        unsigned char gl_stereo = 0;
-        gl.GetBooleanv(GL_STEREO, &gl_stereo);
-
-        PyDict_SetItemString(info, "GL_DOUBLEBUFFER", PyBool_FromLong(gl_doublebuffer));
-        PyDict_SetItemString(info, "GL_STEREO", PyBool_FromLong(gl_stereo));
-    }
-
-    {
-        int gl_max_viewport_dims[2] = {};
-        gl.GetIntegerv(GL_MAX_VIEWPORT_DIMS, gl_max_viewport_dims);
-
-        PyDict_SetItemString(
-            info,
-            "GL_MAX_VIEWPORT_DIMS",
-            tuple2(
-                PyLong_FromLong(gl_max_viewport_dims[0]),
-                PyLong_FromLong(gl_max_viewport_dims[1])
-            )
-        );
-
-        int gl_max_3d_texture_size = 0;
-        gl.GetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &gl_max_3d_texture_size);
-
-        int gl_max_array_texture_layers = 0;
-        gl.GetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &gl_max_array_texture_layers);
-
-        int gl_max_clip_distances = 0;
-        gl.GetIntegerv(GL_MAX_CLIP_DISTANCES, &gl_max_clip_distances);
-
-        int gl_max_color_attachments = 0;
-        gl.GetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &gl_max_color_attachments);
-
-        int gl_max_color_texture_samples = 0;
-        gl.GetIntegerv(GL_MAX_COLOR_TEXTURE_SAMPLES, &gl_max_color_texture_samples);
-
-        int gl_max_combined_fragment_uniform_components = 0;
-        gl.GetIntegerv(GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS, &gl_max_combined_fragment_uniform_components);
-
-        int gl_max_combined_geometry_uniform_components = 0;
-        gl.GetIntegerv(GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS, &gl_max_combined_geometry_uniform_components);
-
-        int gl_max_combined_texture_image_units = 0;
-        gl.GetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &gl_max_combined_texture_image_units);
-
-        int gl_max_combined_uniform_blocks = 0;
-        gl.GetIntegerv(GL_MAX_COMBINED_UNIFORM_BLOCKS, &gl_max_combined_uniform_blocks);
-
-        int gl_max_combined_vertex_uniform_components = 0;
-        gl.GetIntegerv(GL_MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS, &gl_max_combined_vertex_uniform_components);
-
-        int gl_max_cube_map_texture_size = 0;
-        gl.GetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &gl_max_cube_map_texture_size);
-
-        int gl_max_depth_texture_samples = 0;
-        gl.GetIntegerv(GL_MAX_DEPTH_TEXTURE_SAMPLES, &gl_max_depth_texture_samples);
-
-        int gl_max_draw_buffers = 0;
-        gl.GetIntegerv(GL_MAX_DRAW_BUFFERS, &gl_max_draw_buffers);
-
-        int gl_max_dual_source_draw_buffers = 0;
-        gl.GetIntegerv(GL_MAX_DUAL_SOURCE_DRAW_BUFFERS, &gl_max_dual_source_draw_buffers);
-
-        int gl_max_elements_indices = 0;
-        gl.GetIntegerv(GL_MAX_ELEMENTS_INDICES, &gl_max_elements_indices);
-
-        int gl_max_elements_vertices = 0;
-        gl.GetIntegerv(GL_MAX_ELEMENTS_VERTICES, &gl_max_elements_vertices);
-
-        int gl_max_fragment_input_components = 0;
-        gl.GetIntegerv(GL_MAX_FRAGMENT_INPUT_COMPONENTS, &gl_max_fragment_input_components);
-
-        int gl_max_fragment_uniform_components = 0;
-        gl.GetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &gl_max_fragment_uniform_components);
-
-        int gl_max_fragment_uniform_vectors = 0;
-        gl.GetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &gl_max_fragment_uniform_vectors);
-
-        int gl_max_fragment_uniform_blocks = 0;
-        gl.GetIntegerv(GL_MAX_FRAGMENT_UNIFORM_BLOCKS, &gl_max_fragment_uniform_blocks);
-
-        int gl_max_geometry_input_components = 0;
-        gl.GetIntegerv(GL_MAX_GEOMETRY_INPUT_COMPONENTS, &gl_max_geometry_input_components);
-
-        int gl_max_geometry_output_components = 0;
-        gl.GetIntegerv(GL_MAX_GEOMETRY_OUTPUT_COMPONENTS, &gl_max_geometry_output_components);
-
-        int gl_max_geometry_texture_image_units = 0;
-        gl.GetIntegerv(GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS, &gl_max_geometry_texture_image_units);
-
-        int gl_max_geometry_uniform_blocks = 0;
-        gl.GetIntegerv(GL_MAX_GEOMETRY_UNIFORM_BLOCKS, &gl_max_geometry_uniform_blocks);
-
-        int gl_max_geometry_uniform_components = 0;
-        gl.GetIntegerv(GL_MAX_GEOMETRY_UNIFORM_COMPONENTS, &gl_max_geometry_uniform_components);
-
-        int gl_max_geometry_output_vertices = 0;
-        gl.GetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &gl_max_geometry_output_vertices);
-
-        int gl_max_integer_samples = 0;
-        gl.GetIntegerv(GL_MAX_INTEGER_SAMPLES, &gl_max_integer_samples);
-
-        int gl_max_samples = 0;
-        gl.GetIntegerv(GL_MAX_SAMPLES, &gl_max_samples);
-
-        int gl_max_rectangle_texture_size = 0;
-        gl.GetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE, &gl_max_rectangle_texture_size);
-
-        int gl_max_renderbuffer_size = 0;
-        gl.GetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &gl_max_renderbuffer_size);
-
-        int gl_max_sample_mask_words = 0;
-        gl.GetIntegerv(GL_MAX_SAMPLE_MASK_WORDS, &gl_max_sample_mask_words);
-
-        long long gl_max_server_wait_timeout = 0;
-
-        if (gl.GetInteger64v) {
-            gl.GetInteger64v(GL_MAX_SERVER_WAIT_TIMEOUT, &gl_max_server_wait_timeout);
-        }
-
-        int gl_max_texture_buffer_size = 0;
-        gl.GetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE, &gl_max_texture_buffer_size);
-
-        int gl_max_texture_image_units = 0;
-        gl.GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &gl_max_texture_image_units);
-
-        int gl_max_texture_lod_bias = 0;
-        gl.GetIntegerv(GL_MAX_TEXTURE_LOD_BIAS, &gl_max_texture_lod_bias);
-
-        int gl_max_texture_size = 0;
-        gl.GetIntegerv(GL_MAX_TEXTURE_SIZE, &gl_max_texture_size);
-
-        int gl_max_uniform_buffer_bindings = 0;
-        gl.GetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &gl_max_uniform_buffer_bindings);
-
-        int gl_max_uniform_block_size = 0;
-        gl.GetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &gl_max_uniform_block_size);
-
-        int gl_max_varying_vectors = 0;
-        gl.GetIntegerv(GL_MAX_VARYING_VECTORS, &gl_max_varying_vectors);
-
-        int gl_max_vertex_attribs = 0;
-        gl.GetIntegerv(GL_MAX_VERTEX_ATTRIBS, &gl_max_vertex_attribs);
-
-        int gl_max_vertex_texture_image_units = 0;
-        gl.GetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &gl_max_vertex_texture_image_units);
-
-        int gl_max_vertex_uniform_components = 0;
-        gl.GetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &gl_max_vertex_uniform_components);
-
-        int gl_max_vertex_uniform_vectors = 0;
-        gl.GetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &gl_max_vertex_uniform_vectors);
-
-        int gl_max_vertex_output_components = 0;
-        gl.GetIntegerv(GL_MAX_VERTEX_OUTPUT_COMPONENTS, &gl_max_vertex_output_components);
-
-        int gl_max_vertex_uniform_blocks = 0;
-        gl.GetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, &gl_max_vertex_uniform_blocks);
-
-        PyDict_SetItemString(info, "GL_MAX_3D_TEXTURE_SIZE", PyLong_FromLong(gl_max_3d_texture_size));
-        PyDict_SetItemString(info, "GL_MAX_ARRAY_TEXTURE_LAYERS", PyLong_FromLong(gl_max_array_texture_layers));
-        PyDict_SetItemString(info, "GL_MAX_CLIP_DISTANCES", PyLong_FromLong(gl_max_clip_distances));
-        PyDict_SetItemString(info, "GL_MAX_COLOR_ATTACHMENTS", PyLong_FromLong(gl_max_color_attachments));
-        PyDict_SetItemString(info, "GL_MAX_COLOR_TEXTURE_SAMPLES", PyLong_FromLong(gl_max_color_texture_samples));
-        PyDict_SetItemString(info, "GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS", PyLong_FromLong(gl_max_combined_fragment_uniform_components));
-        PyDict_SetItemString(info, "GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS", PyLong_FromLong(gl_max_combined_geometry_uniform_components));
-        PyDict_SetItemString(info, "GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS", PyLong_FromLong(gl_max_combined_texture_image_units));
-        PyDict_SetItemString(info, "GL_MAX_COMBINED_UNIFORM_BLOCKS", PyLong_FromLong(gl_max_combined_uniform_blocks));
-        PyDict_SetItemString(info, "GL_MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS", PyLong_FromLong(gl_max_combined_vertex_uniform_components));
-        PyDict_SetItemString(info, "GL_MAX_CUBE_MAP_TEXTURE_SIZE", PyLong_FromLong(gl_max_cube_map_texture_size));
-        PyDict_SetItemString(info, "GL_MAX_DEPTH_TEXTURE_SAMPLES", PyLong_FromLong(gl_max_depth_texture_samples));
-        PyDict_SetItemString(info, "GL_MAX_DRAW_BUFFERS", PyLong_FromLong(gl_max_draw_buffers));
-        PyDict_SetItemString(info, "GL_MAX_DUAL_SOURCE_DRAW_BUFFERS", PyLong_FromLong(gl_max_dual_source_draw_buffers));
-        PyDict_SetItemString(info, "GL_MAX_ELEMENTS_INDICES", PyLong_FromLong(gl_max_elements_indices));
-        PyDict_SetItemString(info, "GL_MAX_ELEMENTS_VERTICES", PyLong_FromLong(gl_max_elements_vertices));
-        PyDict_SetItemString(info, "GL_MAX_FRAGMENT_INPUT_COMPONENTS", PyLong_FromLong(gl_max_fragment_input_components));
-        PyDict_SetItemString(info, "GL_MAX_FRAGMENT_UNIFORM_COMPONENTS", PyLong_FromLong(gl_max_fragment_uniform_components));
-        PyDict_SetItemString(info, "GL_MAX_FRAGMENT_UNIFORM_VECTORS", PyLong_FromLong(gl_max_fragment_uniform_vectors));
-        PyDict_SetItemString(info, "GL_MAX_FRAGMENT_UNIFORM_BLOCKS", PyLong_FromLong(gl_max_fragment_uniform_blocks));
-        PyDict_SetItemString(info, "GL_MAX_GEOMETRY_INPUT_COMPONENTS", PyLong_FromLong(gl_max_geometry_input_components));
-        PyDict_SetItemString(info, "GL_MAX_GEOMETRY_OUTPUT_COMPONENTS", PyLong_FromLong(gl_max_geometry_output_components));
-        PyDict_SetItemString(info, "GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS", PyLong_FromLong(gl_max_geometry_texture_image_units));
-        PyDict_SetItemString(info, "GL_MAX_GEOMETRY_UNIFORM_BLOCKS", PyLong_FromLong(gl_max_geometry_uniform_blocks));
-        PyDict_SetItemString(info, "GL_MAX_GEOMETRY_UNIFORM_COMPONENTS", PyLong_FromLong(gl_max_geometry_uniform_components));
-        PyDict_SetItemString(info, "GL_MAX_GEOMETRY_OUTPUT_VERTICES", PyLong_FromLong(gl_max_geometry_output_vertices));
-        PyDict_SetItemString(info, "GL_MAX_INTEGER_SAMPLES", PyLong_FromLong(gl_max_integer_samples));
-        PyDict_SetItemString(info, "GL_MAX_SAMPLES", PyLong_FromLong(gl_max_samples));
-        PyDict_SetItemString(info, "GL_MAX_RECTANGLE_TEXTURE_SIZE", PyLong_FromLong(gl_max_rectangle_texture_size));
-        PyDict_SetItemString(info, "GL_MAX_RENDERBUFFER_SIZE", PyLong_FromLong(gl_max_renderbuffer_size));
-        PyDict_SetItemString(info, "GL_MAX_SAMPLE_MASK_WORDS", PyLong_FromLong(gl_max_sample_mask_words));
-        PyDict_SetItemString(info, "GL_MAX_SERVER_WAIT_TIMEOUT", PyLong_FromLongLong(gl_max_server_wait_timeout));
-        PyDict_SetItemString(info, "GL_MAX_TEXTURE_BUFFER_SIZE", PyLong_FromLong(gl_max_texture_buffer_size));
-        PyDict_SetItemString(info, "GL_MAX_TEXTURE_IMAGE_UNITS", PyLong_FromLong(gl_max_texture_image_units));
-        PyDict_SetItemString(info, "GL_MAX_TEXTURE_LOD_BIAS", PyLong_FromLong(gl_max_texture_lod_bias));
-        PyDict_SetItemString(info, "GL_MAX_TEXTURE_SIZE", PyLong_FromLong(gl_max_texture_size));
-        PyDict_SetItemString(info, "GL_MAX_UNIFORM_BUFFER_BINDINGS", PyLong_FromLong(gl_max_uniform_buffer_bindings));
-        PyDict_SetItemString(info, "GL_MAX_UNIFORM_BLOCK_SIZE", PyLong_FromLong(gl_max_uniform_block_size));
-        PyDict_SetItemString(info, "GL_MAX_VARYING_VECTORS", PyLong_FromLong(gl_max_varying_vectors));
-        PyDict_SetItemString(info, "GL_MAX_VERTEX_ATTRIBS", PyLong_FromLong(gl_max_vertex_attribs));
-        PyDict_SetItemString(info, "GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS", PyLong_FromLong(gl_max_vertex_texture_image_units));
-        PyDict_SetItemString(info, "GL_MAX_VERTEX_UNIFORM_COMPONENTS", PyLong_FromLong(gl_max_vertex_uniform_components));
-        PyDict_SetItemString(info, "GL_MAX_VERTEX_UNIFORM_VECTORS", PyLong_FromLong(gl_max_vertex_uniform_vectors));
-        PyDict_SetItemString(info, "GL_MAX_VERTEX_OUTPUT_COMPONENTS", PyLong_FromLong(gl_max_vertex_output_components));
-        PyDict_SetItemString(info, "GL_MAX_VERTEX_UNIFORM_BLOCKS", PyLong_FromLong(gl_max_vertex_uniform_blocks));
-    }
+    set_info_str(self, info, "GL_VENDOR", GL_VENDOR);
+    set_info_str(self, info, "GL_RENDERER", GL_RENDERER);
+    set_info_str(self, info, "GL_VERSION", GL_VERSION);
+    set_info_float_range(self, info, "GL_POINT_SIZE_RANGE", GL_POINT_SIZE_RANGE);
+    set_info_float_range(self, info, "GL_SMOOTH_LINE_WIDTH_RANGE", GL_SMOOTH_LINE_WIDTH_RANGE);
+    set_info_float_range(self, info, "GL_ALIASED_LINE_WIDTH_RANGE", GL_ALIASED_LINE_WIDTH_RANGE);
+    set_info_float(self, info, "GL_POINT_FADE_THRESHOLD_SIZE", GL_POINT_FADE_THRESHOLD_SIZE);
+    set_info_float(self, info, "GL_POINT_SIZE_GRANULARITY", GL_POINT_SIZE_GRANULARITY);
+    set_info_float(self, info, "GL_SMOOTH_LINE_WIDTH_GRANULARITY", GL_SMOOTH_LINE_WIDTH_GRANULARITY);
+    set_info_float(self, info, "GL_MIN_PROGRAM_TEXEL_OFFSET", GL_MIN_PROGRAM_TEXEL_OFFSET);
+    set_info_float(self, info, "GL_MAX_PROGRAM_TEXEL_OFFSET", GL_MAX_PROGRAM_TEXEL_OFFSET);
+    set_info_int(self, info, "GL_MINOR_VERSION", GL_MINOR_VERSION);
+    set_info_int(self, info, "GL_MAJOR_VERSION", GL_MAJOR_VERSION);
+    set_info_int(self, info, "GL_SAMPLE_BUFFERS", GL_SAMPLE_BUFFERS);
+    set_info_int(self, info, "GL_SUBPIXEL_BITS", GL_SUBPIXEL_BITS);
+    set_info_int(self, info, "GL_CONTEXT_PROFILE_MASK", GL_CONTEXT_PROFILE_MASK);
+    set_info_int(self, info, "GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT", GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT);
+    set_info_bool(self, info, "GL_DOUBLEBUFFER", GL_DOUBLEBUFFER);
+    set_info_bool(self, info, "GL_STEREO", GL_STEREO);
+    set_info_int_range(self, info, "GL_MAX_VIEWPORT_DIMS", GL_MAX_VIEWPORT_DIMS);
+    set_info_int(self, info, "GL_MAX_3D_TEXTURE_SIZE", GL_MAX_3D_TEXTURE_SIZE);
+    set_info_int(self, info, "GL_MAX_ARRAY_TEXTURE_LAYERS", GL_MAX_ARRAY_TEXTURE_LAYERS);
+    set_info_int(self, info, "GL_MAX_CLIP_DISTANCES", GL_MAX_CLIP_DISTANCES);
+    set_info_int(self, info, "GL_MAX_COLOR_ATTACHMENTS", GL_MAX_COLOR_ATTACHMENTS);
+    set_info_int(self, info, "GL_MAX_COLOR_TEXTURE_SAMPLES", GL_MAX_COLOR_TEXTURE_SAMPLES);
+    set_info_int(self, info, "GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS", GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS);
+    set_info_int(self, info, "GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS", GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS);
+    set_info_int(self, info, "GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS", GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+    set_info_int(self, info, "GL_MAX_COMBINED_UNIFORM_BLOCKS", GL_MAX_COMBINED_UNIFORM_BLOCKS);
+    set_info_int(self, info, "GL_MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS", GL_MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS);
+    set_info_int(self, info, "GL_MAX_CUBE_MAP_TEXTURE_SIZE", GL_MAX_CUBE_MAP_TEXTURE_SIZE);
+    set_info_int(self, info, "GL_MAX_DEPTH_TEXTURE_SAMPLES", GL_MAX_DEPTH_TEXTURE_SAMPLES);
+    set_info_int(self, info, "GL_MAX_DRAW_BUFFERS", GL_MAX_DRAW_BUFFERS);
+    set_info_int(self, info, "GL_MAX_DUAL_SOURCE_DRAW_BUFFERS", GL_MAX_DUAL_SOURCE_DRAW_BUFFERS);
+    set_info_int(self, info, "GL_MAX_ELEMENTS_INDICES", GL_MAX_ELEMENTS_INDICES);
+    set_info_int(self, info, "GL_MAX_ELEMENTS_VERTICES", GL_MAX_ELEMENTS_VERTICES);
+    set_info_int(self, info, "GL_MAX_FRAGMENT_INPUT_COMPONENTS", GL_MAX_FRAGMENT_INPUT_COMPONENTS);
+    set_info_int(self, info, "GL_MAX_FRAGMENT_UNIFORM_COMPONENTS", GL_MAX_FRAGMENT_UNIFORM_COMPONENTS);
+    set_info_int(self, info, "GL_MAX_FRAGMENT_UNIFORM_VECTORS", GL_MAX_FRAGMENT_UNIFORM_VECTORS);
+    set_info_int(self, info, "GL_MAX_FRAGMENT_UNIFORM_BLOCKS", GL_MAX_FRAGMENT_UNIFORM_BLOCKS);
+    set_info_int(self, info, "GL_MAX_GEOMETRY_INPUT_COMPONENTS", GL_MAX_GEOMETRY_INPUT_COMPONENTS);
+    set_info_int(self, info, "GL_MAX_GEOMETRY_OUTPUT_COMPONENTS", GL_MAX_GEOMETRY_OUTPUT_COMPONENTS);
+    set_info_int(self, info, "GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS", GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS);
+    set_info_int(self, info, "GL_MAX_GEOMETRY_UNIFORM_BLOCKS", GL_MAX_GEOMETRY_UNIFORM_BLOCKS);
+    set_info_int(self, info, "GL_MAX_GEOMETRY_UNIFORM_COMPONENTS", GL_MAX_GEOMETRY_UNIFORM_COMPONENTS);
+    set_info_int(self, info, "GL_MAX_GEOMETRY_OUTPUT_VERTICES", GL_MAX_GEOMETRY_OUTPUT_VERTICES);
+    set_info_int(self, info, "GL_MAX_INTEGER_SAMPLES", GL_MAX_INTEGER_SAMPLES);
+    set_info_int(self, info, "GL_MAX_SAMPLES", GL_MAX_SAMPLES);
+    set_info_int(self, info, "GL_MAX_RECTANGLE_TEXTURE_SIZE", GL_MAX_RECTANGLE_TEXTURE_SIZE);
+    set_info_int(self, info, "GL_MAX_RENDERBUFFER_SIZE", GL_MAX_RENDERBUFFER_SIZE);
+    set_info_int(self, info, "GL_MAX_SAMPLE_MASK_WORDS", GL_MAX_SAMPLE_MASK_WORDS);
+    set_info_int(self, info, "GL_MAX_TEXTURE_BUFFER_SIZE", GL_MAX_TEXTURE_BUFFER_SIZE);
+    set_info_int(self, info, "GL_MAX_TEXTURE_IMAGE_UNITS", GL_MAX_TEXTURE_IMAGE_UNITS);
+    set_info_int(self, info, "GL_MAX_TEXTURE_LOD_BIAS", GL_MAX_TEXTURE_LOD_BIAS);
+    set_info_int(self, info, "GL_MAX_TEXTURE_SIZE", GL_MAX_TEXTURE_SIZE);
+    set_info_int(self, info, "GL_MAX_UNIFORM_BUFFER_BINDINGS", GL_MAX_UNIFORM_BUFFER_BINDINGS);
+    set_info_int(self, info, "GL_MAX_UNIFORM_BLOCK_SIZE", GL_MAX_UNIFORM_BLOCK_SIZE);
+    set_info_int(self, info, "GL_MAX_VARYING_VECTORS", GL_MAX_VARYING_VECTORS);
+    set_info_int(self, info, "GL_MAX_VERTEX_ATTRIBS", GL_MAX_VERTEX_ATTRIBS);
+    set_info_int(self, info, "GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS", GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS);
+    set_info_int(self, info, "GL_MAX_VERTEX_UNIFORM_COMPONENTS", GL_MAX_VERTEX_UNIFORM_COMPONENTS);
+    set_info_int(self, info, "GL_MAX_VERTEX_UNIFORM_VECTORS", GL_MAX_VERTEX_UNIFORM_VECTORS);
+    set_info_int(self, info, "GL_MAX_VERTEX_OUTPUT_COMPONENTS", GL_MAX_VERTEX_OUTPUT_COMPONENTS);
+    set_info_int(self, info, "GL_MAX_VERTEX_UNIFORM_BLOCKS", GL_MAX_VERTEX_UNIFORM_BLOCKS);
+    set_info_int64(self, info, "GL_MAX_SERVER_WAIT_TIMEOUT", GL_MAX_SERVER_WAIT_TIMEOUT);
 
     if (self->version_code >= 410) {
-        int gl_viewport_bounds_range[2] = {};
-        gl.GetIntegerv(GL_VIEWPORT_BOUNDS_RANGE, gl_viewport_bounds_range);
-
-        PyDict_SetItemString(
-            info,
-            "GL_VIEWPORT_BOUNDS_RANGE",
-            tuple2(
-                PyLong_FromLong(gl_viewport_bounds_range[0]),
-                PyLong_FromLong(gl_viewport_bounds_range[1])
-            )
-        );
-
-        int gl_viewport_subpixel_bits = 0;
-        gl.GetIntegerv(GL_VIEWPORT_SUBPIXEL_BITS, &gl_viewport_subpixel_bits);
-
-        int gl_max_viewports = 0;
-        gl.GetIntegerv(GL_MAX_VIEWPORTS, &gl_max_viewports);
-
-        PyDict_SetItemString(info, "GL_VIEWPORT_SUBPIXEL_BITS", PyLong_FromLong(gl_viewport_subpixel_bits));
-        PyDict_SetItemString(info, "GL_MAX_VIEWPORTS", PyLong_FromLong(gl_max_viewports));
+        set_info_int_range(self, info, "GL_VIEWPORT_BOUNDS_RANGE", GL_VIEWPORT_BOUNDS_RANGE);
+        set_info_int(self, info, "GL_VIEWPORT_SUBPIXEL_BITS", GL_VIEWPORT_SUBPIXEL_BITS);
+        set_info_int(self, info, "GL_MAX_VIEWPORTS", GL_MAX_VIEWPORTS);
     }
 
     if (self->version_code >= 420) {
-        int gl_min_map_buffer_alignment = 0;
-        gl.GetIntegerv(GL_MIN_MAP_BUFFER_ALIGNMENT, &gl_min_map_buffer_alignment);
-
-        int gl_max_combined_atomic_counters = 0;
-        gl.GetIntegerv(GL_MAX_COMBINED_ATOMIC_COUNTERS, &gl_max_combined_atomic_counters);
-
-        int gl_max_fragment_atomic_counters = 0;
-        gl.GetIntegerv(GL_MAX_FRAGMENT_ATOMIC_COUNTERS, &gl_max_fragment_atomic_counters);
-
-        int gl_max_geometry_atomic_counters = 0;
-        gl.GetIntegerv(GL_MAX_GEOMETRY_ATOMIC_COUNTERS, &gl_max_geometry_atomic_counters);
-
-        int gl_max_tess_control_atomic_counters = 0;
-        gl.GetIntegerv(GL_MAX_TESS_CONTROL_ATOMIC_COUNTERS, &gl_max_tess_control_atomic_counters);
-
-        int gl_max_tess_evaluation_atomic_counters = 0;
-        gl.GetIntegerv(GL_MAX_TESS_EVALUATION_ATOMIC_COUNTERS, &gl_max_tess_evaluation_atomic_counters);
-
-        int gl_max_vertex_atomic_counters = 0;
-        gl.GetIntegerv(GL_MAX_VERTEX_ATOMIC_COUNTERS, &gl_max_vertex_atomic_counters);
-
-        PyDict_SetItemString(info, "GL_MIN_MAP_BUFFER_ALIGNMENT", PyLong_FromLong(gl_min_map_buffer_alignment));
-        PyDict_SetItemString(info, "GL_MAX_COMBINED_ATOMIC_COUNTERS", PyLong_FromLong(gl_max_combined_atomic_counters));
-        PyDict_SetItemString(info, "GL_MAX_FRAGMENT_ATOMIC_COUNTERS", PyLong_FromLong(gl_max_fragment_atomic_counters));
-        PyDict_SetItemString(info, "GL_MAX_GEOMETRY_ATOMIC_COUNTERS", PyLong_FromLong(gl_max_geometry_atomic_counters));
-        PyDict_SetItemString(info, "GL_MAX_TESS_CONTROL_ATOMIC_COUNTERS", PyLong_FromLong(gl_max_tess_control_atomic_counters));
-        PyDict_SetItemString(info, "GL_MAX_TESS_EVALUATION_ATOMIC_COUNTERS", PyLong_FromLong(gl_max_tess_evaluation_atomic_counters));
-        PyDict_SetItemString(info, "GL_MAX_VERTEX_ATOMIC_COUNTERS", PyLong_FromLong(gl_max_vertex_atomic_counters));
+        set_info_int(self, info, "GL_MIN_MAP_BUFFER_ALIGNMENT", GL_MIN_MAP_BUFFER_ALIGNMENT);
+        set_info_int(self, info, "GL_MAX_COMBINED_ATOMIC_COUNTERS", GL_MAX_COMBINED_ATOMIC_COUNTERS);
+        set_info_int(self, info, "GL_MAX_FRAGMENT_ATOMIC_COUNTERS", GL_MAX_FRAGMENT_ATOMIC_COUNTERS);
+        set_info_int(self, info, "GL_MAX_GEOMETRY_ATOMIC_COUNTERS", GL_MAX_GEOMETRY_ATOMIC_COUNTERS);
+        set_info_int(self, info, "GL_MAX_TESS_CONTROL_ATOMIC_COUNTERS", GL_MAX_TESS_CONTROL_ATOMIC_COUNTERS);
+        set_info_int(self, info, "GL_MAX_TESS_EVALUATION_ATOMIC_COUNTERS", GL_MAX_TESS_EVALUATION_ATOMIC_COUNTERS);
+        set_info_int(self, info, "GL_MAX_VERTEX_ATOMIC_COUNTERS", GL_MAX_VERTEX_ATOMIC_COUNTERS);
     }
 
     if (self->version_code >= 430) {
-        int gl_max_compute_work_group_count[3] = {};
-        gl.GetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &gl_max_compute_work_group_count[0]);
-        gl.GetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &gl_max_compute_work_group_count[1]);
-        gl.GetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &gl_max_compute_work_group_count[2]);
-
-        int gl_max_compute_work_group_size[3] = {};
-        gl.GetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &gl_max_compute_work_group_size[0]);
-        gl.GetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &gl_max_compute_work_group_size[1]);
-        gl.GetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &gl_max_compute_work_group_size[2]);
-
-        PyDict_SetItemString(
-            info,
-            "GL_MAX_COMPUTE_WORK_GROUP_COUNT",
-            tuple3(
-                PyLong_FromLong(gl_max_compute_work_group_count[0]),
-                PyLong_FromLong(gl_max_compute_work_group_count[1]),
-                PyLong_FromLong(gl_max_compute_work_group_count[2])
-            )
-        );
-
-        PyDict_SetItemString(
-            info,
-            "GL_MAX_COMPUTE_WORK_GROUP_SIZE",
-            tuple3(
-                PyLong_FromLong(gl_max_compute_work_group_size[0]),
-                PyLong_FromLong(gl_max_compute_work_group_size[1]),
-                PyLong_FromLong(gl_max_compute_work_group_size[2])
-            )
-        );
-
-        int gl_max_shader_storage_buffer_bindings = 0;
-        gl.GetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS, &gl_max_shader_storage_buffer_bindings);
-
-        int gl_max_combined_shader_storage_blocks = 0;
-        gl.GetIntegerv(GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS, &gl_max_combined_shader_storage_blocks);
-
-        int gl_max_vertex_shader_storage_blocks = 0;
-        gl.GetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS, &gl_max_vertex_shader_storage_blocks);
-
-        int gl_max_fragment_shader_storage_blocks = 0;
-        gl.GetIntegerv(GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS, &gl_max_fragment_shader_storage_blocks);
-
-        int gl_max_geometry_shader_storage_blocks = 0;
-        gl.GetIntegerv(GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS, &gl_max_geometry_shader_storage_blocks);
-
-        int gl_max_tess_evaluation_shader_storage_blocks = 0;
-        gl.GetIntegerv(GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS, &gl_max_tess_evaluation_shader_storage_blocks);
-
-        int gl_max_tess_control_shader_storage_blocks = 0;
-        gl.GetIntegerv(GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS, &gl_max_tess_control_shader_storage_blocks);
-
-        int gl_max_compute_shader_storage_blocks = 0;
-        gl.GetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS, &gl_max_compute_shader_storage_blocks);
-
-        int gl_max_compute_uniform_components = 0;
-        gl.GetIntegerv(GL_MAX_COMPUTE_UNIFORM_COMPONENTS, &gl_max_compute_uniform_components);
-
-        int gl_max_compute_atomic_counters = 0;
-        gl.GetIntegerv(GL_MAX_COMPUTE_ATOMIC_COUNTERS, &gl_max_compute_atomic_counters);
-
-        int gl_max_compute_atomic_counter_buffers = 0;
-        gl.GetIntegerv(GL_MAX_COMPUTE_ATOMIC_COUNTER_BUFFERS, &gl_max_compute_atomic_counter_buffers);
-
-        int gl_max_compute_work_group_invocations = 0;
-        gl.GetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, &gl_max_compute_work_group_invocations);
-
-        int gl_max_compute_uniform_blocks = 0;
-        gl.GetIntegerv(GL_MAX_COMPUTE_UNIFORM_BLOCKS, &gl_max_compute_uniform_blocks);
-
-        int gl_max_compute_texture_image_units = 0;
-        gl.GetIntegerv(GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS, &gl_max_compute_texture_image_units);
-
-        int gl_max_combined_compute_uniform_components = 0;
-        gl.GetIntegerv(GL_MAX_COMBINED_COMPUTE_UNIFORM_COMPONENTS, &gl_max_combined_compute_uniform_components);
-
-        int gl_max_framebuffer_width = 0;
-        gl.GetIntegerv(GL_MAX_FRAMEBUFFER_WIDTH, &gl_max_framebuffer_width);
-
-        int gl_max_framebuffer_height = 0;
-        gl.GetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT, &gl_max_framebuffer_height);
-
-        int gl_max_framebuffer_layers = 0;
-        gl.GetIntegerv(GL_MAX_FRAMEBUFFER_LAYERS, &gl_max_framebuffer_layers);
-
-        int gl_max_framebuffer_samples = 0;
-        gl.GetIntegerv(GL_MAX_FRAMEBUFFER_SAMPLES, &gl_max_framebuffer_samples);
-
-        int gl_max_uniform_locations = 0;
-        gl.GetIntegerv(GL_MAX_UNIFORM_LOCATIONS, &gl_max_uniform_locations);
-
-        long long gl_max_element_index = 0;
-
-        if (gl.GetInteger64v) {
-            gl.GetInteger64v(GL_MAX_ELEMENT_INDEX, &gl_max_element_index);
-        }
-
-        long long gl_max_shader_storage_block_size = 0;
-
-        if (gl.GetInteger64v) {
-            gl.GetInteger64v(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &gl_max_shader_storage_block_size);
-        }
-
-        int gl_max_vertex_attrib_relative_offset = 0;
-        gl.GetIntegerv(GL_MAX_VERTEX_ATTRIB_RELATIVE_OFFSET, &gl_max_vertex_attrib_relative_offset);
-
-        int gl_max_vertex_attrib_bindings = 0;
-        gl.GetIntegerv(GL_MAX_VERTEX_ATTRIB_BINDINGS, &gl_max_vertex_attrib_bindings);
-
-        PyDict_SetItemString(info, "GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS", PyLong_FromLong(gl_max_shader_storage_buffer_bindings));
-        PyDict_SetItemString(info, "GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS", PyLong_FromLong(gl_max_combined_shader_storage_blocks));
-        PyDict_SetItemString(info, "GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS", PyLong_FromLong(gl_max_vertex_shader_storage_blocks));
-        PyDict_SetItemString(info, "GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS", PyLong_FromLong(gl_max_fragment_shader_storage_blocks));
-        PyDict_SetItemString(info, "GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS", PyLong_FromLong(gl_max_geometry_shader_storage_blocks));
-        PyDict_SetItemString(info, "GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS", PyLong_FromLong(gl_max_tess_evaluation_shader_storage_blocks));
-        PyDict_SetItemString(info, "GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS", PyLong_FromLong(gl_max_tess_control_shader_storage_blocks));
-        PyDict_SetItemString(info, "GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS", PyLong_FromLong(gl_max_compute_shader_storage_blocks));
-        PyDict_SetItemString(info, "GL_MAX_COMPUTE_UNIFORM_COMPONENTS", PyLong_FromLong(gl_max_compute_uniform_components));
-        PyDict_SetItemString(info, "GL_MAX_COMPUTE_ATOMIC_COUNTERS", PyLong_FromLong(gl_max_compute_atomic_counters));
-        PyDict_SetItemString(info, "GL_MAX_COMPUTE_ATOMIC_COUNTER_BUFFERS", PyLong_FromLong(gl_max_compute_atomic_counter_buffers));
-        PyDict_SetItemString(info, "GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS", PyLong_FromLong(gl_max_compute_work_group_invocations));
-        PyDict_SetItemString(info, "GL_MAX_COMPUTE_UNIFORM_BLOCKS", PyLong_FromLong(gl_max_compute_uniform_blocks));
-        PyDict_SetItemString(info, "GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS", PyLong_FromLong(gl_max_compute_texture_image_units));
-        PyDict_SetItemString(info, "GL_MAX_COMBINED_COMPUTE_UNIFORM_COMPONENTS", PyLong_FromLong(gl_max_combined_compute_uniform_components));
-        PyDict_SetItemString(info, "GL_MAX_FRAMEBUFFER_WIDTH", PyLong_FromLong(gl_max_framebuffer_width));
-        PyDict_SetItemString(info, "GL_MAX_FRAMEBUFFER_HEIGHT", PyLong_FromLong(gl_max_framebuffer_height));
-        PyDict_SetItemString(info, "GL_MAX_FRAMEBUFFER_LAYERS", PyLong_FromLong(gl_max_framebuffer_layers));
-        PyDict_SetItemString(info, "GL_MAX_FRAMEBUFFER_SAMPLES", PyLong_FromLong(gl_max_framebuffer_samples));
-        PyDict_SetItemString(info, "GL_MAX_UNIFORM_LOCATIONS", PyLong_FromLong(gl_max_uniform_locations));
-        PyDict_SetItemString(info, "GL_MAX_ELEMENT_INDEX", PyLong_FromLongLong(gl_max_element_index));
-        PyDict_SetItemString(info, "GL_MAX_SHADER_STORAGE_BLOCK_SIZE", PyLong_FromLongLong(gl_max_shader_storage_block_size));
-        PyDict_SetItemString(info, "GL_MAX_VERTEX_ATTRIB_BINDINGS", PyLong_FromLong(gl_max_vertex_attrib_bindings));
-        PyDict_SetItemString(info, "GL_MAX_VERTEX_ATTRIB_RELATIVE_OFFSET", PyLong_FromLong(gl_max_vertex_attrib_relative_offset));
+        set_info_int_xyz(self, info, "GL_MAX_COMPUTE_WORK_GROUP_COUNT", GL_MAX_COMPUTE_WORK_GROUP_COUNT);
+        set_info_int_xyz(self, info, "GL_MAX_COMPUTE_WORK_GROUP_SIZE", GL_MAX_COMPUTE_WORK_GROUP_SIZE);
+        set_info_int(self, info, "GL_MAX_VERTEX_ATTRIB_RELATIVE_OFFSET", GL_MAX_VERTEX_ATTRIB_RELATIVE_OFFSET);
+        set_info_int(self, info, "GL_MAX_VERTEX_ATTRIB_BINDINGS", GL_MAX_VERTEX_ATTRIB_BINDINGS);
+        set_info_int(self, info, "GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS", GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS);
+        set_info_int(self, info, "GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS", GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS);
+        set_info_int(self, info, "GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS", GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS);
+        set_info_int(self, info, "GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS", GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS);
+        set_info_int(self, info, "GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS", GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS);
+        set_info_int(self, info, "GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS", GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS);
+        set_info_int(self, info, "GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS", GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS);
+        set_info_int(self, info, "GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS", GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS);
+        set_info_int(self, info, "GL_MAX_COMPUTE_UNIFORM_COMPONENTS", GL_MAX_COMPUTE_UNIFORM_COMPONENTS);
+        set_info_int(self, info, "GL_MAX_COMPUTE_ATOMIC_COUNTERS", GL_MAX_COMPUTE_ATOMIC_COUNTERS);
+        set_info_int(self, info, "GL_MAX_COMPUTE_ATOMIC_COUNTER_BUFFERS", GL_MAX_COMPUTE_ATOMIC_COUNTER_BUFFERS);
+        set_info_int(self, info, "GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS", GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS);
+        set_info_int(self, info, "GL_MAX_COMPUTE_UNIFORM_BLOCKS", GL_MAX_COMPUTE_UNIFORM_BLOCKS);
+        set_info_int(self, info, "GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS", GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS);
+        set_info_int(self, info, "GL_MAX_COMBINED_COMPUTE_UNIFORM_COMPONENTS", GL_MAX_COMBINED_COMPUTE_UNIFORM_COMPONENTS);
+        set_info_int(self, info, "GL_MAX_FRAMEBUFFER_WIDTH", GL_MAX_FRAMEBUFFER_WIDTH);
+        set_info_int(self, info, "GL_MAX_FRAMEBUFFER_HEIGHT", GL_MAX_FRAMEBUFFER_HEIGHT);
+        set_info_int(self, info, "GL_MAX_FRAMEBUFFER_LAYERS", GL_MAX_FRAMEBUFFER_LAYERS);
+        set_info_int(self, info, "GL_MAX_FRAMEBUFFER_SAMPLES", GL_MAX_FRAMEBUFFER_SAMPLES);
+        set_info_int(self, info, "GL_MAX_UNIFORM_LOCATIONS", GL_MAX_UNIFORM_LOCATIONS);
+        set_info_int64(self, info, "GL_MAX_ELEMENT_INDEX", GL_MAX_ELEMENT_INDEX);
+        set_info_int64(self, info, "GL_MAX_SHADER_STORAGE_BLOCK_SIZE", GL_MAX_SHADER_STORAGE_BLOCK_SIZE);
     }
 
     return info;
@@ -9984,7 +9646,6 @@ PyObject * MGLContext_get_error(MGLContext * self, void * closure);
 PyObject * MGLContext_get_version_code(MGLContext * self, void * closure);
 PyObject * MGLContext_get_extensions(MGLContext * self, void * closure);
 PyObject * MGLContext_get_context(MGLContext * self, void * closure);
-PyObject * MGLContext_get_info(MGLContext * self, void * closure);
 void MGLContext_Invalidate(MGLContext * context);
 PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args);
 PyObject * MGLFramebuffer_release(MGLFramebuffer * self);
