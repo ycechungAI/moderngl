@@ -210,10 +210,10 @@ def test_depth_texture_write(ctx):
     first = struct.unpack("16f", fbo.depth_attachment.read())
     second = (1.0,) * 16
     for a, b in zip(first, second):
-        assert pytest.approx(a, rel=0.000001) == b
+        assert pytest.approx(a, abs=1.0e-6) == b
 
     fbo.depth_attachment.write(struct.pack("16f", *([0.5] * 16)))
     first = struct.unpack("16f", fbo.depth_attachment.read())
     second = (0.5,) * 16
     for a, b in zip(first, second):
-        assert pytest.approx(a, rel=0.000001) == b
+        assert pytest.approx(a, abs=1.0e-6) == b

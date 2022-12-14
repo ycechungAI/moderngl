@@ -122,10 +122,10 @@ def test_sampler_2d(ctx):
     tex.use(0)
     vao.transform(buff, vertices=4)
     data = struct.unpack('4f', buff.read())
-    assert pytest.approx(data[0], rel=0.001) == 0.498
+    assert pytest.approx(data[0], abs=1.0e-3) == 0.498
     assert pytest.approx(data[1]) == 0.0
     assert pytest.approx(data[2]) == 1.0
-    assert pytest.approx(data[3], rel=0.01) == 0.25
+    assert pytest.approx(data[3], abs=1.0e-3) == 0.25
 
 def test_sampler_2d_int(ctx):
     prog = ctx.program(vertex_shader="""
@@ -189,10 +189,10 @@ def test_sampler_2d_array(ctx):
     tex.use(0)
     vao.transform(buff, vertices=4)
     data = struct.unpack('4f', buff.read())
-    assert pytest.approx(data[0], rel=0.001) == 0.498
+    assert pytest.approx(data[0], abs=1.0e-3) == 0.498
     assert pytest.approx(data[1]) == 0.0
     assert pytest.approx(data[2]) == 1.0
-    assert pytest.approx(data[3], rel=0.01) == 0.25
+    assert pytest.approx(data[3], abs=1.0e-3) == 0.25
 
 def test_sampler_1d(ctx):
     prog = ctx.program(

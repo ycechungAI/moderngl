@@ -128,10 +128,6 @@ class TestBlend:
         self.vao.render(mode=moderngl.TRIANGLE_STRIP)
         return self.unpack_fbo()
 
-    def assertEqualColors(self, a, b):
-        for i in range(4):
-            assert pytest.approx(a[i], rel=0.01) == b[i]
-
     def test_blend_default(self):
         src = (0.0, 1.0, 0.0, 0.2)
         dst = (1.0, 0.0, 1.0, 0.3)
@@ -143,7 +139,7 @@ class TestBlend:
 
         a = self.blend_emulate(src, dst, blend_func, blend_equation)
         b = self.blend_moderngl(src, dst, blend_func, blend_equation)
-        self.assertEqualColors(a, b)
+        assert pytest.approx(a, abs=1.0e-6) == b
 
     def test_blend_separate(self):
         src = (0.2, 0.6, 0.1, 0.3)
@@ -156,7 +152,7 @@ class TestBlend:
 
         a = self.blend_emulate(src, dst, blend_func, blend_equation)
         b = self.blend_moderngl(src, dst, blend_func, blend_equation)
-        self.assertEqualColors(a, b)
+        assert pytest.approx(a, abs=1.0e-6) == b
 
     def test_blend_separate_equation(self):
         src = (0.2, 0.6, 0.1, 0.3)
@@ -169,7 +165,7 @@ class TestBlend:
 
         a = self.blend_emulate(src, dst, blend_func, blend_equation)
         b = self.blend_moderngl(src, dst, blend_func, blend_equation)
-        self.assertEqualColors(a, b)
+        assert pytest.approx(a, abs=1.0e-6) == b
 
     def test_blend_chaos(self):
         """Pick N random colors with random blend modes and equations"""
@@ -190,7 +186,7 @@ class TestBlend:
             blend_equation = random.choice(eq), random.choice(eq)
             a = self.blend_emulate(src, dst, blend_func, blend_equation)
             b = self.blend_moderngl(src, dst, blend_func, blend_equation)
-            self.assertEqualColors(a, b)
+            assert pytest.approx(a, abs=1.0e-6) == b
 
     def test_invalid_blend_func(self):
         # TypeError: Not iterable
