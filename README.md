@@ -1,6 +1,6 @@
 <div align="center">
 
-[![preview](https://github.com/cprogrammer1994/ModernGL/raw/master/.github/preview.png)](#readme)
+[![preview](https://github.com/moderngl/moderngl/raw/master/.github/preview.png)](#readme)
 
 </div>
 
@@ -47,7 +47,7 @@ pip install moderngl
 b'Hello World!'
 ```
 
-For complete examples please visit the [Examples](https://github.com/cprogrammer1994/ModernGL/tree/master/examples/#readme).
+For complete examples please visit the [Examples](https://github.com/moderngl/moderngl/tree/master/examples/#readme).
 
 ## Easy to use with Pillow and Numpy
 
@@ -122,7 +122,7 @@ but performance would be limited.
 using a [standalone_context] as well. Rendering to a window only requires
 a valid OpenGL context.
 
-[standalone_context]: https://github.com/cprogrammer1994/ModernGL/tree/master/examples/old-examples/standalone
+[standalone_context]: https://github.com/moderngl/moderngl/tree/master/examples/old-examples/standalone
 
 ### Can ModernGL create a Window?
 
@@ -133,8 +133,8 @@ creation and resource loading very simple.
 
 All the necessary calls are (or can be) implemented in ModernGL. However
 you can interact with the ModernGL objects from PyOpenGL. If something is
-missing write an [issue](https://github.com/cprogrammer1994/ModernGL/issues)
-or raise a [PR](https://github.com/cprogrammer1994/ModernGL/pulls).
+missing write an [issue](https://github.com/moderngl/moderngl/issues)
+or raise a [PR](https://github.com/moderngl/moderngl/pulls).
 
 ## Supported platforms
 
@@ -188,7 +188,7 @@ Code is tested with [pep8], [flake8], [prospector] and [pylint]
 
 ## Community
 
-- [Code of conduct](https://github.com/cprogrammer1994/ModernGL/blob/master/.github/CODE_OF_CONDUCT.md)
+- [Code of conduct](https://github.com/moderngl/moderngl/blob/master/.github/CODE_OF_CONDUCT.md)
 
 ## Citation
 
@@ -224,7 +224,7 @@ https://github.com/moderngl/moderngl/releases
 - [yoyonel](https://github.com/yoyonel)
 - [Naveen M K](https://github.com/naveen521kk)
 
-and [many others](https://github.com/cprogrammer1994/ModernGL/graphs/contributors)
+and [many others](https://github.com/moderngl/moderngl/graphs/contributors)
 
 Thank You!
 
