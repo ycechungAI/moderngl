@@ -1,4 +1,34 @@
 
+
+def test_glo(ctx):
+    buf = ctx.buffer(reserve=1024)
+    assert buf.glo > 0
+
+
+def test_buffer_eq(ctx):
+    buf1 = ctx.buffer(reserve=1024)
+    buf2 = ctx.buffer(reserve=1024)
+    assert buf1 != buf2
+    assert buf1 == buf1
+    assert buf2 == buf2
+
+
+def test_buffer_hash(ctx):
+    buff = ctx.buffer(reserve=1024)
+    assert hash(buff) == id(buff)
+
+
+def test_bind(ctx):
+    buf = ctx.buffer(reserve=1024)
+    res = buf.bind("in_pos", "in_vel", layout="2f 2f")
+    assert res == (buf, "2f 2f", "in_pos", "in_vel")
+
+
+def test_assign(ctx):
+    buf = ctx.buffer(reserve=1024)
+    assert buf.assign(1) == (buf, 1)
+
+
 def test_buffer_clear_1(ctx):
     buf = ctx.buffer(data=b'\xAA\x55' * 10)
     buf.clear(chunk=b'AB')
