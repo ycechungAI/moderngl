@@ -28,6 +28,8 @@ def test_program(ctx):
             }
         ''',
     )
+    assert program.glo > 0
+    assert program.subroutines == ()
 
     assert 'vert' in program
     assert 'pos' in program
