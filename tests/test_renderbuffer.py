@@ -2,10 +2,16 @@ import pytest
 
 
 def test_renderbuffer(ctx):
-    rbo = ctx.renderbuffer((4, 4))
-    assert rbo.size == (4, 4)
+    rbo = ctx.renderbuffer((4, 8))
+    assert rbo.size == (4, 8)
+    assert rbo.width == 4
+    assert rbo.height == 8
     assert rbo.samples == 0
-    assert rbo.depth == False
+    assert rbo.depth is False
+    assert rbo.components == 4
+    assert rbo.dtype == 'f1'
+    assert hash(rbo) == id(rbo)
+    assert rbo == rbo
 
 
 def test_multisample_renderbuffer(ctx):
