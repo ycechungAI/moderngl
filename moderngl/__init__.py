@@ -1909,6 +1909,9 @@ class Context:
     ) -> 'Texture3D':
 
         res = Texture3D.__new__(Texture3D)
+        res._size = size
+        res._components = components
+        res._dtype = dtype
         res.mglo, res._glo = self.mglo.texture3d(size, components, data, alignment, dtype)
         res.ctx = self
         res.extra = None
