@@ -1,6 +1,7 @@
 import struct
 import pytest
 
+
 def test_1(ctx):
     if ctx.version_code < 430:
         raise pytest.skip('Compute shaders not supported')

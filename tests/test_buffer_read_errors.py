@@ -13,6 +13,7 @@ def test_1(ctx):
     with pytest.raises(Exception):
         buf.read(offset=1, size=3)
 
+
 def test_2(ctx):
     buf = ctx.buffer(b'123456789')
 
@@ -25,6 +26,7 @@ def test_2(ctx):
     with pytest.raises(Exception):
         buf.read_chunks(2, -1, 2, 1)
 
+
 def test_3(ctx):
     buf = ctx.buffer(b'123456789')
 
@@ -36,6 +38,7 @@ def test_3(ctx):
 
     with pytest.raises(Exception):
         buf.read_chunks(2, -4, -3, 3)
+
 
 def test_4(ctx):
     buf = ctx.buffer(b'123456789')

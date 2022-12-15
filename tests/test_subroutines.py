@@ -1,6 +1,7 @@
 import struct
 import pytest
 
+
 def test_1(ctx):
     if ctx.version_code < 400:
         pytest.skip('Subroutines are not supported')

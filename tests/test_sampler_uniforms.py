@@ -18,6 +18,7 @@ def test_sampler_2D_get_setter(ctx):
     sampler_uniform.value = 1
     assert sampler_uniform.value == 1
 
+
 def test_sampler_3D_get_setter(ctx):
     prog = ctx.program(
         vertex_shader='''

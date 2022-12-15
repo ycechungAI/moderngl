@@ -5,6 +5,7 @@ def test_1(ctx):
     ctx.copy_buffer(buf2, buf1)
     assert buf2.read() == b'abc'
 
+
 def test_2(ctx):
     buf1 = ctx.buffer(b'abcxyz123')
     buf2 = ctx.buffer(reserve=12)

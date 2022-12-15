@@ -1,9 +1,6 @@
 import struct
 import pytest
 
-# NOTE: This is only needed for older version of mesa/llvmpipe
-# if 'llvmpipe' in cls.ctx.info['GL_RENDERER']:
-#     raise unittest.SkipTest('Temp disable for llvmpipe')
 
 @pytest.fixture(scope='module', autouse=True)
 def prog(ctx_static):
@@ -32,6 +29,7 @@ def prog(ctx_static):
         ''',
         varyings=['out_v']
     )
+
 
 def test_1(ctx, prog):
     buf_v = ctx.buffer(struct.pack('2f', 100.0, 1000.0))
@@ -72,6 +70,7 @@ def test_1(ctx, prog):
     a, b = struct.unpack('2f', buf_r.read())
     assert pytest.approx(a) == 309.5
     assert pytest.approx(b) == 3004.0
+
 
 def test_2(ctx, prog):
     min_offset = ctx.info['GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT']

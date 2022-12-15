@@ -2,10 +2,12 @@ from array import array
 import pytest
 import struct
 
+
 @pytest.fixture(scope='module', autouse=True)
 def res(ctx_static):
     """Global buffer we transform results into"""
     return ctx_static.buffer(reserve=1024)
+
 
 def test_float_uniform(ctx, res):
     prog = ctx.program(
@@ -29,6 +31,7 @@ def test_float_uniform(ctx, res):
     val = struct.unpack('f', res.read(4))[0]
     assert pytest.approx(val) == 7.0
 
+
 def test_int_uniform(ctx, res):
     prog = ctx.program(
         vertex_shader='''
@@ -50,6 +53,7 @@ def test_int_uniform(ctx, res):
 
     val = struct.unpack('i', res.read(4))[0]
     assert pytest.approx(val) == -2
+
 
 def test_vec_uniform(ctx, res):
     prog = ctx.program(
@@ -75,6 +79,7 @@ def test_vec_uniform(ctx, res):
     assert pytest.approx(x) == 0.5
     assert pytest.approx(y) == 1.0
     assert pytest.approx(z) == 1.5
+
 
 def test_mat_uniform(ctx, res):
     prog = ctx.program(
@@ -104,9 +109,11 @@ def test_mat_uniform(ctx, res):
     assert pytest.approx(m[4]) == 4.0
     assert pytest.approx(m[5]) == 5.0
 
+
 def test_sampler_2d(ctx):
     """RGBA8 2d sampler"""
-    prog = ctx.program(vertex_shader="""
+    prog = ctx.program(
+        vertex_shader="""
         #version 330
         uniform sampler2D tex;
         out float color;
@@ -114,7 +121,7 @@ def test_sampler_2d(ctx):
             color = texelFetch(tex, ivec2(gl_VertexID, 0), 0).r;
         }
         """,
-        varyings=['color',],
+        varyings=['color'],
     )
     tex = ctx.texture((4, 1), 1, data=array('B', [127, 0, 255, 64]), dtype='f1')
     buff = ctx.buffer(reserve=4 * 4)
@@ -127,8 +134,10 @@ def test_sampler_2d(ctx):
     assert pytest.approx(data[2]) == 1.0
     assert pytest.approx(data[3], abs=1.0e-3) == 0.25
 
+
 def test_sampler_2d_int(ctx):
-    prog = ctx.program(vertex_shader="""
+    prog = ctx.program(
+        vertex_shader="""
         #version 330
         uniform isampler2D tex;
         out int color;
@@ -136,7 +145,7 @@ def test_sampler_2d_int(ctx):
             color = texelFetch(tex, ivec2(gl_VertexID, 0), 0).r;
         }
         """,
-        varyings=['color',],
+        varyings=['color'],
     )
     tex = ctx.texture((4, 1), 1, data=array('i', [-1, 0, 1000, 4353454]), dtype='i4')
     buff = ctx.buffer(reserve=4 * 4)
@@ -149,8 +158,10 @@ def test_sampler_2d_int(ctx):
     assert data[2] == 1000
     assert data[3] == 4353454
 
+
 def test_sampler_2d_uint(ctx):
-    prog = ctx.program(vertex_shader="""
+    prog = ctx.program(
+        vertex_shader="""
         #version 330
         uniform usampler2D tex;
         out uint color;
@@ -158,7 +169,7 @@ def test_sampler_2d_uint(ctx):
             color = texelFetch(tex, ivec2(gl_VertexID, 0), 0).r;
         }
         """,
-        varyings=['color',],
+        varyings=['color'],
     )
     tex = ctx.texture((4, 1), 1, data=array('I', [0, 500, 1000, 4353454]), dtype='u4')
     buff = ctx.buffer(reserve=4 * 4)
@@ -171,9 +182,11 @@ def test_sampler_2d_uint(ctx):
     assert data[2] == 1000
     assert data[3] == 4353454
 
+
 def test_sampler_2d_array(ctx):
     """RGBA8 2d array sampler. Read two pixels from two different layers"""
-    prog = ctx.program(vertex_shader="""
+    prog = ctx.program(
+        vertex_shader="""
         #version 330
         uniform sampler2DArray tex;
         out float color;
@@ -181,7 +194,7 @@ def test_sampler_2d_array(ctx):
             color = texelFetch(tex, ivec3(gl_VertexID % 2, 0, gl_VertexID / 2), 0).r;
         }
         """,
-        varyings=['color',],
+        varyings=['color'],
     )
     tex = ctx.texture_array((2, 1, 2), 1, data=array('B', [127, 0, 255, 64]), dtype='f1')
     buff = ctx.buffer(reserve=4 * 4)
@@ -193,6 +206,7 @@ def test_sampler_2d_array(ctx):
     assert pytest.approx(data[1]) == 0.0
     assert pytest.approx(data[2]) == 1.0
     assert pytest.approx(data[3], abs=1.0e-3) == 0.25
+
 
 def test_sampler_1d(ctx):
     prog = ctx.program(

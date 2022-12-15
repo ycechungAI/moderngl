@@ -26,6 +26,7 @@ def test_1(ctx):
     fbo4.read_into(buf, attachment=2, components=4, dtype='f1')
     assert buf.read() == b'\x00\x00\xff\xff' * 16
 
+
 def test_2(ctx):
     pixels = b'\xFF\x00\x00\xFF\x00\xFF\x00\xFF\x00\x00\xFF\xFF\xFF\xFF\xFF\xFF'
 
@@ -34,6 +35,7 @@ def test_2(ctx):
     texture.write(buf)
 
     assert texture.read() == pixels
+
 
 def test_3(ctx):
     pixels = struct.pack(
@@ -50,6 +52,7 @@ def test_3(ctx):
 
     assert texture.read() == pixels
 
+
 def test_4(ctx):
     pixels = b'\xFF\x00\x00\xFF\x00\xFF\x00\xFF\x00\x00\xFF\xFF\xFF\xFF\xFF\xFF'
 
@@ -58,6 +61,7 @@ def test_4(ctx):
     texture.read_into(buf)
 
     assert buf.read() == pixels
+
 
 def test_5(ctx):
     pixels = struct.pack(

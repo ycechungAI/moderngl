@@ -1,8 +1,8 @@
 import struct
-import pytest
 from array import array
-import struct
+import pytest
 import moderngl
+
 
 @pytest.fixture(scope='module', autouse=True)
 def vao(ctx_static):
@@ -28,6 +28,7 @@ def vao(ctx_static):
     )
     vbo = ctx_static.buffer(struct.pack('8f', 0, 0, 0, 1, 1, 0, 1, 1))
     return ctx_static.simple_vertex_array(prog, vbo, 'vert')
+
 
 def test_1(ctx, vao):
     assert vao.mode == moderngl.TRIANGLES
@@ -59,6 +60,7 @@ def test_1(ctx, vao):
     r, g, b = struct.unpack('3B', fbo.read((9, 9, 1, 1)))
     assert (abs(r - 0) < 8 and abs(g - 0) < 8 and abs(b - 0) < 8)
 
+
 def test_2(ctx, vao):
     fbo = ctx.framebuffer(ctx.renderbuffer((16, 16)))
     pixels1 = struct.pack('16B', 255, 0, 0, 255, 0, 255, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255)
@@ -87,6 +89,7 @@ def test_2(ctx, vao):
 
     r, g, b = struct.unpack('3B', fbo.read((10, 7, 1, 1)))
     assert (abs(r - 80) < 8 and abs(g - 70) < 8 and abs(b - 60) < 8)
+
 
 def test_3(ctx, vao):
     fbo = ctx.framebuffer(ctx.renderbuffer((16, 16)))
@@ -120,10 +123,12 @@ def test_3(ctx, vao):
     r, g, b = struct.unpack('3B', fbo.read((10, 7, 1, 1)))
     assert (abs(r - 80) < 8 and abs(g - 70) < 8 and abs(b - 60) < 8)
 
+
 def test_4(ctx):
     pixels = struct.pack('16B', 255, 0, 0, 255, 0, 255, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255)
     texture = ctx.texture((2, 2), 4, pixels)
     assert texture.read() == pixels
+
 
 def test_5(ctx):
     pixels = struct.pack('16B', 255, 0, 0, 255, 0, 255, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255)
@@ -133,6 +138,7 @@ def test_5(ctx):
 
     assert bytes(buf) == pixels
 
+
 def test_6(ctx):
     pixels = struct.pack('16B', 255, 0, 0, 255, 0, 255, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255)
     texture = ctx.texture((2, 2), 4, pixels)
@@ -141,16 +147,18 @@ def test_6(ctx):
 
     assert pbo.read() == pixels
 
+
 def test_override_internalformat(ctx):
     """Ensure no errors occur when overriding internalformat"""
-    if not "GL_EXT_texture_sRGB" in ctx.extensions:
+    if "GL_EXT_texture_sRGB" not in ctx.extensions:
         pytest.skip('GL_EXT_texture_sRGB extension not supported')
 
     GL_SRGB8 = 0x8C41
     pixels = struct.pack('16B', 255, 0, 0, 255, 0, 255, 0, 255, 255, 0, 0, 255, 0, 255, 0, 255)
     texture = ctx.texture((2, 2), 4, pixels, internal_format=GL_SRGB8)
-    data = texture.read()
+    _ = texture.read()
     assert ctx.error == "GL_NO_ERROR"
+
 
 def test_normalized_textures(ctx, vao):
     """8 and 16 bit normalized integer textures"""
@@ -197,6 +205,7 @@ def test_normalized_textures(ctx, vao):
     ni2.use()
     vao.render()
     assert fbo.read(viewport=(0, 0, 1, 1), components=4, dtype="f1") == b'\xff\xff\xff\xff'
+
 
 def test_depth_texture_write(ctx):
     """Write data into depth texture"""

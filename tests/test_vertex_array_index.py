@@ -2,6 +2,7 @@ import moderngl
 import pytest
 import numpy as np
 
+
 def test_1(ctx):
     prog = ctx.program(
         vertex_shader='''
@@ -50,6 +51,7 @@ def test_1(ctx):
     vao.transform(vbo2, moderngl.POINTS)
     res = np.frombuffer(vbo2.read(), dtype='f4')
     np.testing.assert_almost_equal(res, vertices * count)
+
 
 def test_2(ctx):
     prog = ctx.program(

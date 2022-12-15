@@ -29,11 +29,13 @@ def prog(ctx_static):
         varyings=['a_out', 'b_out', 'c_out', 'd_out']
     )
 
+
 @pytest.fixture(scope='module', autouse=True)
 def fbo(ctx_static):
     """Bind an fbo to avoid GL_INVALID_FRAMEBUFFER_OPERATION with transforms"""
     fbo = ctx_static.simple_framebuffer((2, 2))
     fbo.use()
+
 
 def test_padding_1(ctx, prog):
     buf = ctx.buffer(struct.pack('=ixi12xii', 1, 2, 3, 4))
@@ -53,6 +55,7 @@ def test_padding_1(ctx, prog):
     assert c == 6
     assert d == 8
 
+
 def test_padding_2(ctx, prog):
     buf = ctx.buffer(struct.pack('=i8xi8xi8xi8x', 1, 2, 3, 4))
     res = ctx.buffer(reserve=64)
@@ -70,6 +73,7 @@ def test_padding_2(ctx, prog):
     assert a2 == 4
     assert a3 == 6
     assert a4 == 8
+
 
 def test_padding_3(ctx, prog):
     buf = ctx.buffer(struct.pack('=128xiiii', 1, 2, 3, 4))

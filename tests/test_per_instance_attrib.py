@@ -2,6 +2,7 @@ import struct
 import pytest
 import moderngl
 
+
 @pytest.fixture(scope='module')
 def prog(ctx_static):
     return ctx_static.program(
@@ -20,17 +21,21 @@ def prog(ctx_static):
         varyings=['v_out']
     )
 
+
 @pytest.fixture(scope='module')
 def vbo1(ctx_static):
     return ctx_static.buffer(struct.pack('4f', 1.0, 2.0, 3.0, 4.0))
+
 
 @pytest.fixture(scope='module')
 def vbo2(ctx_static):
     return ctx_static.buffer(struct.pack('4f', 10.0, 20.0, 30.0, 40.0))
 
+
 @pytest.fixture(scope='module')
 def vbo3(ctx_static):
     return ctx_static.buffer(struct.pack('4f', 100.0, 200.0, 300.0, 400.0))
+
 
 @pytest.fixture(scope='module')
 def vao1(ctx_static, prog, vbo1, vbo2):
@@ -50,6 +55,7 @@ def vao2(ctx_static, prog, vbo1, vbo2, vbo3):
     ]
     return ctx_static.vertex_array(prog, content)
 
+
 @pytest.fixture(scope='module')
 def res(ctx_static):
     return ctx_static.buffer(reserve=1024)
@@ -65,6 +71,7 @@ def test_vertex_attrib_per_instance_1(vao1, res):
     assert pytest.approx(c) == 13.0
     assert pytest.approx(d) == 14.0
 
+
 def test_vertex_attrib_per_instance_2(vao1, res):
     vao1.transform(res, moderngl.POINTS, vertices=2, instances=2)
 
@@ -74,6 +81,7 @@ def test_vertex_attrib_per_instance_2(vao1, res):
     assert pytest.approx(b) == 12.0
     assert pytest.approx(c) == 21.0
     assert pytest.approx(d) == 22.0
+
 
 def test_vertex_attrib_per_instance_3(vao1, res):
     vao1.transform(res, moderngl.POINTS, vertices=1, instances=4)
@@ -85,6 +93,7 @@ def test_vertex_attrib_per_instance_3(vao1, res):
     assert pytest.approx(c) == 31.0
     assert pytest.approx(d) == 41.0
 
+
 def test_vertex_attrib_per_render_1(vao2, res):
     vao2.transform(res, moderngl.POINTS, vertices=4, instances=1)
 
@@ -95,6 +104,7 @@ def test_vertex_attrib_per_render_1(vao2, res):
     assert pytest.approx(c) == 113.0
     assert pytest.approx(d) == 114.0
 
+
 def test_vertex_attrib_per_render_2(vao2, res):
     vao2.transform(res, moderngl.POINTS, vertices=2, instances=2)
 
@@ -104,6 +114,7 @@ def test_vertex_attrib_per_render_2(vao2, res):
     assert pytest.approx(b) == 112.0
     assert pytest.approx(c) == 121.0
     assert pytest.approx(d) == 122.0
+
 
 def test_vertex_attrib_per_render_3(vao2, res):
     vao2.transform(res, moderngl.POINTS, vertices=1, instances=4)

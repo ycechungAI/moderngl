@@ -2,8 +2,6 @@ from array import array
 import struct
 import pytest
 
-# NOTE: We should just skip all the test in the module if the version is too low.
-#       There are several ways to do this.
 
 def test_1(ctx):
     if ctx.version_code < 430:
@@ -45,6 +43,7 @@ def test_1(ctx):
     assert pytest.approx(c) == 2.0
     assert pytest.approx(d) == 1.0
 
+
 def test_image(ctx):
     if ctx.version_code < 430:
         pytest.skip('compute shaders not supported')
@@ -53,6 +52,7 @@ def test_image(ctx):
     texture.bind_to_image(0, read=True, write=True)
     assert ctx.error == 'GL_NO_ERROR'
     texture.release()
+
 
 def test_image_float(ctx):
     if ctx.version_code < 430:
@@ -63,6 +63,7 @@ def test_image_float(ctx):
     assert ctx.error == 'GL_NO_ERROR'
     texture.release()
 
+
 def test_image_wrong_format(ctx):
     if ctx.version_code < 430:
         pytest.skip('compute shaders not supported')
@@ -72,6 +73,7 @@ def test_image_wrong_format(ctx):
     assert ctx.error == 'GL_INVALID_VALUE'
     texture.release()
 
+
 def test_3d_image(ctx):
     if ctx.version_code < 430:
         pytest.skip('compute shaders not supported')
@@ -79,7 +81,7 @@ def test_3d_image(ctx):
     program = ctx.compute_shader(
         """
         #version 430
-        
+
         layout(local_size_x=4, local_size_y=4, local_size_z=4) in;
 
         layout(rgba32f, binding=0) uniform image3D img_in;
@@ -104,6 +106,7 @@ def test_3d_image(ctx):
 
     assert data_in == data_out
 
+
 def test_texture_array_image(ctx):
     if ctx.version_code < 430:
         pytest.skip('compute shaders not supported')
@@ -111,7 +114,7 @@ def test_texture_array_image(ctx):
     program = ctx.compute_shader(
         """
         #version 430
-        
+
         layout(local_size_x=4, local_size_y=4, local_size_z=4) in;
 
         layout(rgba32f, binding=0) uniform image2DArray img_in;
@@ -135,6 +138,7 @@ def test_texture_array_image(ctx):
 
     assert data_in == data_out
 
+
 def test_texture_cube_image(ctx):
     if ctx.version_code < 430:
         pytest.skip('compute shaders not supported')
@@ -142,7 +146,7 @@ def test_texture_cube_image(ctx):
     program = ctx.compute_shader(
         """
         #version 450
-        
+
         layout(local_size_x=4, local_size_y=4) in;
 
         layout(rgba8, binding=0) uniform imageCube img_in;

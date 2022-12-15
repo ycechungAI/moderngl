@@ -3,6 +3,7 @@ import numpy as np
 import numpy.testing as npt
 import moderngl
 
+
 def test_padding(ctx):
     prog = ctx.program(
         vertex_shader="""
@@ -20,6 +21,7 @@ def test_padding(ctx):
     ctx.vertex_array(prog, [(buffer, '2f 2x4', 'pos')])
     ctx.vertex_array(prog, [(buffer, '2f 2f', 'pos', 'velocity')])
 
+
 def test_empty(ctx):
     prog = ctx.program(
         vertex_shader="""
@@ -33,6 +35,7 @@ def test_empty(ctx):
         """,
     )
     ctx.vertex_array(prog, [])
+
 
 # def test_optional(ctx):
 #     prog = ctx.program(
@@ -49,6 +52,7 @@ def test_empty(ctx):
 #     )
 #     buffer = ctx.buffer(array('f', range(16)))
 #     ctx.vertex_array(prog, [(buffer, '2f 2f 4f', 'pos', 'velocity', 'color?')])
+
 
 def test_1(ctx):
     prog = ctx.program(
@@ -71,6 +75,7 @@ def test_1(ctx):
     vao.transform(vbo2, moderngl.POINTS)
     res = np.frombuffer(vbo2.read(), dtype='f4')
     npt.assert_almost_equal(res, [4.0, 2.0, 7.5, 1.8])
+
 
 def test_2(ctx):
     prog = ctx.program(
@@ -109,6 +114,7 @@ def test_2(ctx):
     vao.transform(vbo2, moderngl.POINTS, vertices=1)
     res = np.frombuffer(vbo2.read(), dtype='f4')
     npt.assert_almost_equal(res, [4.0, 0.0, 0.0, 1.0])
+
 
 def test_3(ctx):
     prog = ctx.program(
@@ -167,6 +173,7 @@ def test_3(ctx):
         3, 0, 0, 1,
         4, 0, 0, 1,
     ])
+
 
 def test_4(ctx):
     prog = ctx.program(

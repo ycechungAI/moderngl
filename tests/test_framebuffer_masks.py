@@ -16,6 +16,7 @@ def test_1(ctx):
 
     assert fbo.read(components=4) == b'\x19\x99\x4c\xcc' * 16
 
+
 def test_2(ctx):
     fbo = ctx.framebuffer([
         ctx.renderbuffer((4, 4)),

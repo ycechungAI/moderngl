@@ -1,7 +1,7 @@
 import numpy as np
 import numpy.testing as npt
-
 import moderngl
+
 
 def test_1(ctx):
     prog = ctx.program(

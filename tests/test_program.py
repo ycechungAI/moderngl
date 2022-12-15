@@ -38,6 +38,7 @@ def test_program(ctx):
     assert isinstance(program['pos'], moderngl.Uniform)
     assert isinstance(program['scale'], moderngl.Uniform)
 
+
 def test_geo_input_output_primitive(ctx):
     """Test detection of all geo shader input/output primitives types"""
     input_types = [

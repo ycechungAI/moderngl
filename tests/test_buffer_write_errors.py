@@ -1,5 +1,6 @@
 import pytest
 
+
 def test_1(ctx):
     buf = ctx.buffer(b'abc')
 
@@ -11,6 +12,7 @@ def test_1(ctx):
 
     with pytest.raises(Exception):
         buf.write(b'abc', offset=1)
+
 
 def test_2(ctx):
     buf = ctx.buffer(b'123456789')
@@ -30,6 +32,7 @@ def test_2(ctx):
     with pytest.raises(Exception):
         buf.write_chunks(b'yn', -1, 2, 1)
 
+
 def test_3(ctx):
     buf = ctx.buffer(b'123456789')
 
@@ -42,9 +45,9 @@ def test_3(ctx):
     with pytest.raises(Exception):
         buf.write_chunks(b'yyyyny', -4, -3, 3)
 
+
 def test_4(ctx):
     buf = ctx.buffer(b'123456789')
 
     with pytest.raises(Exception):
         buf.write_chunks(b'yyynyy', 0, 2, 2)
-

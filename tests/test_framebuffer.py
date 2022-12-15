@@ -19,6 +19,7 @@ def test_1(ctx):
     pixels3 = fbo3.read(components=4, dtype='f1')
     assert pixels3 == b'\x00\xff\x00\xff' * 16
 
+
 def test_2(ctx):
     rbo1 = ctx.renderbuffer((4, 4), dtype='f1')
     rbo2 = ctx.renderbuffer((4, 4))
@@ -40,6 +41,7 @@ def test_2(ctx):
 
     pixels3 = fbo4.read(attachment=2, components=4, dtype='f1')
     assert pixels3 == b'\x00\x00\xff\xff' * 16
+
 
 def test_3(ctx):
     rbo1 = ctx.renderbuffer((4, 4), dtype='f1')

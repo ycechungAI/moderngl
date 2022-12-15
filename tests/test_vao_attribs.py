@@ -2,6 +2,7 @@ import struct
 import pytest
 import moderngl
 
+
 def test_vao_attribs(ctx):
 
     program = ctx.program(

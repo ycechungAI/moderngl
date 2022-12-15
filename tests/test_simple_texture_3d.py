@@ -1,45 +1,55 @@
 import moderngl
 import pytest
 
+
 def test_texture_3d_create_1(ctx):
     ctx.texture3d((8, 8, 8), 3)
+
 
 def test_texture_3d_create_2(ctx):
     pixels = b'\x10\x20\x30' * 8 * 8 * 8
     ctx.texture3d((8, 8, 8), 3, pixels)
+
 
 def test_texture_3d_create_string(ctx):
     pixels = 'abc' * 8 * 8
     with pytest.raises(Exception):
         ctx.texture3d((8, 8, 8), 3, pixels)
 
+
 def test_texture_3d_create_wrong_size(ctx):
     with pytest.raises(Exception):
         ctx.texture3d((8, 8), 3)
 
+
 def test_texture_3d_get_swizzle(ctx):
     tex = ctx.texture3d((8, 8, 8), 4)
     assert tex.swizzle == 'RGBA'
+
 
 def test_texture_3d_swizzle_1(ctx):
     tex = ctx.texture3d((8, 8, 8), 4)
     tex.swizzle = 'argb'
     assert tex.swizzle == 'ARGB'
 
+
 def test_texture_3d_swizzle_2(ctx):
     tex = ctx.texture3d((8, 8, 8), 1)
     tex.swizzle = 'RRRR'
     assert tex.swizzle == 'RRRR'
+
 
 def test_texture_3d_swizzle_3(ctx):
     tex = ctx.texture3d((8, 8, 8), 2)
     tex.swizzle = '01RG'
     assert tex.swizzle == '01RG'
 
+
 def test_texture_3d_read(ctx):
     pixels = b'\x10\x20\x30' * 8 * 8 * 8
     tex = ctx.texture3d((8, 8, 8), 3, pixels)
     assert tex.read() == pixels
+
 
 def test_texture_3d_read_into(ctx):
     pixels = b'\x10\x20\x30' * 8 * 8 * 8
@@ -47,6 +57,7 @@ def test_texture_3d_read_into(ctx):
     buf = bytearray(8 * 8 * 8 * 3)
     tex.read_into(buf)
     assert bytes(buf) == pixels
+
 
 def test_texture_3d_read_into_pbo(ctx):
     if ctx.info['GL_VENDOR'].startswith('Intel'):
@@ -58,6 +69,7 @@ def test_texture_3d_read_into_pbo(ctx):
     tex.read_into(buf)
     assert buf.read() == pixels
 
+
 def test_texture_3d_write_1(ctx):
     pixels1 = b'\x00\x00\x00' * 8 * 8 * 8
     pixels2 = b'\xff\xff\xff' * 8 * 8 * 8
@@ -67,6 +79,7 @@ def test_texture_3d_write_1(ctx):
 
     tex.write(pixels2)
     assert tex.read() == pixels2
+
 
 def test_texture_3d_write_2(ctx):
     pixels1 = b'\x00\x00\x00' * 8 * 8 * 8
@@ -91,6 +104,7 @@ def test_texture_3d_write_2(ctx):
     expectation = b''.join(pixel(x, y, z) for z in range(8) for y in range(8) for x in range(8))
     assert tex.read() == expectation
 
+
 def test_texture_default_filter(ctx):
     """Ensure default filter is correct"""
     # Float types
@@ -101,6 +115,7 @@ def test_texture_default_filter(ctx):
     for dtype in ["u1", "u2", "u4", "i1", "i2", "i4"]:
         texture = ctx.texture3d((10, 10, 10), 4, dtype=dtype)
         assert texture.filter == (moderngl.NEAREST, moderngl.NEAREST)
+
 
 def test_bind_to_image(ctx):
     if ctx.version_code < 430:

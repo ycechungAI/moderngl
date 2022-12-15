@@ -10,8 +10,10 @@ GL_FLOAT = 0x1406
 GL_DOUBLE = 0x140A
 GL_HALF_FLOAT = 0x140B
 
+
 def check(fmt, res):
     assert fmtdebug(fmt) == res
+
 
 def test_format_1():
     check('1f', (4, 1, 0, True, ((4, 1, GL_FLOAT, False),)))
@@ -27,11 +29,13 @@ def test_format_1():
     check('3u', (12, 1, 0, True, ((12, 3, GL_UNSIGNED_INT, False),)))
     check('4u', (16, 1, 0, True, ((16, 4, GL_UNSIGNED_INT, False),)))
 
+
 def test_format_2():
     check('1f1', (1, 1, 0, True, ((1, 1, GL_UNSIGNED_BYTE, True),)))
     check('1f2', (2, 1, 0, True, ((2, 1, GL_HALF_FLOAT, False),)))
     check('1f4', (4, 1, 0, True, ((4, 1, GL_FLOAT, False),)))
     check('1f8', (8, 1, 0, True, ((8, 1, GL_DOUBLE, False),)))
+
 
 def test_format_3():
     check('1f1f', (0, 0, 0, False, ()))
@@ -45,6 +49,7 @@ def test_format_3():
         ))
     )
 
+
 def test_format_4():
     check('3f 3f /v', (24, 2, 0, True, ((12, 3, GL_FLOAT, False), (12, 3, GL_FLOAT, False))))
     check(
@@ -55,6 +60,7 @@ def test_format_4():
             (12, 3, GL_FLOAT, False)
         ))
     )
+
 
 def test_format_5():
     # vert, norm, text, color
@@ -90,9 +96,11 @@ def test_format_5():
         ))
     )
 
+
 def test_format_6():
     check('2f/i', (8, 1, 1, True, ((8, 2, GL_FLOAT, False),)))
     check('2f /i', (8, 1, 1, True, ((8, 2, GL_FLOAT, False),)))
+
 
 def test_format_7():
     check('2f 2x4/i', (16, 1, 1, True, ((8, 2, GL_FLOAT, False), (8, 2, 0, False))))

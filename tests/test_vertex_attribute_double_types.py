@@ -115,6 +115,7 @@ def test_simple(ctx, v_type):
     for a, b in zip(struct.unpack(fmt, vbo2.read()), v_type['output']):
         assert pytest.approx(a) == b
 
+
 @pytest.mark.parametrize('v_type', v_types)
 def test_arrays(ctx, v_type):
     vert_src = '''

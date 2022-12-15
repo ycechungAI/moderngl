@@ -2,6 +2,7 @@ import moderngl
 import pytest
 import numpy as np
 
+
 @pytest.fixture(scope='module')
 def prog(ctx_static):
     return ctx_static.program(
@@ -26,10 +27,11 @@ def prog(ctx_static):
         ''',
     )
 
+
 @pytest.fixture(scope='module')
 def vao(ctx_static, prog):
     quad = [
-        -1.0,  1.0,
+        -1.0, 1.0,
         -1.0, -1.0,
         1.0, 1.0,
         1.0, -1.0,
@@ -45,11 +47,13 @@ def create_fbo(ctx, size, components=3):
     fbo.clear()
     return fbo
 
+
 def test_default_value(ctx):
     """Ensure default value of the scissor matches the framebuffer size"""
     size = (16, 32)
     fbo = create_fbo(ctx, size)
     assert fbo.scissor == (0, 0, *size)
+
 
 def test_reset_scissor(ctx):
     """We should be able to reset scissor with `None`"""
@@ -62,6 +66,7 @@ def test_reset_scissor(ctx):
 
     fbo.scissor = None
     assert fbo.scissor == (0, 0, *size)
+
 
 def test_render(ctx, prog, vao):
     """Render different color to the four corners of the fbo using scissor"""
@@ -99,6 +104,7 @@ def test_render(ctx, prog, vao):
     )
     assert data == expected
 
+
 def test_clear(ctx):
     """Ensure fbo clearing works with scissoring"""
     size = (4, 4)
@@ -131,6 +137,7 @@ def test_clear(ctx):
     )
     assert data == expected
 
+
 def test_scissor_leak(ctx):
     """Make sure we don't leak scissor values to other framebuffers"""
     size = 2, 2
@@ -145,6 +152,7 @@ def test_scissor_leak(ctx):
 
     assert fbo1.read() == b'\xff\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
     assert fbo2.read() == b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\x00'
+
 
 def test_clear_with_viewport(ctx):
     """Clearing with viewport take presence over scissor"""

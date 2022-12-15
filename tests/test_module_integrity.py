@@ -1,6 +1,5 @@
 import os
 import re
-import unittest
 
 
 def read_file(name):

@@ -1,9 +1,11 @@
 import re
 import pytest
 
+
 def test_buffer_repr(ctx):
     buf = ctx.buffer(reserve=1024)
     assert re.search(r'<Buffer: \d+>', repr(buf))
+
 
 def test_compute_shader_repr(ctx):
     if ctx.version_code < 430:
@@ -18,6 +20,7 @@ def test_compute_shader_repr(ctx):
 
     assert re.search(r'<ComputeShader: \d+>', repr(compute_shader))
 
+
 def test_renderbuffer_and_framebuffer_repr(ctx):
     rbo = ctx.renderbuffer((16, 16))
     assert re.search(r'<Renderbuffer: \d+>', repr(rbo))
@@ -25,9 +28,11 @@ def test_renderbuffer_and_framebuffer_repr(ctx):
     fbo = ctx.simple_framebuffer((16, 19))
     assert re.search(r'<Framebuffer: \d+>', repr(fbo))
 
+
 def test_texture_repr(ctx):
     texture = ctx.texture((4, 4), 3)
     assert re.search(r'<Texture: \d+>', repr(texture))
+
 
 def test_program_repr(ctx):
     prog = ctx.program(

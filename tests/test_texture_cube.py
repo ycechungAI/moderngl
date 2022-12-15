@@ -1,6 +1,7 @@
 import moderngl
 import pytest
 
+
 def test_0(ctx):
     texture = ctx.texture_cube((16, 16), 4)
     assert texture.size == (16, 16)
@@ -9,6 +10,7 @@ def test_0(ctx):
     assert texture.anisotropy == 1.0
     assert texture.swizzle == "RGBA"
     assert texture.glo > 0
+
 
 def test_1(ctx):
     faces = [
@@ -33,6 +35,7 @@ def test_1(ctx):
     tex.write(5, b'\xff\xff\xff' * 4 * 4)
     assert tex.read(5) == b'\xff\xff\xff' * 4 * 4
 
+
 def test_2(ctx):
     tex = ctx.texture_cube((4, 4), 3)
 
@@ -48,6 +51,7 @@ def test_2(ctx):
     with pytest.raises(Exception):
         tex.write(6, b'\xff\xff\xff' * 4 * 4)
 
+
 def test_3(ctx):
     tex = ctx.texture_cube((4, 4), 3)
 
@@ -56,6 +60,7 @@ def test_3(ctx):
 
     with pytest.raises(Exception):
         tex.read(6)
+
 
 def test_texture_default_filter(ctx):
     """Ensure default filter is correct"""

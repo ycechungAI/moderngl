@@ -1,13 +1,14 @@
 import pytest
-import moderngl
-import numpy
-import platform
 
 
 def test_create_destroy(ctx_new):
     """Create and destroy a context"""
     # Context will destroy itself on exit
     pass
+
+
+def test_core_profile_check(ctx):
+    ctx.core_profile_check()
 
 
 def test_extensions(ctx_new):
@@ -17,6 +18,7 @@ def test_extensions(ctx_new):
     ctx = ctx_new
     assert isinstance(ctx.extensions, set)
     assert len(ctx.extensions) > 0
+
 
 def test_attributes(ctx_new):
     """Ensure enums are present in the context instance"""
@@ -79,6 +81,7 @@ def test_attributes(ctx_new):
     assert isinstance(ctx.FIRST_VERTEX_CONVENTION, int)
     assert isinstance(ctx.LAST_VERTEX_CONVENTION, int)
 
+
 def test_enable_direct(ctx_new):
     # We already support this, but it's a safe value
     ctx = ctx_new
@@ -90,10 +93,12 @@ def test_enable_direct(ctx_new):
     ctx.disable_direct(GL_PROGRAM_POINT_SIZE)
     assert ctx.error == "GL_NO_ERROR"
 
+
 def test_info(ctx):
     assert isinstance(ctx.info, dict)
     assert len(ctx.info) > 50
     assert ctx.info["GL_MAX_GEOMETRY_OUTPUT_VERTICES"] >= 256
+
 
 def test_polygon_offset(ctx):
     ctx.polygon_offset = 0.0, 1.0
@@ -102,6 +107,7 @@ def test_polygon_offset(ctx):
     assert ctx.polygon_offset == (1.0, 0.0)
     ctx.polygon_offset = -1.0, -1.0
     assert ctx.polygon_offset == (-1.0, -1.0)
+
 
 def test_context_gc_modes(ctx_new):
     """Check gc mode default and set different modes"""
@@ -113,6 +119,7 @@ def test_context_gc_modes(ctx_new):
     ctx.gc_mode = "auto"
     with pytest.raises(ValueError):
         ctx.gc_mode = "something"
+
 
 def test_context_gc(ctx_new):
     """Simple usage of context_gc"""
@@ -205,7 +212,7 @@ def test_context_gc(ctx_new):
 
 # #     with ctx1 as ctx:
 # #         buffer1 = ctx.buffer(reserve=1024)
-    
+
 # #     with ctx2 as ctx:
 # #         buffer2 = ctx.buffer(reserve=1024)
 

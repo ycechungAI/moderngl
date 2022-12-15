@@ -1,9 +1,11 @@
 import moderngl
 
+
 def test_create(ctx):
     sampler = ctx.sampler()
     sampler.use(location=0)
     sampler.clear(location=0)
+
 
 def test_defaults(ctx):
     sampler = ctx.sampler()
@@ -16,6 +18,7 @@ def test_defaults(ctx):
     assert sampler.border_color == (0.0, 0.0, 0.0, 0.0)
     assert sampler.min_lod == -1000.0
     assert sampler.max_lod == 1000.0
+
 
 def test_prop_changes(ctx):
     sampler = ctx.sampler()
@@ -36,6 +39,7 @@ def test_prop_changes(ctx):
     sampler.repeat_z = False
     assert (sampler.repeat_x, sampler.repeat_y, sampler.repeat_z) == (False, False, False)
 
+
 def test_border_color(ctx):
     sampler = ctx.sampler()
 
@@ -50,6 +54,7 @@ def test_border_color(ctx):
         sampler.border_color = color
         assert sampler.border_color == color
 
+
 def test_lod(ctx):
     sampler = ctx.sampler()
 
@@ -58,6 +63,7 @@ def test_lod(ctx):
 
     sampler.max_lod = 500.0
     assert sampler.max_lod == 500.0
+
 
 def test_clear_samplers(ctx):
     ctx.clear_samplers(start=0, end=5)

@@ -2,6 +2,7 @@ import struct
 import pytest
 import moderngl
 
+
 def test_1(ctx):
     prog = ctx.program(
         vertex_shader='''

@@ -38,12 +38,14 @@ FRAGMENT_SHADER = '''
     }
 '''
 
+
 def test_program_uniforms_1(ctx):
     program = ctx.program(vertex_shader=VERTEX_SHADER)
 
     assert 'Mvp' in program
     assert 'Block' in program
     assert 'Transform' not in program
+
 
 def test_program_uniforms_2(ctx):
     program = ctx.program(
@@ -56,6 +58,7 @@ def test_program_uniforms_2(ctx):
     assert 'Position' in program
     assert 'Color' in program
 
+
 def test_program_uniform_blocks(ctx):
     program = ctx.program(
         vertex_shader=VERTEX_SHADER,
@@ -67,12 +70,14 @@ def test_program_uniform_blocks(ctx):
     assert 'Transform' not in program
     assert 'Light' not in program
 
+
 def test_program_geometry_primitives_1(ctx):
     program = ctx.program(vertex_shader=VERTEX_SHADER)
 
     assert program.geometry_input is None
     assert program.geometry_output is None
     assert program.geometry_vertices == 0
+
 
 def test_program_geometry_primitives_2(ctx):
     program = ctx.program(

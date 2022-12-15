@@ -1,6 +1,7 @@
 import moderngl
 import pytest
 
+
 def test_compute_shader(ctx):
     if ctx.version_code < 430:
         pytest.skip('OpenGL 4.3 is not supported')

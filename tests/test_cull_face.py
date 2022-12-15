@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 import moderngl as mgl
 
+
 @pytest.fixture
 def prog_render_depth_pass(ctx):
     return ctx.program(
@@ -22,10 +23,12 @@ def prog_render_depth_pass(ctx):
             ''',
     )
 
+
 @pytest.fixture
 def vbo_triangle(ctx):
     vertices = np.array([[-1, 1, 0.], [-1, -1, 0.], [1, -1, 0.], ])
     return ctx.buffer(vertices.astype('f4').tobytes())
+
 
 @pytest.fixture
 def fbo_with_rasterised_triangle(ctx, vbo_triangle):
@@ -43,6 +46,7 @@ def fbo_with_rasterised_triangle(ctx, vbo_triangle):
         return fbo_depth, tex_depth
 
     return _build_fbo_with_rasterised_triangle
+
 
 @pytest.fixture
 def np_triangle_rasterised():

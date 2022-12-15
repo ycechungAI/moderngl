@@ -1,4 +1,3 @@
-import unittest
 import moderngl
 
 
@@ -15,14 +14,15 @@ def test_create(ctx):
     assert texture.components == 4
 
     # Texture parameters
-    assert texture.repeat_x == True
-    assert texture.repeat_y == True
+    assert texture.repeat_x is True
+    assert texture.repeat_y is True
     assert texture.filter == (moderngl.LINEAR, moderngl.LINEAR)
     assert texture.swizzle == "RGBA"
     assert texture.anisotropy == 1.0
 
     texture.build_mipmaps()
     assert texture.filter == (moderngl.LINEAR_MIPMAP_LINEAR, moderngl.LINEAR)
+
 
 def test_texture_default_filter(ctx):
     """Ensure default filter is correct"""

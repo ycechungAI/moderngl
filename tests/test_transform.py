@@ -4,14 +4,11 @@ Test transform feedback.
 Note that some of the tests are commented out because they currently don't
 work with mesa/lvvmpipe. They are left here for future reference.
 """
-
 from array import array
 import struct
-import platform
 import numpy as np
-
-import pytest
 import moderngl
+
 
 def test_transform(ctx):
 
@@ -36,6 +33,7 @@ def test_transform(ctx):
     assert 'vert' in program
     assert 'vert_length' in program
 
+
 def test_vertex_points(ctx):
     """Transform with points"""
     print(ctx.error)
@@ -55,11 +53,12 @@ def test_vertex_points(ctx):
         varyings=["out_pos"],
     )
 
-    vao = ctx.vertex_array(program, [(buffer, "2f", "in_pos"),])
+    vao = ctx.vertex_array(program, [(buffer, "2f", "in_pos"), ])
     assert vao.mode == moderngl.POINTS
     buffer2 = ctx.buffer(reserve=buffer.size)
     vao.transform(buffer2, mode=ctx.POINTS)
     assert data == struct.unpack(f"{len(data)}f", buffer.read())
+
 
 def test_vertex_lines(ctx):
     data = 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0
@@ -78,10 +77,11 @@ def test_vertex_lines(ctx):
         varyings=["out_pos"],
     )
 
-    vao = ctx.vertex_array(program, [(buffer, "2f", "in_pos"),])
+    vao = ctx.vertex_array(program, [(buffer, "2f", "in_pos"), ])
     buffer2 = ctx.buffer(reserve=buffer.size)
     vao.transform(buffer2, mode=ctx.LINES)
     assert tuple(v * 2 for v in data) == struct.unpack(f"{len(data)}f", buffer2.read())
+
 
 # NOTE: This fails in tests and may be non-standard or require higher gl version
 # def test_vertex_lines_adjacency(ctx):
@@ -115,6 +115,7 @@ def test_vertex_lines(ctx):
 #     # Start end end line is removed
 #     self.assertEqual(tuple(data[2:6]), struct.unpack(f"4f", buffer2.read()))
 
+
 def test_vertex_line_strip(ctx):
     data = (
         1.0, 1.0,
@@ -136,7 +137,7 @@ def test_vertex_line_strip(ctx):
         """,
         varyings=["out_pos"],
     )
-    vao = ctx.vertex_array(program, [(buffer, "2f", "in_pos"),])
+    vao = ctx.vertex_array(program, [(buffer, "2f", "in_pos"), ])
     buffer2 = ctx.buffer(reserve=4 * 12)
     vao.transform(buffer2, mode=ctx.LINE_STRIP)
 
@@ -178,6 +179,7 @@ def test_vertex_line_strip(ctx):
 #         struct.unpack("8f", buffer2.read())
 #     )
 
+
 def test_vertex_triangles(ctx):
     data = (
         1.0, 1.0,
@@ -201,10 +203,11 @@ def test_vertex_triangles(ctx):
         """,
         varyings=["out_pos"],
     )
-    vao = ctx.vertex_array(program, [(buffer, "2f", "in_pos"),])
+    vao = ctx.vertex_array(program, [(buffer, "2f", "in_pos"), ])
     buffer2 = ctx.buffer(reserve=4 * 12)
     vao.transform(buffer2, mode=ctx.TRIANGLES)
     assert tuple(v * 2 for v in data) == struct.unpack("12f", buffer2.read())
+
 
 # def test_vertex_triangles_adjacency(ctx):
 #     if platform.system().lower() in ["darwin"]:
@@ -272,7 +275,7 @@ def test_vertex_triangles(ctx):
 #             0.0, 0.0,  # Initial triangle
 #             1.0, 0.0,
 #             1.0, 1.0,
-#             0.0, 1.0,  # second triangle 
+#             0.0, 1.0,  # second triangle
 #         ],
 #         dtype='f4',
 #     )
@@ -300,8 +303,8 @@ def test_vertex_triangles(ctx):
 #         0.0, 0.0,  # Initial triangle
 #         1.0, 0.0,
 #         1.0, 1.0,
-#         0.0, 0.0,  # second triangle 
-#         1.0, 1.0, 
+#         0.0, 0.0,  # second triangle
+#         1.0, 1.0,
 #         0.0, 1.0,
 #     )
 #     assert data == expected
@@ -312,8 +315,7 @@ def test_geometry_points(ctx):
     data = (1.0, 2.0, 3.0, 4.0, 5.0, 6.0)
     vertices = np.array(data, dtype='f4')
     prog = ctx.program(
-        vertex_shader=
-        """
+        vertex_shader="""
         #version 330
 
         in float in_value;
@@ -343,6 +345,7 @@ def test_geometry_points(ctx):
     vao.transform(buffer, mode=moderngl.POINTS)
     assert tuple(v * 2 for v in data) == struct.unpack('6f', buffer.read())
 
+
 def test_geometry_lines(ctx):
     data = (
         1.0, 2.0,
@@ -351,8 +354,7 @@ def test_geometry_lines(ctx):
     )
     vertices = np.array(data, dtype='f4')
     prog = ctx.program(
-        vertex_shader=
-        """
+        vertex_shader="""
         #version 330
 
         in float in_value;
@@ -384,6 +386,7 @@ def test_geometry_lines(ctx):
     buffer = ctx.buffer(reserve=vbo.size)
     vao.transform(buffer, mode=moderngl.LINES)
     assert data == struct.unpack('6f', buffer.read())
+
 
 # def test_geometry_line_loop(ctx):
 #     data = (
@@ -547,7 +550,6 @@ def test_geometry_lines(ctx):
 #     vao.transform(buffer, mode=moderngl.LINE_STRIP_ADJACENCY)       
 #     assert struct.unpack('4f', buffer.read()) == (2.0, 3.0, 3.0, 4.0)
 
-# # ---
 
 def test_geometry_triangles(ctx):
     data = (
@@ -555,8 +557,7 @@ def test_geometry_triangles(ctx):
     )
     vertices = np.array(data, dtype='f4')
     prog = ctx.program(
-        vertex_shader=
-        """
+        vertex_shader="""
         #version 330
 
         in float in_value;
@@ -590,6 +591,7 @@ def test_geometry_triangles(ctx):
     buffer = ctx.buffer(reserve=vbo.size)
     vao.transform(buffer, mode=moderngl.TRIANGLES)
     assert struct.unpack('6f', buffer.read()) == data
+
 
 # def test_geometry_triangle_strip(ctx):
 #     data = (
@@ -677,6 +679,7 @@ def test_geometry_triangles(ctx):
 #     expected = (0.0, 1.0, 2.0, 0.0, 2.0, 3.0)
 #     assert struct.unpack('6f', buffer.read()) == expected
 
+
 # def test_geometry_triangles_adjacency(ctx):
 #     data = (
 #         1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
@@ -718,6 +721,7 @@ def test_geometry_triangles(ctx):
 #     buffer = ctx.buffer(reserve=4 * 3)
 #     vao.transform(buffer, mode=moderngl.TRIANGLES_ADJACENCY)
 #     assert struct.unpack('3f', buffer.read()) == (1.0, 3.0, 5.0)
+
 
 # def test_geometry_triangle_strip_adjacency(ctx):
 #     data = (
