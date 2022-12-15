@@ -4,6 +4,38 @@ import numpy.testing as npt
 import moderngl
 
 
+def test_properties(ctx):
+    prog = ctx.program(
+        vertex_shader="""
+        #version 330
+        in vec2 pos;
+        in vec2 velocity;
+        out vec2 out_pos;
+        void main() {
+            out_pos = pos + velocity;
+        }
+        """,
+        varyings=["out_pos"],
+    )
+    buffer = ctx.buffer(array('f', range(16)))
+    vao = ctx.vertex_array(prog, [(buffer, '2f', 'pos')])
+
+    assert vao.program == prog
+    assert vao.vertices == 8
+    assert vao.index_buffer is None
+    assert vao.index_element_size == 4
+    assert vao.mode == moderngl.POINTS
+    assert vao.instances == 1
+    assert vao.glo > 0
+
+    vao.mode = moderngl.LINES
+    assert vao.mode == moderngl.LINES
+    vao.vertices = 2
+    assert vao.vertices == 2
+    vao.instances = 2
+    assert vao.instances == 2
+
+
 def test_padding(ctx):
     prog = ctx.program(
         vertex_shader="""
