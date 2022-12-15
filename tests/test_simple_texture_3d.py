@@ -2,6 +2,41 @@ import moderngl
 import pytest
 
 
+def test_properties(ctx):
+    tex = ctx.texture3d((2, 4, 8), 4)
+    assert tex.size == (2, 4, 8)
+    assert tex.width == 2
+    assert tex.height == 4
+    assert tex.depth == 8
+    assert tex.components == 4
+    assert tex.dtype == 'f1'
+    assert hash(tex) == id(tex)
+    assert tex.glo > 0
+    assert tex.filter == (moderngl.LINEAR, moderngl.LINEAR)
+    assert tex.repeat_x is True
+    assert tex.repeat_y is True
+    assert tex.repeat_z is True
+    assert tex == tex
+
+    tex.repeat_x = False
+    tex.repeat_y = False
+    tex.repeat_z = False
+    assert tex.repeat_x is False
+    assert tex.repeat_y is False
+    assert tex.repeat_z is False
+
+
+def test_repr(ctx):
+    tex = ctx.texture3d((2, 4, 8), 4)
+    assert repr(tex) == '<Texture3D: {}>'.format(tex.glo)
+
+
+def test_mipmaps(ctx):
+    tex = ctx.texture3d((8, 8, 8), 4)
+    tex.build_mipmaps(max_level=2)
+    tex.filter = moderngl.LINEAR_MIPMAP_LINEAR, moderngl.LINEAR
+
+
 def test_texture_3d_create_1(ctx):
     ctx.texture3d((8, 8, 8), 3)
 
