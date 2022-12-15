@@ -11,6 +11,16 @@ def test_core_profile_check(ctx):
     ctx.core_profile_check()
 
 
+def test_repr(ctx):
+    assert repr(ctx) == f"<Context {id(ctx)} version_code={ctx.version_code}>"
+
+
+def test_detect_framebuffer(ctx):
+    # find a randomly active framebuffer.
+    # We just test the call for now
+    ctx.detect_framebuffer()
+
+
 def test_extensions(ctx_new):
     # self.assertTrue("GL_ARB_vertex_array_object" in ctx.extensions)
     # self.assertTrue("GL_ARB_transform_feedback2" in ctx.extensions)
@@ -80,6 +90,24 @@ def test_attributes(ctx_new):
     # Provoking vertex
     assert isinstance(ctx.FIRST_VERTEX_CONVENTION, int)
     assert isinstance(ctx.LAST_VERTEX_CONVENTION, int)
+
+    assert ctx == ctx
+    assert hash(ctx) == id(ctx)
+
+    assert ctx.line_width == 1.0
+    assert ctx.point_size == 1.0
+    assert isinstance(ctx.max_integer_samples, int)
+    assert isinstance(ctx.max_texture_units, int)
+    assert ctx.default_texture_unit == ctx.max_texture_units - 1
+    assert ctx.screen is None
+    assert ctx.wireframe is False
+    assert ctx.front_face == "ccw"
+    assert ctx.cull_face == "front_and_back"
+    assert ctx.patch_vertices == 3
+
+    ctx.enable(ctx.NOTHING)
+    ctx.disable(ctx.NOTHING)
+    ctx.finish()
 
 
 def test_enable_direct(ctx_new):
