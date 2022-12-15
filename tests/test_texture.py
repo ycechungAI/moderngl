@@ -30,6 +30,27 @@ def vao(ctx_static):
     return ctx_static.simple_vertex_array(prog, vbo, 'vert')
 
 
+def test_texture_properties(ctx):
+    tex = ctx.texture((16, 16), 4)
+    assert tex.width == 16
+    assert tex.height == 16
+    assert tex.size == (16, 16)
+    assert tex.components == 4
+    assert tex.depth is False
+    assert tex.samples == 0
+    assert tex.glo > 0
+    assert tex.filter == (moderngl.LINEAR, moderngl.LINEAR)
+    assert tex.repeat_x is True
+    assert tex.repeat_y is True
+    assert tex.anisotropy == 1.0
+    assert tex.dtype == 'f1'
+
+    tex.anisotropy = ctx.max_anisotropy
+    assert tex.anisotropy == ctx.max_anisotropy
+    tex.build_mipmaps()
+    assert tex.filter == (moderngl.LINEAR_MIPMAP_LINEAR, moderngl.LINEAR)
+
+
 def test_1(ctx, vao):
     assert vao.mode == moderngl.TRIANGLES
     fbo = ctx.framebuffer(ctx.renderbuffer((16, 16)))
