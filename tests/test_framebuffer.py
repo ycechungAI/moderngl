@@ -1,4 +1,27 @@
 
+def test_properties(ctx):
+    fbo = ctx.simple_framebuffer((4, 4))
+    assert fbo.size == (4, 4)
+    assert hash(fbo) == id(fbo)
+    assert fbo == fbo
+    assert fbo.depth_mask is True
+    assert fbo.width == 4
+    assert fbo.height == 4
+    assert fbo.size == (4, 4)
+    assert fbo.samples == 0
+    assert fbo.glo > 0
+
+    fbo.depth_mask = False
+    assert fbo.depth_mask is False
+
+
+def test_viewport(ctx):
+    fbo = ctx.simple_framebuffer((4, 4))
+    assert fbo.viewport == (0, 0, 4, 4)
+    fbo.viewport = (1, 2, 3, 4)
+    assert fbo.viewport == (1, 2, 3, 4)
+
+
 def test_1(ctx):
     rbo1 = ctx.renderbuffer((4, 4), dtype='f1')
     rbo2 = ctx.renderbuffer((4, 4))
