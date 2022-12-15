@@ -10,6 +10,19 @@ def test_0(ctx):
     assert texture.anisotropy == 1.0
     assert texture.swizzle == "RGBA"
     assert texture.glo > 0
+    assert texture.dtype == "f1"
+    assert texture.filter == (moderngl.LINEAR, moderngl.LINEAR)
+    assert texture.swizzle == "RGBA"
+    assert texture.anisotropy == 1.0
+    assert texture == texture
+    assert hash(texture) == id(texture)
+
+    texture.filter = moderngl.NEAREST, moderngl.NEAREST
+    assert texture.filter == (moderngl.NEAREST, moderngl.NEAREST)
+    texture.swizzle = "BGRA"
+    assert texture.swizzle == "BGRA"
+    texture.anisotropy = ctx.max_anisotropy
+    assert texture.anisotropy == ctx.max_anisotropy
 
 
 def test_1(ctx):
