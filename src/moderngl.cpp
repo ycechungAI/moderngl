@@ -4332,7 +4332,7 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
 
     texture->max_level = 0;
     texture->compare_func = 0;
-    texture->anisotropy = 1.0f;
+    texture->anisotropy = 0.0;
     texture->depth = false;
 
     texture->min_filter = data_type->float_type ? GL_LINEAR : GL_NEAREST;
