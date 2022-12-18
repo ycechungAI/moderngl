@@ -19,6 +19,7 @@ jobs:
 
       - name: build
         run: docker build . -f tests/coverage/Dockerfile -t coverage
+        continue-on-error: true
 
       - name: coverage
         run: docker run --rm -t coverage
