@@ -4497,6 +4497,10 @@ PyObject * MGLContext_external_texture(MGLContext * self, PyObject * args) {
         &dtype_size
     );
 
+    if (!args_ok) {
+        return NULL;
+    }
+
     MGLDataType * data_type = from_dtype(dtype, dtype_size);
 
     if (!data_type) {
