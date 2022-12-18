@@ -30,7 +30,6 @@ def test_create(ctx):
     texture.swizzle = "RGBA"
     assert texture.swizzle == "RGBA"
 
-    assert texture.anisotropy == 1.0
     texture.anisotropy = ctx.max_anisotropy
     assert texture.anisotropy == ctx.max_anisotropy
 

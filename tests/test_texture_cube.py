@@ -7,15 +7,16 @@ def test_0(ctx):
     assert texture.size == (16, 16)
     assert texture.components == 4
     assert texture.filter == (moderngl.LINEAR, moderngl.LINEAR)
-    assert texture.anisotropy == 1.0
     assert texture.swizzle == "RGBA"
     assert texture.glo > 0
     assert texture.dtype == "f1"
     assert texture.filter == (moderngl.LINEAR, moderngl.LINEAR)
     assert texture.swizzle == "RGBA"
-    assert texture.anisotropy == 1.0
     assert texture == texture
     assert hash(texture) == id(texture)
+
+    texture.anisotropy = ctx.max_anisotropy
+    assert texture.anisotropy == ctx.max_anisotropy
 
     texture.filter = moderngl.NEAREST, moderngl.NEAREST
     assert texture.filter == (moderngl.NEAREST, moderngl.NEAREST)

@@ -3862,7 +3862,6 @@ PyObject * MGLSampler_get_anisotropy(MGLSampler * self) {
 }
 
 int MGLSampler_set_anisotropy(MGLSampler * self, PyObject * value) {
-    // Avoid context error if anisotropy is not supported.
     if (self->context->max_anisotropy == 0) return 0;
     self->anisotropy = (float)MGL_MIN(MGL_MAX(PyFloat_AsDouble(value), 1.0), self->context->max_anisotropy);
 
@@ -4521,7 +4520,7 @@ PyObject * MGLContext_external_texture(MGLContext * self, PyObject * args) {
 
     texture->max_level = 0;
     texture->compare_func = 0;
-    texture->anisotropy = 1.0f;
+    texture->anisotropy = 0.0;
     texture->depth = false;
 
     texture->min_filter = data_type->float_type ? GL_LINEAR : GL_NEAREST;
@@ -5163,6 +5162,7 @@ PyObject * MGLTexture_get_anisotropy(MGLTexture * self) {
 }
 
 int MGLTexture_set_anisotropy(MGLTexture * self, PyObject * value) {
+    if (self->context->max_anisotropy == 0) return 0;
     self->anisotropy = (float)MGL_MIN(MGL_MAX(PyFloat_AsDouble(value), 1.0), self->context->max_anisotropy);
     int texture_target = self->samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 
@@ -5948,7 +5948,7 @@ PyObject * MGLContext_texture_array(MGLContext * self, PyObject * args) {
 
     texture->repeat_x = true;
     texture->repeat_y = true;
-    texture->anisotropy = 1.0;
+    texture->anisotropy = 0.0;
 
     Py_INCREF(self);
     texture->context = self;
@@ -6482,6 +6482,7 @@ PyObject * MGLTextureArray_get_anisotropy(MGLTextureArray * self) {
 }
 
 int MGLTextureArray_set_anisotropy(MGLTextureArray * self, PyObject * value) {
+    if (self->context->max_anisotropy == 0) return 0;
     self->anisotropy = (float)MGL_MIN(MGL_MAX(PyFloat_AsDouble(value), 1.0), self->context->max_anisotropy);
 
     const GLMethods & gl = self->context->gl;
@@ -6628,7 +6629,7 @@ PyObject * MGLContext_texture_cube(MGLContext * self, PyObject * args) {
     texture->min_filter = data_type->float_type ? GL_LINEAR : GL_NEAREST;
     texture->mag_filter = data_type->float_type ? GL_LINEAR : GL_NEAREST;
     texture->max_level = 0;
-    texture->anisotropy = 1.0;
+    texture->anisotropy = 0.0;
 
     Py_INCREF(self);
     texture->context = self;
@@ -7070,6 +7071,7 @@ PyObject * MGLTextureCube_get_anisotropy(MGLTextureCube * self) {
 }
 
 int MGLTextureCube_set_anisotropy(MGLTextureCube * self, PyObject * value) {
+    if (self->context->max_anisotropy == 0) return 0;
     self->anisotropy = (float)MGL_MIN(MGL_MAX(PyFloat_AsDouble(value), 1.0), self->context->max_anisotropy);
 
     const GLMethods & gl = self->context->gl;
