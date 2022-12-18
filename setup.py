@@ -74,6 +74,10 @@ extra_linker_args = {
     'android': [],
 }
 
+if os.getenv('MODERNGL_COVERAGE'):
+    extra_compile_args[target] += ['-O0', '--coverage']
+    extra_linker_args[target] += ['-O0', '--coverage']
+
 mgl = Extension(
     name='moderngl.mgl',
     define_macros=[
