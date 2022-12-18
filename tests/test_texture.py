@@ -42,8 +42,8 @@ def test_texture_properties(ctx):
     assert tex.filter == (moderngl.LINEAR, moderngl.LINEAR)
     assert tex.repeat_x is True
     assert tex.repeat_y is True
-    assert tex.anisotropy == 1.0
     assert tex.dtype == 'f1'
+    assert tex.anisotropy == 0.0
 
     tex.anisotropy = ctx.max_anisotropy
     assert tex.anisotropy == ctx.max_anisotropy

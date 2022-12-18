@@ -12,6 +12,7 @@ def test_create(ctx):
     assert texture.layers == 8
     assert texture.dtype == 'f1'
     assert texture.components == 4
+    assert texture.anisotropy == 0.0
 
     # Texture parameters
     assert texture.repeat_x is True
