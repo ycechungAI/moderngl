@@ -198,6 +198,10 @@ def test_ssbo_binding(ctx):
     )
     ssbo_in = program['ssbo_in']
     ssbo_out = program['ssbo_out']
+
+    assert ssbo_in.name == 'ssbo_in'
+    assert ssbo_out.name == 'ssbo_out'
+
     assert ssbo_in.binding == 0
     assert ssbo_in.value == 0
     assert ssbo_out.binding == 1
