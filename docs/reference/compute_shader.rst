@@ -32,3 +32,13 @@ Attributes
 
 .. toctree::
     :maxdepth: 2
+
+ComputeShader Members
+---------------------
+
+.. toctree::
+    :maxdepth: 2
+
+    uniform.rst
+    uniform_block.rst
+    storage_block.rst

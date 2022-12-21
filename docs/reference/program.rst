@@ -93,4 +93,3 @@ Program Members
     subroutine.rst
     attribute.rst
     varying.rst
-    storage_block.rst
