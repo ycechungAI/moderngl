@@ -932,9 +932,9 @@ class ComputeShader:
     This values is provided for debug purposes only.
     '''
 
-    def __getitem__(self, key: str) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    def __getitem__(self, key: str) -> Union[Uniform, UniformBlock, StorageBlock]:
         '''
-        Get a member such as uniforms, uniform blocks, subroutines, attributes and varyings by name.
+        Get a member such as uniforms, uniform blocks and storage blocks.
 
         .. code-block:: python
 
@@ -947,6 +947,9 @@ class ComputeShader:
 
             # Still when writing byte data we need to use the `write()` method
             program['color'].write(buffer)
+
+            # Set binding for a storage block (if supported)
+            program['DataBlock'].binding = 0
         '''
 
     def __setitem__(self, key: str, value: Any):
@@ -964,13 +967,24 @@ class ComputeShader:
 
             uniform = program['cameraMatrix']
             uniform.write(camera_matrix)
+
+            # Set binding for a storage block (if supported)
+            program['DataBlock'].binding = 0
         '''
 
     def __iter__(self) -> Generator[str, None, None]:
         '''
         Yields the internal members names as strings.
 
-        This includes all members such as uniforms, attributes etc.
+        Example::
+
+            for member in program:
+                obj = program[member]
+                print(member, obj)
+                if isinstance(obj, moderngl.StorageBlock):
+                    print("This is a storage block member")
+
+        This includes all members such as uniforms, uniform blocks and storage blocks.
         '''
 
     def run(self, group_x: int = 1, group_y: int = 1, group_z: int = 1) -> None:
