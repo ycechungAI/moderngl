@@ -1604,7 +1604,6 @@ PyObject * MGLContext_compute_shader(MGLContext * self, PyObject * args) {
     }
 
     for(int i = 0; i < num_storage_blocks; ++i) {
-        int size = 0;
         int name_len = 0;
         char name[256];
 
@@ -3157,7 +3156,6 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
     gl.GetProgramiv(program->program_obj, GL_ACTIVE_UNIFORMS, &num_uniforms);
     gl.GetProgramiv(program->program_obj, GL_ACTIVE_UNIFORM_BLOCKS, &num_uniform_blocks);
 
-    int num_subroutines = num_vertex_shader_subroutines + num_fragment_shader_subroutines + num_geometry_shader_subroutines + num_tess_evaluation_shader_subroutines + num_tess_control_shader_subroutines;
     int num_subroutine_uniforms = num_vertex_shader_subroutine_uniforms + num_fragment_shader_subroutine_uniforms + num_geometry_shader_subroutine_uniforms + num_tess_evaluation_shader_subroutine_uniforms + num_tess_control_shader_subroutine_uniforms;
 
     program->num_vertex_shader_subroutines = num_vertex_shader_subroutine_uniforms;
