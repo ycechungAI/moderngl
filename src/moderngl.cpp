@@ -167,10 +167,17 @@ enum MGLQueryKeys {
     PRIMITIVES_GENERATED,
 };
 
+enum MGLQueryState {
+    QUERY_INACTIVE,
+    QUERY_ACTIVE,
+    QUERY_CONDITIONAL_RENDER,
+};
+
 struct MGLQuery {
     PyObject_HEAD
     MGLContext * context;
     int query_obj[4];
+    MGLQueryState state;
     bool released;
 };
 
@@ -3362,6 +3369,8 @@ PyObject * MGLContext_query(MGLContext * self, PyObject * args) {
     Py_INCREF(self);
     query->context = self;
 
+    query->state = QUERY_INACTIVE;
+
     const GLMethods & gl = self->gl;
 
     if (samples_passed) {
@@ -3377,22 +3386,12 @@ PyObject * MGLContext_query(MGLContext * self, PyObject * args) {
         gl.GenQueries(1, (GLuint *)&query->query_obj[PRIMITIVES_GENERATED]);
     }
 
-    // PyObject * result = PyTuple_New(2);
-    // PyTuple_SET_ITEM(result, 0, (PyObject *)query);
-    // PyTuple_SET_ITEM(result, 1, PyLong_FromLong(query->query_obj));
-    // return result;
-
     return (PyObject *)query;
 }
 
-PyObject * MGLQuery_begin(MGLQuery * self, PyObject * args) {
-    int args_ok = PyArg_ParseTuple(
-        args,
-        ""
-    );
-
-    if (!args_ok) {
-        return 0;
+PyObject * MGLQuery_begin(MGLQuery * self) {
+    if (self->state != QUERY_INACTIVE) {
+        MGLError_Set(self->state == QUERY_ACTIVE ? "this query is already running" : "this query is in conditional render mode");
     }
 
     const GLMethods & gl = self->context->gl;
@@ -3413,17 +3412,13 @@ PyObject * MGLQuery_begin(MGLQuery * self, PyObject * args) {
         gl.BeginQuery(GL_PRIMITIVES_GENERATED, self->query_obj[PRIMITIVES_GENERATED]);
     }
 
+    self->state = QUERY_ACTIVE;
     Py_RETURN_NONE;
 }
 
-PyObject * MGLQuery_end(MGLQuery * self, PyObject * args) {
-    int args_ok = PyArg_ParseTuple(
-        args,
-        ""
-    );
-
-    if (!args_ok) {
-        return 0;
+PyObject * MGLQuery_end(MGLQuery * self) {
+    if (self->state != QUERY_ACTIVE) {
+        MGLError_Set(self->state == QUERY_INACTIVE ? "this query was not started" : "this query is in conditional render mode");
     }
 
     const GLMethods & gl = self->context->gl;
@@ -3444,17 +3439,13 @@ PyObject * MGLQuery_end(MGLQuery * self, PyObject * args) {
         gl.EndQuery(GL_PRIMITIVES_GENERATED);
     }
 
+    self->state = QUERY_INACTIVE;
     Py_RETURN_NONE;
 }
 
 PyObject * MGLQuery_begin_render(MGLQuery * self, PyObject * args) {
-    int args_ok = PyArg_ParseTuple(
-        args,
-        ""
-    );
-
-    if (!args_ok) {
-        return 0;
+    if (self->state != QUERY_INACTIVE) {
+        MGLError_Set(self->state == QUERY_ACTIVE ? "this query was not stopped" : "this query is already in conditional render mode");
     }
 
     const GLMethods & gl = self->context->gl;
@@ -3468,21 +3459,18 @@ PyObject * MGLQuery_begin_render(MGLQuery * self, PyObject * args) {
         return 0;
     }
 
+    self->state = QUERY_CONDITIONAL_RENDER;
     Py_RETURN_NONE;
 }
 
 PyObject * MGLQuery_end_render(MGLQuery * self, PyObject * args) {
-    int args_ok = PyArg_ParseTuple(
-        args,
-        ""
-    );
-
-    if (!args_ok) {
-        return 0;
+    if (self->state != QUERY_CONDITIONAL_RENDER) {
+        MGLError_Set("this query is not in conditional render mode");
     }
 
     const GLMethods & gl = self->context->gl;
     gl.EndConditionalRender();
+    self->state = QUERY_INACTIVE;
     Py_RETURN_NONE;
 }
 
@@ -9511,10 +9499,10 @@ PyGetSetDef MGLQuery_getset[] = {
 };
 
 PyMethodDef MGLQuery_methods[] = {
-    {(char *)"begin", (PyCFunction)MGLQuery_begin, METH_VARARGS},
-    {(char *)"end", (PyCFunction)MGLQuery_end, METH_VARARGS},
-    {(char *)"begin_render", (PyCFunction)MGLQuery_begin_render, METH_VARARGS},
-    {(char *)"end_render", (PyCFunction)MGLQuery_end_render, METH_VARARGS},
+    {(char *)"begin", (PyCFunction)MGLQuery_begin, METH_NOARGS},
+    {(char *)"end", (PyCFunction)MGLQuery_end, METH_NOARGS},
+    {(char *)"begin_render", (PyCFunction)MGLQuery_begin_render, METH_NOARGS},
+    {(char *)"end_render", (PyCFunction)MGLQuery_end_render, METH_NOARGS},
     // {(char *)"release", (PyCFunction)MGLQuery_release, METH_NOARGS},
     {},
 };
