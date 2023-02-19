@@ -178,6 +178,7 @@ struct MGLQuery {
     MGLContext * context;
     int query_obj[4];
     MGLQueryState state;
+    bool ended;
     bool released;
 };
 
@@ -3370,6 +3371,7 @@ PyObject * MGLContext_query(MGLContext * self, PyObject * args) {
     query->context = self;
 
     query->state = QUERY_INACTIVE;
+    query->ended = false;
 
     const GLMethods & gl = self->gl;
 
@@ -3392,6 +3394,7 @@ PyObject * MGLContext_query(MGLContext * self, PyObject * args) {
 PyObject * MGLQuery_begin(MGLQuery * self) {
     if (self->state != QUERY_INACTIVE) {
         MGLError_Set(self->state == QUERY_ACTIVE ? "this query is already running" : "this query is in conditional render mode");
+        return NULL;
     }
 
     const GLMethods & gl = self->context->gl;
@@ -3419,6 +3422,7 @@ PyObject * MGLQuery_begin(MGLQuery * self) {
 PyObject * MGLQuery_end(MGLQuery * self) {
     if (self->state != QUERY_ACTIVE) {
         MGLError_Set(self->state == QUERY_INACTIVE ? "this query was not started" : "this query is in conditional render mode");
+        return NULL;
     }
 
     const GLMethods & gl = self->context->gl;
@@ -3440,12 +3444,14 @@ PyObject * MGLQuery_end(MGLQuery * self) {
     }
 
     self->state = QUERY_INACTIVE;
+    self->ended = true;
     Py_RETURN_NONE;
 }
 
 PyObject * MGLQuery_begin_render(MGLQuery * self, PyObject * args) {
     if (self->state != QUERY_INACTIVE) {
         MGLError_Set(self->state == QUERY_ACTIVE ? "this query was not stopped" : "this query is already in conditional render mode");
+        return NULL;
     }
 
     const GLMethods & gl = self->context->gl;
@@ -3456,7 +3462,7 @@ PyObject * MGLQuery_begin_render(MGLQuery * self, PyObject * args) {
         gl.BeginConditionalRender(self->query_obj[SAMPLES_PASSED], GL_QUERY_NO_WAIT);
     } else {
         MGLError_Set("no samples");
-        return 0;
+        return NULL;
     }
 
     self->state = QUERY_CONDITIONAL_RENDER;
@@ -3466,6 +3472,7 @@ PyObject * MGLQuery_begin_render(MGLQuery * self, PyObject * args) {
 PyObject * MGLQuery_end_render(MGLQuery * self, PyObject * args) {
     if (self->state != QUERY_CONDITIONAL_RENDER) {
         MGLError_Set("this query is not in conditional render mode");
+        return NULL;
     }
 
     const GLMethods & gl = self->context->gl;
@@ -3475,30 +3482,66 @@ PyObject * MGLQuery_end_render(MGLQuery * self, PyObject * args) {
 }
 
 PyObject * MGLQuery_get_samples(MGLQuery * self) {
+    if (!self->query_obj[SAMPLES_PASSED]) {
+        MGLError_Set("query created without the samples_passed flag");
+        return NULL;
+    }
+
+    if (self->state == QUERY_ACTIVE) {
+        MGLError_Set("this query was not stopped");
+        return NULL;
+    }
+
     const GLMethods & gl = self->context->gl;
 
-    int samples = 0;
-    gl.GetQueryObjectiv(self->query_obj[SAMPLES_PASSED], GL_QUERY_RESULT, &samples);
+    unsigned samples = 0;
+    if (self->ended) {
+        gl.GetQueryObjectuiv(self->query_obj[SAMPLES_PASSED], GL_QUERY_RESULT, &samples);
+    }
 
-    return PyLong_FromLong(samples);
+    return PyLong_FromUnsignedLong(samples);
 }
 
 PyObject * MGLQuery_get_primitives(MGLQuery * self) {
+    if (!self->query_obj[PRIMITIVES_GENERATED]) {
+        MGLError_Set("query created without the primitives_generated flag");
+        return NULL;
+    }
+
+    if (self->state == QUERY_ACTIVE) {
+        MGLError_Set("this query was not stopped");
+        return NULL;
+    }
+
     const GLMethods & gl = self->context->gl;
 
-    int primitives = 0;
-    gl.GetQueryObjectiv(self->query_obj[PRIMITIVES_GENERATED], GL_QUERY_RESULT, &primitives);
+    unsigned primitives = 0;
+    if (self->ended) {
+        gl.GetQueryObjectuiv(self->query_obj[PRIMITIVES_GENERATED], GL_QUERY_RESULT, &primitives);
+    }
 
-    return PyLong_FromLong(primitives);
+    return PyLong_FromUnsignedLong(primitives);
 }
 
 PyObject * MGLQuery_get_elapsed(MGLQuery * self) {
+    if (!self->query_obj[TIME_ELAPSED]) {
+        MGLError_Set("query created without the time_elapsed flag");
+        return NULL;
+    }
+
+    if (self->state == QUERY_ACTIVE) {
+        MGLError_Set("this query was not stopped");
+        return NULL;
+    }
+
     const GLMethods & gl = self->context->gl;
 
-    int elapsed = 0;
-    gl.GetQueryObjectiv(self->query_obj[TIME_ELAPSED], GL_QUERY_RESULT, &elapsed);
+    unsigned elapsed = 0;
+    if (self->ended) {
+        gl.GetQueryObjectuiv(self->query_obj[TIME_ELAPSED], GL_QUERY_RESULT, &elapsed);
+    }
 
-    return PyLong_FromLong(elapsed);
+    return PyLong_FromUnsignedLong(elapsed);
 }
 
 PyObject * MGLContext_renderbuffer(MGLContext * self, PyObject * args) {
