@@ -1423,7 +1423,7 @@ PyObject * MGLBuffer_release(MGLBuffer * self) {
 }
 
 PyObject * MGLBuffer_size(MGLBuffer * self) {
-    return PyLong_FromLong(self->size);
+    return PyLong_FromSsize_t(self->size);
 }
 
 int MGLBuffer_tp_as_buffer_get_view(MGLBuffer * self, Py_buffer * view, int flags) {
