@@ -8303,7 +8303,7 @@ PyObject * MGLContext_clear_samplers(MGLContext * self, PyObject * args) {
     Py_RETURN_NONE;
 }
 
-PyObject * MGLContext_enter(MGLContext * self, PyObject *_null) {
+PyObject * MGLContext_enter(MGLContext * self, PyObject *args) {
     return PyObject_CallMethod(self->ctx, "__enter__", NULL);
 }
 
@@ -8311,7 +8311,7 @@ PyObject * MGLContext_exit(MGLContext * self, PyObject *args) {
     return PyObject_CallMethod(self->ctx, "__exit__", NULL);
 }
 
-PyObject * MGLContext_release(MGLContext * self, PyObject *_null) {
+PyObject * MGLContext_release(MGLContext * self, PyObject *args) {
     if (self->released) {
         Py_RETURN_NONE;
     }
