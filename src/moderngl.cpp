@@ -2080,7 +2080,7 @@ PyObject * MGLFramebuffer_clear(MGLFramebuffer * self, PyObject * args) {
     }
 
     gl.ClearColor(r, g, b, a);
-    gl.ClearDepth(depth);
+    gl.ClearDepthf(depth);
 
     for (int i = 0; i < self->draw_buffers_len; ++i) {
         gl.ColorMaski(
@@ -9229,6 +9229,8 @@ PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
         if (!context) {
             return NULL;
         }
+    } else {
+        Py_INCREF(context);
     }
 
     MGLContext * ctx = PyObject_New(MGLContext, MGLContext_type);
@@ -9275,8 +9277,12 @@ PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
 
     gl.Enable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-    gl.Enable(GL_PRIMITIVE_RESTART);
-    gl.PrimitiveRestartIndex(-1);
+    if (gl.PrimitiveRestartIndex) {
+        gl.Enable(GL_PRIMITIVE_RESTART);
+        gl.PrimitiveRestartIndex(-1);
+    } else {
+        gl.Enable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+    }
 
     ctx->max_samples = 0;
     gl.GetIntegerv(GL_MAX_SAMPLES, (GLint *)&ctx->max_samples);
