@@ -512,6 +512,13 @@ class Uniform:
     The value must be a list of tuples for array uniforms.
     '''
 
+    handle: int
+    '''
+    The handle of the uniform.
+
+    Only valid for uniform textures when using Bindless Textures.
+    '''
+
     extra: Any
     '''
     Attribute for storing user defined objects
@@ -3503,6 +3510,11 @@ class Texture3D:
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
         '''
 
+    def get_handle(self, resident: bool = True):
+        '''
+        Handle for Bindless Textures.
+        '''
+
     def release(self) -> None:
         '''Release the ModernGL object.'''
 
@@ -3792,6 +3804,11 @@ class TextureArray:
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
         '''
 
+    def get_handle(self, resident: bool = True):
+        '''
+        Handle for Bindless Textures.
+        '''
+
     def release(self) -> None:
         '''Release the ModernGL object.'''
 
@@ -4045,6 +4062,11 @@ class TextureCube:
             write (bool): Allows the shader to write to the image (default: ``True``)
             level (int): Level of the texture to bind (default: ``0``).
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
+        '''
+
+    def get_handle(self, resident: bool = True):
+        '''
+        Handle for Bindless Textures.
         '''
 
     def release(self) -> None:
@@ -4375,6 +4397,11 @@ class Texture:
             write (bool): Allows the shader to write to the image (default: ``True``)
             level (int): Level of the texture to bind (default: ``0``).
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
+        '''
+
+    def get_handle(self, resident: bool = True):
+        '''
+        Handle for Bindless Textures.
         '''
 
     def release(self) -> None:

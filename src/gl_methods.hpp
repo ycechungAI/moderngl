@@ -660,6 +660,10 @@ struct GLMethods {
     PFNGLMULTIDRAWARRAYSINDIRECTCOUNTPROC MultiDrawArraysIndirectCount;
     PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC MultiDrawElementsIndirectCount;
     PFNGLPOLYGONOFFSETCLAMPPROC PolygonOffsetClamp;
+    PFNGLGETTEXTUREHANDLEARBPROC GetTextureHandleARB;
+    PFNGLMAKETEXTUREHANDLERESIDENTARBPROC MakeTextureHandleResidentARB;
+    PFNGLMAKETEXTUREHANDLENONRESIDENTARBPROC MakeTextureHandleNonResidentARB;
+    PFNGLPROGRAMUNIFORMHANDLEUI64ARBPROC ProgramUniformHandleui64ARB;
 };
 
 const char * const GL_FUNCTIONS[] = {
@@ -1320,5 +1324,9 @@ const char * const GL_FUNCTIONS[] = {
     "glMultiDrawArraysIndirectCount",
     "glMultiDrawElementsIndirectCount",
     "glPolygonOffsetClamp",
+    "glGetTextureHandleARB",
+    "glMakeTextureHandleResidentARB",
+    "glMakeTextureHandleNonResidentARB",
+    "glProgramUniformHandleui64ARB",
     NULL,
 };

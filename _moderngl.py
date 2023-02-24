@@ -78,6 +78,14 @@ class Uniform:
             data = struct.pack(self.fmt, value)
         self.write(data)
 
+    @property
+    def handle(self):
+        raise NotImplementedError
+
+    @handle.setter
+    def handle(self, value):
+        return self.ctx._set_uniform_handle(self.program_obj, self.location, value)
+
     def read(self):
         return self.ctx._read_uniform(self.program_obj, self.location, self.gl_type, self.array_length, self.element_size)
 

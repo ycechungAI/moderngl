@@ -4989,6 +4989,25 @@ PyObject * MGLTexture_build_mipmaps(MGLTexture * self, PyObject * args) {
     Py_RETURN_NONE;
 }
 
+PyObject * MGLTexture_get_handle(MGLTexture * self, PyObject * args) {
+    int resident = true;
+
+    if(!PyArg_ParseTuple(args, "|p", &resident)) {
+        return NULL;
+    }
+
+    const GLMethods & gl = self->context->gl;
+
+    unsigned long long handle = gl.GetTextureHandleARB(self->texture_obj);
+    if (resident) {
+        gl.MakeTextureHandleResidentARB(handle);
+    } else {
+        gl.MakeTextureHandleNonResidentARB(handle);
+    }
+
+    return PyLong_FromUnsignedLongLong(handle);
+}
+
 PyObject * MGLTexture_release(MGLTexture * self) {
     if (self->released) {
         Py_RETURN_NONE;
@@ -5687,6 +5706,24 @@ PyObject * MGLTexture3D_build_mipmaps(MGLTexture3D * self, PyObject * args) {
 
     Py_RETURN_NONE;
 }
+PyObject * MGLTexture3D_get_handle(MGLTexture3D * self, PyObject * args) {
+    int resident = true;
+
+    if(!PyArg_ParseTuple(args, "|p", &resident)) {
+        return NULL;
+    }
+
+    const GLMethods & gl = self->context->gl;
+
+    unsigned long long handle = gl.GetTextureHandleARB(self->texture_obj);
+    if (resident) {
+        gl.MakeTextureHandleResidentARB(handle);
+    } else {
+        gl.MakeTextureHandleNonResidentARB(handle);
+    }
+
+    return PyLong_FromUnsignedLongLong(handle);
+}
 
 PyObject * MGLTexture3D_release(MGLTexture3D * self) {
     if (self->released) {
@@ -6361,6 +6398,24 @@ PyObject * MGLTextureArray_build_mipmaps(MGLTextureArray * self, PyObject * args
 
     Py_RETURN_NONE;
 }
+PyObject * MGLTextureArray_get_handle(MGLTextureArray * self, PyObject * args) {
+    int resident = true;
+
+    if(!PyArg_ParseTuple(args, "|p", &resident)) {
+        return NULL;
+    }
+
+    const GLMethods & gl = self->context->gl;
+
+    unsigned long long handle = gl.GetTextureHandleARB(self->texture_obj);
+    if (resident) {
+        gl.MakeTextureHandleResidentARB(handle);
+    } else {
+        gl.MakeTextureHandleNonResidentARB(handle);
+    }
+
+    return PyLong_FromUnsignedLongLong(handle);
+}
 
 PyObject * MGLTextureArray_release(MGLTextureArray * self) {
     if (self->released) {
@@ -6999,6 +7054,24 @@ PyObject * MGLTextureCube_use(MGLTextureCube * self, PyObject * args) {
     gl.BindTexture(GL_TEXTURE_CUBE_MAP, self->texture_obj);
 
     Py_RETURN_NONE;
+}
+PyObject * MGLTextureCube_get_handle(MGLTextureCube * self, PyObject * args) {
+    int resident = true;
+
+    if(!PyArg_ParseTuple(args, "|p", &resident)) {
+        return NULL;
+    }
+
+    const GLMethods & gl = self->context->gl;
+
+    unsigned long long handle = gl.GetTextureHandleARB(self->texture_obj);
+    if (resident) {
+        gl.MakeTextureHandleResidentARB(handle);
+    } else {
+        gl.MakeTextureHandleNonResidentARB(handle);
+    }
+
+    return PyLong_FromUnsignedLongLong(handle);
 }
 
 PyObject * MGLTextureCube_release(MGLTextureCube * self) {
@@ -8545,6 +8618,19 @@ PyObject * MGLContext_write_uniform(MGLContext * self, PyObject * args) {
     Py_RETURN_NONE;
 }
 
+PyObject * MGLContext_set_uniform_handle(MGLContext * self, PyObject * args) {
+    int program_obj;
+    int location;
+    unsigned long long handle;
+
+    if (!PyArg_ParseTuple(args, "IIK", &program_obj, &location, &handle)) {
+        return NULL;
+    }
+
+    self->gl.ProgramUniformHandleui64ARB(program_obj, location, handle);
+    Py_RETURN_NONE;
+}
+
 PyObject * MGLContext_get_line_width(MGLContext * self) {
     float line_width = 0.0f;
 
@@ -9479,6 +9565,7 @@ PyMethodDef MGLContext_methods[] = {
     {(char *)"_set_storage_block_binding", (PyCFunction)MGLContext_set_storage_block_binding, METH_VARARGS},
     {(char *)"_write_uniform", (PyCFunction)MGLContext_write_uniform, METH_VARARGS},
     {(char *)"_read_uniform", (PyCFunction)MGLContext_read_uniform, METH_VARARGS},
+    {(char *)"_set_uniform_handle", (PyCFunction)MGLContext_set_uniform_handle, METH_VARARGS},
     {},
 };
 
@@ -9605,6 +9692,7 @@ PyMethodDef MGLTexture_methods[] = {
     {(char *)"build_mipmaps", (PyCFunction)MGLTexture_build_mipmaps, METH_VARARGS},
     {(char *)"read", (PyCFunction)MGLTexture_read, METH_VARARGS},
     {(char *)"read_into", (PyCFunction)MGLTexture_read_into, METH_VARARGS},
+    {(char *)"get_handle", (PyCFunction)MGLTexture_get_handle, METH_VARARGS},
     {(char *)"release", (PyCFunction)MGLTexture_release, METH_NOARGS},
     {},
 };
@@ -9625,6 +9713,7 @@ PyMethodDef MGLTexture3D_methods[] = {
     {(char *)"build_mipmaps", (PyCFunction)MGLTexture3D_build_mipmaps, METH_VARARGS},
     {(char *)"read", (PyCFunction)MGLTexture3D_read, METH_VARARGS},
     {(char *)"read_into", (PyCFunction)MGLTexture3D_read_into, METH_VARARGS},
+    {(char *)"get_handle", (PyCFunction)MGLTexture3D_get_handle, METH_VARARGS},
     {(char *)"release", (PyCFunction)MGLTexture3D_release, METH_NOARGS},
     {},
 };
@@ -9645,6 +9734,7 @@ PyMethodDef MGLTextureArray_methods[] = {
     {(char *)"build_mipmaps", (PyCFunction)MGLTextureArray_build_mipmaps, METH_VARARGS},
     {(char *)"read", (PyCFunction)MGLTextureArray_read, METH_VARARGS},
     {(char *)"read_into", (PyCFunction)MGLTextureArray_read_into, METH_VARARGS},
+    {(char *)"get_handle", (PyCFunction)MGLTextureArray_get_handle, METH_VARARGS},
     {(char *)"release", (PyCFunction)MGLTextureArray_release, METH_NOARGS},
     {},
 };
@@ -9663,6 +9753,7 @@ PyMethodDef MGLTextureCube_methods[] = {
 //	{(char *)"build_mipmaps", (PyCFunction)MGLTextureCube_build_mipmaps, METH_VARARGS},
     {(char *)"read", (PyCFunction)MGLTextureCube_read, METH_VARARGS},
     {(char *)"read_into", (PyCFunction)MGLTextureCube_read_into, METH_VARARGS},
+    {(char *)"get_handle", (PyCFunction)MGLTextureCube_get_handle, METH_VARARGS},
     {(char *)"release", (PyCFunction)MGLTextureCube_release, METH_NOARGS},
     {},
 };
