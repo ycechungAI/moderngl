@@ -5668,18 +5668,20 @@ PyObject * MGLTexture3D_build_mipmaps(MGLTexture3D * self, PyObject * args) {
         return 0;
     }
 
+    int texture_target = GL_TEXTURE_3D;
+
     const GLMethods & gl = self->context->gl;
 
     gl.ActiveTexture(GL_TEXTURE0 + self->context->default_texture_unit);
-    gl.BindTexture(GL_TEXTURE_3D, self->texture_obj);
+    gl.BindTexture(texture_target, self->texture_obj);
 
-    gl.TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, base);
-    gl.TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, max);
+    gl.TexParameteri(texture_target, GL_TEXTURE_BASE_LEVEL, base);
+    gl.TexParameteri(texture_target, GL_TEXTURE_MAX_LEVEL, max);
 
-    gl.GenerateMipmap(GL_TEXTURE_3D);
+    gl.GenerateMipmap(texture_target);
 
-    gl.TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    gl.TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl.TexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    gl.TexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     self->min_filter = GL_LINEAR_MIPMAP_LINEAR;
     self->mag_filter = GL_LINEAR;
@@ -6342,18 +6344,20 @@ PyObject * MGLTextureArray_build_mipmaps(MGLTextureArray * self, PyObject * args
         return 0;
     }
 
+    int texture_target = GL_TEXTURE_2D_ARRAY;
+
     const GLMethods & gl = self->context->gl;
 
     gl.ActiveTexture(GL_TEXTURE0 + self->context->default_texture_unit);
-    gl.BindTexture(GL_TEXTURE_2D_ARRAY, self->texture_obj);
+    gl.BindTexture(texture_target, self->texture_obj);
 
-    gl.TexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, base);
-    gl.TexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, max);
+    gl.TexParameteri(texture_target, GL_TEXTURE_BASE_LEVEL, base);
+    gl.TexParameteri(texture_target, GL_TEXTURE_MAX_LEVEL, max);
 
-    gl.GenerateMipmap(GL_TEXTURE_2D_ARRAY);
+    gl.GenerateMipmap(texture_target);
 
-    gl.TexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    gl.TexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl.TexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    gl.TexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     self->min_filter = GL_LINEAR_MIPMAP_LINEAR;
     self->mag_filter = GL_LINEAR;
@@ -6997,6 +7001,48 @@ PyObject * MGLTextureCube_use(MGLTextureCube * self, PyObject * args) {
     const GLMethods & gl = self->context->gl;
     gl.ActiveTexture(GL_TEXTURE0 + index);
     gl.BindTexture(GL_TEXTURE_CUBE_MAP, self->texture_obj);
+
+    Py_RETURN_NONE;
+}
+
+PyObject * MGLTextureCube_build_mipmaps(MGLTextureCube * self, PyObject * args) {
+    int base = 0;
+    int max = 1000;
+
+    int args_ok = PyArg_ParseTuple(
+        args,
+        "II",
+        &base,
+        &max
+    );
+
+    if (!args_ok) {
+        return 0;
+    }
+
+    if (base > self->max_level) {
+        MGLError_Set("invalid base");
+        return 0;
+    }
+
+    int texture_target = GL_TEXTURE_CUBE_MAP;
+
+    const GLMethods & gl = self->context->gl;
+
+    gl.ActiveTexture(GL_TEXTURE0 + self->context->default_texture_unit);
+    gl.BindTexture(texture_target, self->texture_obj);
+
+    gl.TexParameteri(texture_target, GL_TEXTURE_BASE_LEVEL, base);
+    gl.TexParameteri(texture_target, GL_TEXTURE_MAX_LEVEL, max);
+
+    gl.GenerateMipmap(texture_target);
+
+    gl.TexParameteri(texture_target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    gl.TexParameteri(texture_target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    self->min_filter = GL_LINEAR_MIPMAP_LINEAR;
+    self->mag_filter = GL_LINEAR;
+    self->max_level = max;
 
     Py_RETURN_NONE;
 }
@@ -9660,7 +9706,7 @@ PyMethodDef MGLTextureCube_methods[] = {
     {(char *)"write", (PyCFunction)MGLTextureCube_write, METH_VARARGS},
     {(char *)"use", (PyCFunction)MGLTextureCube_use, METH_VARARGS},
     {(char *)"bind", (PyCFunction)MGLTextureCube_meth_bind, METH_VARARGS},
-//	{(char *)"build_mipmaps", (PyCFunction)MGLTextureCube_build_mipmaps, METH_VARARGS},
+	{(char *)"build_mipmaps", (PyCFunction)MGLTextureCube_build_mipmaps, METH_VARARGS},
     {(char *)"read", (PyCFunction)MGLTextureCube_read, METH_VARARGS},
     {(char *)"read_into", (PyCFunction)MGLTextureCube_read_into, METH_VARARGS},
     {(char *)"release", (PyCFunction)MGLTextureCube_release, METH_NOARGS},
