@@ -2187,6 +2187,21 @@ class Context:
         res.extra = None
         return res
 
+    def empty_framebuffer(
+        self,
+        size: Tuple[int, int],
+        layers: Optional[int] = 0,
+        samples: Optional[int] = 0,
+    ) -> 'Framebuffer':
+        res = Framebuffer.__new__(Framebuffer)
+        res.mglo, res._size, res._samples, res._glo = self.mglo.empty_framebuffer(size, layers, samples)
+        res._color_attachments = ()
+        res._depth_attachment = None
+        res.ctx = self
+        res._is_reference = False
+        res.extra = None
+        return res
+
     def renderbuffer(
         self,
         size: Tuple[int, int],

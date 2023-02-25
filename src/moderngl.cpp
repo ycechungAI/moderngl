@@ -2015,6 +2015,129 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
     return result;
 }
 
+PyObject * MGLContext_empty_framebuffer(MGLContext * self, PyObject * args) {
+    int width;
+    int height;
+    int layers = 0;
+    int samples = 0;
+
+    if (!PyArg_ParseTuple(args, "(II)|II", &width, &height, &layers, &samples)) {
+        return 0;
+    }
+
+    const GLMethods & gl = self->gl;
+
+    MGLFramebuffer * framebuffer = PyObject_New(MGLFramebuffer, MGLFramebuffer_type);
+    framebuffer->released = false;
+
+    framebuffer->framebuffer_obj = 0;
+    gl.GenFramebuffers(1, (GLuint *)&framebuffer->framebuffer_obj);
+
+    if (!framebuffer->framebuffer_obj) {
+        MGLError_Set("cannot create framebuffer");
+        Py_DECREF(framebuffer);
+        return 0;
+    }
+
+    gl.BindFramebuffer(GL_FRAMEBUFFER, framebuffer->framebuffer_obj);
+    gl.DrawBuffer(GL_NONE);
+    gl.ReadBuffer(GL_NONE);
+
+    gl.FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, width);
+    gl.FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, height);
+
+    if (layers) {
+        gl.FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_LAYERS, layers);
+    }
+
+    if (samples) {
+        gl.FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_SAMPLES, samples);
+    }
+
+    int status = gl.CheckFramebufferStatus(GL_FRAMEBUFFER);
+
+    gl.BindFramebuffer(GL_FRAMEBUFFER, self->bound_framebuffer->framebuffer_obj);
+
+    if (status != GL_FRAMEBUFFER_COMPLETE) {
+        const char * message = "the framebuffer is not complete";
+
+        switch (status) {
+            case GL_FRAMEBUFFER_UNDEFINED:
+                message = "the framebuffer is not complete (UNDEFINED)";
+                break;
+
+            case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+                message = "the framebuffer is not complete (INCOMPLETE_ATTACHMENT)";
+                break;
+
+            case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+                message = "the framebuffer is not complete (INCOMPLETE_MISSING_ATTACHMENT)";
+                break;
+
+            case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+                message = "the framebuffer is not complete (INCOMPLETE_DRAW_BUFFER)";
+                break;
+
+            case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+                message = "the framebuffer is not complete (INCOMPLETE_READ_BUFFER)";
+                break;
+
+            case GL_FRAMEBUFFER_UNSUPPORTED:
+                message = "the framebuffer is not complete (UNSUPPORTED)";
+                break;
+
+            case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+                message = "the framebuffer is not complete (INCOMPLETE_MULTISAMPLE)";
+                break;
+
+            case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+                message = "the framebuffer is not complete (INCOMPLETE_LAYER_TARGETS)";
+                break;
+        }
+
+        MGLError_Set(message);
+        return 0;
+    }
+
+    framebuffer->draw_buffers_len = 0;
+    framebuffer->draw_buffers = new unsigned[1];
+    framebuffer->color_mask = new bool[5];
+    framebuffer->depth_mask = false;
+
+    framebuffer->viewport_x = 0;
+    framebuffer->viewport_y = 0;
+    framebuffer->viewport_width = width;
+    framebuffer->viewport_height = height;
+    framebuffer->dynamic = false;
+
+    framebuffer->scissor_enabled = false;
+    framebuffer->scissor_x = 0;
+    framebuffer->scissor_y = 0;
+    framebuffer->scissor_width = width;
+    framebuffer->scissor_height = height;
+
+    framebuffer->width = width;
+    framebuffer->height = height;
+    framebuffer->samples = samples;
+
+    Py_INCREF(self);
+    framebuffer->context = self;
+
+    Py_INCREF(framebuffer);
+
+    PyObject * size = PyTuple_New(2);
+    PyTuple_SET_ITEM(size, 0, PyLong_FromLong(framebuffer->width));
+    PyTuple_SET_ITEM(size, 1, PyLong_FromLong(framebuffer->height));
+
+    Py_INCREF(framebuffer);
+    PyObject * result = PyTuple_New(4);
+    PyTuple_SET_ITEM(result, 0, (PyObject *)framebuffer);
+    PyTuple_SET_ITEM(result, 1, size);
+    PyTuple_SET_ITEM(result, 2, PyLong_FromLong(framebuffer->samples));
+    PyTuple_SET_ITEM(result, 3, PyLong_FromLong(framebuffer->framebuffer_obj));
+    return result;
+}
+
 PyObject * MGLFramebuffer_release(MGLFramebuffer * self, PyObject * args) {
     if (self->released) {
         Py_RETURN_NONE;
@@ -9636,6 +9759,7 @@ PyMethodDef MGLContext_methods[] = {
     {(char *)"vertex_array", (PyCFunction)MGLContext_vertex_array, METH_VARARGS},
     {(char *)"program", (PyCFunction)MGLContext_program, METH_VARARGS},
     {(char *)"framebuffer", (PyCFunction)MGLContext_framebuffer, METH_VARARGS},
+    {(char *)"empty_framebuffer", (PyCFunction)MGLContext_empty_framebuffer, METH_VARARGS},
     {(char *)"renderbuffer", (PyCFunction)MGLContext_renderbuffer, METH_VARARGS},
     {(char *)"depth_renderbuffer", (PyCFunction)MGLContext_depth_renderbuffer, METH_VARARGS},
     {(char *)"compute_shader", (PyCFunction)MGLContext_compute_shader, METH_VARARGS},
