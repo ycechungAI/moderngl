@@ -1,6 +1,5 @@
 #include <Python.h>
 
-#include "opengl.hpp"
 #include "gl_methods.hpp"
 
 #define MGLError_Set(...) PyErr_Format(moderngl_error, __VA_ARGS__)
@@ -9535,18 +9534,9 @@ PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
     ctx->wireframe = false;
     ctx->ctx = context;
 
-    bool modern_loader = PyObject_HasAttrString(ctx->ctx, "load_opengl_function");
-    const char * loader_method = modern_loader ? "load_opengl_function" : "load";
-
-    // Map OpenGL functions
-    void ** gl_function = (void **)&ctx->gl;
-    for (int i = 0; GL_FUNCTIONS[i]; ++i) {
-        PyObject * val = PyObject_CallMethod(ctx->ctx, loader_method, "s", GL_FUNCTIONS[i]);
-        if (!val) {
-            return NULL;
-        }
-        gl_function[i] = PyLong_AsVoidPtr(val);
-        Py_DECREF(val);
+    ctx->gl = load_gl_methods(context);
+    if (PyErr_Occurred()) {
+        return NULL;
     }
 
     const GLMethods & gl = ctx->gl;
