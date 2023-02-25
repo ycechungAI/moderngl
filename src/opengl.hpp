@@ -2160,3 +2160,8 @@ typedef void(GLAPI * PFNGLMULTIDRAWARRAYSINDIRECTCOUNTPROC)(GLenum mode, const v
 typedef void(GLAPI * PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC)(GLenum mode, GLenum type, const void * indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride);
 typedef void(GLAPI * PFNGLPOLYGONOFFSETCLAMPPROC)(GLfloat factor, GLfloat units, GLfloat clamp);
 #endif
+
+typedef GLuint64 (GLAPI * PFNGLGETTEXTUREHANDLEARBPROC)(GLuint texture);
+typedef void (GLAPI * PFNGLMAKETEXTUREHANDLERESIDENTARBPROC)(GLuint64 handle);
+typedef void (GLAPI * PFNGLMAKETEXTUREHANDLENONRESIDENTARBPROC)(GLuint64 handle);
+typedef void (GLAPI * PFNGLPROGRAMUNIFORMHANDLEUI64ARBPROC)(GLuint program, GLint location, GLuint64 value);

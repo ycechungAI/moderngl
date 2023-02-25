@@ -60,14 +60,7 @@ class CrateExample(Example):
         self.vao = self.scene.root_nodes[0].mesh.vao.instance(self.prog)
         self.texture = self.load_texture_2d('crate.png')
 
-        import ctypes
-        glcontext = self.ctx.mglo._context
-        glGetTextureHandleARB = ctypes.cast(glcontext.load('glGetTextureHandleARB'), ctypes.CFUNCTYPE(ctypes.c_uint64, ctypes.c_uint))
-        glMakeTextureHandleResidentARB = ctypes.cast(glcontext.load('glMakeTextureHandleResidentARB'), ctypes.CFUNCTYPE(None, ctypes.c_uint64))
-        glProgramUniformHandleui64ARB = ctypes.cast(glcontext.load('glProgramUniformHandleui64ARB'), ctypes.CFUNCTYPE(None, ctypes.c_uint, ctypes.c_int, ctypes.c_uint64))
-        handle = glGetTextureHandleARB(self.texture.glo)
-        glMakeTextureHandleResidentARB(handle)
-        glProgramUniformHandleui64ARB(self.prog.glo, self.prog['Texture'].location, handle)
+        self.prog['Texture'].handle = self.texture.get_handle()
 
     def render(self, time, frame_time):
         angle = time
