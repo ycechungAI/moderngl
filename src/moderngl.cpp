@@ -2956,6 +2956,9 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
                 gl.ShaderSource(shader_obj, 1, &source_str, NULL);
                 gl.CompileShader(shader_obj);
             }
+        } else {
+            MGLError_Set("wrong shader source type");
+            return NULL;
         }
 
         int compiled = GL_FALSE;
