@@ -3365,6 +3365,10 @@ PyObject * MGLContext_query(MGLContext * self, PyObject * args) {
     }
 
     MGLQuery * query = PyObject_New(MGLQuery, MGLQuery_type);
+    query->query_obj[SAMPLES_PASSED] = 0;
+    query->query_obj[ANY_SAMPLES_PASSED] = 0;
+    query->query_obj[TIME_ELAPSED] = 0;
+    query->query_obj[PRIMITIVES_GENERATED] = 0;
     query->released = false;
 
     Py_INCREF(self);
