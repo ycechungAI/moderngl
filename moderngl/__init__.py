@@ -282,6 +282,9 @@ class ComputeShader:
     def run(self, group_x: int = 1, group_y: int = 1, group_z: int = 1) -> None:
         return self.mglo.run(group_x, group_y, group_z)
 
+    def run_indirect(self, buffer: 'Buffer', offset: int = 0) -> None:
+        return self.mglo.run(buffer, offset)
+
     def get(self, key: str, default: Any) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
         return self._members.get(key, default)
 

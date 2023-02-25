@@ -1074,6 +1074,11 @@ class ComputeShader:
             group_z (int): The number of work groups to be launched in the Z dimension.
         '''
 
+    def run_indirect(self, buffer: Buffer, offset: int = 0) -> None:
+        '''
+        Run the compute shader.
+        '''
+
     def get(self, key: str, default: Any) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
         '''
         Returns a Uniform, UniformBlock, Subroutine, Attribute or Varying.

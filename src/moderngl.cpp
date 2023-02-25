@@ -1659,6 +1659,23 @@ PyObject * MGLComputeShader_run(MGLComputeShader * self, PyObject * args) {
     Py_RETURN_NONE;
 }
 
+PyObject * MGLComputeShader_run_indirect(MGLComputeShader * self, PyObject * args) {
+    MGLBuffer * buffer;
+    Py_ssize_t offset = 0;
+
+    if (!PyArg_ParseTuple(args, "O!|n", MGLBuffer_type, &buffer, &offset)) {
+        return 0;
+    }
+
+    const GLMethods & gl = self->context->gl;
+
+    gl.UseProgram(self->program_obj);
+    gl.BindBuffer(GL_DISPATCH_INDIRECT_BUFFER, buffer->buffer_obj);
+    gl.DispatchComputeIndirect((GLintptr)offset);
+
+    Py_RETURN_NONE;
+}
+
 PyObject * MGLComputeShader_release(MGLComputeShader * self) {
     if (self->released) {
         Py_RETURN_NONE;
