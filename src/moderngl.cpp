@@ -1409,7 +1409,7 @@ PyObject * MGLBuffer_bind_to_storage_buffer(MGLBuffer * self, PyObject * args) {
     Py_RETURN_NONE;
 }
 
-PyObject * MGLBuffer_release(MGLBuffer * self) {
+PyObject * MGLBuffer_release(MGLBuffer * self, PyObject * args) {
     if (self->released) {
         Py_RETURN_NONE;
     }
@@ -1423,7 +1423,7 @@ PyObject * MGLBuffer_release(MGLBuffer * self) {
     Py_RETURN_NONE;
 }
 
-PyObject * MGLBuffer_size(MGLBuffer * self) {
+PyObject * MGLBuffer_size(MGLBuffer * self, PyObject * args) {
     return PyLong_FromSsize_t(self->size);
 }
 
@@ -2015,7 +2015,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
     return result;
 }
 
-PyObject * MGLFramebuffer_release(MGLFramebuffer * self) {
+PyObject * MGLFramebuffer_release(MGLFramebuffer * self, PyObject * args) {
     if (self->released) {
         Py_RETURN_NONE;
     }
@@ -2143,7 +2143,7 @@ PyObject * MGLFramebuffer_clear(MGLFramebuffer * self, PyObject * args) {
     Py_RETURN_NONE;
 }
 
-PyObject * MGLFramebuffer_use(MGLFramebuffer * self) {
+PyObject * MGLFramebuffer_use(MGLFramebuffer * self, PyObject * args) {
     const GLMethods & gl = self->context->gl;
 
     gl.BindFramebuffer(GL_FRAMEBUFFER, self->framebuffer_obj);
@@ -3341,7 +3341,7 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
     return result;
 }
 
-PyObject * MGLProgram_release(MGLProgram * self) {
+PyObject * MGLProgram_release(MGLProgram * self, PyObject * args) {
     if (self->released) {
         Py_RETURN_NONE;
     }
@@ -3412,7 +3412,7 @@ PyObject * MGLContext_query(MGLContext * self, PyObject * args) {
     return (PyObject *)query;
 }
 
-PyObject * MGLQuery_begin(MGLQuery * self) {
+PyObject * MGLQuery_begin(MGLQuery * self, PyObject * args) {
     if (self->state != QUERY_INACTIVE) {
         MGLError_Set(self->state == QUERY_ACTIVE ? "this query is already running" : "this query is in conditional render mode");
         return NULL;
@@ -3440,7 +3440,7 @@ PyObject * MGLQuery_begin(MGLQuery * self) {
     Py_RETURN_NONE;
 }
 
-PyObject * MGLQuery_end(MGLQuery * self) {
+PyObject * MGLQuery_end(MGLQuery * self, PyObject * args) {
     if (self->state != QUERY_ACTIVE) {
         MGLError_Set(self->state == QUERY_INACTIVE ? "this query was not started" : "this query is in conditional render mode");
         return NULL;
@@ -3713,7 +3713,7 @@ PyObject * MGLContext_depth_renderbuffer(MGLContext * self, PyObject * args) {
     return result;
 }
 
-PyObject * MGLRenderbuffer_release(MGLRenderbuffer * self) {
+PyObject * MGLRenderbuffer_release(MGLRenderbuffer * self, PyObject * args) {
     if (self->released) {
         Py_RETURN_NONE;
     }
@@ -3827,7 +3827,7 @@ PyObject * MGLSampler_clear(MGLSampler * self, PyObject * args) {
     Py_RETURN_NONE;
 }
 
-PyObject * MGLSampler_release(MGLSampler * self) {
+PyObject * MGLSampler_release(MGLSampler * self, PyObject * args) {
     if (self->released) {
         Py_RETURN_NONE;
     }
@@ -4165,7 +4165,7 @@ PyObject * MGLScope_begin(MGLScope * self, PyObject * args) {
     self->old_enable_flags = self->context->enable_flags;
     self->context->enable_flags = self->enable_flags;
 
-    MGLFramebuffer_use(self->framebuffer);
+    Py_XDECREF(MGLFramebuffer_use(self->framebuffer, NULL));
 
     for (int i = 0; i < self->num_textures; ++i) {
         gl.ActiveTexture(self->textures[i * 3]);
@@ -4237,7 +4237,7 @@ PyObject * MGLScope_end(MGLScope * self, PyObject * args) {
 
     self->context->enable_flags = self->old_enable_flags;
 
-    MGLFramebuffer_use(self->old_framebuffer);
+    Py_XDECREF(MGLFramebuffer_use(self->old_framebuffer, NULL));
 
     if (flags & MGL_BLEND) {
         gl.Enable(GL_BLEND);
@@ -4272,7 +4272,7 @@ PyObject * MGLScope_end(MGLScope * self, PyObject * args) {
     Py_RETURN_NONE;
 }
 
-PyObject * MGLScope_release(MGLScope * self) {
+PyObject * MGLScope_release(MGLScope * self, PyObject * args) {
     if (self->released) {
         Py_RETURN_NONE;
     }
@@ -5050,7 +5050,7 @@ PyObject * MGLTexture_get_handle(MGLTexture * self, PyObject * args) {
     return PyLong_FromUnsignedLongLong(handle);
 }
 
-PyObject * MGLTexture_release(MGLTexture * self) {
+PyObject * MGLTexture_release(MGLTexture * self, PyObject * args) {
     if (self->released) {
         Py_RETURN_NONE;
     }
@@ -5769,7 +5769,7 @@ PyObject * MGLTexture3D_get_handle(MGLTexture3D * self, PyObject * args) {
     return PyLong_FromUnsignedLongLong(handle);
 }
 
-PyObject * MGLTexture3D_release(MGLTexture3D * self) {
+PyObject * MGLTexture3D_release(MGLTexture3D * self, PyObject * args) {
     if (self->released) {
         Py_RETURN_NONE;
     }
@@ -6463,7 +6463,7 @@ PyObject * MGLTextureArray_get_handle(MGLTextureArray * self, PyObject * args) {
     return PyLong_FromUnsignedLongLong(handle);
 }
 
-PyObject * MGLTextureArray_release(MGLTextureArray * self) {
+PyObject * MGLTextureArray_release(MGLTextureArray * self, PyObject * args) {
     if (self->released) {
         Py_RETURN_NONE;
     }
@@ -7162,7 +7162,7 @@ PyObject * MGLTextureCube_build_mipmaps(MGLTextureCube * self, PyObject * args) 
     Py_RETURN_NONE;
 }
 
-PyObject * MGLTextureCube_release(MGLTextureCube * self) {
+PyObject * MGLTextureCube_release(MGLTextureCube * self, PyObject * args) {
     if (self->released) {
         Py_RETURN_NONE;
     }
@@ -7828,7 +7828,7 @@ PyObject * MGLVertexArray_bind(MGLVertexArray * self, PyObject * args) {
     Py_RETURN_NONE;
 }
 
-PyObject * MGLVertexArray_release(MGLVertexArray * self) {
+PyObject * MGLVertexArray_release(MGLVertexArray * self, PyObject * args) {
     if (self->released) {
         Py_RETURN_NONE;
     }
@@ -8128,7 +8128,7 @@ PyObject * MGLContext_disable_direct(MGLContext * self, PyObject * args) {
     Py_RETURN_NONE;
 }
 
-PyObject * MGLContext_finish(MGLContext * self) {
+PyObject * MGLContext_finish(MGLContext * self, PyObject * args) {
     self->gl.Finish();
     Py_RETURN_NONE;
 }
