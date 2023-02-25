@@ -2454,6 +2454,16 @@ class Context:
             :py:class:`Framebuffer` object
         '''
 
+    def empty_framebuffer(
+        self,
+        size: Tuple[int, int],
+        layers: Optional[int] = 0,
+        samples: Optional[int] = 0,
+    ) -> 'Framebuffer':
+        '''
+        Empty Framebuffer
+        '''
+
     def renderbuffer(
         self,
         size: Tuple[int, int],
