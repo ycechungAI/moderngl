@@ -4139,6 +4139,18 @@ class TextureCube:
             alignment (int): The byte alignment of the pixels.
         '''
 
+    def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
+        '''
+        Generate mipmaps.
+
+        This also changes the texture filter to ``LINEAR_MIPMAP_LINEAR, LINEAR``
+        (Will be removed in ``6.x``)
+
+        Keyword Args:
+            base (int): The base level
+            max_level (int): The maximum levels to generate
+        '''
+
     def use(self, location: int = 0) -> None:
         '''
         Bind the texture to a texture unit.
@@ -4473,6 +4485,7 @@ class Texture:
         Generate mipmaps.
 
         This also changes the texture filter to ``LINEAR_MIPMAP_LINEAR, LINEAR``
+        (Will be removed in ``6.x``)
 
         Keyword Args:
             base (int): The base level

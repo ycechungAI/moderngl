@@ -1175,6 +1175,9 @@ class TextureCube:
 
         self.mglo.write(face, data, viewport, alignment)
 
+    def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
+        self.mglo.build_mipmaps(base, max_level)
+
     def use(self, location: int = 0) -> None:
         self.mglo.use(location)
 
