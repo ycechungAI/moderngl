@@ -2934,8 +2934,6 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
             continue;
         }
 
-        const char * source_str = PyUnicode_AsUTF8(shaders[i]);
-
         int shader_obj = gl.CreateShader(SHADER_TYPE[i]);
 
         if (!shader_obj) {
@@ -2943,8 +2941,22 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
             return 0;
         }
 
-        gl.ShaderSource(shader_obj, 1, &source_str, 0);
-        gl.CompileShader(shader_obj);
+        if (PyUnicode_CheckExact(shaders[i])) {
+            const char * source_str = PyUnicode_AsUTF8(shaders[i]);
+            gl.ShaderSource(shader_obj, 1, &source_str, NULL);
+            gl.CompileShader(shader_obj);
+        } else if (PyBytes_CheckExact(shaders[i])) {
+            unsigned * spv = (unsigned *)PyBytes_AsString(shaders[i]);
+            if (spv[0] == 0x07230203) {
+                int spv_length = (int)PyBytes_Size(shaders[i]);
+                gl.ShaderBinary(1, (unsigned *)&shader_obj, GL_SHADER_BINARY_FORMAT_SPIR_V, spv, spv_length);
+                gl.SpecializeShader(shader_obj, "main", 0, NULL, NULL);
+            } else {
+                const char * source_str = PyBytes_AsString(shaders[i]);
+                gl.ShaderSource(shader_obj, 1, &source_str, NULL);
+                gl.CompileShader(shader_obj);
+            }
+        }
 
         int compiled = GL_FALSE;
         gl.GetShaderiv(shader_obj, GL_COMPILE_STATUS, &compiled);
