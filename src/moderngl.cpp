@@ -3751,6 +3751,27 @@ PyObject * MGLContext_sampler(MGLContext * self, PyObject * args) {
     return result;
 }
 
+PyObject * MGLContext_memory_barrier(MGLContext * self, PyObject * args) {
+    unsigned barriers = GL_ALL_BARRIER_BITS;
+    int by_region = false;
+
+    if (!PyArg_ParseTuple(args, "|Ip", &barriers, &by_region)) {
+        return 0;
+    }
+
+    if (by_region && !self->gl.MemoryBarrierByRegion) {
+        by_region = false;
+    }
+
+    if (by_region) {
+        self->gl.MemoryBarrierByRegion(barriers);
+    } else if (self->gl.MemoryBarrier) {
+        self->gl.MemoryBarrier(barriers);
+    }
+
+    Py_RETURN_NONE;
+}
+
 PyObject * MGLSampler_use(MGLSampler * self, PyObject * args) {
     int index;
 
@@ -9472,6 +9493,7 @@ PyMethodDef MGLContext_methods[] = {
     {(char *)"query", (PyCFunction)MGLContext_query, METH_VARARGS},
     {(char *)"scope", (PyCFunction)MGLContext_scope, METH_VARARGS},
     {(char *)"sampler", (PyCFunction)MGLContext_sampler, METH_VARARGS},
+    {(char *)"memory_barrier", (PyCFunction)MGLContext_memory_barrier, METH_VARARGS},
 
     {(char *)"__enter__", (PyCFunction)MGLContext_enter, METH_NOARGS},
     {(char *)"__exit__", (PyCFunction)MGLContext_exit, METH_VARARGS},

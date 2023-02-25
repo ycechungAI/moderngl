@@ -228,6 +228,76 @@ Specifies the last vertex should be used as the source of data for flat shaded v
 Used with :py:attr:`Context.provoking_vertex`.
 '''
 
+VERTEX_ATTRIB_ARRAY_BARRIER_BIT: Constant
+'''
+VERTEX_ATTRIB_ARRAY_BARRIER_BIT
+'''
+
+ELEMENT_ARRAY_BARRIER_BIT: Constant
+'''
+ELEMENT_ARRAY_BARRIER_BIT
+'''
+
+UNIFORM_BARRIER_BIT: Constant
+'''
+UNIFORM_BARRIER_BIT
+'''
+
+TEXTURE_FETCH_BARRIER_BIT: Constant
+'''
+TEXTURE_FETCH_BARRIER_BIT
+'''
+
+SHADER_IMAGE_ACCESS_BARRIER_BIT: Constant
+'''
+SHADER_IMAGE_ACCESS_BARRIER_BIT
+'''
+
+COMMAND_BARRIER_BIT: Constant
+'''
+COMMAND_BARRIER_BIT
+'''
+
+PIXEL_BUFFER_BARRIER_BIT: Constant
+'''
+PIXEL_BUFFER_BARRIER_BIT
+'''
+
+TEXTURE_UPDATE_BARRIER_BIT: Constant
+'''
+TEXTURE_UPDATE_BARRIER_BIT
+'''
+
+BUFFER_UPDATE_BARRIER_BIT: Constant
+'''
+BUFFER_UPDATE_BARRIER_BIT
+'''
+
+FRAMEBUFFER_BARRIER_BIT: Constant
+'''
+FRAMEBUFFER_BARRIER_BIT
+'''
+
+TRANSFORM_FEEDBACK_BARRIER_BIT: Constant
+'''
+TRANSFORM_FEEDBACK_BARRIER_BIT
+'''
+
+ATOMIC_COUNTER_BARRIER_BIT: Constant
+'''
+ATOMIC_COUNTER_BARRIER_BIT
+'''
+
+SHADER_STORAGE_BARRIER_BIT: Constant
+'''
+SHADER_STORAGE_BARRIER_BIT
+'''
+
+ALL_BARRIER_BITS: Constant
+'''
+ALL_BARRIER_BITS
+'''
+
 
 class Attribute:
     '''
@@ -1219,6 +1289,76 @@ class Context:
     LAST_VERTEX_CONVENTION: Constant
     '''Specifies the last vertex should be used as the source of data for flat shaded varyings.
     Used with :py:attr:`Context.provoking_vertex`.'''
+
+    VERTEX_ATTRIB_ARRAY_BARRIER_BIT: Constant
+    '''
+    VERTEX_ATTRIB_ARRAY_BARRIER_BIT
+    '''
+
+    ELEMENT_ARRAY_BARRIER_BIT: Constant
+    '''
+    ELEMENT_ARRAY_BARRIER_BIT
+    '''
+
+    UNIFORM_BARRIER_BIT: Constant
+    '''
+    UNIFORM_BARRIER_BIT
+    '''
+
+    TEXTURE_FETCH_BARRIER_BIT: Constant
+    '''
+    TEXTURE_FETCH_BARRIER_BIT
+    '''
+
+    SHADER_IMAGE_ACCESS_BARRIER_BIT: Constant
+    '''
+    SHADER_IMAGE_ACCESS_BARRIER_BIT
+    '''
+
+    COMMAND_BARRIER_BIT: Constant
+    '''
+    COMMAND_BARRIER_BIT
+    '''
+
+    PIXEL_BUFFER_BARRIER_BIT: Constant
+    '''
+    PIXEL_BUFFER_BARRIER_BIT
+    '''
+
+    TEXTURE_UPDATE_BARRIER_BIT: Constant
+    '''
+    TEXTURE_UPDATE_BARRIER_BIT
+    '''
+
+    BUFFER_UPDATE_BARRIER_BIT: Constant
+    '''
+    BUFFER_UPDATE_BARRIER_BIT
+    '''
+
+    FRAMEBUFFER_BARRIER_BIT: Constant
+    '''
+    FRAMEBUFFER_BARRIER_BIT
+    '''
+
+    TRANSFORM_FEEDBACK_BARRIER_BIT: Constant
+    '''
+    TRANSFORM_FEEDBACK_BARRIER_BIT
+    '''
+
+    ATOMIC_COUNTER_BARRIER_BIT: Constant
+    '''
+    ATOMIC_COUNTER_BARRIER_BIT
+    '''
+
+    SHADER_STORAGE_BARRIER_BIT: Constant
+    '''
+    SHADER_STORAGE_BARRIER_BIT
+    '''
+
+    ALL_BARRIER_BITS: Constant
+    '''
+    ALL_BARRIER_BITS
+    '''
 
     version_code :int
     '''int: The OpenGL version code. Reports ``410`` for OpenGL 4.1'''
