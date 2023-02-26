@@ -9263,7 +9263,7 @@ void set_info_int(MGLContext * self, PyObject * info, const char * name, GLenum 
 void set_info_int64(MGLContext * self, PyObject * info, const char * name, GLenum param) {
     long long value = 0;
     if (self->gl.GetInteger64v) {
-        self->gl.GetInteger64v(param, &value);
+        self->gl.GetInteger64v(param, (GLint64 *)&value);
     }
     set_key(info, name, PyLong_FromLongLong(value));
 }
