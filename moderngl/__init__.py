@@ -102,18 +102,6 @@ class Buffer:
         self.extra = None
         raise TypeError()
 
-    def __repr__(self) -> str:
-        if hasattr(self, '_glo'):
-            return f"<{self.__class__.__name__}: {self._glo}>"
-        else:
-            return f"<{self.__class__.__name__}: INCOMPLETE>"
-
-    def __eq__(self, other: Any):
-        return type(self) is type(other) and self.mglo is other.mglo
-
-    def __hash__(self) -> int:
-        return id(self)
-
     def __del__(self) -> None:
         if not hasattr(self, "ctx"):
             return
@@ -191,9 +179,6 @@ class ConditionalRender:
         self.mglo = None
         raise TypeError()
 
-    def __repr__(self):
-        return '<ConditionalRender>'
-
     def __enter__(self):
         self.mglo.begin_render()
         return self
@@ -209,12 +194,6 @@ class Query:
         self.ctx = None
         self.extra = None
         raise TypeError()
-
-    def __repr__(self) -> str:
-        return '<Query>'
-
-    def __hash__(self) -> int:
-        return id(self)
 
     def __enter__(self):
         self.mglo.begin()
@@ -244,18 +223,6 @@ class ComputeShader:
         self.ctx = None
         self.extra = None
         raise TypeError()
-
-    def __repr__(self) -> str:
-        if hasattr(self, '_glo'):
-            return f"<{self.__class__.__name__}: {self._glo}>"
-        else:
-            return f"<{self.__class__.__name__}: INCOMPLETE>"
-
-    def __eq__(self, other: Any):
-        return type(self) is type(other) and self.mglo is other.mglo
-
-    def __hash__(self) -> int:
-        return id(self)
 
     def __del__(self) -> None:
         if not hasattr(self, "ctx"):
@@ -306,18 +273,6 @@ class Framebuffer:
         self._is_reference = None
         self.extra: Any = None
         raise TypeError()
-
-    def __repr__(self) -> str:
-        if hasattr(self, '_glo'):
-            return '<Framebuffer: %d>' % self._glo
-        else:
-            return "<Framebuffer: INCOMPLETE>"
-
-    def __eq__(self, other: Any) -> bool:
-        return type(self) is type(other) and self.mglo is other.mglo
-
-    def __hash__(self) -> int:
-        return id(self)
 
     def __del__(self):
         if not hasattr(self, "ctx"):
@@ -473,18 +428,6 @@ class Program:
         self.extra = None
         raise TypeError()
 
-    def __repr__(self):
-        if hasattr(self, '_glo'):
-            return f"<{self.__class__.__name__}: {self._glo}>"
-        else:
-            return f"<{self.__class__.__name__}: INCOMPLETE>"
-
-    def __eq__(self, other: Any) -> bool:
-        return type(self) is type(other) and self.mglo is other.mglo
-
-    def __hash__(self) -> int:
-        return id(self)
-
     def __del__(self):
         if not hasattr(self, "ctx"):
             return
@@ -549,18 +492,6 @@ class Renderbuffer:
         self.extra = None
         raise TypeError()
 
-    def __repr__(self):
-        if hasattr(self, '_glo'):
-            return f"<{self.__class__.__name__}: {self._glo}>"
-        else:
-            return f"<{self.__class__.__name__}: INCOMPLETE>"
-
-    def __eq__(self, other: Any):
-        return type(self) is type(other) and self.mglo is other.mglo
-
-    def __hash__(self) -> int:
-        return id(self)
-
     def __del__(self) -> None:
         if not hasattr(self, "ctx"):
             return
@@ -616,15 +547,6 @@ class Sampler:
         self.extra = None
         self.texture = None
         raise TypeError()
-
-    def __hash__(self) -> int:
-        return id(self)
-
-    def __repr__(self):
-        if hasattr(self, '_glo'):
-            return f"<{self.__class__.__name__}: {self._glo}>"
-        else:
-            return f"<{self.__class__.__name__}: INCOMPLETE>"
 
     def __del__(self):
         if not hasattr(self, "ctx"):
@@ -737,12 +659,6 @@ class Scope:
         self.extra = None
         raise TypeError()
 
-    def __repr__(self):
-        return '<Scope>'
-
-    def __hash__(self) -> int:
-        return id(self)
-
     def __enter__(self):
         self.mglo.begin()
         return self
@@ -782,18 +698,6 @@ class Texture:
         self.ctx = None
         self.extra = None
         raise TypeError()
-
-    def __repr__(self):
-        if hasattr(self, '_glo'):
-            return f"<{self.__class__.__name__}: {self._glo}>"
-        else:
-            return f"<{self.__class__.__name__}: INCOMPLETE>"
-
-    def __eq__(self, other: Any):
-        return type(self) is type(other) and self.mglo is other.mglo
-
-    def __hash__(self) -> int:
-        return id(self)
 
     def __del__(self):
         if not hasattr(self, "ctx"):
@@ -943,18 +847,6 @@ class Texture3D:
         self.extra = None
         raise TypeError()
 
-    def __repr__(self):
-        if hasattr(self, '_glo'):
-            return f"<{self.__class__.__name__}: {self._glo}>"
-        else:
-            return f"<{self.__class__.__name__}: INCOMPLETE>"
-
-    def __eq__(self, other: Any):
-        return type(self) is type(other) and self.mglo is other.mglo
-
-    def __hash__(self) -> int:
-        return id(self)
-
     def __del__(self):
         if not hasattr(self, "ctx"):
             return
@@ -1088,18 +980,6 @@ class TextureCube:
         self.extra = None
         raise TypeError()
 
-    def __repr__(self):
-        if hasattr(self, '_glo'):
-            return f"<{self.__class__.__name__}: {self._glo}>"
-        else:
-            return f"<{self.__class__.__name__}: INCOMPLETE>"
-
-    def __eq__(self, other: Any):
-        return type(self) is type(other) and self.mglo is other.mglo
-
-    def __hash__(self) -> int:
-        return id(self)
-
     def __del__(self) -> None:
         if not hasattr(self, "ctx"):
             return
@@ -1208,18 +1088,6 @@ class TextureArray:
         self.ctx = None
         self.extra = None
         raise TypeError()
-
-    def __repr__(self):
-        if hasattr(self, '_glo'):
-            return f"<{self.__class__.__name__}: {self._glo}>"
-        else:
-            return f"<{self.__class__.__name__}: INCOMPLETE>"
-
-    def __eq__(self, other: Any):
-        return type(self) is type(other) and self.mglo is other.mglo
-
-    def __hash__(self) -> int:
-        return id(self)
 
     def __del__(self):
         if not hasattr(self, "ctx"):
@@ -1356,18 +1224,6 @@ class VertexArray:
         self.extra = None
         self.scope = None
         raise TypeError()
-
-    def __repr__(self) -> str:
-        if hasattr(self, 'mglo'):
-            return '<VertexArray: %d>' % self.glo
-        else:
-            return '<VertexArray: INCOMPLETE>'
-
-    def __eq__(self, other: Any) -> bool:
-        return type(self) is type(other) and self.mglo is other.mglo
-
-    def __hash__(self) -> int:
-        return id(self)
 
     def __del__(self) -> None:
         if not hasattr(self, "ctx"):
@@ -1601,15 +1457,6 @@ class Context:
         self._gc_mode = None
         self._objects: Deque[Any] = deque()
         raise TypeError()
-
-    def __repr__(self) -> str:
-        return f"<Context {id(self)} version_code={self.version_code}>"
-
-    def __eq__(self, other: Any):
-        return type(self) is type(other) and self.mglo is other.mglo
-
-    def __hash__(self) -> int:
-        return id(self)
 
     def __del__(self):
         if hasattr(self, "_gc_mode") and self._gc_mode == "auto":

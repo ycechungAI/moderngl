@@ -11,10 +11,6 @@ def test_core_profile_check(ctx):
     ctx.core_profile_check()
 
 
-def test_repr(ctx):
-    assert repr(ctx) == f"<Context {id(ctx)} version_code={ctx.version_code}>"
-
-
 def test_detect_framebuffer(ctx):
     # find a randomly active framebuffer.
     # We just test the call for now
@@ -92,7 +88,6 @@ def test_attributes(ctx_new):
     assert isinstance(ctx.LAST_VERTEX_CONVENTION, int)
 
     assert ctx == ctx
-    assert hash(ctx) == id(ctx)
 
     assert ctx.line_width == 1.0
     assert ctx.point_size == 1.0
