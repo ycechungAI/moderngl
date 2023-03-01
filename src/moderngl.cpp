@@ -6215,6 +6215,7 @@ PyObject * MGLContext_texture_array(MGLContext * self, PyObject * args) {
     texture->repeat_x = true;
     texture->repeat_y = true;
     texture->anisotropy = 0.0;
+    texture->max_level = 0;
 
     Py_INCREF(self);
     texture->context = self;
