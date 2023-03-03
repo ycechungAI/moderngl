@@ -2941,10 +2941,12 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
             return 0;
         }
 
-        if (PyUnicode_CheckExact(shaders[i])) {
+        if (PyUnicode_Check(shaders[i])) {
+            PyObject * source = PyObject_Str(shaders[i]);
             const char * source_str = PyUnicode_AsUTF8(shaders[i]);
             gl.ShaderSource(shader_obj, 1, &source_str, NULL);
             gl.CompileShader(shader_obj);
+            Py_DECREF(source);
         } else if (PyBytes_CheckExact(shaders[i])) {
             unsigned * spv = (unsigned *)PyBytes_AsString(shaders[i]);
             if (spv[0] == 0x07230203) {
