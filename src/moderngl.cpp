@@ -1462,22 +1462,9 @@ void MGLBuffer_tp_as_buffer_release_view(MGLBuffer * self, Py_buffer * view) {
 PyObject * MGLContext_compute_shader(MGLContext * self, PyObject * args) {
     PyObject * source;
 
-    int args_ok = PyArg_ParseTuple(
-        args,
-        "O",
-        &source
-    );
-
-    if (!args_ok) {
+    if (!PyArg_ParseTuple(args, "O", &source)) {
         return 0;
     }
-
-    if (!PyUnicode_Check(source)) {
-        MGLError_Set("the source must be a string not %s", Py_TYPE(source)->tp_name);
-        return 0;
-    }
-
-    const char * source_str = PyUnicode_AsUTF8(source);
 
     MGLComputeShader * compute_shader = PyObject_New(MGLComputeShader, MGLComputeShader_type);
     compute_shader->released = false;
@@ -1501,8 +1488,36 @@ PyObject * MGLContext_compute_shader(MGLContext * self, PyObject * args) {
         return 0;
     }
 
-    gl.ShaderSource(shader_obj, 1, &source_str, 0);
-    gl.CompileShader(shader_obj);
+    if (PyObject_HasAttrString(source, "to_shader_source")) {
+        source = PyObject_CallMethod(source, "to_shader_source", NULL);
+        if (!source) {
+            return NULL;
+        }
+    } else {
+        Py_INCREF(source);
+    }
+
+    if (PyUnicode_Check(source)) {
+        const char * source_str = PyUnicode_AsUTF8(source);
+        gl.ShaderSource(shader_obj, 1, &source_str, NULL);
+        gl.CompileShader(shader_obj);
+    } else if (PyBytes_Check(source)) {
+        unsigned * spv = (unsigned *)PyBytes_AsString(source);
+        if (spv[0] == 0x07230203) {
+            int spv_length = (int)PyBytes_Size(source);
+            gl.ShaderBinary(1, (unsigned *)&shader_obj, GL_SHADER_BINARY_FORMAT_SPIR_V, spv, spv_length);
+            gl.SpecializeShader(shader_obj, "main", 0, NULL, NULL);
+        } else {
+            const char * source_str = PyBytes_AsString(source);
+            gl.ShaderSource(shader_obj, 1, &source_str, NULL);
+            gl.CompileShader(shader_obj);
+        }
+    } else {
+        MGLError_Set("wrong shader source type");
+        return NULL;
+    }
+
+    Py_DECREF(source);
 
     int compiled = GL_FALSE;
     gl.GetShaderiv(shader_obj, GL_COMPILE_STATUS, &compiled);
@@ -2941,13 +2956,20 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
             return 0;
         }
 
+        if (PyObject_HasAttrString(shaders[i], "to_shader_source")) {
+            shaders[i] = PyObject_CallMethod(shaders[i], "to_shader_source", NULL);
+            if (!shaders[i]) {
+                return NULL;
+            }
+        } else {
+            Py_INCREF(shaders[i]);
+        }
+
         if (PyUnicode_Check(shaders[i])) {
-            PyObject * source = PyObject_Str(shaders[i]);
             const char * source_str = PyUnicode_AsUTF8(shaders[i]);
             gl.ShaderSource(shader_obj, 1, &source_str, NULL);
             gl.CompileShader(shader_obj);
-            Py_DECREF(source);
-        } else if (PyBytes_CheckExact(shaders[i])) {
+        } else if (PyBytes_Check(shaders[i])) {
             unsigned * spv = (unsigned *)PyBytes_AsString(shaders[i]);
             if (spv[0] == 0x07230203) {
                 int spv_length = (int)PyBytes_Size(shaders[i]);
@@ -2962,6 +2984,8 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
             MGLError_Set("wrong shader source type");
             return NULL;
         }
+
+        Py_DECREF(shaders[i]);
 
         int compiled = GL_FALSE;
         gl.GetShaderiv(shader_obj, GL_COMPILE_STATUS, &compiled);
