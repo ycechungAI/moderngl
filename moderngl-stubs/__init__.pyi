@@ -1,4 +1,10 @@
-from typing import Any, Deque, Dict, Generator, List, Optional, Set, Tuple, Union
+from typing import Any, Deque, Dict, Generator, List, Optional, Protocol, Set, Tuple, Union
+
+
+class ConvertibleToShaderSource(Protocol):
+    def to_shader_source(self) -> str | bytes:
+        ...
+
 
 class Constant: ...
 
@@ -2336,11 +2342,11 @@ class Context:
     def program(
         self,
         *,
-        vertex_shader: Union[str, bytes],
-        fragment_shader: Optional[Union[str, bytes]] = None,
-        geometry_shader: Optional[Union[str, bytes]] = None,
-        tess_control_shader: Optional[Union[str, bytes]] = None,
-        tess_evaluation_shader: Optional[Union[str, bytes]] = None,
+        vertex_shader: str | bytes | ConvertibleToShaderSource,
+        fragment_shader: str | bytes | ConvertibleToShaderSource | None = None,
+        geometry_shader: str | bytes | ConvertibleToShaderSource | None = None,
+        tess_control_shader: str | bytes | ConvertibleToShaderSource | None = None,
+        tess_evaluation_shader: str | bytes | ConvertibleToShaderSource | None = None,
         varyings: Tuple[str, ...] = (),
         fragment_outputs: Optional[Dict[str, int]] = None,
         varyings_capture_mode: str = 'interleaved',
@@ -2508,7 +2514,7 @@ class Context:
             :py:class:`Renderbuffer` object
         '''
 
-    def compute_shader(self, source: str) -> 'ComputeShader':
+    def compute_shader(self, source: str | bytes | ConvertibleToShaderSource) -> 'ComputeShader':
         '''
         A :py:class:`ComputeShader` is a Shader Stage that is used entirely \
         for computing arbitrary information. While it can do rendering, it \
