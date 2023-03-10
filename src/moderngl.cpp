@@ -9765,6 +9765,7 @@ PyMethodDef MGLBuffer_methods[] = {
 
 PyMethodDef MGLComputeShader_methods[] = {
     {(char *)"run", (PyCFunction)MGLComputeShader_run, METH_VARARGS},
+    {(char *)"run_indirect", (PyCFunction)MGLComputeShader_run_indirect, METH_VARARGS},
     {(char *)"release", (PyCFunction)MGLComputeShader_release, METH_VARARGS},
     {},
 };
