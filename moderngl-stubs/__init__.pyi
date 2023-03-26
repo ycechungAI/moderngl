@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, Deque, Dict, Generator, List, Optional, Protocol, Set, Tuple, Union
 
 
