@@ -2236,6 +2236,27 @@ class Context:
             :py:class:`Texture` object
         '''
 
+    def depth_texture_cube(
+            self,
+            size: Tuple[int, int],
+            data: Optional[Any] = None,
+            *,
+            alignment: int = 4,
+    ) -> 'TextureCube':
+        '''
+        Create a :py:class:`TextureCube` object
+
+        Args:
+            size (tuple): The width and height of the texture.
+            data (bytes): Content of the texture.
+
+        Keyword Args:
+            alignment (int): The byte alignment 1, 2, 4 or 8.
+
+        Returns:
+            :py:class:`TextureCube` object
+        '''
+
     def vertex_array(self, *args, **kwargs) -> 'VertexArray':
         '''
         Create a :py:class:`VertexArray` object.
@@ -4044,6 +4065,40 @@ class TextureCube:
         texture.swizzle = 'ABGR'
     '''
 
+    compare_func: str
+    '''
+    tuple: The compare function of the depth texture (Default ``'<='``).
+
+    By default depth textures have ``GL_TEXTURE_COMPARE_MODE`` set to
+    ``GL_COMPARE_REF_TO_TEXTURE``, meaning any texture lookup will
+    return a depth comparison value.
+
+    If you need to read the actual depth value in shaders, setting
+    ``compare_func`` to a blank string will set ``GL_TEXTURE_COMPARE_MODE`` to
+    ``GL_NONE`` making you able to read the depth texture as a ``sampler2D``::
+
+        uniform sampler2D depth;
+        out vec4 fragColor;
+        in vec2 uv;
+
+        void main() {
+            float raw_depth_nonlinear = texture(depth, uv);
+            fragColor = vec4(raw_depth_nonlinear);
+        }
+
+    Accepted compare functions::
+
+        texture.compare_func = ''    # Disable depth comparison completely
+        texture.compare_func = '<='  # GL_LEQUAL
+        texture.compare_func = '<'   # GL_LESS
+        texture.compare_func = '>='  # GL_GEQUAL
+        texture.compare_func = '>'   # GL_GREATER
+        texture.compare_func = '=='  # GL_EQUAL
+        texture.compare_func = '!='  # GL_NOTEQUAL
+        texture.compare_func = '0'   # GL_NEVER
+        texture.compare_func = '1'   # GL_ALWAYS
+    '''
+
     anisotropy: float
     '''
     float: Number of samples for anisotropic filtering (Default ``1.0``).
@@ -4064,6 +4119,9 @@ class TextureCube:
 
     ctx: 'Context'
     '''The context this object belongs to'''
+
+    depth: bool
+    '''bool: Is the texture a depth texture?.'''
 
     extra: Any
     '''Any - Attribute for storing user defined objects'''

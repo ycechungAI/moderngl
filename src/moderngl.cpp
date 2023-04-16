@@ -278,6 +278,7 @@ struct MGLTextureCube {
     int min_filter;
     int mag_filter;
     int max_level;
+    int compare_func;
     float anisotropy;
     bool released;
 };
@@ -6939,10 +6940,137 @@ PyObject * MGLContext_texture_cube(MGLContext * self, PyObject * args) {
     texture->components = components;
     texture->data_type = data_type;
 
+    texture->depth = false;
+
     texture->min_filter = data_type->float_type ? GL_LINEAR : GL_NEAREST;
     texture->mag_filter = data_type->float_type ? GL_LINEAR : GL_NEAREST;
     texture->max_level = 0;
     texture->anisotropy = 0.0;
+
+    Py_INCREF(self);
+    texture->context = self;
+
+    Py_INCREF(texture);
+
+    PyObject * result = PyTuple_New(2);
+    PyTuple_SET_ITEM(result, 0, (PyObject *)texture);
+    PyTuple_SET_ITEM(result, 1, PyLong_FromLong(texture->texture_obj));
+    return result;
+}
+
+PyObject * MGLContext_depth_texture_cube(MGLContext * self, PyObject * args) {
+    int width;
+    int height;
+
+    PyObject * data;
+
+    int alignment;
+
+    int args_ok = PyArg_ParseTuple(
+        args,
+        "(II)OI",
+        &width,
+        &height,
+        &data,
+        &alignment
+    );
+
+    if (!args_ok) {
+        return 0;
+    }
+
+    if (alignment != 1 && alignment != 2 && alignment != 4 && alignment != 8) {
+        MGLError_Set("the alignment must be 1, 2, 4 or 8");
+        return 0;
+    }
+
+    int expected_size = width * 4;
+    expected_size = (expected_size + alignment - 1) / alignment * alignment;
+    expected_size = expected_size * height * 6;
+
+    Py_buffer buffer_view;
+
+    if (data != Py_None) {
+        int get_buffer = PyObject_GetBuffer(data, &buffer_view, PyBUF_SIMPLE);
+        if (get_buffer < 0) {
+            // Propagate the default error
+            return 0;
+        }
+    } else {
+        buffer_view.len = expected_size;
+        buffer_view.buf = 0;
+    }
+
+    if (buffer_view.len != expected_size) {
+        MGLError_Set("data size mismatch %d != %d", buffer_view.len, expected_size);
+        if (data != Py_None) {
+            PyBuffer_Release(&buffer_view);
+        }
+        return 0;
+    }
+
+    int pixel_type = GL_FLOAT;
+    int base_format = GL_DEPTH_COMPONENT;
+    int internal_format = GL_DEPTH_COMPONENT;
+
+    const GLMethods & gl = self->gl;
+
+    MGLTextureCube * texture = PyObject_New(MGLTextureCube, MGLTextureCube_type);
+    texture->released = false;
+
+    texture->texture_obj = 0;
+    gl.GenTextures(1, (GLuint *)&texture->texture_obj);
+
+    if (!texture->texture_obj) {
+        MGLError_Set("cannot create texture");
+        Py_DECREF(texture);
+        return 0;
+    }
+
+    gl.ActiveTexture(GL_TEXTURE0 + self->default_texture_unit);
+    gl.BindTexture(GL_TEXTURE_CUBE_MAP, texture->texture_obj);
+
+    if (data == Py_None) {
+        expected_size = 0;
+    }
+
+    const char * ptr[6] = {
+        (const char *)buffer_view.buf + expected_size * 0 / 6,
+        (const char *)buffer_view.buf + expected_size * 1 / 6,
+        (const char *)buffer_view.buf + expected_size * 2 / 6,
+        (const char *)buffer_view.buf + expected_size * 3 / 6,
+        (const char *)buffer_view.buf + expected_size * 4 / 6,
+        (const char *)buffer_view.buf + expected_size * 5 / 6,
+    };
+
+    gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
+    gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+    gl.TexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, internal_format, width, height, 0, base_format, pixel_type, ptr[0]);
+    gl.TexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, internal_format, width, height, 0, base_format, pixel_type, ptr[1]);
+    gl.TexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, internal_format, width, height, 0, base_format, pixel_type, ptr[2]);
+    gl.TexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, internal_format, width, height, 0, base_format, pixel_type, ptr[3]);
+    gl.TexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, internal_format, width, height, 0, base_format, pixel_type, ptr[4]);
+    gl.TexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, internal_format, width, height, 0, base_format, pixel_type, ptr[5]);
+    gl.TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl.TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    if (data != Py_None) {
+        PyBuffer_Release(&buffer_view);
+    }
+
+    texture->depth = true;
+
+    texture->width = width;
+    texture->height = height;
+    texture->components = 1;
+    texture->data_type = from_dtype("f4", 2);
+
+
+    texture->compare_func = GL_LEQUAL;
+
+    texture->min_filter = GL_LINEAR;
+    texture->mag_filter = GL_LINEAR;
+    texture->max_level = 0;
 
     Py_INCREF(self);
     texture->context = self;
@@ -6988,7 +7116,7 @@ PyObject * MGLTextureCube_read(MGLTextureCube * self, PyObject * args) {
     char * data = PyBytes_AS_STRING(result);
 
     int pixel_type = self->data_type->gl_type;
-    int format = self->data_type->base_format[self->components];
+    int format = self->depth ? GL_DEPTH_COMPONENT : self->data_type->base_format[self->components];
 
     const GLMethods & gl = self->context->gl;
 
@@ -7036,7 +7164,7 @@ PyObject * MGLTextureCube_read_into(MGLTextureCube * self, PyObject * args) {
     expected_size = expected_size * self->height;
 
     int pixel_type = self->data_type->gl_type;
-    int format = self->data_type->base_format[self->components];
+    int format = self->depth ? GL_DEPTH_COMPONENT : self->data_type->base_format[self->components];
 
     if (Py_TYPE(data) == MGLBuffer_type) {
 
@@ -7164,7 +7292,7 @@ PyObject * MGLTextureCube_write(MGLTextureCube * self, PyObject * args) {
     // GL_TEXTURE_CUBE_MAP_NEGATIVE_Z = GL_TEXTURE_CUBE_MAP_POSITIVE_X + 5
 
     int pixel_type = self->data_type->gl_type;
-    int format = self->data_type->base_format[self->components];
+    int format = self->depth ? GL_DEPTH_COMPONENT : self->data_type->base_format[self->components];
 
     if (Py_TYPE(data) == MGLBuffer_type) {
 
@@ -7368,6 +7496,10 @@ int MGLTextureCube_set_filter(MGLTextureCube * self, PyObject * value) {
 }
 
 PyObject * MGLTextureCube_get_swizzle(MGLTextureCube * self, void * closure) {
+    if (self->depth) {
+        MGLError_Set("cannot get swizzle of depth textures");
+        return 0;
+    }
 
     const GLMethods & gl = self->context->gl;
 
@@ -7397,6 +7529,11 @@ PyObject * MGLTextureCube_get_swizzle(MGLTextureCube * self, void * closure) {
 
 int MGLTextureCube_set_swizzle(MGLTextureCube * self, PyObject * value, void * closure) {
     const char * swizzle = PyUnicode_AsUTF8(value);
+    
+    if (self->depth) {
+        MGLError_Set("cannot set swizzle for depth textures");
+        return -1;
+    }
 
     if (!swizzle[0]) {
         MGLError_Set("the swizzle is empty");
@@ -7434,6 +7571,42 @@ int MGLTextureCube_set_swizzle(MGLTextureCube * self, PyObject * value, void * c
                 gl.TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_SWIZZLE_A, tex_swizzle[3]);
             }
         }
+    }
+
+    return 0;
+}
+
+PyObject * MGLTextureCube_get_compare_func(MGLTextureCube * self) {
+    if (!self->depth) {
+        MGLError_Set("only depth textures have compare_func");
+        return 0;
+    }
+
+    return compare_func_to_string(self->compare_func);
+}
+
+int MGLTextureCube_set_compare_func(MGLTextureCube * self, PyObject * value) {
+    if (!self->depth) {
+        MGLError_Set("only depth textures have compare_func");
+        return -1;
+    }
+
+    const char * func = PyUnicode_AsUTF8(value);
+
+    if (PyErr_Occurred()) {
+        return -1;
+    }
+
+    self->compare_func = compare_func_from_string(func);
+
+    const GLMethods & gl = self->context->gl;
+    gl.ActiveTexture(GL_TEXTURE0 + self->context->default_texture_unit);
+    gl.BindTexture(GL_TEXTURE_CUBE_MAP, self->texture_obj);
+    if (self->compare_func == 0) {
+        gl.TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+    } else {
+        gl.TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+        gl.TexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_COMPARE_FUNC, self->compare_func);
     }
 
     return 0;
@@ -9788,6 +9961,7 @@ PyMethodDef MGLContext_methods[] = {
     {(char *)"texture_array", (PyCFunction)MGLContext_texture_array, METH_VARARGS},
     {(char *)"texture_cube", (PyCFunction)MGLContext_texture_cube, METH_VARARGS},
     {(char *)"depth_texture", (PyCFunction)MGLContext_depth_texture, METH_VARARGS},
+    {(char *)"depth_texture_cube", (PyCFunction)MGLContext_depth_texture_cube, METH_VARARGS},
     {(char *)"external_texture", (PyCFunction)MGLContext_external_texture, METH_VARARGS},
     {(char *)"vertex_array", (PyCFunction)MGLContext_vertex_array, METH_VARARGS},
     {(char *)"program", (PyCFunction)MGLContext_program, METH_VARARGS},
@@ -9988,6 +10162,7 @@ PyMethodDef MGLTextureArray_methods[] = {
 PyGetSetDef MGLTextureCube_getset[] = {
     {(char *)"filter", (getter)MGLTextureCube_get_filter, (setter)MGLTextureCube_set_filter},
     {(char *)"swizzle", (getter)MGLTextureCube_get_swizzle, (setter)MGLTextureCube_set_swizzle},
+    {(char *)"compare_func", (getter)MGLTextureCube_get_compare_func, (setter)MGLTextureCube_set_compare_func},
     {(char *)"anisotropy", (getter)MGLTextureCube_get_anisotropy, (setter)MGLTextureCube_set_anisotropy},
     {},
 };
@@ -9996,7 +10171,7 @@ PyMethodDef MGLTextureCube_methods[] = {
     {(char *)"write", (PyCFunction)MGLTextureCube_write, METH_VARARGS},
     {(char *)"use", (PyCFunction)MGLTextureCube_use, METH_VARARGS},
     {(char *)"bind", (PyCFunction)MGLTextureCube_meth_bind, METH_VARARGS},
-	{(char *)"build_mipmaps", (PyCFunction)MGLTextureCube_build_mipmaps, METH_VARARGS},
+    {(char *)"build_mipmaps", (PyCFunction)MGLTextureCube_build_mipmaps, METH_VARARGS},
     {(char *)"read", (PyCFunction)MGLTextureCube_read, METH_VARARGS},
     {(char *)"read_into", (PyCFunction)MGLTextureCube_read_into, METH_VARARGS},
     {(char *)"get_handle", (PyCFunction)MGLTextureCube_get_handle, METH_VARARGS},

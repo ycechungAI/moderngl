@@ -974,6 +974,7 @@ class TextureCube:
         self.mglo = None
         self._size = (None, None)
         self._components = None
+        self._depth = None
         self._dtype = None
         self._glo = None
         self.ctx = None
@@ -1018,12 +1019,24 @@ class TextureCube:
         self.mglo.swizzle = value
 
     @property
+    def compare_func(self) -> str:
+        return self.mglo.compare_func
+
+    @compare_func.setter
+    def compare_func(self, value: str) -> None:
+        self.mglo.compare_func = value
+
+    @property
     def anisotropy(self) -> float:
         return self.mglo.anisotropy
 
     @anisotropy.setter
     def anisotropy(self, value: float) -> None:
         self.mglo.anisotropy = value
+
+    @property
+    def depth(self) -> bool:
+        return self._depth
 
     @property
     def glo(self) -> int:
@@ -1850,6 +1863,37 @@ class Context:
         res._size = size
         res._components = 1
         res._samples = samples
+        res._dtype = 'f4'
+        res._depth = True
+        res.ctx = self
+        res.extra = None
+        return res
+
+    def depth_texture_cube(
+        self,
+        size: Tuple[int, int],
+        data: Optional[Any] = None,
+        *,
+        alignment: int = 4,
+    ) -> 'TextureCube':
+        """
+        Create a :py:class:`Texture` object.
+
+        Args:
+            size (tuple): The width and height of the texture.
+            data (bytes): Content of the texture.
+
+        Keyword Args:
+            samples (int): The number of samples. Value 0 means no multisample format.
+            alignment (int): The byte alignment 1, 2, 4 or 8.
+
+        Returns:
+            :py:class:`Texture` object
+        """
+        res = TextureCube.__new__(TextureCube)
+        res.mglo, res._glo = self.mglo.depth_texture_cube(size, data, alignment)
+        res._size = size
+        res._components = 1
         res._dtype = 'f4'
         res._depth = True
         res.ctx = self
