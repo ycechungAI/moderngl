@@ -7529,10 +7529,10 @@ PyObject * MGLTextureCube_get_swizzle(MGLTextureCube * self, void * closure) {
 
 int MGLTextureCube_set_swizzle(MGLTextureCube * self, PyObject * value, void * closure) {
     const char * swizzle = PyUnicode_AsUTF8(value);
-
+    
     if (self->depth) {
-        MGLError_Set("cannot get swizzle of depth textures");
-        return 0;
+        MGLError_Set("cannot set swizzle for depth textures");
+        return -1;
     }
 
     if (!swizzle[0]) {
