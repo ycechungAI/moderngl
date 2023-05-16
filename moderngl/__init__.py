@@ -826,7 +826,7 @@ class Texture:
     def bind_to_image(self, unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0) -> None:
         self.mglo.bind(unit, read, write, level, format)
 
-    def get_handle(self, resident: bool = True):
+    def get_handle(self, resident: bool = True) -> int:
         return self.mglo.get_handle(resident)
 
     def release(self) -> None:
@@ -960,7 +960,7 @@ class Texture3D:
     def bind_to_image(self, unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0) -> None:
         self.mglo.bind(unit, read, write, level, format)
 
-    def get_handle(self, resident: bool = True):
+    def get_handle(self, resident: bool = True) -> int:
         return self.mglo.get_handle(resident)
 
     def release(self) -> None:
@@ -1080,7 +1080,7 @@ class TextureCube:
     def bind_to_image(self, unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0) -> None:
         self.mglo.bind(unit, read, write, level, format)
 
-    def get_handle(self, resident: bool = True):
+    def get_handle(self, resident: bool = True) -> int:
         return self.mglo.get_handle(resident)
 
     def release(self) -> None:
@@ -1215,7 +1215,7 @@ class TextureArray:
     def bind_to_image(self, unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0) -> None:
         self.mglo.bind(unit, read, write, level, format)
 
-    def get_handle(self, resident: bool = True):
+    def get_handle(self, resident: bool = True) -> int:
         return self.mglo.get_handle(resident)
 
     def release(self) -> None:

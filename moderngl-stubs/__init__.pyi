@@ -3694,9 +3694,35 @@ class Texture3D:
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
         '''
 
-    def get_handle(self, resident: bool = True):
+    def get_handle(self, resident: bool = True) -> int:
         '''
         Handle for Bindless Textures.
+
+        Once a handle is created its parameters cannot be changed.
+        Attempting to do so will have no effect. (filter, wrap etc).
+        There is no way to undo this immutability.
+
+        Handles cannot be used by shaders until they are resident.
+        This method can be called multiple times to move a texture
+        in and out of residency::
+
+            >> texture.get_handle(resident=False)
+            4294969856
+            >> texture.get_handle(resident=True)
+            4294969856
+
+        Ths same handle is returned if the handle already exists.
+
+        .. note:: Limitations from the OpenGL wiki
+
+            The amount of storage available for resident images/textures may be less
+            than the total storage for textures that is available. As such, you should
+            attempt to minimize the time a texture spends being resident. Do not attempt
+            to take steps like making textures resident/unresident every frame or something.
+            But if you are finished using a texture for some time, make it unresident.
+
+        Keyword Args:
+            resident (bool): Make the texture resident.
         '''
 
     def release(self) -> None:
@@ -3988,9 +4014,35 @@ class TextureArray:
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
         '''
 
-    def get_handle(self, resident: bool = True):
+    def get_handle(self, resident: bool = True) -> int:
         '''
         Handle for Bindless Textures.
+
+        Once a handle is created its parameters cannot be changed.
+        Attempting to do so will have no effect. (filter, wrap etc).
+        There is no way to undo this immutability.
+
+        Handles cannot be used by shaders until they are resident.
+        This method can be called multiple times to move a texture
+        in and out of residency::
+
+            >> texture.get_handle(resident=False)
+            4294969856
+            >> texture.get_handle(resident=True)
+            4294969856
+
+        Ths same handle is returned if the handle already exists.
+
+        .. note:: Limitations from the OpenGL wiki
+
+            The amount of storage available for resident images/textures may be less
+            than the total storage for textures that is available. As such, you should
+            attempt to minimize the time a texture spends being resident. Do not attempt
+            to take steps like making textures resident/unresident every frame or something.
+            But if you are finished using a texture for some time, make it unresident.
+
+        Keyword Args:
+            resident (bool): Make the texture resident.
         '''
 
     def release(self) -> None:
@@ -4297,9 +4349,35 @@ class TextureCube:
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
         '''
 
-    def get_handle(self, resident: bool = True):
+    def get_handle(self, resident: bool = True) -> int:
         '''
         Handle for Bindless Textures.
+
+        Once a handle is created its parameters cannot be changed.
+        Attempting to do so will have no effect. (filter, wrap etc).
+        There is no way to undo this immutability.
+
+        Handles cannot be used by shaders until they are resident.
+        This method can be called multiple times to move a texture
+        in and out of residency::
+
+            >> texture.get_handle(resident=False)
+            4294969856
+            >> texture.get_handle(resident=True)
+            4294969856
+
+        Ths same handle is returned if the handle already exists.
+
+        .. note:: Limitations from the OpenGL wiki
+
+            The amount of storage available for resident images/textures may be less
+            than the total storage for textures that is available. As such, you should
+            attempt to minimize the time a texture spends being resident. Do not attempt
+            to take steps like making textures resident/unresident every frame or something.
+            But if you are finished using a texture for some time, make it unresident.
+
+        Keyword Args:
+            resident (bool): Make the texture resident.
         '''
 
     def release(self) -> None:
@@ -4633,9 +4711,35 @@ class Texture:
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
         '''
 
-    def get_handle(self, resident: bool = True):
+    def get_handle(self, resident: bool = True) -> int:
         '''
         Handle for Bindless Textures.
+
+        Once a handle is created its parameters cannot be changed.
+        Attempting to do so will have no effect. (filter, wrap etc).
+        There is no way to undo this immutability.
+
+        Handles cannot be used by shaders until they are resident.
+        This method can be called multiple times to move a texture
+        in and out of residency::
+
+            >> texture.get_handle(resident=False)
+            4294969856
+            >> texture.get_handle(resident=True)
+            4294969856
+
+        Ths same handle is returned if the handle already exists.
+
+        .. note:: Limitations from the OpenGL wiki
+
+            The amount of storage available for resident images/textures may be less
+            than the total storage for textures that is available. As such, you should
+            attempt to minimize the time a texture spends being resident. Do not attempt
+            to take steps like making textures resident/unresident every frame or something.
+            But if you are finished using a texture for some time, make it unresident.
+
+        Keyword Args:
+            resident (bool): Make the texture resident.
         '''
 
     def release(self) -> None:
