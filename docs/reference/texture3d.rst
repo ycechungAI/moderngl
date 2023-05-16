@@ -21,6 +21,7 @@ Methods
 .. automethod:: Texture3D.bind_to_image
 .. automethod:: Texture3D.use
 .. automethod:: Texture3D.release
+.. automethod:: Texture3D.get_handle
 
 Attributes
 ----------

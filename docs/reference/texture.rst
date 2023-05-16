@@ -24,6 +24,7 @@ Methods
 .. automethod:: Texture.bind_to_image
 .. automethod:: Texture.use
 .. automethod:: Texture.release
+.. automethod:: Texture.get_handle
 
 Attributes
 ----------

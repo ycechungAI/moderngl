@@ -21,6 +21,7 @@ Methods
 .. automethod:: TextureArray.build_mipmaps
 .. automethod:: TextureArray.use
 .. automethod:: TextureArray.release
+.. automethod:: TextureArray.get_handle
 
 Attributes
 ----------

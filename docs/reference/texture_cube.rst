@@ -20,6 +20,7 @@ Methods
 .. automethod:: TextureCube.bind_to_image
 .. automethod:: TextureCube.use
 .. automethod:: TextureCube.release
+.. automethod:: TextureCube.get_handle
 
 Attributes
 ----------
