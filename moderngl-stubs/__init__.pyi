@@ -2057,6 +2057,21 @@ class Context:
             :py:class:`Framebuffer` object
         '''
 
+    def memory_barrier(self, enum: Optional[int] = moderngl.ALL_BARRIER_BITS) -> None:
+        '''
+        Applying a memory barrier.
+
+        The memory barrier is needed in particular to correctly change buffers or textures
+        between each compute shader. If the same buffer is changed in two shaders, 
+        it can cause an effect like depth fighting on a buffer or texture.
+
+        The method should be used between programs, between compute shaders, 
+        and between programs and compute shaders.
+
+        Args:
+            enum (int): Barrier type, default moderngl.ALL_BARRIER_BITS.
+        '''
+
     def buffer(
         self,
         data: Optional[Any] = None,
