@@ -48,6 +48,7 @@ Methods
 .. automethod:: Context.copy_buffer
 .. automethod:: Context.copy_framebuffer
 .. automethod:: Context.detect_framebuffer
+.. automethod:: Context.memory_barrier
 .. automethod:: Context.gc
 .. automethod:: Context.__enter__
 .. automethod:: Context.__exit__
