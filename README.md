@@ -223,6 +223,7 @@ https://github.com/moderngl/moderngl/releases
 - [Jonathan Hartley](https://github.com/tartley)
 - [yoyonel](https://github.com/yoyonel)
 - [Naveen M K](https://github.com/naveen521kk)
+- [compik710](https://github.com/compik710)
 
 and [many others](https://github.com/moderngl/moderngl/graphs/contributors)
 

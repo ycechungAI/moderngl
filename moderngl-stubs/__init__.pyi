@@ -2057,6 +2057,22 @@ class Context:
             :py:class:`Framebuffer` object
         '''
 
+    def memory_barrier(self, barriers: Optional[int] = moderngl.ALL_BARRIER_BITS, by_region: Optional[bool] = False) -> None:
+        '''
+        Applying a memory barrier.
+
+        The memory barrier is needed in particular to correctly change buffers or textures
+        between each compute shader. If the same buffer is changed in two shaders, 
+        it can cause an effect like depth fighting on a buffer or texture.
+
+        The method should be used between programs, between compute shaders, 
+        and between programs and compute shaders.
+
+        Keyword Args:
+            barriers (int): Affected barriers, default moderngl.ALL_BARRIER_BITS.
+            by_region (bool): Memory barrier mode by region. More read on https://registry.khronos.org/OpenGL-Refpages/gl4/html/glMemoryBarrier.xhtml
+        '''
+
     def buffer(
         self,
         data: Optional[Any] = None,
