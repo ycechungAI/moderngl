@@ -2057,7 +2057,7 @@ class Context:
             :py:class:`Framebuffer` object
         '''
 
-    def memory_barrier(self, enum: Optional[int] = moderngl.ALL_BARRIER_BITS) -> None:
+    def memory_barrier(self, barriers: Optional[int] = moderngl.ALL_BARRIER_BITS, by_region: Optional[bool] = False) -> None:
         '''
         Applying a memory barrier.
 
@@ -2068,8 +2068,9 @@ class Context:
         The method should be used between programs, between compute shaders, 
         and between programs and compute shaders.
 
-        Args:
-            enum (int): Barrier type, default moderngl.ALL_BARRIER_BITS.
+        Keyword Args:
+            barriers (int): Affected barriers, default moderngl.ALL_BARRIER_BITS.
+            by_region (bool): Memory barrier mode by region. More read on https://registry.khronos.org/OpenGL-Refpages/gl4/html/glMemoryBarrier.xhtml
         '''
 
     def buffer(
