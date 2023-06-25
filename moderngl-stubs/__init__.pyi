@@ -2065,8 +2065,8 @@ class Context:
         between each shader. If the same buffer is changed in two shaders, 
         it can cause an effect like "depth fighting" on a buffer or texture.
 
-        The method should be used between :py:class:`Program`s, between :py:class:`ComputeShader`s, 
-        and between :py:class:`Program`s and :py:class:`ComputeShader`s.
+        The method should be used between :py:class:`Program` -s, between :py:class:`ComputeShader` -s, 
+        and between :py:class:`Program` -s and :py:class:`ComputeShader` -s.
 
         Keyword Args:
             barriers (int): Affected barriers, default moderngl.ALL_BARRIER_BITS.
