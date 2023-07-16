@@ -366,8 +366,8 @@ def make_varying(name, number, array_length, dimension):
     return res
 
 
-def parse_spv_inputs(spv: bytes):
-    spv = struct.unpack(str(len(spv)//4)+'I', spv)
+def parse_spv_inputs(raw_spv: bytes):
+    spv = struct.unpack(str(len(raw_spv)//4)+'I', raw_spv)
 
     assert spv[0] == 0x07230203
     idx = 5
@@ -406,18 +406,18 @@ def parse_spv_inputs(spv: bytes):
             #print(spv[idx + 1], spv[idx + 2], spv[idx + 3])
         
         if opcode == 19:  # OpTypeVoid
-            allowed_types[spv[idx + 1]] = ['void', None]
+            allowed_types[spv[idx + 1]] = ['void', -1]
         if opcode == 20:  # OpTypeBool
-            allowed_types[spv[idx + 1]] = ['bool', None]
+            allowed_types[spv[idx + 1]] = ['bool', -1]
          
         if opcode == 21:  # OpTypeInt
             addware_unsigned = ''
             if spv[idx + 3] == 1:
                  addware_unsigned = 'u'
-            allowed_types[spv[idx + 1]] = [f'{addware_unsigned}i{spv[idx + 2]//8}', None]
+            allowed_types[spv[idx + 1]] = [f'{addware_unsigned}i{spv[idx + 2]//8}', -1]
             
         if opcode == 22:  # OpTypeFloat
-            allowed_types[spv[idx + 1]] = [f'f{spv[idx + 2]//8}', None]
+            allowed_types[spv[idx + 1]] = [f'f{spv[idx + 2]//8}', -1]
             
         if opcode == 23:  # OpTypeVector
             allowed_types[spv[idx + 1]] = [f'vec{spv[idx + 3]}', spv[idx + 2]]
@@ -433,10 +433,10 @@ def parse_spv_inputs(spv: bytes):
     # So we use endless research to identify complete types of variables.
     def assembly(type_id):
         typ, thrw_typ = allowed_types[type_id]
-        if thrw_typ is not None:
+        if thrw_typ != -1:
             add_typ = assembly(thrw_typ)
             allowed_types[type_id][0] = add_typ+' '+typ
-            allowed_types[type_id][1] = None
+            allowed_types[type_id][1] = -1
         return typ
 
     for type_id, config in allowed_types.items():
@@ -458,7 +458,7 @@ def parse_spv_inputs(spv: bytes):
 
     extracted_collected = {}
     for ids in exrtacted_general_ids:
-        to_add = {'name':None, 'class':None, 'type':None, 'location':None}
+        to_add = {'name':'', 'class':-1, 'type':-1, 'location':-1}
         if ids in extracted_names:
             to_add['name'] = extracted_names[ids]
         if ids in extracted_storage_class_id:
@@ -516,9 +516,9 @@ def parse_spv_inputs(spv: bytes):
     ##################
     
     # == Cropping the data to the required output == #
-    result = {}
+    result: Dict[int, tuple] = {}
     for key, item in extracted_collected.items():
-        if item['class'] == 1 and item['location'] is not None:
+        if item['class'] == 1 and item['location'] != -1:
             result[item['location']] = ATTRIBUTE_LOOKUP_TABLE.get(item['type'], 
                                             (1, 0, 1, 1, False, '?'))
     #########################
