@@ -606,7 +606,7 @@ def parse_spv_inputs(spv: bytes):
     for ids, item in extracted_collected.items():
         if item[2] != -1:
             if item[2] not in TRANSLATION_TABLE_SPIRV_GLSL:
-                raise RuntimeError(f"Could not find the encoding of the variable type \"{item['type']}\".")
+                raise RuntimeError(f"Could not find the encoding of the variable type \"{item[2]}\".")
             
             extracted_collected[ids] = \
                 (item[0], item[1], TRANSLATION_TABLE_SPIRV_GLSL[item[2]], item[3])
