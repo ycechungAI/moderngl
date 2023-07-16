@@ -370,14 +370,7 @@ def parse_spv_inputs(spv: bytes):
     spv = struct.unpack(str(len(spv)//4)+'I', spv)
 
     assert spv[0] == 0x07230203
-    """
-    print('version', hex(spv[1]))
-    print('generator', hex(spv[2]))
-    print('bound', spv[3])
-    """
-    
     idx = 5
-
 
     # == Get max information == #
     extracted_names = {}  # id : name
@@ -393,28 +386,11 @@ def parse_spv_inputs(spv: bytes):
         args, opcode = spv[idx] >> 16, spv[idx] & 0xffff
         if opcode == 5: # OpName
             # We can extract the name of some ids
-            # print(f'id={spv[idx + 1]} name={spv[idx + 2 : idx + args].tobytes().decode()}')
             extracted_names[spv[idx + 1]] = spv[idx + 2 : idx + args].tobytes().decode()
         
         if opcode == 59: # OpVariable
             # We can extract if it is a vertex shader input or not
-            to_write = spv[idx + 3]
-            
-            # There are too many of them to correctly identify in this section of code.
-            # Therefore, for now, I leave only their identifiers.
-            # https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#Storage_Class
-            #if to_write == 0:
-            #    to_write = 'uniform'
-            #elif to_write == 1:
-            #    to_write = 'input'
-            #elif to_write == 2:
-            #    to_write = 'uniform'
-            #elif to_write == 3:
-            #    to_write = 'output'
-            #else:
-            #    to_write = 'error'
-            
-            extracted_storage_class_id[spv[idx + 2]] = to_write
+            extracted_storage_class_id[spv[idx + 2]] = spv[idx + 3]
             
             # Mapping pointer_type_id to id of user variables
             pointer_variable[spv[idx + 2]] = spv[idx + 1]
@@ -448,24 +424,6 @@ def parse_spv_inputs(spv: bytes):
             
         if opcode == 24:  # OpTypeMatrix
             allowed_types[spv[idx + 1]] = [f'mat{spv[idx + 3]}', spv[idx + 2]]
-        
-        # if opcode == 25:  # OpTypeImage
-        # if opcode == 26:  # OpTypeSampler
-        # if opcode == 27:  # OpTypeSampledImage
-        #if opcode == 28:  # OpTypeArray
-        #    allowed_types[spv[idx + 1]] = [f'arr{spv[idx + 3]}', spv[idx + 2]]
-            
-        # if opcode == 29:  # OpTypeRuntimeArray
-        # if opcode == 30:  # OpTypeStruct
-        # if opcode == 31:  # OpTypeOpaque
-        # if opcode == 33:  # OpTypeFunction
-        # if opcode == 34:  # OpTypeEvent
-        # if opcode == 35:  # OpTypeDeviceEvent
-        # if opcode == 36:  # OpTypeReserveId
-        # if opcode == 37:  # OpTypeQueue
-        # if opcode == 38:  # OpTypePipe
-        # if opcode == 39:  # OpTypeForwardPointer
-        
         
         idx += args
     ##################
@@ -556,22 +514,6 @@ def parse_spv_inputs(spv: bytes):
                 raise RuntimeError(f"Could not find the encoding of the variable type \"{item['type']}\".")
             item['type'] = mgl_attr_table[item['type']]
     ##################
-
-
-    # == Getting Results == #
-    # Here you can trim the content to the required class.
-    """
-    print('== Input ==')
-    for key, item in extracted_collected.items():
-        # print(key, item)
-        if item['class'] == 1 and item['location'] is not None:  # Input storage class
-            print('---|', item['name'], hex(item['type']), item['location'])
-    print('\n== Output ==')
-    for key, item in extracted_collected.items():
-        if item['class'] == 3 and item['location'] is not None:  # Output storage class
-            print('---|', item['name'], hex(item['type']), item['location'])
-    """
-    #################
     
     # == Cropping the data to the required output == #
     result = {}
