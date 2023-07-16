@@ -425,18 +425,18 @@ TRANSLATION_TABLE_SPIRV_GLSL = {  # spv_type : gl_type
 
 def parse_spv_inputs(spv: bytes):
     # SPIR-V parser
-    
+
     token = lambda i: struct.unpack('I', spv[i * 4 : i * 4 + 4])[0]
 
     assert token(0) == 0x07230203
-    
+
     idx = 5
 
     # == Get max information == #
     extracted_names: Dict[int, str] = {}  # id : name
     extracted_storage_class_id: Dict[int, int] = {}  # id : storage_class_id
 
-    pointer_variable: Dict[int, int] = {}  # id : pointer_type_id 
+    pointer_variable: Dict[int, int] = {}  # id : pointer_type_id
     pointer_allowed_types: Dict[int, int] = {}  # pointer_type_id : type_id
     allowed_types: Dict[int, Tuple[int, int]] = {}  # type_id : (spv_type, type_id)
 
@@ -447,23 +447,23 @@ def parse_spv_inputs(spv: bytes):
         if opcode == 5: # OpName
             # We can extract the name of some ids
             extracted_names[token(idx + 1)] = spv[(idx+2) * 4 : idx * 4 + args*4].decode()
-        
+
         if opcode == 59: # OpVariable
             # We can extract if it is a vertex shader input or not
             extracted_storage_class_id[token(idx + 2)] = token(idx + 3)
-            
+
             # Mapping pointer_type_id to id of user variables
             pointer_variable[token(idx + 2)] = token(idx + 1)
-        
+
         if opcode == 71: # OpDecorate
             # We can extract the location here
             extracted_location[token(idx + 1)] = token(idx + 3)
-        
+
         if opcode == 32:  # OpTypePointer
             # Retrieving used (allowed) type_ids for pointer_type_ids
             pointer_allowed_types[token(idx + 1)] = token(idx + 3)
             # --------------------^pointer_id^^----^^^type_id^^==
-         
+
         if opcode == 21:  # OpTypeInt
             unsg, bsz = token(idx + 3), token(idx + 2)//8
             to_write = Spv.UNKNOWN
@@ -478,7 +478,7 @@ def parse_spv_inputs(spv: bytes):
                 elif bsz == 8:
                     to_write = Spv.INT64
             allowed_types[token(idx + 1)] = (to_write, -1)
-            
+
         if opcode == 22:  # OpTypeFloat
             to_write = Spv.UNKNOWN
             bsz = token(idx + 2)//8
@@ -487,7 +487,7 @@ def parse_spv_inputs(spv: bytes):
             elif bsz == 8:
                 to_write = Spv.FLOAT64
             allowed_types[token(idx + 1)] = (to_write, -1)
-            
+
         if opcode == 23:  # OpTypeVector
             to_write = Spv.UNKNOWN
             vsz = token(idx + 3)
@@ -497,9 +497,9 @@ def parse_spv_inputs(spv: bytes):
                 to_write = Spv.VEC3
             elif vsz == 4:
                 to_write = Spv.VEC4
-            
+
             allowed_types[token(idx + 1)] = (to_write, token(idx + 2))
-            
+
         if opcode == 24:  # OpTypeMatrix
             to_write = Spv.UNKNOWN
             msz = token(idx + 3)
@@ -509,9 +509,9 @@ def parse_spv_inputs(spv: bytes):
                 to_write = Spv.MAT3
             elif msz == 4:
                 to_write = Spv.MAT4
-            
+
             allowed_types[token(idx + 1)] = (to_write, token(idx + 2))
-        
+
         idx += args
     ##################
 
@@ -541,7 +541,7 @@ def parse_spv_inputs(spv: bytes):
         set(extracted_location.keys()) | set(extracted_types.keys()) | \
         set(extracted_storage_class_id.keys()) | set(extracted_names.keys()))
     # exrtacted_general_ids.sort()  # if needed for sorting locations
-    
+
     extracted_collected: Dict[int, Tuple[str, int, int, int]] = {}  # id : variable_info
     for ids in exrtacted_general_ids:
         # to_add: Tuple[str, int, int, int] = ()  # name, class, type, location
@@ -562,19 +562,19 @@ def parse_spv_inputs(spv: bytes):
         if item[2] != -1:
             if item[2] not in TRANSLATION_TABLE_SPIRV_GLSL:
                 raise RuntimeError(f"Could not find the encoding of the variable type \"{item[2]}\".")
-            
+
             extracted_collected[ids] = \
                 (item[0], item[1], TRANSLATION_TABLE_SPIRV_GLSL[item[2]], item[3])
     ##################
-    
+
     # == Cropping the data to the required output == #
     result:Dict[int, Tuple[int, int, int, int, bool, str]]  = {}
     for key, item in extracted_collected.items():
         if item[1] == 1 and item[3] != -1:
-            result[item[3]] = ATTRIBUTE_LOOKUP_TABLE.get(item[2], 
+            result[item[3]] = ATTRIBUTE_LOOKUP_TABLE.get(item[2],
                                             (1, 0, 1, 1, False, '?'))
     #########################
-    
+
     return result
 
 
