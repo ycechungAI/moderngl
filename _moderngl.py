@@ -366,5 +366,223 @@ def make_varying(name, number, array_length, dimension):
     return res
 
 
+def parse_spv_inputs(spv: bytes):
+    spv = struct.unpack(str(len(spv)//4)+'I', spv)
+
+    assert spv[0] == 0x07230203
+    """
+    print('version', hex(spv[1]))
+    print('generator', hex(spv[2]))
+    print('bound', spv[3])
+    """
+    
+    idx = 5
+
+
+    # == Get max information == #
+    extracted_names = {}  # id : name
+    extracted_storage_class_id = {}  # id : storage_class_id
+
+    pointer_variable = {}  # id : pointer_type_id 
+    pointer_allowed_types = {}  # pointer_type_id : type_id
+    allowed_types = {}  # type_id : [py_type, type_id]
+
+    extracted_types = {}  # id : py_type
+    extracted_location = {}  # id : location
+    while idx < len(spv):
+        args, opcode = spv[idx] >> 16, spv[idx] & 0xffff
+        if opcode == 5: # OpName
+            # We can extract the name of some ids
+            # print(f'id={spv[idx + 1]} name={spv[idx + 2 : idx + args].tobytes().decode()}')
+            extracted_names[spv[idx + 1]] = spv[idx + 2 : idx + args].tobytes().decode()
+        
+        if opcode == 59: # OpVariable
+            # We can extract if it is a vertex shader input or not
+            to_write = spv[idx + 3]
+            
+            # There are too many of them to correctly identify in this section of code.
+            # Therefore, for now, I leave only their identifiers.
+            # https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#Storage_Class
+            #if to_write == 0:
+            #    to_write = 'uniform'
+            #elif to_write == 1:
+            #    to_write = 'input'
+            #elif to_write == 2:
+            #    to_write = 'uniform'
+            #elif to_write == 3:
+            #    to_write = 'output'
+            #else:
+            #    to_write = 'error'
+            
+            extracted_storage_class_id[spv[idx + 2]] = to_write
+            
+            # Mapping pointer_type_id to id of user variables
+            pointer_variable[spv[idx + 2]] = spv[idx + 1]
+        
+        if opcode == 71: # OpDecorate
+            # We can extract the location here
+            extracted_location[spv[idx + 1]] = spv[idx + 3]
+        
+        if opcode == 32:  # OpTypePointer
+            # Retrieving used (allowed) type_ids for pointer_type_ids
+            pointer_allowed_types[spv[idx + 1]] = spv[idx + 3]
+            # --------------------^pointer_id^^----^^^type_id^^==
+            #print(spv[idx + 1], spv[idx + 2], spv[idx + 3])
+        
+        if opcode == 19:  # OpTypeVoid
+            allowed_types[spv[idx + 1]] = ['void', None]
+        if opcode == 20:  # OpTypeBool
+            allowed_types[spv[idx + 1]] = ['bool', None]
+         
+        if opcode == 21:  # OpTypeInt
+            addware_unsigned = ''
+            if spv[idx + 3] == 1:
+                 addware_unsigned = 'u'
+            allowed_types[spv[idx + 1]] = [f'{addware_unsigned}i{spv[idx + 2]//8}', None]
+            
+        if opcode == 22:  # OpTypeFloat
+            allowed_types[spv[idx + 1]] = [f'f{spv[idx + 2]//8}', None]
+            
+        if opcode == 23:  # OpTypeVector
+            allowed_types[spv[idx + 1]] = [f'vec{spv[idx + 3]}', spv[idx + 2]]
+            
+        if opcode == 24:  # OpTypeMatrix
+            allowed_types[spv[idx + 1]] = [f'mat{spv[idx + 3]}', spv[idx + 2]]
+        
+        # if opcode == 25:  # OpTypeImage
+        # if opcode == 26:  # OpTypeSampler
+        # if opcode == 27:  # OpTypeSampledImage
+        #if opcode == 28:  # OpTypeArray
+        #    allowed_types[spv[idx + 1]] = [f'arr{spv[idx + 3]}', spv[idx + 2]]
+            
+        # if opcode == 29:  # OpTypeRuntimeArray
+        # if opcode == 30:  # OpTypeStruct
+        # if opcode == 31:  # OpTypeOpaque
+        # if opcode == 33:  # OpTypeFunction
+        # if opcode == 34:  # OpTypeEvent
+        # if opcode == 35:  # OpTypeDeviceEvent
+        # if opcode == 36:  # OpTypeReserveId
+        # if opcode == 37:  # OpTypeQueue
+        # if opcode == 38:  # OpTypePipe
+        # if opcode == 39:  # OpTypeForwardPointer
+        
+        
+        idx += args
+    ##################
+
+    # == Assembly types == #
+    # Some types of variables have pointers to other types of variables used in them.
+    # So we use endless research to identify complete types of variables.
+    def assembly(type_id):
+        typ, thrw_typ = allowed_types[type_id]
+        if thrw_typ is not None:
+            add_typ = assembly(thrw_typ)
+            allowed_types[type_id][0] = add_typ+' '+typ
+            allowed_types[type_id][1] = None
+        return typ
+
+    for type_id, config in allowed_types.items():
+        assembly(type_id)
+
+    for ids, pointer_type_id in pointer_variable.items():
+        try:
+            extracted_types[ids] = allowed_types[pointer_allowed_types[pointer_type_id]][0]
+        except KeyError:
+            pass
+    ###############
+
+    # == Making a whole list == #
+    exrtacted_general_ids = [] # id, id, id ...
+    exrtacted_general_ids = list( # get all identifiers for variables
+        set(extracted_location.keys()) | set(extracted_types.keys()) | \
+        set(extracted_storage_class_id.keys()) | set(extracted_names.keys()))
+    # exrtacted_general_ids.sort()  # if needed for sorting locations
+
+    extracted_collected = {}
+    for ids in exrtacted_general_ids:
+        to_add = {'name':None, 'class':None, 'type':None, 'location':None}
+        if ids in extracted_names:
+            to_add['name'] = extracted_names[ids]
+        if ids in extracted_storage_class_id:
+            to_add['class'] = extracted_storage_class_id[ids]
+        if ids in extracted_types:
+            to_add['type'] = extracted_types[ids]
+        if ids in extracted_location:
+            to_add['location'] = extracted_location[ids]
+        extracted_collected[ids]=to_add
+    ##################
+
+    # == Conversion to the moderngl type == #
+    mgl_attr_table = {  # py_type : mgl_type
+        'i4': 0x1404,  # GL_INT
+        'i4 vec2': 0x8b53,  # GL_INT_VEC2
+        'i4 vec3': 0x8b54,  # GL_INT_VEC3
+        'i4 vec4': 0x8b55,  # GL_INT_VEC4
+        'ui4': 0x1405,  # GL_UNSIGNED_INT
+        'ui4 vec2': 0x8dc6,  # GL_UNSIGNED_INT_VEC2
+        'ui4 vec3': 0x8dc7,  # GL_UNSIGNED_INT_VEC3
+        'ui4 vec4': 0x8dc8,  # GL_UNSIGNED_INT_VEC4
+        'f4': 0x1406,  # GL_FLOAT
+        'f4 vec2': 0x8b50,  # GL_FLOAT_VEC2
+        'f4 vec3': 0x8b51,  # GL_FLOAT_VEC3
+        'f4 vec4': 0x8b52,  # GL_FLOAT_VEC4
+        'f8': 0x140a,  # GL_DOUBLE
+        'f8 vec2': 0x8ffc,  # GL_DOUBLE_VEC2
+        'f8 vec3': 0x8ffd,  # GL_DOUBLE_VEC3
+        'f8 vec4': 0x8ffe,  # GL_DOUBLE_VEC4
+        'f4 vec2 mat2': 0x8b5a,  # GL_FLOAT_MAT2
+        'f4 vec3 mat2': 0x8b65,  # GL_FLOAT_MAT2x3
+        'f4 vec4 mat2': 0x8b66,  # GL_FLOAT_MAT2x4
+        'f4 vec2 mat3': 0x8b67,  # GL_FLOAT_MAT3x2
+        'f4 vec3 mat3': 0x8b5b,  # GL_FLOAT_MAT3
+        'f4 vec4 mat3': 0x8b68,  # GL_FLOAT_MAT3x4
+        'f4 vec2 mat4': 0x8b69,  # GL_FLOAT_MAT4x2
+        'f4 vec3 mat4': 0x8b6a,  # GL_FLOAT_MAT4x3
+        'f4 vec4 mat4': 0x8b5c,  # GL_FLOAT_MAT4
+        'f8 vec2 mat2': 0x8f46,  # GL_DOUBLE_MAT2
+        'f8 vec3 mat2': 0x8f49,  # GL_DOUBLE_MAT2x3
+        'f8 vec4 mat2': 0x8f4a,  # GL_DOUBLE_MAT2x4
+        'f8 vec3 mat2': 0x8f4b,  # GL_DOUBLE_MAT3x2
+        'f8 vec3 mat3': 0x8f47,  # GL_DOUBLE_MAT3
+        'f8 vec4 mat3': 0x8f4c,  # GL_DOUBLE_MAT3x4
+        'f8 vec2 mat4': 0x8f4d,  # GL_DOUBLE_MAT4x2
+        'f8 vec3 mat4': 0x8f4e,  # GL_DOUBLE_MAT4x3
+        'f8 vec4 mat4': 0x8f48,  # GL_DOUBLE_MAT4
+    }
+
+    for ids, item in extracted_collected.items():
+        if item['type'] is not None:
+            if str(item['type']) not in mgl_attr_table:
+                raise RuntimeError(f"Could not find the encoding of the variable type \"{item['type']}\".")
+            item['type'] = mgl_attr_table[item['type']]
+    ##################
+
+
+    # == Getting Results == #
+    # Here you can trim the content to the required class.
+    """
+    print('== Input ==')
+    for key, item in extracted_collected.items():
+        # print(key, item)
+        if item['class'] == 1 and item['location'] is not None:  # Input storage class
+            print('---|', item['name'], hex(item['type']), item['location'])
+    print('\n== Output ==')
+    for key, item in extracted_collected.items():
+        if item['class'] == 3 and item['location'] is not None:  # Output storage class
+            print('---|', item['name'], hex(item['type']), item['location'])
+    """
+    #################
+    
+    # == Cropping the data to the required output == #
+    result = {}
+    for key, item in extracted_collected.items():
+        if item['class'] == 1 and item['location'] is not None:
+            result[item['location']] = ATTRIBUTE_LOOKUP_TABLE.get(item['type'], 
+                                            (1, 0, 1, 1, False, '?'))
+    #########################
+    
+    return result
+
+
 class InvalidObject:
     pass
