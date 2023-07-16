@@ -520,7 +520,7 @@ def parse_spv_inputs(raw_spv: bytes):
     
     # == Cropping the data to the required output == #
     result: Dict[int, Tuple[int, int, int, int, bool, str]] = {}
-    for key, item in extracted_collected.items():
+    for key, item in extracted_collected_end.items():
         if item['class'] == 1 and item['location'] != -1:
             result[item['location']] = ATTRIBUTE_LOOKUP_TABLE.get(item['type'], 
                                             (1, 0, 1, 1, False, '?'))
