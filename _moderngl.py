@@ -1,5 +1,5 @@
 import struct
-from typing import Any, Dict, List
+from typing import Any, Dict, Tuple
 
 
 class Attribute:
@@ -368,9 +368,11 @@ def make_varying(name, number, array_length, dimension):
 
 class Spv:
     INT32 = 1 << 0
-    UINT32 = 1 << 1
-    FLOAT32 = 1 << 2
-    FLOAT64 = 1 << 3
+    INT64 = 1 << 1
+    UINT32 = 1 << 2
+    UINT64 = 1 << 3
+    FLOAT32 = 1 << 4
+    FLOAT64 = 1 << 5
 
     VEC2 = 1 << 10
     VEC3 = 1 << 11
@@ -440,7 +442,7 @@ def parse_spv_inputs(spv: bytes):
 
     pointer_variable: Dict[int, int] = {}  # id : pointer_type_id 
     pointer_allowed_types: Dict[int, int] = {}  # pointer_type_id : type_id
-    allowed_types: Dict[int, List[int, int]] = {}  # type_id : [spv_type, type_id]
+    allowed_types: Dict[int, Tuple[int, int]] = {}  # type_id : (spv_type, type_id)
 
     extracted_types: Dict[int, int] = {}  # id : spv_type
     extracted_location: Dict[int, int] = {}  # id : location
@@ -484,9 +486,9 @@ def parse_spv_inputs(spv: bytes):
             #print(token(idx + 1), token(idx + 2), token(idx + 3))
         
         # if opcode == 19:  # OpTypeVoid
-        #     allowed_types[token(idx + 1)] = ['void', -1]
+        #     allowed_types[token(idx + 1)] = ('void', -1)
         # if opcode == 20:  # OpTypeBool
-        #     allowed_types[token(idx + 1)] = ['bool', -1]
+        #     allowed_types[token(idx + 1)] = ('bool', -1)
          
         if opcode == 21:  # OpTypeInt
             unsg, bsz = token(idx + 3), token(idx + 2)//8
@@ -501,7 +503,7 @@ def parse_spv_inputs(spv: bytes):
                     to_write = Spv.INT32
                 elif bsz == 8:
                     to_write = Spv.INT64
-            allowed_types[token(idx + 1)] = [to_write, -1]
+            allowed_types[token(idx + 1)] = (to_write, -1)
             
         if opcode == 22:  # OpTypeFloat
             to_write = Spv.UNKNOWN
@@ -510,7 +512,7 @@ def parse_spv_inputs(spv: bytes):
                 to_write = Spv.FLOAT32
             elif bsz == 8:
                 to_write = Spv.FLOAT64
-            allowed_types[token(idx + 1)] = [to_write, -1]
+            allowed_types[token(idx + 1)] = (to_write, -1)
             
         if opcode == 23:  # OpTypeVector
             to_write = Spv.UNKNOWN
@@ -522,7 +524,7 @@ def parse_spv_inputs(spv: bytes):
             elif vsz == 4:
                 to_write = Spv.VEC4
             
-            allowed_types[token(idx + 1)] = [to_write, token(idx + 2)]
+            allowed_types[token(idx + 1)] = (to_write, token(idx + 2))
             
         if opcode == 24:  # OpTypeMatrix
             to_write = Spv.UNKNOWN
@@ -534,13 +536,13 @@ def parse_spv_inputs(spv: bytes):
             elif msz == 4:
                 to_write = Spv.MAT4
             
-            allowed_types[token(idx + 1)] = [to_write, token(idx + 2)]
+            allowed_types[token(idx + 1)] = (to_write, token(idx + 2))
         
         # if opcode == 25:  # OpTypeImage
         # if opcode == 26:  # OpTypeSampler
         # if opcode == 27:  # OpTypeSampledImage
         #if opcode == 28:  # OpTypeArray
-        #    allowed_types[token(idx + 1)] = [f'arr{token(idx + 3)}', token(idx + 2)]
+        #    allowed_types[token(idx + 1)] = (f'arr{token(idx + 3)}', token(idx + 2))
             
         # if opcode == 29:  # OpTypeRuntimeArray
         # if opcode == 30:  # OpTypeStruct
@@ -564,8 +566,7 @@ def parse_spv_inputs(spv: bytes):
         typ, thrw_typ = allowed_types[type_id]
         if thrw_typ != -1:
             add_typ = assembly(thrw_typ)
-            allowed_types[type_id][0] = add_typ | typ
-            allowed_types[type_id][1] = -1
+            allowed_types[type_id] = (add_typ | typ, -1)
         return typ
 
     for type_id, config in allowed_types.items():
@@ -579,14 +580,14 @@ def parse_spv_inputs(spv: bytes):
     ###############
 
     # == Making a whole list == #
-    exrtacted_general_ids: List[int] = [] # id, id, id ...
+    # exrtacted_general_ids: List[int] = [] # id, id, id ...
     exrtacted_general_ids: List[int] = list( # get all identifiers for variables
         set(extracted_location.keys()) | set(extracted_types.keys()) | \
         set(extracted_storage_class_id.keys()) | set(extracted_names.keys()))
     # exrtacted_general_ids.sort()  # if needed for sorting locations
     
     
-    extracted_collected: Dict[int, List[str, int, int, int]] = {}  # id : variable_info
+    extracted_collected: Dict[int, Tuple[str, int, int, int]] = {}  # id : variable_info
     for ids in exrtacted_general_ids:
         to_add = ['', -1, -1, -1]  # name, class, type, location
         if ids in extracted_names:
@@ -625,7 +626,7 @@ def parse_spv_inputs(spv: bytes):
     #################
     
     # == Cropping the data to the required output == #
-    result:Dict[int, List[int, int, int, int, bool, str]]  = {}
+    result:Dict[int, Tuple[int, int, int, int, bool, str]]  = {}
     for key, item in extracted_collected.items():
         if item[1] == 1 and item[3] != -1:
             result[item[3]] = ATTRIBUTE_LOOKUP_TABLE.get(item[2], 
