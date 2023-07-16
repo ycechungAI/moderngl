@@ -508,15 +508,18 @@ def parse_spv_inputs(raw_spv: bytes):
         'f8 vec4 mat4': 0x8f48,  # GL_DOUBLE_MAT4
     }
 
+    extracted_collected_end = {}
     for ids, item in extracted_collected.items():
+        to_add = {'name':item['name'], 'class':item['class'], 'type':-1, 'location':item['location']}
         if item['type'] != '':
             if str(item['type']) not in mgl_attr_table:
                 raise RuntimeError(f"Could not find the encoding of the variable type \"{item['type']}\".")
-            item['type'] = mgl_attr_table[item['type']]
+            to_add['type'] = mgl_attr_table[item['type']]
+        extracted_collected_end[ids] = to_add
     ##################
     
     # == Cropping the data to the required output == #
-    result: Dict[int, tuple] = {}
+    result: Dict[int, Tuple[int, int, int, int, bool, str]] = {}
     for key, item in extracted_collected.items():
         if item['class'] == 1 and item['location'] != -1:
             result[item['location']] = ATTRIBUTE_LOOKUP_TABLE.get(item['type'], 
