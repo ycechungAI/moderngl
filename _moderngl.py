@@ -424,15 +424,14 @@ TRANSLATION_TABLE_SPIRV_GLSL = {  # spv_type : gl_type
 
 
 def parse_spv_inputs(spv: bytes):
-    # SPIR-V parser
-
     token = lambda i: struct.unpack('I', spv[i * 4 : i * 4 + 4])[0]
+    num_tokens = len(spv) // 4
 
-    assert token(0) == 0x07230203
+    if token(0) != 0x07230203 or len(spv) % 4 != 0:
+        return None
 
     idx = 5
 
-    # == Get max information == #
     extracted_names: Dict[int, str] = {}  # id : name
     extracted_storage_class_id: Dict[int, int] = {}  # id : storage_class_id
 
@@ -442,30 +441,30 @@ def parse_spv_inputs(spv: bytes):
 
     extracted_types: Dict[int, int] = {}  # id : spv_type
     extracted_location: Dict[int, int] = {}  # id : location
-    while idx < len(spv)//4:
+    while idx < num_tokens:
         args, opcode = token(idx) >> 16, token(idx) & 0xffff
-        if opcode == 5: # OpName
+        if opcode == 5:  # OpName
             # We can extract the name of some ids
-            extracted_names[token(idx + 1)] = spv[(idx+2) * 4 : idx * 4 + args*4].decode()
+            name_start, name_end = (idx + 2) * 4, (idx + args) * 4
+            extracted_names[token(idx + 1)] = spv[name_start:name_end].decode()
 
-        if opcode == 59: # OpVariable
+        if opcode == 59:  # OpVariable
             # We can extract if it is a vertex shader input or not
             extracted_storage_class_id[token(idx + 2)] = token(idx + 3)
 
             # Mapping pointer_type_id to id of user variables
             pointer_variable[token(idx + 2)] = token(idx + 1)
 
-        if opcode == 71: # OpDecorate
+        if opcode == 71:  # OpDecorate
             # We can extract the location here
             extracted_location[token(idx + 1)] = token(idx + 3)
 
         if opcode == 32:  # OpTypePointer
             # Retrieving used (allowed) type_ids for pointer_type_ids
             pointer_allowed_types[token(idx + 1)] = token(idx + 3)
-            # --------------------^pointer_id^^----^^^type_id^^==
 
         if opcode == 21:  # OpTypeInt
-            unsg, bsz = token(idx + 3), token(idx + 2)//8
+            unsg, bsz = token(idx + 3), token(idx + 2) // 8
             to_write = Spv.UNKNOWN
             if unsg == 1:
                 if bsz == 4:
@@ -481,7 +480,7 @@ def parse_spv_inputs(spv: bytes):
 
         if opcode == 22:  # OpTypeFloat
             to_write = Spv.UNKNOWN
-            bsz = token(idx + 2)//8
+            bsz = token(idx + 2) // 8
             if bsz == 4:
                 to_write = Spv.FLOAT32
             elif bsz == 8:
@@ -513,9 +512,8 @@ def parse_spv_inputs(spv: bytes):
             allowed_types[token(idx + 1)] = (to_write, token(idx + 2))
 
         idx += args
-    ##################
 
-    # == Assembly types == #
+    # Assembly types
     # Some types of variables have pointers to other types of variables used in them.
     # So we use endless research to identify complete types of variables.
     def assembly(type_id):
@@ -525,7 +523,7 @@ def parse_spv_inputs(spv: bytes):
             allowed_types[type_id] = (add_typ | typ, -1)
         return typ
 
-    for type_id, config in allowed_types.items():
+    for type_id in allowed_types.keys():
         assembly(type_id)
 
     for ids, pointer_type_id in pointer_variable.items():
@@ -533,14 +531,14 @@ def parse_spv_inputs(spv: bytes):
             extracted_types[ids] = allowed_types[pointer_allowed_types[pointer_type_id]][0]
         except KeyError:
             pass
-    ###############
 
-    # == Making a whole list == #
-    # exrtacted_general_ids: List[int] = [] # id, id, id ...
-    exrtacted_general_ids: List[int] = list( # get all identifiers for variables
-        set(extracted_location.keys()) | set(extracted_types.keys()) | \
-        set(extracted_storage_class_id.keys()) | set(extracted_names.keys()))
-    # exrtacted_general_ids.sort()  # if needed for sorting locations
+    # Making a whole list
+    exrtacted_general_ids = sorted(set(
+        *extracted_location.keys(),
+        *extracted_types.keys(),
+        *extracted_storage_class_id.keys(),
+        *extracted_names.keys(),
+    ))
 
     extracted_collected: Dict[int, Tuple[str, int, int, int]] = {}  # id : variable_info
     for ids in exrtacted_general_ids:
@@ -554,26 +552,20 @@ def parse_spv_inputs(spv: bytes):
             typ = extracted_types[ids]
         if ids in extracted_location:
             location = extracted_location[ids]
-        extracted_collected[ids]=(name, cls, typ, location)
-    ##################
+        extracted_collected[ids] = (name, cls, typ, location)
 
-    # == Conversion to the moderngl type == #
+    # Conversion to the moderngl type
     for ids, item in extracted_collected.items():
-        if item[2] != -1:
-            if item[2] not in TRANSLATION_TABLE_SPIRV_GLSL:
-                raise RuntimeError(f"Could not find the encoding of the variable type \"{item[2]}\".")
+        if item[2] == -1 or item[2] not in TRANSLATION_TABLE_SPIRV_GLSL:
+            continue
 
-            extracted_collected[ids] = \
-                (item[0], item[1], TRANSLATION_TABLE_SPIRV_GLSL[item[2]], item[3])
-    ##################
+        extracted_collected[ids] = (item[0], item[1], TRANSLATION_TABLE_SPIRV_GLSL[item[2]], item[3])
 
-    # == Cropping the data to the required output == #
-    result:Dict[int, Tuple[int, int, int, int, bool, str]]  = {}
-    for key, item in extracted_collected.items():
+    # Cropping the data to the required output
+    result: Dict[int, Tuple[int, int, int, int, bool, str]]  = {}
+    for item in extracted_collected.values():
         if item[1] == 1 and item[3] != -1:
-            result[item[3]] = ATTRIBUTE_LOOKUP_TABLE.get(item[2],
-                                            (1, 0, 1, 1, False, '?'))
-    #########################
+            result[item[3]] = ATTRIBUTE_LOOKUP_TABLE.get(item[2], (1, 0, 1, 1, False, '?'))
 
     return result
 
