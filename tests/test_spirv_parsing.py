@@ -31,11 +31,6 @@ def test_spirv_parsing():
     
     result = parse_spv_inputs(raw)
     
-    """
-    for location, attr_info in result.items():
-        print(f'Location: {location}, AttributeInfo: {attr_info}')
-    """
-    
     must_be = [(0, ATTRIBUTE_LOOKUP_TABLE[0x8b51]), (1, ATTRIBUTE_LOOKUP_TABLE[0x8b66])]
     output = True
     for x in result.items():
