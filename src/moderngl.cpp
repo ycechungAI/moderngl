@@ -3357,6 +3357,8 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
 
     PyObject * subroutine_uniforms_lst = PyTuple_New(num_subroutine_uniforms);
     PyObject * members_dict = PyDict_New();
+    PyObject * attribute_locations = PyDict_New();
+    PyObject * attribute_types = PyDict_New();
 
     for (int i = 0; i < num_attributes; ++i) {
         int type = 0;
@@ -3365,17 +3367,20 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
         char name[256];
 
         gl.GetActiveAttrib(program->program_obj, i, 256, &name_len, &array_length, (GLenum *)&type, name);
-        int location = gl.GetAttribLocation(program->program_obj, name);
+        PyObject * location = PyLong_FromLong(gl.GetAttribLocation(program->program_obj, name));
 
         clean_glsl_name(name, name_len);
 
         PyObject * item = PyObject_CallMethod(
-            helper, "make_attribute", "(siiii)",
+            helper, "make_attribute", "(siiOi)",
             name, type, program->program_obj, location, array_length
         );
 
         PyDict_SetItemString(members_dict, name, item);
+        PyDict_SetItemString(attribute_locations, name, location);
+        PyDict_SetItem(attribute_types, location, item);
         Py_DECREF(item);
+        Py_DECREF(location);
     }
 
     for (int i = 0; i < num_varyings; ++i) {
@@ -3496,9 +3501,11 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
     }
     PyTuple_SET_ITEM(geom_info, 2, PyLong_FromLong(program->geometry_vertices));
 
+    PyObject * members_and_attributes = Py_BuildValue("(NNN)", members_dict, attribute_locations, attribute_types);
+
     PyObject * result = PyTuple_New(5);
     PyTuple_SET_ITEM(result, 0, (PyObject *)program);
-    PyTuple_SET_ITEM(result, 1, members_dict);
+    PyTuple_SET_ITEM(result, 1, members_and_attributes);
     PyTuple_SET_ITEM(result, 2, subroutine_uniforms_lst);
     PyTuple_SET_ITEM(result, 3, geom_info);
     PyTuple_SET_ITEM(result, 4, PyLong_FromLong(program->program_obj));

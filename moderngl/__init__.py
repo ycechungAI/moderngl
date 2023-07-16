@@ -424,6 +424,8 @@ class Program:
         self._geom = (None, None, None)
         self._glo = None
         self._is_transform = None
+        self._attribute_locations = None
+        self._attribute_types = None
         self.ctx = None
         self.extra = None
         raise TypeError()
@@ -1915,10 +1917,11 @@ class Context:
         skip_errors: bool = False,
         mode: Optional[int] = None,
     ) -> 'VertexArray':
-        members = program._members
+        locations = program._attribute_locations
+        types = program._attribute_types
         index_buffer_mglo = None if index_buffer is None else index_buffer.mglo
         mgl_content = tuple(
-            (a.mglo, b) + tuple(members.get(x) for x in c)
+            (a.mglo, b) + tuple(types[x] if type(x) is int else types[locations[x]] for x in c)
             for a, b, *c in content
         )
 
@@ -1980,10 +1983,11 @@ class Context:
             fragment_outputs = {}
 
         res = Program.__new__(Program)
-        res.mglo, res._members, res._subroutines, res._geom, res._glo = self.mglo.program(
+        res.mglo, _members, res._subroutines, res._geom, res._glo = self.mglo.program(
             vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader,
             varyings, fragment_outputs, varyings_capture_mode == 'interleaved'
         )
+        res._members, res._attribute_locations, res._attribute_types = _members
 
         res._is_transform = fragment_shader is None
         res.ctx = self
@@ -2284,4 +2288,6 @@ def detect_format(
         else:
             raise ValueError("invalid format mode: {0}".format(mode))
 
-    return ' '.join('%d%s' % fmt(program[a]) for a in attributes)
+    locations = program._attribute_locations
+    types = program._attribute_types
+    return ' '.join('%d%s' % fmt(types[x] if type(x) is int else types[locations[x]]) for x in attributes)
