@@ -424,15 +424,11 @@ TRANSLATION_TABLE_SPIRV_GLSL = {  # spv_type : gl_type
 
 
 def parse_spv_inputs(spv: bytes):
+    # SPIR-V parser
+    
     token = lambda i: struct.unpack('I', spv[i * 4 : i * 4 + 4])[0]
-    # spv = struct.unpack(str(len(raw)//4)+'I', spv)
 
     assert token(0) == 0x07230203
-    """
-    print('version', hex(token(1)))
-    print('generator', hex(token(2)))
-    print('bound', token(3))
-    """
     
     idx = 5
 
@@ -454,23 +450,7 @@ def parse_spv_inputs(spv: bytes):
         
         if opcode == 59: # OpVariable
             # We can extract if it is a vertex shader input or not
-            to_write = token(idx + 3)
-            
-            # There are too many of them to correctly identify in this section of code.
-            # Therefore, for now, I leave only their identifiers.
-            # https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#Storage_Class
-            #if to_write == 0:
-            #    to_write = 'uniform'
-            #elif to_write == 1:
-            #    to_write = 'input'
-            #elif to_write == 2:
-            #    to_write = 'uniform'
-            #elif to_write == 3:
-            #    to_write = 'output'
-            #else:
-            #    to_write = 'error'
-            
-            extracted_storage_class_id[token(idx + 2)] = to_write
+            extracted_storage_class_id[token(idx + 2)] = token(idx + 3)
             
             # Mapping pointer_type_id to id of user variables
             pointer_variable[token(idx + 2)] = token(idx + 1)
@@ -483,12 +463,6 @@ def parse_spv_inputs(spv: bytes):
             # Retrieving used (allowed) type_ids for pointer_type_ids
             pointer_allowed_types[token(idx + 1)] = token(idx + 3)
             # --------------------^pointer_id^^----^^^type_id^^==
-            #print(token(idx + 1), token(idx + 2), token(idx + 3))
-        
-        # if opcode == 19:  # OpTypeVoid
-        #     allowed_types[token(idx + 1)] = ('void', -1)
-        # if opcode == 20:  # OpTypeBool
-        #     allowed_types[token(idx + 1)] = ('bool', -1)
          
         if opcode == 21:  # OpTypeInt
             unsg, bsz = token(idx + 3), token(idx + 2)//8
@@ -538,24 +512,6 @@ def parse_spv_inputs(spv: bytes):
             
             allowed_types[token(idx + 1)] = (to_write, token(idx + 2))
         
-        # if opcode == 25:  # OpTypeImage
-        # if opcode == 26:  # OpTypeSampler
-        # if opcode == 27:  # OpTypeSampledImage
-        #if opcode == 28:  # OpTypeArray
-        #    allowed_types[token(idx + 1)] = (f'arr{token(idx + 3)}', token(idx + 2))
-            
-        # if opcode == 29:  # OpTypeRuntimeArray
-        # if opcode == 30:  # OpTypeStruct
-        # if opcode == 31:  # OpTypeOpaque
-        # if opcode == 33:  # OpTypeFunction
-        # if opcode == 34:  # OpTypeEvent
-        # if opcode == 35:  # OpTypeDeviceEvent
-        # if opcode == 36:  # OpTypeReserveId
-        # if opcode == 37:  # OpTypeQueue
-        # if opcode == 38:  # OpTypePipe
-        # if opcode == 39:  # OpTypeForwardPointer
-        
-        
         idx += args
     ##################
 
@@ -586,7 +542,6 @@ def parse_spv_inputs(spv: bytes):
         set(extracted_storage_class_id.keys()) | set(extracted_names.keys()))
     # exrtacted_general_ids.sort()  # if needed for sorting locations
     
-    
     extracted_collected: Dict[int, Tuple[str, int, int, int]] = {}  # id : variable_info
     for ids in exrtacted_general_ids:
         # to_add: Tuple[str, int, int, int] = ()  # name, class, type, location
@@ -611,22 +566,6 @@ def parse_spv_inputs(spv: bytes):
             extracted_collected[ids] = \
                 (item[0], item[1], TRANSLATION_TABLE_SPIRV_GLSL[item[2]], item[3])
     ##################
-
-
-    # == Getting Results == #
-    # Here you can trim the content to the required class.
-    """
-    print('== Input ==')
-    for key, item in extracted_collected.items():
-        # print(key, item)
-        if item[1] == 1 and item[3] != -1:  # Input storage class
-            print('---|', item[0], hex(item[2]), item[3])
-    print('\n== Output ==')
-    for key, item in extracted_collected.items():
-        if item[1] == 3 and item[3] != -1:  # Output storage class
-            print('---|', item[0], hex(item[2]), item[3])
-    """
-    #################
     
     # == Cropping the data to the required output == #
     result:Dict[int, Tuple[int, int, int, int, bool, str]]  = {}
