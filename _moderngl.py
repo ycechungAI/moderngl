@@ -535,12 +535,12 @@ def parse_spv_inputs(spv: bytes):
             pass
 
     # Making a whole list
-    exrtacted_general_ids = sorted(set(
+    exrtacted_general_ids = sorted(set([
         *extracted_location.keys(),
         *extracted_types.keys(),
         *extracted_storage_class_id.keys(),
         *extracted_names.keys(),
-    ))
+    ]))
 
     extracted_collected: Dict[int, Tuple[str, int, int, int]] = {}  # id : variable_info
     for ids in exrtacted_general_ids:
