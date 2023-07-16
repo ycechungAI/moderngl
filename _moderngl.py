@@ -1,5 +1,5 @@
 import struct
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Tuple
 
 
 class Attribute:
@@ -589,16 +589,17 @@ def parse_spv_inputs(spv: bytes):
     
     extracted_collected: Dict[int, Tuple[str, int, int, int]] = {}  # id : variable_info
     for ids in exrtacted_general_ids:
-        to_add = ['', -1, -1, -1]  # name, class, type, location
+        # to_add: Tuple[str, int, int, int] = ()  # name, class, type, location
+        name, cls, typ, location = '', -1, -1, -1
         if ids in extracted_names:
-            to_add[0] = extracted_names[ids]
+            name = extracted_names[ids]
         if ids in extracted_storage_class_id:
-            to_add[1] = extracted_storage_class_id[ids]
+            cls = extracted_storage_class_id[ids]
         if ids in extracted_types:
-            to_add[2] = extracted_types[ids]
+            typ = extracted_types[ids]
         if ids in extracted_location:
-            to_add[3] = extracted_location[ids]
-        extracted_collected[ids]=to_add
+            location = extracted_location[ids]
+        extracted_collected[ids]=(name, cls, typ, location)
     ##################
 
     # == Conversion to the moderngl type == #
@@ -606,7 +607,9 @@ def parse_spv_inputs(spv: bytes):
         if item[2] != -1:
             if item[2] not in TRANSLATION_TABLE_SPIRV_GLSL:
                 raise RuntimeError(f"Could not find the encoding of the variable type \"{item['type']}\".")
-            item[2] = TRANSLATION_TABLE_SPIRV_GLSL[item[2]]
+            
+            extracted_collected[ids] = \
+                (item[0], item[1], TRANSLATION_TABLE_SPIRV_GLSL[item[2]], item[3])
     ##################
 
 
