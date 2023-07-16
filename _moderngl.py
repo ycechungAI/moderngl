@@ -1,5 +1,5 @@
 import struct
-from typing import Any
+from typing import Any, Dict
 
 
 class Attribute:
@@ -386,7 +386,7 @@ def parse_spv_inputs(raw_spv: bytes):
         args, opcode = spv[idx] >> 16, spv[idx] & 0xffff
         if opcode == 5: # OpName
             # We can extract the name of some ids
-            extracted_names[spv[idx + 1]] = spv[idx + 2 : idx + args].tobytes().decode()
+            extracted_names[spv[idx + 1]] = raw_spv[idx*4 + 2*4 : idx*4 + args*4].decode()
         
         if opcode == 59: # OpVariable
             # We can extract if it is a vertex shader input or not
@@ -458,7 +458,7 @@ def parse_spv_inputs(raw_spv: bytes):
 
     extracted_collected = {}
     for ids in exrtacted_general_ids:
-        to_add = {'name':'', 'class':-1, 'type':-1, 'location':-1}
+        to_add = {'name':'', 'class':-1, 'type':'', 'location':-1}
         if ids in extracted_names:
             to_add['name'] = extracted_names[ids]
         if ids in extracted_storage_class_id:
@@ -509,7 +509,7 @@ def parse_spv_inputs(raw_spv: bytes):
     }
 
     for ids, item in extracted_collected.items():
-        if item['type'] is not None:
+        if item['type'] != '':
             if str(item['type']) not in mgl_attr_table:
                 raise RuntimeError(f"Could not find the encoding of the variable type \"{item['type']}\".")
             item['type'] = mgl_attr_table[item['type']]
