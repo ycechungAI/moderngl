@@ -1,5 +1,5 @@
 import struct
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
 
 class Attribute:
