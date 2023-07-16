@@ -193,40 +193,40 @@ class Error(Exception):
 
 
 ATTRIBUTE_LOOKUP_TABLE = {
-    0x1404: (1, 0x1404, 1, 1, False, 'i'),
-    0x8b53: (2, 0x1404, 1, 2, False, 'i'),
-    0x8b54: (3, 0x1404, 1, 3, False, 'i'),
-    0x8b55: (4, 0x1404, 1, 4, False, 'i'),
-    0x1405: (1, 0x1405, 1, 1, False, 'i'),
-    0x8dc6: (2, 0x1405, 1, 2, False, 'i'),
-    0x8dc7: (3, 0x1405, 1, 3, False, 'i'),
-    0x8dc8: (4, 0x1405, 1, 4, False, 'i'),
-    0x1406: (1, 0x1406, 1, 1, True, 'f'),
-    0x8b50: (2, 0x1406, 1, 2, True, 'f'),
-    0x8b51: (3, 0x1406, 1, 3, True, 'f'),
-    0x8b52: (4, 0x1406, 1, 4, True, 'f'),
-    0x140a: (1, 0x140a, 1, 1, False, 'd'),
-    0x8ffc: (2, 0x140a, 1, 2, False, 'd'),
-    0x8ffd: (3, 0x140a, 1, 3, False, 'd'),
-    0x8ffe: (4, 0x140a, 1, 4, False, 'd'),
-    0x8b5a: (4, 0x1406, 2, 2, True, 'f'),
-    0x8b65: (6, 0x1406, 2, 3, True, 'f'),
-    0x8b66: (8, 0x1406, 2, 4, True, 'f'),
-    0x8b67: (6, 0x1406, 3, 2, True, 'f'),
-    0x8b5b: (9, 0x1406, 3, 3, True, 'f'),
-    0x8b68: (12, 0x1406, 3, 4, True, 'f'),
-    0x8b69: (8, 0x1406, 4, 2, True, 'f'),
-    0x8b6a: (12, 0x1406, 4, 3, True, 'f'),
-    0x8b5c: (16, 0x1406, 4, 4, True, 'f'),
-    0x8f46: (4, 0x140a, 2, 2, False, 'd'),
-    0x8f49: (6, 0x140a, 2, 3, False, 'd'),
-    0x8f4a: (8, 0x140a, 2, 4, False, 'd'),
-    0x8f4b: (6, 0x140a, 3, 2, False, 'd'),
-    0x8f47: (9, 0x140a, 3, 3, False, 'd'),
-    0x8f4c: (12, 0x140a, 3, 4, False, 'd'),
-    0x8f4d: (8, 0x140a, 4, 2, False, 'd'),
-    0x8f4e: (12, 0x140a, 4, 3, False, 'd'),
-    0x8f48: (16, 0x140a, 4, 4, False, 'd'),
+    0x1404: (1, 0x1404, 1, 1, False, 'i'),  # GL_INT
+    0x8b53: (2, 0x1404, 1, 2, False, 'i'),  # GL_INT_VEC2
+    0x8b54: (3, 0x1404, 1, 3, False, 'i'),  # GL_INT_VEC3
+    0x8b55: (4, 0x1404, 1, 4, False, 'i'),  # GL_INT_VEC4
+    0x1405: (1, 0x1405, 1, 1, False, 'i'),  # GL_UNSIGNED_INT
+    0x8dc6: (2, 0x1405, 1, 2, False, 'i'),  # GL_UNSIGNED_INT_VEC2
+    0x8dc7: (3, 0x1405, 1, 3, False, 'i'),  # GL_UNSIGNED_INT_VEC3
+    0x8dc8: (4, 0x1405, 1, 4, False, 'i'),  # GL_UNSIGNED_INT_VEC4
+    0x1406: (1, 0x1406, 1, 1, True, 'f'),  # GL_FLOAT
+    0x8b50: (2, 0x1406, 1, 2, True, 'f'),  # GL_FLOAT_VEC2
+    0x8b51: (3, 0x1406, 1, 3, True, 'f'),  # GL_FLOAT_VEC3
+    0x8b52: (4, 0x1406, 1, 4, True, 'f'),  # GL_FLOAT_VEC4
+    0x140a: (1, 0x140a, 1, 1, False, 'd'),  # GL_DOUBLE
+    0x8ffc: (2, 0x140a, 1, 2, False, 'd'),  # GL_DOUBLE_VEC2
+    0x8ffd: (3, 0x140a, 1, 3, False, 'd'),  # GL_DOUBLE_VEC3
+    0x8ffe: (4, 0x140a, 1, 4, False, 'd'),  # GL_DOUBLE_VEC4
+    0x8b5a: (4, 0x1406, 2, 2, True, 'f'),  # GL_FLOAT_MAT2
+    0x8b65: (6, 0x1406, 2, 3, True, 'f'),  # GL_FLOAT_MAT2x3
+    0x8b66: (8, 0x1406, 2, 4, True, 'f'),  # GL_FLOAT_MAT2x4
+    0x8b67: (6, 0x1406, 3, 2, True, 'f'),  # GL_FLOAT_MAT3x2
+    0x8b5b: (9, 0x1406, 3, 3, True, 'f'),  # GL_FLOAT_MAT3
+    0x8b68: (12, 0x1406, 3, 4, True, 'f'),  # GL_FLOAT_MAT3x4
+    0x8b69: (8, 0x1406, 4, 2, True, 'f'),  # GL_FLOAT_MAT4x2
+    0x8b6a: (12, 0x1406, 4, 3, True, 'f'),  # GL_FLOAT_MAT4x3
+    0x8b5c: (16, 0x1406, 4, 4, True, 'f'),  # GL_FLOAT_MAT4
+    0x8f46: (4, 0x140a, 2, 2, False, 'd'),  # GL_DOUBLE_MAT2
+    0x8f49: (6, 0x140a, 2, 3, False, 'd'),  # GL_DOUBLE_MAT2x3
+    0x8f4a: (8, 0x140a, 2, 4, False, 'd'),  # GL_DOUBLE_MAT2x4
+    0x8f4b: (6, 0x140a, 3, 2, False, 'd'),  # GL_DOUBLE_MAT3x2
+    0x8f47: (9, 0x140a, 3, 3, False, 'd'),  # GL_DOUBLE_MAT3
+    0x8f4c: (12, 0x140a, 3, 4, False, 'd'),  # GL_DOUBLE_MAT3x4
+    0x8f4d: (8, 0x140a, 4, 2, False, 'd'),  # GL_DOUBLE_MAT4x2
+    0x8f4e: (12, 0x140a, 4, 3, False, 'd'),  # GL_DOUBLE_MAT4x3
+    0x8f48: (16, 0x140a, 4, 4, False, 'd'),  # GL_DOUBLE_MAT4
 }
 
 UNIFORM_LOOKUP_TABLE = {
