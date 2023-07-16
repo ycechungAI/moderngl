@@ -193,105 +193,105 @@ class Error(Exception):
 
 
 ATTRIBUTE_LOOKUP_TABLE = {
-    0x1404: (1, 0x1404, 1, 1, False, 'i'),  # GL_INT
-    0x8b53: (2, 0x1404, 1, 2, False, 'i'),  # GL_INT_VEC2
-    0x8b54: (3, 0x1404, 1, 3, False, 'i'),  # GL_INT_VEC3
-    0x8b55: (4, 0x1404, 1, 4, False, 'i'),  # GL_INT_VEC4
-    0x1405: (1, 0x1405, 1, 1, False, 'i'),  # GL_UNSIGNED_INT
-    0x8dc6: (2, 0x1405, 1, 2, False, 'i'),  # GL_UNSIGNED_INT_VEC2
-    0x8dc7: (3, 0x1405, 1, 3, False, 'i'),  # GL_UNSIGNED_INT_VEC3
-    0x8dc8: (4, 0x1405, 1, 4, False, 'i'),  # GL_UNSIGNED_INT_VEC4
-    0x1406: (1, 0x1406, 1, 1, True, 'f'),  # GL_FLOAT
-    0x8b50: (2, 0x1406, 1, 2, True, 'f'),  # GL_FLOAT_VEC2
-    0x8b51: (3, 0x1406, 1, 3, True, 'f'),  # GL_FLOAT_VEC3
-    0x8b52: (4, 0x1406, 1, 4, True, 'f'),  # GL_FLOAT_VEC4
-    0x140a: (1, 0x140a, 1, 1, False, 'd'),  # GL_DOUBLE
-    0x8ffc: (2, 0x140a, 1, 2, False, 'd'),  # GL_DOUBLE_VEC2
-    0x8ffd: (3, 0x140a, 1, 3, False, 'd'),  # GL_DOUBLE_VEC3
-    0x8ffe: (4, 0x140a, 1, 4, False, 'd'),  # GL_DOUBLE_VEC4
-    0x8b5a: (4, 0x1406, 2, 2, True, 'f'),  # GL_FLOAT_MAT2
-    0x8b65: (6, 0x1406, 2, 3, True, 'f'),  # GL_FLOAT_MAT2x3
-    0x8b66: (8, 0x1406, 2, 4, True, 'f'),  # GL_FLOAT_MAT2x4
-    0x8b67: (6, 0x1406, 3, 2, True, 'f'),  # GL_FLOAT_MAT3x2
-    0x8b5b: (9, 0x1406, 3, 3, True, 'f'),  # GL_FLOAT_MAT3
-    0x8b68: (12, 0x1406, 3, 4, True, 'f'),  # GL_FLOAT_MAT3x4
-    0x8b69: (8, 0x1406, 4, 2, True, 'f'),  # GL_FLOAT_MAT4x2
-    0x8b6a: (12, 0x1406, 4, 3, True, 'f'),  # GL_FLOAT_MAT4x3
-    0x8b5c: (16, 0x1406, 4, 4, True, 'f'),  # GL_FLOAT_MAT4
-    0x8f46: (4, 0x140a, 2, 2, False, 'd'),  # GL_DOUBLE_MAT2
-    0x8f49: (6, 0x140a, 2, 3, False, 'd'),  # GL_DOUBLE_MAT2x3
-    0x8f4a: (8, 0x140a, 2, 4, False, 'd'),  # GL_DOUBLE_MAT2x4
-    0x8f4b: (6, 0x140a, 3, 2, False, 'd'),  # GL_DOUBLE_MAT3x2
-    0x8f47: (9, 0x140a, 3, 3, False, 'd'),  # GL_DOUBLE_MAT3
-    0x8f4c: (12, 0x140a, 3, 4, False, 'd'),  # GL_DOUBLE_MAT3x4
-    0x8f4d: (8, 0x140a, 4, 2, False, 'd'),  # GL_DOUBLE_MAT4x2
-    0x8f4e: (12, 0x140a, 4, 3, False, 'd'),  # GL_DOUBLE_MAT4x3
-    0x8f48: (16, 0x140a, 4, 4, False, 'd'),  # GL_DOUBLE_MAT4
+    0x1404: (1, 0x1404, 1, 1, False, 'i'),
+    0x8b53: (2, 0x1404, 1, 2, False, 'i'),
+    0x8b54: (3, 0x1404, 1, 3, False, 'i'),
+    0x8b55: (4, 0x1404, 1, 4, False, 'i'),
+    0x1405: (1, 0x1405, 1, 1, False, 'i'),
+    0x8dc6: (2, 0x1405, 1, 2, False, 'i'),
+    0x8dc7: (3, 0x1405, 1, 3, False, 'i'),
+    0x8dc8: (4, 0x1405, 1, 4, False, 'i'),
+    0x1406: (1, 0x1406, 1, 1, True, 'f'),
+    0x8b50: (2, 0x1406, 1, 2, True, 'f'),
+    0x8b51: (3, 0x1406, 1, 3, True, 'f'),
+    0x8b52: (4, 0x1406, 1, 4, True, 'f'),
+    0x140a: (1, 0x140a, 1, 1, False, 'd'),
+    0x8ffc: (2, 0x140a, 1, 2, False, 'd'),
+    0x8ffd: (3, 0x140a, 1, 3, False, 'd'),
+    0x8ffe: (4, 0x140a, 1, 4, False, 'd'),
+    0x8b5a: (4, 0x1406, 2, 2, True, 'f'),
+    0x8b65: (6, 0x1406, 2, 3, True, 'f'),
+    0x8b66: (8, 0x1406, 2, 4, True, 'f'),
+    0x8b67: (6, 0x1406, 3, 2, True, 'f'),
+    0x8b5b: (9, 0x1406, 3, 3, True, 'f'),
+    0x8b68: (12, 0x1406, 3, 4, True, 'f'),
+    0x8b69: (8, 0x1406, 4, 2, True, 'f'),
+    0x8b6a: (12, 0x1406, 4, 3, True, 'f'),
+    0x8b5c: (16, 0x1406, 4, 4, True, 'f'),
+    0x8f46: (4, 0x140a, 2, 2, False, 'd'),
+    0x8f49: (6, 0x140a, 2, 3, False, 'd'),
+    0x8f4a: (8, 0x140a, 2, 4, False, 'd'),
+    0x8f4b: (6, 0x140a, 3, 2, False, 'd'),
+    0x8f47: (9, 0x140a, 3, 3, False, 'd'),
+    0x8f4c: (12, 0x140a, 3, 4, False, 'd'),
+    0x8f4d: (8, 0x140a, 4, 2, False, 'd'),
+    0x8f4e: (12, 0x140a, 4, 3, False, 'd'),
+    0x8f48: (16, 0x140a, 4, 4, False, 'd'),
 }
 
 UNIFORM_LOOKUP_TABLE = {
-    0x8B56: (False, 1, 4, '1i'),  # GL_BOOL
-    0x8B57: (False, 2, 8, '2i'),  # GL_BOOL_VEC2
-    0x8B58: (False, 3, 12, '3i'),  # GL_BOOL_VEC3
-    0x8B59: (False, 4, 16, '4i'),  # GL_BOOL_VEC4
-    0x1404: (False, 1, 4, '1i'),  # GL_INT
-    0x8B53: (False, 2, 8, '2i'),  # GL_INT_VEC2
-    0x8B54: (False, 3, 12, '3i'),  # GL_INT_VEC3
-    0x8B55: (False, 4, 16, '4i'),  # GL_INT_VEC4
-    0x1405: (False, 1, 4, '1I'),  # GL_UNSIGNED_INT
-    0x8DC6: (False, 2, 8, '2I'),  # GL_UNSIGNED_INT_VEC2
-    0x8DC7: (False, 3, 12, '3I'),  # GL_UNSIGNED_INT_VEC3
-    0x8DC8: (False, 4, 16, '4I'),  # GL_UNSIGNED_INT_VEC4
-    0x1406: (False, 1, 4, '1f'),  # GL_FLOAT
-    0x8B50: (False, 2, 8, '2f'),  # GL_FLOAT_VEC2
-    0x8B51: (False, 3, 12, '3f'),  # GL_FLOAT_VEC3
-    0x8B52: (False, 4, 16, '4f'),  # GL_FLOAT_VEC4
-    0x140A: (False, 1, 8, '1d'),  # GL_DOUBLE
-    0x8FFC: (False, 2, 16, '2d'),  # GL_DOUBLE_VEC2
-    0x8FFD: (False, 3, 24, '3d'),  # GL_DOUBLE_VEC3
-    0x8FFE: (False, 4, 32, '4d'),  # GL_DOUBLE_VEC4
-    0x8B5D: (False, 1, 4, '1i'),  # GL_SAMPLER_1D
-    0x8DC0: (False, 1, 4, '1i'),  # GL_SAMPLER_1D_ARRAY
-    0x8DC9: (False, 1, 4, '1i'),  # GL_INT_SAMPLER_1D
-    0x8DCE: (False, 1, 4, '1i'),  # GL_INT_SAMPLER_1D_ARRAY
-    0x8B5E: (False, 1, 4, '1i'),  # GL_SAMPLER_2D
-    0x8DCA: (False, 1, 4, '1i'),  # GL_INT_SAMPLER_2D
-    0x8DD2: (False, 1, 4, '1i'),  # GL_UNSIGNED_INT_SAMPLER_2D
-    0x8DC1: (False, 1, 4, '1i'),  # GL_SAMPLER_2D_ARRAY
-    0x8DCF: (False, 1, 4, '1i'),  # GL_INT_SAMPLER_2D_ARRAY
-    0x8DD7: (False, 1, 4, '1i'),  # GL_UNSIGNED_INT_SAMPLER_2D_ARRAY
-    0x8B5F: (False, 1, 4, '1i'),  # GL_SAMPLER_3D
-    0x8DCB: (False, 1, 4, '1i'),  # GL_INT_SAMPLER_3D
-    0x8DD3: (False, 1, 4, '1i'),  # GL_UNSIGNED_INT_SAMPLER_3D
-    0x8B62: (False, 1, 4, '1i'),  # GL_SAMPLER_2D_SHADOW
-    0x9108: (False, 1, 4, '1i'),  # GL_SAMPLER_2D_MULTISAMPLE
-    0x9109: (False, 1, 4, '1i'),  # GL_INT_SAMPLER_2D_MULTISAMPLE
-    0x910A: (False, 1, 4, '1i'),  # GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE
-    0x910B: (False, 1, 4, '1i'),  # GL_SAMPLER_2D_MULTISAMPLE_ARRAY
-    0x910C: (False, 1, 4, '1i'),  # GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY
-    0x910D: (False, 1, 4, '1i'),  # GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY
-    0x8B60: (False, 1, 4, '1i'),  # GL_SAMPLER_CUBE
-    0x8DCC: (False, 1, 4, '1i'),  # GL_INT_SAMPLER_CUBE
-    0x8DD4: (False, 1, 4, '1i'),  # GL_UNSIGNED_INT_SAMPLER_CUBE
-    0x904D: (False, 1, 4, '1i'),  # GL_IMAGE_2D
-    0x8B5A: (True, 4, 16, '4f'),  # GL_FLOAT_MAT2
-    0x8B65: (True, 6, 24, '6f'),  # GL_FLOAT_MAT2x3
-    0x8B66: (True, 8, 32, '8f'),  # GL_FLOAT_MAT2x4
-    0x8B67: (True, 6, 24, '6f'),  # GL_FLOAT_MAT3x2
-    0x8B5B: (True, 9, 36, '9f'),  # GL_FLOAT_MAT3
-    0x8B68: (True, 12, 48, '12f'),  # GL_FLOAT_MAT3x4
-    0x8B69: (True, 8, 32, '8f'),  # GL_FLOAT_MAT4x2
-    0x8B6A: (True, 12, 48, '12f'),  # GL_FLOAT_MAT4x3
-    0x8B5C: (True, 16, 64, '16f'),  # GL_FLOAT_MAT4
-    0x8F46: (True, 4, 32, '4d'),  # GL_DOUBLE_MAT2
-    0x8F49: (True, 6, 48, '6d'),  # GL_DOUBLE_MAT2x3
-    0x8F4A: (True, 8, 64, '8d'),  # GL_DOUBLE_MAT2x4
-    0x8F4B: (True, 6, 48, '6d'),  # GL_DOUBLE_MAT3x2
-    0x8F47: (True, 9, 72, '9d'),  # GL_DOUBLE_MAT3
-    0x8F4C: (True, 12, 96, '12d'),  # GL_DOUBLE_MAT3x4
-    0x8F4D: (True, 8, 64, '8d'),  # GL_DOUBLE_MAT4x2
-    0x8F4E: (True, 12, 96, '12d'),  # GL_DOUBLE_MAT4x3
-    0x8F48: (True, 16, 128, '16d'),  # GL_DOUBLE_MAT4
+    0x8B56: (False, 1, 4, '1i'),
+    0x8B57: (False, 2, 8, '2i'),
+    0x8B58: (False, 3, 12, '3i'),
+    0x8B59: (False, 4, 16, '4i'),
+    0x1404: (False, 1, 4, '1i'),
+    0x8B53: (False, 2, 8, '2i'),
+    0x8B54: (False, 3, 12, '3i'),
+    0x8B55: (False, 4, 16, '4i'),
+    0x1405: (False, 1, 4, '1I'),
+    0x8DC6: (False, 2, 8, '2I'),
+    0x8DC7: (False, 3, 12, '3I'),
+    0x8DC8: (False, 4, 16, '4I'),
+    0x1406: (False, 1, 4, '1f'),
+    0x8B50: (False, 2, 8, '2f'),
+    0x8B51: (False, 3, 12, '3f'),
+    0x8B52: (False, 4, 16, '4f'),
+    0x140A: (False, 1, 8, '1d'),
+    0x8FFC: (False, 2, 16, '2d'),
+    0x8FFD: (False, 3, 24, '3d'),
+    0x8FFE: (False, 4, 32, '4d'),
+    0x8B5D: (False, 1, 4, '1i'),
+    0x8DC0: (False, 1, 4, '1i'),
+    0x8DC9: (False, 1, 4, '1i'),
+    0x8DCE: (False, 1, 4, '1i'),
+    0x8B5E: (False, 1, 4, '1i'),
+    0x8DCA: (False, 1, 4, '1i'),
+    0x8DD2: (False, 1, 4, '1i'),
+    0x8DC1: (False, 1, 4, '1i'),
+    0x8DCF: (False, 1, 4, '1i'),
+    0x8DD7: (False, 1, 4, '1i'),
+    0x8B5F: (False, 1, 4, '1i'),
+    0x8DCB: (False, 1, 4, '1i'),
+    0x8DD3: (False, 1, 4, '1i'),
+    0x8B62: (False, 1, 4, '1i'),
+    0x9108: (False, 1, 4, '1i'),
+    0x9109: (False, 1, 4, '1i'),
+    0x910A: (False, 1, 4, '1i'),
+    0x910B: (False, 1, 4, '1i'),
+    0x910C: (False, 1, 4, '1i'),
+    0x910D: (False, 1, 4, '1i'),
+    0x8B60: (False, 1, 4, '1i'),
+    0x8DCC: (False, 1, 4, '1i'),
+    0x8DD4: (False, 1, 4, '1i'),
+    0x904D: (False, 1, 4, '1i'),
+    0x8B5A: (True, 4, 16, '4f'),
+    0x8B65: (True, 6, 24, '6f'),
+    0x8B66: (True, 8, 32, '8f'),
+    0x8B67: (True, 6, 24, '6f'),
+    0x8B5B: (True, 9, 36, '9f'),
+    0x8B68: (True, 12, 48, '12f'),
+    0x8B69: (True, 8, 32, '8f'),
+    0x8B6A: (True, 12, 48, '12f'),
+    0x8B5C: (True, 16, 64, '16f'),
+    0x8F46: (True, 4, 32, '4d'),
+    0x8F49: (True, 6, 48, '6d'),
+    0x8F4A: (True, 8, 64, '8d'),
+    0x8F4B: (True, 6, 48, '6d'),
+    0x8F47: (True, 9, 72, '9d'),
+    0x8F4C: (True, 12, 96, '12d'),
+    0x8F4D: (True, 8, 64, '8d'),
+    0x8F4E: (True, 12, 96, '12d'),
+    0x8F48: (True, 16, 128, '16d'),
 }
 
 
@@ -385,41 +385,41 @@ class Spv:
     UNKNOWN = 1 << 30
 
 
-TRANSLATION_TABLE_SPIRV_GLSL = {  # spv_type : gl_type
-    Spv.INT32: 0x1404,  # GL_INT
-    Spv.INT32 | Spv.VEC2: 0x8b53,  # GL_INT_VEC2
-    Spv.INT32 | Spv.VEC3: 0x8b54,  # GL_INT_VEC3
-    Spv.INT32 | Spv.VEC4: 0x8b55,  # GL_INT_VEC4
-    Spv.UINT32: 0x1405,  # GL_UNSIGNED_INT
-    Spv.UINT32 | Spv.VEC2: 0x8dc6,  # GL_UNSIGNED_INT_VEC2
-    Spv.UINT32 | Spv.VEC3: 0x8dc7,  # GL_UNSIGNED_INT_VEC3
-    Spv.UINT32 | Spv.VEC4: 0x8dc8,  # GL_UNSIGNED_INT_VEC4
-    Spv.FLOAT32: 0x1406,  # GL_FLOAT
-    Spv.FLOAT32 | Spv.VEC2: 0x8b50,  # GL_FLOAT_VEC2
-    Spv.FLOAT32 | Spv.VEC3: 0x8b51,  # GL_FLOAT_VEC3
-    Spv.FLOAT32 | Spv.VEC4: 0x8b52,  # GL_FLOAT_VEC4
-    Spv.FLOAT64: 0x140a,  # GL_DOUBLE
-    Spv.FLOAT64 | Spv.VEC2: 0x8ffc,  # GL_DOUBLE_VEC2
-    Spv.FLOAT64 | Spv.VEC3: 0x8ffd,  # GL_DOUBLE_VEC3
-    Spv.FLOAT64 | Spv.VEC4: 0x8ffe,  # GL_DOUBLE_VEC4
-    Spv.FLOAT32 | Spv.VEC2 | Spv.MAT2: 0x8b5a,  # GL_FLOAT_MAT2
-    Spv.FLOAT32 | Spv.VEC3 | Spv.MAT2: 0x8b65,  # GL_FLOAT_MAT2x3
-    Spv.FLOAT32 | Spv.VEC4 | Spv.MAT2: 0x8b66,  # GL_FLOAT_MAT2x4
-    Spv.FLOAT32 | Spv.VEC2 | Spv.MAT3: 0x8b67,  # GL_FLOAT_MAT3x2
-    Spv.FLOAT32 | Spv.VEC3 | Spv.MAT3: 0x8b5b,  # GL_FLOAT_MAT3
-    Spv.FLOAT32 | Spv.VEC4 | Spv.MAT3: 0x8b68,  # GL_FLOAT_MAT3x4
-    Spv.FLOAT32 | Spv.VEC2 | Spv.MAT4: 0x8b69,  # GL_FLOAT_MAT4x2
-    Spv.FLOAT32 | Spv.VEC3 | Spv.MAT4: 0x8b6a,  # GL_FLOAT_MAT4x3
-    Spv.FLOAT32 | Spv.VEC4 | Spv.MAT4: 0x8b5c,  # GL_FLOAT_MAT4
-    Spv.FLOAT64 | Spv.VEC2 | Spv.MAT2: 0x8f46,  # GL_DOUBLE_MAT2
-    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT2: 0x8f49,  # GL_DOUBLE_MAT2x3
-    Spv.FLOAT64 | Spv.VEC4 | Spv.MAT2: 0x8f4a,  # GL_DOUBLE_MAT2x4
-    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT2: 0x8f4b,  # GL_DOUBLE_MAT3x2
-    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT3: 0x8f47,  # GL_DOUBLE_MAT3
-    Spv.FLOAT64 | Spv.VEC4 | Spv.MAT3: 0x8f4c,  # GL_DOUBLE_MAT3x4
-    Spv.FLOAT64 | Spv.VEC2 | Spv.MAT4: 0x8f4d,  # GL_DOUBLE_MAT4x2
-    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT4: 0x8f4e,  # GL_DOUBLE_MAT4x3
-    Spv.FLOAT64 | Spv.VEC4 | Spv.MAT4: 0x8f48,  # GL_DOUBLE_MAT4
+TRANSLATION_TABLE_SPIRV_GLSL = {
+    Spv.INT32: 0x1404,
+    Spv.INT32 | Spv.VEC2: 0x8b53,
+    Spv.INT32 | Spv.VEC3: 0x8b54,
+    Spv.INT32 | Spv.VEC4: 0x8b55,
+    Spv.UINT32: 0x1405,
+    Spv.UINT32 | Spv.VEC2: 0x8dc6,
+    Spv.UINT32 | Spv.VEC3: 0x8dc7,
+    Spv.UINT32 | Spv.VEC4: 0x8dc8,
+    Spv.FLOAT32: 0x1406,
+    Spv.FLOAT32 | Spv.VEC2: 0x8b50,
+    Spv.FLOAT32 | Spv.VEC3: 0x8b51,
+    Spv.FLOAT32 | Spv.VEC4: 0x8b52,
+    Spv.FLOAT64: 0x140a,
+    Spv.FLOAT64 | Spv.VEC2: 0x8ffc,
+    Spv.FLOAT64 | Spv.VEC3: 0x8ffd,
+    Spv.FLOAT64 | Spv.VEC4: 0x8ffe,
+    Spv.FLOAT32 | Spv.VEC2 | Spv.MAT2: 0x8b5a,
+    Spv.FLOAT32 | Spv.VEC3 | Spv.MAT2: 0x8b65,
+    Spv.FLOAT32 | Spv.VEC4 | Spv.MAT2: 0x8b66,
+    Spv.FLOAT32 | Spv.VEC2 | Spv.MAT3: 0x8b67,
+    Spv.FLOAT32 | Spv.VEC3 | Spv.MAT3: 0x8b5b,
+    Spv.FLOAT32 | Spv.VEC4 | Spv.MAT3: 0x8b68,
+    Spv.FLOAT32 | Spv.VEC2 | Spv.MAT4: 0x8b69,
+    Spv.FLOAT32 | Spv.VEC3 | Spv.MAT4: 0x8b6a,
+    Spv.FLOAT32 | Spv.VEC4 | Spv.MAT4: 0x8b5c,
+    Spv.FLOAT64 | Spv.VEC2 | Spv.MAT2: 0x8f46,
+    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT2: 0x8f49,
+    Spv.FLOAT64 | Spv.VEC4 | Spv.MAT2: 0x8f4a,
+    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT2: 0x8f4b,
+    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT3: 0x8f47,
+    Spv.FLOAT64 | Spv.VEC4 | Spv.MAT3: 0x8f4c,
+    Spv.FLOAT64 | Spv.VEC2 | Spv.MAT4: 0x8f4d,
+    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT4: 0x8f4e,
+    Spv.FLOAT64 | Spv.VEC4 | Spv.MAT4: 0x8f48,
 }
 
 
