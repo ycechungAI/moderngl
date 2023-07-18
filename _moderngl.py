@@ -564,12 +564,11 @@ def parse_spv_inputs(spv: bytes):
         extracted_collected[ids] = (item[0], item[1], TRANSLATION_TABLE_SPIRV_GLSL[item[2]], item[3])
 
     # Cropping the data to the required output
-    result: Dict[int, Tuple[int, int, int, int, bool, str]]  = {}
-    for item in extracted_collected.values():
-        if item[1] == 1 and item[3] != -1:
-            result[item[3]] = ATTRIBUTE_LOOKUP_TABLE.get(item[2], (1, 0, 1, 1, False, '?'))
-
-    return result
+    return {
+        location: gltype
+        for _, cls, gltype, location in extracted_collected.values()
+        if cls == 1 and location != -1
+    }
 
 
 class InvalidObject:

@@ -28,19 +28,22 @@ def test_spirv_parsing():
         6000000240000000f0000003d0004000700000027000000260000003e0003002100000027000000
         3e0003002c0000001b0000008500050006000000340000001b0000001b0000003e0003002f00000
         034000000fd00010038000100'''.replace('\n        ', ''))
-    
-    result = parse_spv_inputs(raw)
-    
+
+    result = {
+        location: ATTRIBUTE_LOOKUP_TABLE[gltype]
+        for location, gltype in parse_spv_inputs(raw).items()
+    }
+
     must_be = [(0, ATTRIBUTE_LOOKUP_TABLE[0x8b51]), (1, ATTRIBUTE_LOOKUP_TABLE[0x8b66])]
     output = True
     for x in result.items():
         if x not in must_be:
             output = False
             break
-    
+
     for x in must_be:
         if x not in result.items():
             output = False
             break
-    
+
     assert output
