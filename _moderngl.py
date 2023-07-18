@@ -529,13 +529,12 @@ def parse_spv_inputs(spv: bytes):
         assembly(type_id)
 
     for ids, pointer_type_id in pointer_variable.items():
-        try:
-            extracted_types[ids] = allowed_types[pointer_allowed_types[pointer_type_id]][0]
-        except KeyError:
-            pass
+        type_id = pointer_allowed_types[pointer_type_id]
+        if type_id in allowed_types:
+            extracted_types[ids] = allowed_types[type_id][0]
 
     # Making a whole list
-    exrtacted_general_ids = sorted(set([
+    exrtacted_general_ids: List[int] = sorted(set([
         *extracted_location.keys(),
         *extracted_types.keys(),
         *extracted_storage_class_id.keys(),
@@ -556,7 +555,7 @@ def parse_spv_inputs(spv: bytes):
             location = extracted_location[ids]
         extracted_collected[ids] = (name, cls, typ, location)
 
-    # Conversion to the moderngl type
+    # Conversion to the GLSL type
     for ids, item in extracted_collected.items():
         if item[2] == -1 or item[2] not in TRANSLATION_TABLE_SPIRV_GLSL:
             continue
