@@ -431,7 +431,7 @@ def parse_spv_inputs(spv: bytes):
     num_tokens = len(spv) // 4
 
     if token(0) != 0x07230203 or len(spv) % 4 != 0:
-        return None
+        raise ValueError('invalid spv')
 
     idx = 5
 
