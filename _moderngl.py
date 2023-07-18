@@ -449,7 +449,7 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
         if opcode == 5:  # OpName
             # We can extract the name of some ids
             name_start, name_end = (idx + 2) * 4, (idx + args) * 4
-            extracted_names[token(idx + 1)] = spv[name_start:name_end].decode()
+            extracted_names[token(idx + 1)] = spv[name_start:name_end].decode().replace('\x00', '')
 
         if opcode == 59:  # OpVariable
             # We can extract if it is a vertex shader input or not
