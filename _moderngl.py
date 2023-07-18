@@ -426,7 +426,8 @@ TRANSLATION_TABLE_SPIRV_GLSL = {
 
 
 def parse_spv_inputs(spv: bytes):
-    token = lambda i: struct.unpack('I', spv[i * 4 : i * 4 + 4])[0]
+    ui32 = struct.Struct('I')
+    token = lambda i: ui32.unpack(spv[i * 4 : i * 4 + 4])[0]
     num_tokens = len(spv) // 4
 
     if token(0) != 0x07230203 or len(spv) % 4 != 0:
