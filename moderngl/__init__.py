@@ -3,6 +3,7 @@ from collections import deque
 from typing import Any, Deque, Dict, Generator, List, Optional, Set, Tuple, Union
 
 from _moderngl import Attribute, Error, InvalidObject, Subroutine, Uniform, UniformBlock, Varying, StorageBlock  # noqa
+from _moderngl import parse_spv_inputs as _parse_spv
 
 try:
     from moderngl import mgl  # type: ignore
@@ -1988,6 +1989,9 @@ class Context:
             varyings, fragment_outputs, varyings_capture_mode == 'interleaved'
         )
         res._members, res._attribute_locations, res._attribute_types = _members
+
+        if isinstance(vertex_shader, bytes) and int.from_bytes(vertex_shader[:4], 'little') == 0x07230203:
+            res._attribute_types = _parse_spv(res._glo, vertex_shader)
 
         res._is_transform = fragment_shader is None
         res.ctx = self

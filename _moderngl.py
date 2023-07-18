@@ -425,7 +425,7 @@ TRANSLATION_TABLE_SPIRV_GLSL = {
 }
 
 
-def parse_spv_inputs(spv: bytes):
+def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
     ui32 = struct.Struct('I')
     token = lambda i: ui32.unpack(spv[i * 4 : i * 4 + 4])[0]
     num_tokens = len(spv) // 4
@@ -565,8 +565,8 @@ def parse_spv_inputs(spv: bytes):
 
     # Cropping the data to the required output
     return {
-        location: gltype
-        for _, cls, gltype, location in extracted_collected.values()
+        location: make_attribute(name, gltype, program, location, 1)
+        for name, cls, gltype, location in extracted_collected.values()
         if cls == 1 and location != -1
     }
 
