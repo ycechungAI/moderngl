@@ -1969,6 +1969,7 @@ class Context:
         tess_evaluation_shader: Optional[str] = None,
         varyings: Tuple[str, ...] = (),
         fragment_outputs: Optional[Dict[str, int]] = None,
+        attributes: Optional[List[str]] = None,
         varyings_capture_mode: str = 'interleaved',
     ) -> 'Program':
 
@@ -1992,6 +1993,13 @@ class Context:
 
         if isinstance(vertex_shader, bytes) and int.from_bytes(vertex_shader[:4], 'little') == 0x07230203:
             res._attribute_types = _parse_spv(res._glo, vertex_shader)
+            for info in res._attribute_types.values():
+                res._attribute_locations[info.name] = info.location
+
+        if attributes is not None:
+            res._attribute_locations = {}
+            for i, name in enumerate(attributes):
+                res._attribute_locations[name] = i
 
         res._is_transform = fragment_shader is None
         res.ctx = self
