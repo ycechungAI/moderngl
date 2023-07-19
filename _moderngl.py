@@ -383,7 +383,8 @@ class Spv:
     MAT2 = 1 << 20
     MAT3 = 1 << 21
     MAT4 = 1 << 22
-
+    
+    NONE = 0
     UNKNOWN = 1 << 30
 
 
@@ -437,12 +438,13 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
 
     extracted_names: Dict[int, str] = {}  # id : name
     extracted_storage_class_id: Dict[int, int] = {}  # id : storage_class_id
+    extracted_constants: Dict[int, Tuple[int, bytes]] = {}  # const_id : (type_id, content)
 
     pointer_variable: Dict[int, int] = {}  # id : pointer_type_id
     pointer_allowed_types: Dict[int, int] = {}  # pointer_type_id : type_id
-    allowed_types: Dict[int, Tuple[int, int]] = {}  # type_id : (spv_type, type_id)
+    allowed_types: Dict[int, Tuple[int, int, int, int]] = {}  # type_id : (spv_type, type_id, arr_const_id, arr_length)
 
-    extracted_types: Dict[int, int] = {}  # id : spv_type
+    extracted_types: Dict[int, Tuple[int, int]] = {}  # id : (spv_type, arr_length)
     extracted_location: Dict[int, int] = {}  # id : location
     while idx < num_tokens:
         args, opcode = token(idx) >> 16, token(idx) & 0xffff
@@ -479,7 +481,7 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
                     to_write = Spv.INT32
                 elif bsz == 8:
                     to_write = Spv.INT64
-            allowed_types[token(idx + 1)] = (to_write, -1)
+            allowed_types[token(idx + 1)] = (to_write, -1, -1, -1)
 
         if opcode == 22:  # OpTypeFloat
             to_write = Spv.UNKNOWN
@@ -488,7 +490,7 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
                 to_write = Spv.FLOAT32
             elif bsz == 8:
                 to_write = Spv.FLOAT64
-            allowed_types[token(idx + 1)] = (to_write, -1)
+            allowed_types[token(idx + 1)] = (to_write, -1, -1, -1)
 
         if opcode == 23:  # OpTypeVector
             to_write = Spv.UNKNOWN
@@ -500,7 +502,7 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
             elif vsz == 4:
                 to_write = Spv.VEC4
 
-            allowed_types[token(idx + 1)] = (to_write, token(idx + 2))
+            allowed_types[token(idx + 1)] = (to_write, token(idx + 2), -1, -1)
 
         if opcode == 24:  # OpTypeMatrix
             to_write = Spv.UNKNOWN
@@ -512,27 +514,61 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
             elif msz == 4:
                 to_write = Spv.MAT4
 
-            allowed_types[token(idx + 1)] = (to_write, token(idx + 2))
+            allowed_types[token(idx + 1)] = (to_write, token(idx + 2), -1, -1)
+
+        if opcode == 28:  # OpTypeArray
+            allowed_types[token(idx + 1)] = (Spv.NONE, token(idx + 2), token(idx + 3), -1)
+
+        if opcode == 43:  # OpConstant
+            # OpConstant is needed to extract the length of arrays
+            # However, it can be used for other purposes
+            content_start, content_end = (idx + 3) * 4, (idx + args) * 4
+            extracted_constants[token(idx+2)] = (token(idx+1),
+                spv[content_start:content_end])
 
         idx += args
 
     # Assembly types
     # Some types of variables have pointers to other types of variables used in them.
     # So we use endless research to identify complete types of variables.
+    def decode_constant(const_id):
+        type_id, content = extracted_constants[const_id]
+        typ, _ = assembly(type_id)
+        if typ == Spv.INT32:
+            return struct.unpack('i', content[:4])[0]
+        elif typ == Spv.INT64:
+            return struct.unpack('q', content[:8])[0]
+        elif typ == Spv.UINT32:
+            return struct.unpack('I', content[:4])[0]
+        elif typ == Spv.UINT64:
+            return struct.unpack('Q', content[:8])[0]
+        elif typ == Spv.FLOAT32:
+            return struct.unpack('f', content[:4])[0]
+        elif typ == Spv.FLOAT64:
+            return struct.unpack('d', content[:8])[0]
+        else:
+            return 0
+
     def assembly(type_id):
-        typ, thrw_typ = allowed_types[type_id]
+        typ, thrw_typ, arr_const_id, arr_length = allowed_types[type_id]
+        if arr_const_id != -1 and arr_length == -1:
+            arr_length = decode_constant(arr_const_id)
+
         if thrw_typ != -1:
-            add_typ = assembly(thrw_typ)
-            allowed_types[type_id] = (add_typ | typ, -1)
-        return typ
+            add_typ, multi_arr_length = assembly(thrw_typ)
+            typ = add_typ | typ
+            arr_length = arr_length * multi_arr_length
+        
+        allowed_types[type_id] = (typ, -1, -1, arr_length if arr_length > 0 else 1)
+
+        return typ, arr_length
 
     for type_id in allowed_types.keys():
         assembly(type_id)
-
     for ids, pointer_type_id in pointer_variable.items():
         type_id = pointer_allowed_types[pointer_type_id]
         if type_id in allowed_types:
-            extracted_types[ids] = allowed_types[type_id][0]
+            extracted_types[ids] = (allowed_types[type_id][0], allowed_types[type_id][3])
 
     # Making a whole list
     exrtacted_general_ids: List[int] = sorted(set([
@@ -542,32 +578,32 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
         *extracted_names.keys(),
     ]))
 
-    extracted_collected: Dict[int, Tuple[str, int, int, int]] = {}  # id : variable_info
+    extracted_collected: Dict[int, Tuple[str, int, int, int, int]] = {}  # id : variable_info
     for ids in exrtacted_general_ids:
-        # to_add: Tuple[str, int, int, int] = ()  # name, class, type, location
-        name, cls, typ, location = '', -1, -1, -1
+        # to_add: Tuple[str, int, int, int] = ()  # name, class, type, location, arr_length
+        name, cls, typ, location, arr_length = '', -1, -1, -1, -1
         if ids in extracted_names:
             name = extracted_names[ids]
         if ids in extracted_storage_class_id:
             cls = extracted_storage_class_id[ids]
         if ids in extracted_types:
-            typ = extracted_types[ids]
+            typ, arr_length = extracted_types[ids]
         if ids in extracted_location:
             location = extracted_location[ids]
-        extracted_collected[ids] = (name, cls, typ, location)
+        extracted_collected[ids] = (name, cls, typ, location, arr_length)
 
     # Conversion to the GLSL type
     for ids, item in extracted_collected.items():
         if item[2] == -1 or item[2] not in TRANSLATION_TABLE_SPIRV_GLSL:
             continue
 
-        extracted_collected[ids] = (item[0], item[1], TRANSLATION_TABLE_SPIRV_GLSL[item[2]], item[3])
+        extracted_collected[ids] = (item[0], item[1], TRANSLATION_TABLE_SPIRV_GLSL[item[2]], item[3], item[4])
 
     # Cropping the data to the required output
     return {
-        location: make_attribute(name, gltype, program, location, 1)
-        for name, cls, gltype, location in extracted_collected.values()
-        if cls == 1 and location != -1
+        location: make_attribute(name, gltype, program, location, arr_length)
+        for name, cls, gltype, location, arr_length in extracted_collected.values()
+        if cls == 1 and location != -1 and gltype != -1
     }
 
 
