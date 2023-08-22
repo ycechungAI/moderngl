@@ -1855,6 +1855,9 @@ class Context:
         }
     '''
 
+    includes: Dict[str, str]
+    '''Mapping used for include statements.'''
+
     mglo: Any
     '''Internal representation for debug purposes only.'''
 
