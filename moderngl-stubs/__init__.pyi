@@ -151,6 +151,15 @@ BLEND: Constant
 DEPTH_TEST: Constant
 '''Enable/disable depth testing'''
 
+DEPTH_CLAMP: Constant
+'''
+Enable/disable depth clamping
+Depth clamp is needed to disable clipping of fragments outside
+far/near limits of projection matrix.
+For example, this will allow you to draw between 0 and 1 in the Z (depth) coordinate,
+even if ``near`` is set to 0.5 in the projection matrix.
+'''
+
 CULL_FACE: Constant
 '''Enable/disable face culling'''
 
@@ -1135,6 +1144,15 @@ class Context:
 
     DEPTH_TEST: Constant
     '''Enable/disable depth testing'''
+    
+    DEPTH_CLAMP: Constant
+    '''
+    Enable/disable depth clamping
+    Depth clamp is needed to disable clipping of fragments outside
+    far/near limits of projection matrix.
+    For example, this will allow you to draw between 0 and 1 in the Z (depth) coordinate,
+    even if ``near`` is set to 0.5 in the projection matrix.
+    '''
 
     CULL_FACE: Constant
     '''Enable/disable face culling'''
@@ -1918,6 +1936,7 @@ class Context:
         - :py:data:`moderngl.NOTHING`
         - :py:data:`moderngl.BLEND`
         - :py:data:`moderngl.DEPTH_TEST`
+        - :py:data:`moderngl.DEPTH_CLAMP`
         - :py:data:`moderngl.CULL_FACE`
         - :py:data:`moderngl.RASTERIZER_DISCARD`
         - :py:data:`moderngl.PROGRAM_POINT_SIZE`

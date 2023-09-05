@@ -31,6 +31,7 @@ enum MGLEnableFlag {
     MGL_CULL_FACE = 4,
     MGL_RASTERIZER_DISCARD = 8,
     MGL_PROGRAM_POINT_SIZE = 16,
+    MGL_DEPTH_CLAMP = 32,
     MGL_INVALID = 0x40000000,
 };
 
@@ -4372,6 +4373,12 @@ PyObject * MGLScope_begin(MGLScope * self, PyObject * args) {
         gl.Disable(GL_DEPTH_TEST);
     }
 
+    if (flags & MGL_DEPTH_CLAMP) {
+        gl.Enable(GL_DEPTH_CLAMP);
+    } else {
+        gl.Disable(GL_DEPTH_CLAMP);
+    }
+
     if (flags & MGL_CULL_FACE) {
         gl.Enable(GL_CULL_FACE);
     } else {
@@ -4420,6 +4427,12 @@ PyObject * MGLScope_end(MGLScope * self, PyObject * args) {
         gl.Enable(GL_DEPTH_TEST);
     } else {
         gl.Disable(GL_DEPTH_TEST);
+    }
+
+    if (flags & MGL_DEPTH_CLAMP) {
+        gl.Enable(GL_DEPTH_CLAMP);
+    } else {
+        gl.Disable(GL_DEPTH_CLAMP);
     }
 
     if (flags & MGL_CULL_FACE) {
@@ -8341,6 +8354,12 @@ PyObject * MGLContext_enable_only(MGLContext * self, PyObject * args) {
         self->gl.Disable(GL_DEPTH_TEST);
     }
 
+    if (flags & MGL_DEPTH_CLAMP) {
+        self->gl.Enable(GL_DEPTH_CLAMP);
+    } else {
+        self->gl.Disable(GL_DEPTH_CLAMP);
+    }
+
     if (flags & MGL_CULL_FACE) {
         self->gl.Enable(GL_CULL_FACE);
     } else {
@@ -8385,6 +8404,10 @@ PyObject * MGLContext_enable(MGLContext * self, PyObject * args) {
         self->gl.Enable(GL_DEPTH_TEST);
     }
 
+    if (flags & MGL_DEPTH_CLAMP) {
+        self->gl.Enable(GL_DEPTH_CLAMP);
+    }
+
     if (flags & MGL_CULL_FACE) {
         self->gl.Enable(GL_CULL_FACE);
     }
@@ -8421,6 +8444,10 @@ PyObject * MGLContext_disable(MGLContext * self, PyObject * args) {
 
     if (flags & MGL_DEPTH_TEST) {
         self->gl.Disable(GL_DEPTH_TEST);
+    }
+    
+    if (flags & MGL_DEPTH_CLAMP) {
+        self->gl.Disable(GL_DEPTH_CLAMP);
     }
 
     if (flags & MGL_CULL_FACE) {
