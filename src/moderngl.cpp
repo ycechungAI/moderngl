@@ -31,7 +31,6 @@ enum MGLEnableFlag {
     MGL_CULL_FACE = 4,
     MGL_RASTERIZER_DISCARD = 8,
     MGL_PROGRAM_POINT_SIZE = 16,
-    MGL_DEPTH_CLAMP = 32,
     MGL_INVALID = 0x40000000,
 };
 
@@ -107,6 +106,7 @@ struct MGLContext {
     int front_face;
     int cull_face;
     int depth_func;
+    bool depth_clamp;
     int blend_func_src;
     int blend_func_dst;
     bool wireframe;
@@ -4373,12 +4373,6 @@ PyObject * MGLScope_begin(MGLScope * self, PyObject * args) {
         gl.Disable(GL_DEPTH_TEST);
     }
 
-    if (flags & MGL_DEPTH_CLAMP) {
-        gl.Enable(GL_DEPTH_CLAMP);
-    } else {
-        gl.Disable(GL_DEPTH_CLAMP);
-    }
-
     if (flags & MGL_CULL_FACE) {
         gl.Enable(GL_CULL_FACE);
     } else {
@@ -4427,12 +4421,6 @@ PyObject * MGLScope_end(MGLScope * self, PyObject * args) {
         gl.Enable(GL_DEPTH_TEST);
     } else {
         gl.Disable(GL_DEPTH_TEST);
-    }
-
-    if (flags & MGL_DEPTH_CLAMP) {
-        gl.Enable(GL_DEPTH_CLAMP);
-    } else {
-        gl.Disable(GL_DEPTH_CLAMP);
     }
 
     if (flags & MGL_CULL_FACE) {
@@ -8354,12 +8342,6 @@ PyObject * MGLContext_enable_only(MGLContext * self, PyObject * args) {
         self->gl.Disable(GL_DEPTH_TEST);
     }
 
-    if (flags & MGL_DEPTH_CLAMP) {
-        self->gl.Enable(GL_DEPTH_CLAMP);
-    } else {
-        self->gl.Disable(GL_DEPTH_CLAMP);
-    }
-
     if (flags & MGL_CULL_FACE) {
         self->gl.Enable(GL_CULL_FACE);
     } else {
@@ -8404,10 +8386,6 @@ PyObject * MGLContext_enable(MGLContext * self, PyObject * args) {
         self->gl.Enable(GL_DEPTH_TEST);
     }
 
-    if (flags & MGL_DEPTH_CLAMP) {
-        self->gl.Enable(GL_DEPTH_CLAMP);
-    }
-
     if (flags & MGL_CULL_FACE) {
         self->gl.Enable(GL_CULL_FACE);
     }
@@ -8444,10 +8422,6 @@ PyObject * MGLContext_disable(MGLContext * self, PyObject * args) {
 
     if (flags & MGL_DEPTH_TEST) {
         self->gl.Disable(GL_DEPTH_TEST);
-    }
-    
-    if (flags & MGL_DEPTH_CLAMP) {
-        self->gl.Disable(GL_DEPTH_CLAMP);
     }
 
     if (flags & MGL_CULL_FACE) {
@@ -9219,6 +9193,24 @@ int MGLContext_set_depth_func(MGLContext * self, PyObject * value) {
     return 0;
 }
 
+PyObject * MGLContext_get_depth_clamp(MGLContext * self) {
+    return PyBool_FromLong(self->depth_clamp);
+}
+
+int MGLContext_set_depth_clamp(MGLContext * self, PyObject * value) {
+    if (value == Py_True) {
+        self->depth_clamp = true;
+        self->gl.Enable(GL_DEPTH_CLAMP);
+        return 0;
+    }
+    else if (value == Py_False) {
+        self->depth_clamp = false;
+        self->gl.Disable(GL_DEPTH_CLAMP);
+        return 0;
+    }
+    return -1;
+}
+
 PyObject * MGLContext_get_multisample(MGLContext * self) {
     return PyBool_FromLong(self->multisample);
 }
@@ -9918,6 +9910,7 @@ PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
     ctx->front_face = GL_CCW;
 
     ctx->depth_func = GL_LEQUAL;
+    ctx->depth_clamp = false;
     ctx->blend_func_src = GL_SRC_ALPHA;
     ctx->blend_func_dst = GL_ONE_MINUS_SRC_ALPHA;
 
@@ -10028,6 +10021,7 @@ PyGetSetDef MGLContext_getset[] = {
     {(char *)"point_size", (getter)MGLContext_get_point_size, (setter)MGLContext_set_point_size},
 
     {(char *)"depth_func", (getter)MGLContext_get_depth_func, (setter)MGLContext_set_depth_func},
+    {(char *)"depth_clamp", (getter)MGLContext_get_depth_clamp, (setter)MGLContext_set_depth_clamp},
     {(char *)"blend_func", (getter)MGLContext_get_blend_func, (setter)MGLContext_set_blend_func},
     {(char *)"blend_equation", (getter)MGLContext_get_blend_equation, (setter)MGLContext_set_blend_equation},
     {(char *)"multisample", (getter)MGLContext_get_multisample, (setter)MGLContext_set_multisample},

@@ -20,7 +20,6 @@ DEPTH_TEST = 2
 CULL_FACE = 4
 RASTERIZER_DISCARD = 8
 PROGRAM_POINT_SIZE = 16
-DEPTH_CLAMP = 32
 
 # Primitive modes
 
@@ -1391,7 +1390,6 @@ class Context:
     CULL_FACE = 4
     RASTERIZER_DISCARD = 8
     PROGRAM_POINT_SIZE = 16
-    DEPTH_CLAMP = 32
 
     # Primitive modes
 
@@ -1549,6 +1547,14 @@ class Context:
             self.mglo.blend_equation = tuple([value])
         else:
             self.mglo.blend_equation = tuple(value)
+
+    @property
+    def depth_clamp(self) -> bool:
+        raise NotImplementedError()
+
+    @depth_clamp.setter
+    def depth_clamp(self, value: bool) -> None:
+        self.mglo.depth_clamp = value
 
     @property
     def multisample(self) -> bool:
