@@ -1549,12 +1549,12 @@ class Context:
             self.mglo.blend_equation = tuple(value)
 
     @property
-    def depth_clamp(self) -> bool:
+    def depth_clamp_range(self) -> Union[Tuple[float, float], None]:
         raise NotImplementedError()
 
-    @depth_clamp.setter
-    def depth_clamp(self, value: bool) -> None:
-        self.mglo.depth_clamp = value
+    @depth_clamp_range.setter
+    def depth_clamp_range(self, value: Union[Tuple[float, float], None]) -> None:
+        self.mglo.depth_clamp_range = value
 
     @property
     def multisample(self) -> bool:

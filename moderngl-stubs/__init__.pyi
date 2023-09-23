@@ -1472,22 +1472,25 @@ class Context:
         ctx.depth_func = '1'   # GL_ALWAYS
     '''
 
-    depth_clamp: bool
+    depth_clamp_range: Union[Tuple[int, int], None]
     '''
-    bool: Enable/disable depth clamping (``GL_DEPTH_CLAMP``).
-    
-    Depth clamp is needed to disable clipping of fragments outside
+    Setting up depth clamp range (write only, by default None).
+
+    ``ctx.depth_clamp_range`` offers uniform use of GL_DEPTH_CLAMP and glDepthRange.
+
+    ``GL_DEPTH_CLAMP`` is needed to disable clipping of fragments outside
     near limit of projection matrix.
     For example, this will allow you to draw between 0 and 1 in the Z (depth) coordinate,
     even if ``near`` is set to 0.5 in the projection matrix.
     .. Note:: All fragments outside the ``near`` of the projection matrix will have a depth of ``near``.
     See https://www.khronos.org/opengl/wiki/Vertex_Post-Processing#Depth_clamping for more info.
-    
+
+    ``glDepthRange(nearVal, farVal)`` is needed to specify mapping of depth values from normalized device coordinates to window coordinates.
+    See https://registry.khronos.org/OpenGL-Refpages/gl4/html/glDepthRange.xhtml for more info.
+
     Example::
-        # Enable
-        ctx.depth_clamp = True
-        # Disable
-        ctx.depth_clamp = False
+        ctx.depth_clamp_range = None  # It will glDisable(GL_DEPTH_CLAMP) and glDepthRange(0, 1)
+        ctx.depth_clamp_range = (near, far)  # It will glEnable(GL_DEPTH_CLAMP) and glDepthRange(near, far)
     '''
 
     blend_func: Tuple[int, int]
