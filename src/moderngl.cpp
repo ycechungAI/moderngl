@@ -106,6 +106,8 @@ struct MGLContext {
     int front_face;
     int cull_face;
     int depth_func;
+    bool depth_clamp;
+    double depth_range[2];
     int blend_func_src;
     int blend_func_dst;
     bool wireframe;
@@ -9192,6 +9194,35 @@ int MGLContext_set_depth_func(MGLContext * self, PyObject * value) {
     return 0;
 }
 
+PyObject * MGLContext_get_depth_clamp_range(MGLContext * self) {
+    if (self->depth_clamp) {
+        return Py_BuildValue("dd", self->depth_range[0], 
+                             self->depth_range[1]);
+    }
+    return Py_None;
+}
+
+int MGLContext_set_depth_clamp_range(MGLContext * self, PyObject * value) {
+    if (value == Py_None) {
+        self->depth_clamp = false;
+        self->depth_range[0] = 0.0;
+        self->depth_range[1] = 1.0;
+        
+        self->gl.Disable(GL_DEPTH_CLAMP);
+        self->gl.DepthRange(self->depth_range[0], self->depth_range[1]);
+        return 0;
+    } else if (PyTuple_CheckExact(value) && PyTuple_Size(value) == 2) {
+        self->depth_clamp = true;
+        self->depth_range[0] = PyFloat_AsDouble(PyTuple_GetItem(value, 0));
+        self->depth_range[1] = PyFloat_AsDouble(PyTuple_GetItem(value, 1));
+        
+        self->gl.Enable(GL_DEPTH_CLAMP);
+        self->gl.DepthRange(self->depth_range[0], self->depth_range[1]);
+        return 0;
+    }
+    return -1;
+}
+
 PyObject * MGLContext_get_multisample(MGLContext * self) {
     return PyBool_FromLong(self->multisample);
 }
@@ -9891,6 +9922,9 @@ PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
     ctx->front_face = GL_CCW;
 
     ctx->depth_func = GL_LEQUAL;
+    ctx->depth_clamp = false;
+    ctx->depth_range[0] = 0.0;
+    ctx->depth_range[1] = 1.0;
     ctx->blend_func_src = GL_SRC_ALPHA;
     ctx->blend_func_dst = GL_ONE_MINUS_SRC_ALPHA;
 
@@ -10001,6 +10035,7 @@ PyGetSetDef MGLContext_getset[] = {
     {(char *)"point_size", (getter)MGLContext_get_point_size, (setter)MGLContext_set_point_size},
 
     {(char *)"depth_func", (getter)MGLContext_get_depth_func, (setter)MGLContext_set_depth_func},
+    {(char *)"depth_clamp_range", (getter)MGLContext_get_depth_clamp_range, (setter)MGLContext_set_depth_clamp_range},
     {(char *)"blend_func", (getter)MGLContext_get_blend_func, (setter)MGLContext_set_blend_func},
     {(char *)"blend_equation", (getter)MGLContext_get_blend_equation, (setter)MGLContext_set_blend_equation},
     {(char *)"multisample", (getter)MGLContext_get_multisample, (setter)MGLContext_set_multisample},
