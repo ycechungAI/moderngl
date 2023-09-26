@@ -95,6 +95,7 @@ struct MGLContext {
     PyObject * extensions;
     MGLFramebuffer * default_framebuffer;
     MGLFramebuffer * bound_framebuffer;
+    PyObject * includes;
     int version_code;
     int max_samples;
     int max_integer_samples;
@@ -2969,6 +2970,10 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
         }
 
         if (PyUnicode_Check(shaders[i])) {
+            shaders[i] = PyObject_CallMethod(helper, "resolve_includes", "(ON)", self, shaders[i]);
+            if (!shaders[i]) {
+                return NULL;
+            }
             const char * source_str = PyUnicode_AsUTF8(shaders[i]);
             gl.ShaderSource(shader_obj, 1, &source_str, NULL);
             gl.CompileShader(shader_obj);
@@ -9283,6 +9288,11 @@ int MGLContext_set_polygon_offset(MGLContext * self, PyObject * value) {
     return 0;
 }
 
+PyObject * MGLContext_get_includes(MGLContext * self) {
+    Py_INCREF(self->includes);
+    return self->includes;
+}
+
 PyObject * MGLContext_get_default_texture_unit(MGLContext * self) {
     return PyLong_FromLong(self->default_texture_unit);
 }
@@ -9917,6 +9927,7 @@ PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
 
     Py_INCREF(ctx->default_framebuffer);
     ctx->bound_framebuffer = ctx->default_framebuffer;
+    ctx->includes = PyDict_New();
 
     ctx->enable_flags = 0;
     ctx->front_face = GL_CCW;
@@ -10057,6 +10068,7 @@ PyGetSetDef MGLContext_getset[] = {
 
     {(char *)"patch_vertices", (getter)MGLContext_get_patch_vertices, (setter)MGLContext_set_patch_vertices},
 
+    {(char *)"includes", (getter)MGLContext_get_includes, NULL},
     {(char *)"extensions", (getter)MGLContext_get_extensions, NULL},
     {(char *)"info", (getter)MGLContext_get_info, NULL},
     {(char *)"error", (getter)MGLContext_get_error, NULL},

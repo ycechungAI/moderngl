@@ -609,3 +609,16 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
 
 class InvalidObject:
     pass
+
+
+def resolve_includes(ctx, source):
+    def include(match):
+        name = match.group(1)
+        content = ctx.includes.get(name)
+        if content is None:
+            raise KeyError(f'cannot include "{name}"')
+        return content
+
+    import re
+    source = re.sub(r'#include\s+"([^"]+)"', include, source)
+    return source

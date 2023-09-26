@@ -1680,6 +1680,10 @@ class Context:
 
         return self._info
 
+    @property
+    def includes(self) -> Dict[str, str]:
+        return self.mglo.includes
+
     def clear(
         self,
         red: float = 0.0,
