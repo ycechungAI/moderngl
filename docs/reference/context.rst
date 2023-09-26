@@ -61,6 +61,7 @@ Attributes
 .. autoattribute:: Context.line_width
 .. autoattribute:: Context.point_size
 .. autoattribute:: Context.depth_func
+.. autoattribute:: Context.depth_clamp_range
 .. autoattribute:: Context.blend_func
 .. autoattribute:: Context.blend_equation
 .. autoattribute:: Context.viewport
