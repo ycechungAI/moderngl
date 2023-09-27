@@ -1472,7 +1472,7 @@ class Context:
         ctx.depth_func = '1'   # GL_ALWAYS
     '''
 
-    depth_clamp_range: Tuple[float, float]
+    depth_clamp_range: Union[Tuple[float, float], None]
     '''
     Setting up depth clamp range (write only, by default ``None``).
 
