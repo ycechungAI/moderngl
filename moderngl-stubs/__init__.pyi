@@ -4530,10 +4530,10 @@ class VertexArray:
     '''
 
     index_buffer: Buffer
-    '''Buffer: The index buffer if the index_buffer is set, otherwise ``None``.'''
+    '''Buffer: '''
 
     index_element_size: int
-    '''int: The byte size of each element in the index buffer.'''
+    '''int: '''
 
     vertices: int
     '''
