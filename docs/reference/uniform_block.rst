@@ -1,17 +1,37 @@
 UniformBlock
 ============
 
-.. py:currentmodule:: moderngl
+.. py:class:: UniformBlock
 
-.. autoclass:: moderngl.UniformBlock
+.. py:attribute:: UniformBlock.binding
+    :type: int
 
-.. autoattribute:: UniformBlock.binding
-.. autoattribute:: UniformBlock.value
-.. autoattribute:: UniformBlock.name
-.. autoattribute:: UniformBlock.index
-.. autoattribute:: UniformBlock.size
-.. autoattribute:: UniformBlock.extra
-.. autoattribute:: UniformBlock.mglo
+    The binding of the uniform block. Same as the value.
+
+.. py:attribute:: UniformBlock.value
+    :type: int
+
+    The value of the uniform block. Same as the binding.
+
+.. py:attribute:: UniformBlock.name
+    :type: str
+
+    The name of the uniform block.
+
+.. py:attribute:: UniformBlock.index
+    :type: int
+
+    The index of the uniform block.
+
+.. py:attribute:: UniformBlock.size
+    :type: int
+
+    The size of the uniform block.
+
+.. py:attribute:: UniformBlock.extra
+    :type: Any
+
+    User defined data.
 
 .. toctree::
     :maxdepth: 2

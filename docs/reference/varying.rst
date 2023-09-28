@@ -18,7 +18,7 @@ Varying
 .. py:attribute:: Varying.extra
     :type: Any
 
-    Attribute for storing user defined objects
+    User defined data.
 
 .. toctree::
     :maxdepth: 2
