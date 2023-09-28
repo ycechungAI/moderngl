@@ -1,46 +1,44 @@
 TextureArray
 ============
 
-.. py:currentmodule:: moderngl
-
-.. autoclass:: moderngl.TextureArray
+.. py:class:: TextureArray
 
 Create
 ------
 
-.. automethod:: Context.texture_array
+.. py:method:: Context.texture_array
    :noindex:
 
 Methods
 -------
 
-.. automethod:: TextureArray.read
-.. automethod:: TextureArray.read_into
-.. automethod:: TextureArray.write
-.. automethod:: TextureArray.bind_to_image
-.. automethod:: TextureArray.build_mipmaps
-.. automethod:: TextureArray.use
-.. automethod:: TextureArray.release
-.. automethod:: TextureArray.get_handle
+.. py:method:: TextureArray.read
+.. py:method:: TextureArray.read_into
+.. py:method:: TextureArray.write
+.. py:method:: TextureArray.bind_to_image
+.. py:method:: TextureArray.build_mipmaps
+.. py:method:: TextureArray.use
+.. py:method:: TextureArray.release
+.. py:method:: TextureArray.get_handle
 
 Attributes
 ----------
 
-.. autoattribute:: TextureArray.repeat_x
-.. autoattribute:: TextureArray.repeat_y
-.. autoattribute:: TextureArray.filter
-.. autoattribute:: TextureArray.swizzle
-.. autoattribute:: TextureArray.anisotropy
-.. autoattribute:: TextureArray.width
-.. autoattribute:: TextureArray.height
-.. autoattribute:: TextureArray.layers
-.. autoattribute:: TextureArray.size
-.. autoattribute:: TextureArray.dtype
-.. autoattribute:: TextureArray.components
-.. autoattribute:: TextureArray.glo
-.. autoattribute:: TextureArray.mglo
-.. autoattribute:: TextureArray.extra
-.. autoattribute:: TextureArray.ctx
+.. py:attribute:: TextureArray.repeat_x
+.. py:attribute:: TextureArray.repeat_y
+.. py:attribute:: TextureArray.filter
+.. py:attribute:: TextureArray.swizzle
+.. py:attribute:: TextureArray.anisotropy
+.. py:attribute:: TextureArray.width
+.. py:attribute:: TextureArray.height
+.. py:attribute:: TextureArray.layers
+.. py:attribute:: TextureArray.size
+.. py:attribute:: TextureArray.dtype
+.. py:attribute:: TextureArray.components
+.. py:attribute:: TextureArray.glo
+.. py:attribute:: TextureArray.mglo
+.. py:attribute:: TextureArray.extra
+.. py:attribute:: TextureArray.ctx
 
 .. toctree::
     :maxdepth: 2

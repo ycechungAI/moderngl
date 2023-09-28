@@ -1,29 +1,27 @@
 Scope
 =====
 
-.. py:currentmodule:: moderngl
-
-.. autoclass:: moderngl.Scope
+.. py:class:: Scope
 
 Create
 ------
 
-.. automethod:: Context.scope
+.. py:method:: Context.scope
    :noindex:
 
 Methods
 -------
 
-.. automethod:: Scope.__enter__
-.. automethod:: Scope.__exit__
-.. automethod:: Scope.release
+.. py:method:: Scope.__enter__
+.. py:method:: Scope.__exit__
+.. py:method:: Scope.release
 
 Attributes
 ----------
 
-.. autoattribute:: Scope.extra
-.. autoattribute:: Scope.mglo
-.. autoattribute:: Scope.ctx
+.. py:attribute:: Scope.extra
+.. py:attribute:: Scope.mglo
+.. py:attribute:: Scope.ctx
 
 Examples
 --------

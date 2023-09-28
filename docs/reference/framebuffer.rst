@@ -1,46 +1,43 @@
 Framebuffer
 ===========
 
-.. py:currentmodule:: moderngl
-
-.. autoclass:: moderngl.Framebuffer
+.. py:class:: Framebuffer
 
 Create
 ------
 
-.. automethod:: Context.simple_framebuffer
+.. py:method:: Context.simple_framebuffer
    :noindex:
 
-.. automethod:: Context.framebuffer
+.. py:method:: Context.framebuffer
    :noindex:
 
 Methods
 -------
 
-.. automethod:: Framebuffer.clear
-.. automethod:: Framebuffer.read
-.. automethod:: Framebuffer.read_into
-.. automethod:: Framebuffer.use
-.. automethod:: Framebuffer.release
+.. py:method:: Framebuffer.clear
+.. py:method:: Framebuffer.read
+.. py:method:: Framebuffer.read_into
+.. py:method:: Framebuffer.use
+.. py:method:: Framebuffer.release
 
 Attributes
 ----------
 
-.. autoattribute:: Framebuffer.viewport
-.. autoattribute:: Framebuffer.scissor
-.. autoattribute:: Framebuffer.color_mask
-.. autoattribute:: Framebuffer.depth_mask
-.. autoattribute:: Framebuffer.width
-.. autoattribute:: Framebuffer.height
-.. autoattribute:: Framebuffer.size
-.. autoattribute:: Framebuffer.samples
-.. autoattribute:: Framebuffer.bits
-.. autoattribute:: Framebuffer.color_attachments
-.. autoattribute:: Framebuffer.depth_attachment
-.. autoattribute:: Framebuffer.glo
-.. autoattribute:: Framebuffer.mglo
-.. autoattribute:: Framebuffer.extra
-.. autoattribute:: Framebuffer.ctx
+.. py:attribute:: Framebuffer.viewport
+.. py:attribute:: Framebuffer.scissor
+.. py:attribute:: Framebuffer.color_mask
+.. py:attribute:: Framebuffer.depth_mask
+.. py:attribute:: Framebuffer.width
+.. py:attribute:: Framebuffer.height
+.. py:attribute:: Framebuffer.size
+.. py:attribute:: Framebuffer.samples
+.. py:attribute:: Framebuffer.bits
+.. py:attribute:: Framebuffer.color_attachments
+.. py:attribute:: Framebuffer.depth_attachment
+.. py:attribute:: Framebuffer.glo
+.. py:attribute:: Framebuffer.extra
+.. py:attribute:: Framebuffer.ctx
 
 .. toctree::
     :maxdepth: 2

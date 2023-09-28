@@ -1,20 +1,10 @@
 ConditionalRender
 =================
 
-.. py:module:: moderngl.conditional_renderer
-.. py:currentmodule:: moderngl
-
-.. autoclass:: ConditionalRender
-
-Attributes
-----------
-
-.. autoattribute:: ConditionalRender.mglo
+.. py:class:: ConditionalRender
 
 Examples
 --------
-
-.. rubric:: Simple conditional rendering example
 
 .. code-block:: python
 

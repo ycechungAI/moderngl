@@ -1,42 +1,39 @@
 Buffer
 ======
 
-.. py:currentmodule:: moderngl
-
-.. autoclass:: moderngl.Buffer
+.. py:class:: Buffer
 
 Create
 ------
 
-.. automethod:: Context.buffer
+.. py:method:: Context.buffer
     :noindex:
 
 Methods
 -------
 
-.. automethod:: Buffer.assign
-.. automethod:: Buffer.bind
-.. automethod:: Buffer.write
-.. automethod:: Buffer.write_chunks
-.. automethod:: Buffer.read
-.. automethod:: Buffer.read_into
-.. automethod:: Buffer.read_chunks
-.. automethod:: Buffer.read_chunks_into
-.. automethod:: Buffer.clear
-.. automethod:: Buffer.bind_to_uniform_block
-.. automethod:: Buffer.bind_to_storage_buffer
-.. automethod:: Buffer.orphan
-.. automethod:: Buffer.release
+.. py:method:: Buffer.assign
+.. py:method:: Buffer.bind
+.. py:method:: Buffer.write
+.. py:method:: Buffer.write_chunks
+.. py:method:: Buffer.read
+.. py:method:: Buffer.read_into
+.. py:method:: Buffer.read_chunks
+.. py:method:: Buffer.read_chunks_into
+.. py:method:: Buffer.clear
+.. py:method:: Buffer.bind_to_uniform_block
+.. py:method:: Buffer.bind_to_storage_buffer
+.. py:method:: Buffer.release
 
 Attributes
 ----------
 
-.. autoattribute:: Buffer.size
-.. autoattribute:: Buffer.dynamic
-.. autoattribute:: Buffer.glo
-.. autoattribute:: Buffer.mglo
-.. autoattribute:: Buffer.extra
-.. autoattribute:: Buffer.ctx
+.. py:attribute:: Buffer.size
+.. py:attribute:: Buffer.dynamic
+.. py:attribute:: Buffer.glo
+.. py:attribute:: Buffer.mglo
+.. py:attribute:: Buffer.extra
+.. py:attribute:: Buffer.ctx
 
 .. toctree::
     :maxdepth: 2

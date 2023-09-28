@@ -1,40 +1,38 @@
 TextureCube
 ===========
 
-.. py:currentmodule:: moderngl
-
-.. autoclass:: moderngl.TextureCube
+.. py:class:: TextureCube
 
 Create
 ------
 
-.. automethod:: Context.texture_cube
+.. py:method:: Context.texture_cube
    :noindex:
 
 Methods
 -------
 
-.. automethod:: TextureCube.read
-.. automethod:: TextureCube.read_into
-.. automethod:: TextureCube.write
-.. automethod:: TextureCube.bind_to_image
-.. automethod:: TextureCube.use
-.. automethod:: TextureCube.release
-.. automethod:: TextureCube.get_handle
+.. py:method:: TextureCube.read
+.. py:method:: TextureCube.read_into
+.. py:method:: TextureCube.write
+.. py:method:: TextureCube.bind_to_image
+.. py:method:: TextureCube.use
+.. py:method:: TextureCube.release
+.. py:method:: TextureCube.get_handle
 
 Attributes
 ----------
 
-.. autoattribute:: TextureCube.size
-.. autoattribute:: TextureCube.dtype
-.. autoattribute:: TextureCube.components
-.. autoattribute:: TextureCube.filter
-.. autoattribute:: TextureCube.swizzle
-.. autoattribute:: TextureCube.anisotropy
-.. autoattribute:: TextureCube.glo
-.. autoattribute:: TextureCube.mglo
-.. autoattribute:: TextureCube.extra
-.. autoattribute:: TextureCube.ctx
+.. py:attribute:: TextureCube.size
+.. py:attribute:: TextureCube.dtype
+.. py:attribute:: TextureCube.components
+.. py:attribute:: TextureCube.filter
+.. py:attribute:: TextureCube.swizzle
+.. py:attribute:: TextureCube.anisotropy
+.. py:attribute:: TextureCube.glo
+.. py:attribute:: TextureCube.mglo
+.. py:attribute:: TextureCube.extra
+.. py:attribute:: TextureCube.ctx
 
 .. toctree::
     :maxdepth: 2

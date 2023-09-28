@@ -221,5 +221,6 @@ Program Members
 
     uniform.rst
     uniform_block.rst
+    storage_block.rst
     attribute.rst
     varying.rst

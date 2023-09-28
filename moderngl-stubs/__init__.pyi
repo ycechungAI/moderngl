@@ -6,299 +6,178 @@ class ConvertibleToShaderSource(Protocol):
     def to_shader_source(self) -> str | bytes: ...
 
 POINTS: int
-'''
-Each vertex represents a point
-'''
+'''ctx.POINTS'''
 
 LINES: int
-'''
-Vertices 0 and 1 are considered a line. Vertices 2 and 3 are considered a line.
-And so on. If the user specifies a non-even number of vertices, then the extra vertex is ignored.
-'''
+'''ctx.LINES'''
 
 LINE_LOOP: int
-'''
-As line strips, except that the first and last vertices are also used as a line.
-Thus, you get n lines for n input vertices. If the user only specifies 1 vertex,
-the drawing command is ignored. The line between the first and last vertices happens
-after all of the previous lines in the sequence.
-'''
+'''ctx.LINE_LOOP'''
 
 LINE_STRIP: int
-'''
-The adjacent vertices are considered lines. Thus, if you pass n vertices, you will get n-1 lines.
-If the user only specifies 1 vertex, the drawing command is ignored.
-'''
+'''ctx.LINE_STRIP'''
 
 TRIANGLES: int
-'''
-Vertices 0, 1, and 2 form a triangle. Vertices 3, 4, and 5 form a triangle. And so on.
-'''
+'''ctx.TRIANGLES'''
 
 TRIANGLE_STRIP: int
-'''
-Every group of 3 adjacent vertices forms a triangle. The face direction of the
-strip is determined by the winding of the first triangle. Each successive triangle
-will have its effective face order reversed, so the system compensates for that
-by testing it in the opposite way. A vertex stream of n length will generate n-2 triangles.
-'''
+'''ctx.TRIANGLE_STRIP'''
 
 TRIANGLE_FAN: int
-'''
-The first vertex is always held fixed. From there on, every group of 2 adjacent
-vertices form a triangle with the first. So with a vertex stream, you get a list
-of triangles like so: (0, 1, 2) (0, 2, 3), (0, 3, 4), etc. A vertex stream of
-n length will generate n-2 triangles.
-'''
+'''ctx.TRIANGLE_FAN'''
 
 LINES_ADJACENCY: int
-'''
-These are special primitives that are expected to be used specifically with
-geomtry shaders. These primitives give the geometry shader more vertices
-to work with for each input primitive. Data needs to be duplicated in buffers.
-'''
+'''ctx.LINES_ADJACENCY'''
 
 LINE_STRIP_ADJACENCY: int
-'''
-These are special primitives that are expected to be used specifically with
-geomtry shaders. These primitives give the geometry shader more vertices
-to work with for each input primitive. Data needs to be duplicated in buffers.
-'''
+'''ctx.LINE_STRIP_ADJACENCY'''
 
 TRIANGLES_ADJACENCY: int
-'''
-These are special primitives that are expected to be used specifically with
-geomtry shaders. These primitives give the geometry shader more vertices
-to work with for each input primitive. Data needs to be duplicated in buffers.
-'''
+'''ctx.TRIANGLES_ADJACENCY'''
 
 TRIANGLE_STRIP_ADJACENCY: int
-'''
-These are special primitives that are expected to be used specifically with
-geomtry shaders. These primitives give the geometry shader more vertices
-to work with for each input primitive. Data needs to be duplicated in buffers.
-'''
+'''ctx.TRIANGLE_STRIP_ADJACENCY'''
 
 PATCHES: int
-'''
-primitive type can only be used when Tessellation is active. It is a primitive
-with a user-defined number of vertices, which is then tessellated based on the
-control and evaluation shaders into regular points, lines, or triangles, depending
-on the TES's settings.
-'''
+'''ctx.PATCHES'''
 
 NEAREST: int
-'''
-Returns the value of the texture element that is nearest
-(in Manhattan distance) to the specified texture coordinates.
-'''
+'''ctx.NEAREST'''
 
 LINEAR: int
-'''
-Returns the weighted average of the four texture elements
-that are closest to the specified texture coordinates.
-These can include items wrapped or repeated from other parts
-of a texture, depending on the values of texture repeat mode,
-and on the exact mapping.
-'''
+'''ctx.LINEAR'''
 
 NEAREST_MIPMAP_NEAREST: int
-'''
-Chooses the mipmap that most closely matches the size of the
-pixel being textured and uses the ``NEAREST``` criterion (the texture
-element closest to the specified texture coordinates) to produce
-a texture value.
-'''
+'''ctx.NEAREST_MIPMAP_NEAREST'''
 
 LINEAR_MIPMAP_NEAREST: int
-'''
-Chooses the mipmap that most closely matches the size of the pixel
-being textured and uses the ``LINEAR`` criterion (a weighted average
-of the four texture elements that are closest to the specified
-texture coordinates) to produce a texture value.
-'''
+'''ctx.LINEAR_MIPMAP_NEAREST'''
 
 NEAREST_MIPMAP_LINEAR: int
-'''
-Chooses the two mipmaps that most closely match the size of the
-pixel being textured and uses the ``NEAREST`` criterion (the texture
-element closest to the specified texture coordinates ) to produce
-a texture value from each mipmap. The final texture value is a
-weighted average of those two values.
-'''
+'''ctx.NEAREST_MIPMAP_LINEAR'''
 
 LINEAR_MIPMAP_LINEAR: int
-'''
-Chooses the two mipmaps that most closely match the size of the pixel
-being textured and uses the ``LINEAR`` criterion (a weighted average
-of the texture elements that are closest to the specified texture
-coordinates) to produce a texture value from each mipmap.
-The final texture value is a weighted average of those two values.
-'''
+'''ctx.LINEAR_MIPMAP_LINEAR'''
 
 NOTHING: int
-'''Represents no states. Can be used with :py:meth:`Context.enable_only` to disable all states.'''
+'''ctx.NOTHING'''
 
 BLEND: int
-'''Enable/disable blending'''
+'''ctx.BLEND'''
 
 DEPTH_TEST: int
-'''Enable/disable depth testing'''
+'''ctx.DEPTH_TEST'''
 
 CULL_FACE: int
-'''Enable/disable face culling'''
+'''ctx.CULL_FACE'''
 
 RASTERIZER_DISCARD: int
-'''Enable/disable rasterization'''
+'''ctx.RASTERIZER_DISCARD'''
 
 PROGRAM_POINT_SIZE: int
-'''
-Context flag: Enables ``gl_PointSize`` in vertex or geometry shaders.
-
-When enabled we can write to ``gl_PointSize`` in the vertex shader to specify the point size
-for each individual point.
-
-If this value is not set in the shader the behavior is undefined. This means the points may
-or may not appear depending if the drivers enforce some default value for ``gl_PointSize``.
-
-When disabled :py:attr:`Context.point_size` is used.
-'''
+'''ctx.PROGRAM_POINT_SIZE'''
 
 ZERO: int
-'''(0,0,0,0)'''
+'''ctx.ZERO'''
 
 ONE: int
-'''(1,1,1,1)'''
+'''ctx.ONE'''
 
 SRC_COLOR: int
-'''(Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)'''
+'''ctx.SRC_COLOR'''
 
 ONE_MINUS_SRC_COLOR: int
-'''(1,1,1,1) - (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)'''
+'''ctx.ONE_MINUS_SRC_COLOR'''
 
 SRC_ALPHA: int
-'''(As0/kA,As0/kA,As0/kA,As0/kA)'''
+'''ctx.SRC_ALPHA'''
 
 ONE_MINUS_SRC_ALPHA: int
-'''(1,1,1,1) - (As0/kA,As0/kA,As0/kA,As0/kA)'''
+'''ctx.ONE_MINUS_SRC_ALPHA'''
 
 DST_ALPHA: int
-'''(Ad/kA,Ad/kA,Ad/kA,Ad/kA)'''
+'''ctx.DST_ALPHA'''
 
 ONE_MINUS_DST_ALPHA: int
-'''(1,1,1,1) - (Ad/kA,Ad/kA,Ad/kA,Ad/kA)'''
+'''ctx.ONE_MINUS_DST_ALPHA'''
 
 DST_COLOR: int
-'''(Rd/kR,Gd/kG,Bd/kB,Ad/kA)'''
+'''ctx.DST_COLOR'''
 
 ONE_MINUS_DST_COLOR: int
-'''(1,1,1,1) - (Rd/kR,Gd/kG,Bd/kB,Ad/kA)'''
+'''ctx.ONE_MINUS_DST_COLOR'''
 
 FUNC_ADD: int
-'''source + destination'''
+'''ctx.FUNC_ADD'''
 
 FUNC_SUBTRACT: int
-'''source - destination'''
+'''ctx.FUNC_SUBTRACT'''
 
 FUNC_REVERSE_SUBTRACT: int
-'''destination - source'''
+'''ctx.FUNC_REVERSE_SUBTRACT'''
 
 MIN: int
-'''Minimum of source and destination'''
+'''ctx.MIN'''
 
 MAX: int
-'''Maximum of source and destination'''
+'''ctx.MAX'''
 
 DEFAULT_BLENDING: int
-'''Shotcut for the default blending ``SRC_ALPHA, ONE_MINUS_SRC_ALPHA``'''
+'''ctx.DEFAULT_BLENDING'''
 
 ADDITIVE_BLENDING: int
-'''Shotcut for additive blending ``ONE, ONE``'''
+'''ctx.ADDITIVE_BLENDING'''
 
 PREMULTIPLIED_ALPHA: int
-'''Shotcut for blend mode when using premultiplied alpha ``SRC_ALPHA, ONE``'''
+'''ctx.PREMULTIPLIED_ALPHA'''
 
 FIRST_VERTEX_CONVENTION: int
-'''
-Specifies the first vertex should be used as the source of data for flat shaded varyings.
-Used with :py:attr:`Context.provoking_vertex`.
-'''
+'''ctx.FIRST_VERTEX_CONVENTION'''
 
 LAST_VERTEX_CONVENTION: int
-'''
-Specifies the last vertex should be used as the source of data for flat shaded varyings.
-Used with :py:attr:`Context.provoking_vertex`.
-'''
+'''ctx.LAST_VERTEX_CONVENTION'''
 
 VERTEX_ATTRIB_ARRAY_BARRIER_BIT: int
-'''
-VERTEX_ATTRIB_ARRAY_BARRIER_BIT
-'''
+'''ctx.VERTEX_ATTRIB_ARRAY_BARRIER_BIT'''
 
 ELEMENT_ARRAY_BARRIER_BIT: int
-'''
-ELEMENT_ARRAY_BARRIER_BIT
-'''
+'''ctx.ELEMENT_ARRAY_BARRIER_BIT'''
 
 UNIFORM_BARRIER_BIT: int
-'''
-UNIFORM_BARRIER_BIT
-'''
+'''ctx.UNIFORM_BARRIER_BIT'''
 
 TEXTURE_FETCH_BARRIER_BIT: int
-'''
-TEXTURE_FETCH_BARRIER_BIT
-'''
+'''ctx.TEXTURE_FETCH_BARRIER_BIT'''
 
 SHADER_IMAGE_ACCESS_BARRIER_BIT: int
-'''
-SHADER_IMAGE_ACCESS_BARRIER_BIT
-'''
+'''ctx.SHADER_IMAGE_ACCESS_BARRIER_BIT'''
 
 COMMAND_BARRIER_BIT: int
-'''
-COMMAND_BARRIER_BIT
-'''
+'''ctx.COMMAND_BARRIER_BIT'''
 
 PIXEL_BUFFER_BARRIER_BIT: int
-'''
-PIXEL_BUFFER_BARRIER_BIT
-'''
+'''ctx.PIXEL_BUFFER_BARRIER_BIT'''
 
 TEXTURE_UPDATE_BARRIER_BIT: int
-'''
-TEXTURE_UPDATE_BARRIER_BIT
-'''
+'''ctx.TEXTURE_UPDATE_BARRIER_BIT'''
 
 BUFFER_UPDATE_BARRIER_BIT: int
-'''
-BUFFER_UPDATE_BARRIER_BIT
-'''
+'''ctx.BUFFER_UPDATE_BARRIER_BIT'''
 
 FRAMEBUFFER_BARRIER_BIT: int
-'''
-FRAMEBUFFER_BARRIER_BIT
-'''
+'''ctx.FRAMEBUFFER_BARRIER_BIT'''
 
 TRANSFORM_FEEDBACK_BARRIER_BIT: int
-'''
-TRANSFORM_FEEDBACK_BARRIER_BIT
-'''
+'''ctx.TRANSFORM_FEEDBACK_BARRIER_BIT'''
 
 ATOMIC_COUNTER_BARRIER_BIT: int
-'''
-ATOMIC_COUNTER_BARRIER_BIT
-'''
+'''ctx.ATOMIC_COUNTER_BARRIER_BIT'''
 
 SHADER_STORAGE_BARRIER_BIT: int
-'''
-SHADER_STORAGE_BARRIER_BIT
-'''
+'''ctx.SHADER_STORAGE_BARRIER_BIT'''
 
 ALL_BARRIER_BITS: int
-'''
-ALL_BARRIER_BITS
-'''
+'''ctx.ALL_BARRIER_BITS'''
 
 class Attribute:
     '''
@@ -1854,13 +1733,7 @@ class Context:
             barriers (int): Affected barriers, default moderngl.ALL_BARRIER_BITS.
             by_region (bool): Memory barrier mode by region. More read on https://registry.khronos.org/OpenGL-Refpages/gl4/html/glMemoryBarrier.xhtml
         '''
-    def buffer(
-        self,
-        data: Optional[Any] = None,
-        *,
-        reserve: int = 0,
-        dynamic: bool = False,
-    ) -> Buffer:
+    def buffer(self, data: Any = None, *, reserve: int = 0, dynamic: bool = False) -> Buffer:
         '''
         Create a :py:class:`Buffer` object.
 
@@ -2296,9 +2169,7 @@ class Context:
         Returns:
             :py:class:`Renderbuffer` object
         '''
-    def depth_renderbuffer(
-        self, size: Tuple[int, int], *, samples: int = 0
-    ) -> 'Renderbuffer':
+    def depth_renderbuffer(self, size: Tuple[int, int], *, samples: int = 0) -> 'Renderbuffer':
         '''
         :py:class:`Renderbuffer` objects are OpenGL objects that contain images. \
         They are created and used specifically with :py:class:`Framebuffer` objects.

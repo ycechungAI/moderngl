@@ -1,44 +1,31 @@
 ComputeShader
 =============
 
-.. py:currentmodule:: moderngl
-
-.. autoclass:: moderngl.ComputeShader
+.. py:class:: ComputeShader
 
 Create
 ------
 
-.. automethod:: Context.compute_shader
+.. py:method:: Context.compute_shader
    :noindex:
 
 Methods
 -------
 
-.. automethod:: ComputeShader.run
-.. automethod:: ComputeShader.get
-.. automethod:: ComputeShader.release
-.. automethod:: ComputeShader.__eq__
-.. automethod:: ComputeShader.__getitem__
-.. automethod:: ComputeShader.__setitem__
-.. automethod:: ComputeShader.__iter__
+.. py:method:: ComputeShader.run
+.. py:method:: ComputeShader.get
+.. py:method:: ComputeShader.release
+.. py:method:: ComputeShader.__getitem__
+.. py:method:: ComputeShader.__setitem__
+.. py:method:: ComputeShader.__iter__
 
 Attributes
 ----------
 
-.. autoattribute:: ComputeShader.glo
-.. autoattribute:: ComputeShader.mglo
-.. autoattribute:: ComputeShader.extra
-.. autoattribute:: ComputeShader.ctx
+.. py:attribute:: ComputeShader.glo
+.. py:attribute:: ComputeShader.mglo
+.. py:attribute:: ComputeShader.extra
+.. py:attribute:: ComputeShader.ctx
 
 .. toctree::
     :maxdepth: 2
-
-ComputeShader Members
----------------------
-
-.. toctree::
-    :maxdepth: 2
-
-    uniform.rst
-    uniform_block.rst
-    storage_block.rst

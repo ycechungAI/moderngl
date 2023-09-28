@@ -7,37 +7,8 @@ Context
 
     ModernGL objects can be created from this class.
 
-Create
-------
-
-.. py:function:: moderngl.create_context(require: int = 330, standalone: bool = False) -> Context
-
-    Create a ModernGL context by loading OpenGL functions from an existing OpenGL context. An OpenGL context must exists.
-    Other backend specific settings are passed as keyword arguments.
-
-    Context sharing is known to not work properly, please avoid using it.
-    There is a paramter `share` for that to attempt to create a shared context.
-
-    :param int require: OpenGL version code
-    :param bool standalone: Headless flag
-
-    Example::
-
-        # Accept the current context version
-        ctx = moderngl.create_context()
-
-        # Require at least OpenGL 4.3
-        ctx = moderngl.create_context(require=430)
-
-        # Create a headless context requiring OpenGL 4.3
-        ctx = moderngl.create_context(require=430, standalone=True)
-
-.. py:function:: moderngl.create_standalone_context(...) -> Context
-
-    Deprecated, please prefer using `create_context(..., standalone=True)`.
-
-ModernGL Objects
-----------------
+Objects
+-------
 
 .. py:method:: Context.program(vertex_shader: str, fragment_shader: str, geometry_shader: str, tess_control_shader: str, tess_evaluation_shader: str, varyings: Tuple[str, ...], fragment_outputs: Dict[str, int], varyings_capture_mode: str = 'interleaved') -> Program
 
@@ -58,24 +29,27 @@ ModernGL Objects
     :param list varyings: A list of varyings.
     :param dict fragment_outputs: A dictionary of fragment outputs.
 
-.. py:method:: Context.simple_vertex_array
+.. py:method:: Context.buffer(data = None, reserve: int = 0, dynamic: bool = False) -> Buffer
 
-    Deprecated, use :py:meth:`Context.vertex_array` instead.
+    Returns a new :py:class:`Buffer` object.
 
-    :param Program program: The program used when rendering.
-    :param Buffer buffer: The buffer.
-    :param list attributes: A list of attribute names.
-    :param int index_element_size: byte size of each index element, 1, 2 or 4.
-    :param Buffer index_buffer: An index buffer.
-    :param int mode: The default draw mode (for example: ``TRIANGLES``)
+    The `data` can be anything supporting the buffer interface.
 
-.. py:method:: Context.vertex_array
+    The `data` and `reserve` parameters are mutually exclusive.
 
-    Create a :py:class:`VertexArray` object.
+    :param bytes data: Content of the new buffer.
+    :param int reserve: The number of bytes to reserve.
+    :param bool dynamic: Treat buffer as dynamic.
 
-    The vertex array describes how buffers are read by a shader program.
-    We need to supply buffer formats and attributes names. The attribute names
-    are defined by the user in the glsl code and can be anything.
+.. py:method:: Context.vertex_array(program: Program, content: list, index_buffer: Buffer = None, index_element_size: int = 4, mode: int = ...) -> VertexArray
+
+    Returns a new :py:class:`VertexArray` object.
+
+    A VertexArray describes how buffers are read by a shader program.
+    The content is a list of tuples containing a buffer, a format string and any number of attribute names.
+    Attribute names are defined by the user in the Vertex Shader program stage.
+
+    The default `mode` is :py:attr:`~Context.TRIANGLES`.
 
     :param Program program: The program used when rendering
     :param list content: A list of (buffer, format, attributes). See :ref:`buffer-format-label`.
@@ -89,16 +63,14 @@ ModernGL Objects
         # Empty vertext array (no attribute input)
         vao = ctx.vertex_array(program)
 
-        # Simple version with a single buffer
-        vao = ctx.vertex_array(program, buffer, 'in_position', 'in_normal')
-        vao = ctx.vertex_array(program, buffer, 'in_position', 'in_normal', index_buffer=ibo)
-
         # Multiple buffers
         vao = ctx.vertex_array(program, [
             (buffer1, '3f', 'in_position'),
             (buffer2, '3f', 'in_normal'),
         ])
-        vao = ctx.vertex_array(program, [
+        vao = ctx.vertex_array(
+            program,
+            [
                 (buffer1, '3f', 'in_position'),
                 (buffer2, '3f', 'in_normal'),
             ],
@@ -106,162 +78,63 @@ ModernGL Objects
             index_element_size=2,  # 16 bit / 'u2' index buffer
         )
 
-    This method also supports arguments for :py:meth:`Context.simple_vertex_array`.
+    Backward Compatible Version::
 
-.. py:method:: Context.buffer
+        # Simple version with a single buffer
+        vao = ctx.vertex_array(program, buffer, 'in_position', 'in_normal')
+        vao = ctx.vertex_array(program, buffer, 'in_position', 'in_normal', index_buffer=ibo)
 
-    Create a :py:class:`Buffer` object.
+.. py:method:: Context.simple_vertex_array(...)
 
-    :param bytes data: Content of the new buffer.
-    :param int reserve: The number of bytes to reserve.
-    :param bool dynamic: Treat buffer as dynamic.
+    Deprecated, use :py:meth:`Context.vertex_array` instead.
 
-.. py:method:: Context.texture
+.. py:method:: Context.texture(size: Tuple[int, int], components: int, data: Any = None, samples: int = 0, alignment: int = 1, dtype: str = 'f1') -> Texture
 
-    Create a :py:class:`Texture` object.
+    Returns a new :py:class:`Texture` object.
 
-    .. Warning:: Do not play with ``internal_format`` unless you know exactly
+    A Texture is a 2D image that can be used for sampler2D uniforms or as render targets if framebuffers.
+
+    :param tuple size: The width and height of the texture.
+    :param int components: The number of components 1, 2, 3 or 4.
+    :param bytes data: Content of the texture.
+    :param int samples: The number of samples. Value 0 means no multisample format.
+    :param int alignment: The byte alignment 1, 2, 4 or 8.
+    :param str dtype: Data type.
+    :param int internal_format: Override the internalformat of the texture (IF needed)
+
+    Example::
+
+        from PIL import Image
+
+        img = Image.open(...).convert('RGBA')
+        texture = ctx.texture(img.size, components=4, data=img.tobytes())
+
+        # float texture
+        texture = ctx.texture((64, 64), components=..., dtype='f4')
+
+        # integer texture
+        texture = ctx.texture((64, 64), components=..., dtype='i4')
+
+    .. Note:: Do not play with ``internal_format`` unless you know exactly
                     you are doing. This is an override to support sRGB and
                     compressed textures if needed.
 
-    :param tuple size: The width and height of the texture.
-    :param int components: The number of components 1, 2, 3 or 4.
-    :param bytes data: Content of the texture.
-    :param int samples: The number of samples. Value 0 means no multisample format.
-    :param int alignment: The byte alignment 1, 2, 4 or 8.
-    :param str dtype: Data type.
-    :param int internal_format: Override the internalformat of the texture (IF needed)
+.. py:method:: Context.framebuffer(color_attachments: List[Texture], depth_attachment: Texture = None) -> Framebuffer
 
-.. py:method:: Context.depth_texture
+    Returns a new :py:class:`Framebuffer` object.
 
-    Create a :py:class:`Texture` object.
+    A Framebuffer is a collection of images that can be used as render targets.
+    The images of the Framebuffer object can be either Textures or Renderbuffers.
 
-    :param tuple size: The width and height of the texture.
-    :param bytes data: Content of the texture.
-    :param int samples: The number of samples. Value 0 means no multisample format.
-    :param int alignment: The byte alignment 1, 2, 4 or 8.
+    :param list color_attachments: A list of :py:class:`Texture` or :py:class:`Renderbuffer` objects.
+    :param Texture depth_attachment: The depth attachment.
 
-.. py:method:: Context.texture3d
+.. py:method:: Context.sampler(repeat_x: bool, repeat_y: bool, repeat_z: bool, filter: tuple, anisotropy: float, compare_func: str, border_color: tuple, min_lod: float, max_lod: float, texture: Texture) -> Sampler
 
-    Create a :py:class:`Texture3D` object.
+    Returns a new :py:class:`Sampler` object.
 
-    :param tuple size: The width, height and depth of the texture.
-    :param int components: The number of components 1, 2, 3 or 4.
-    :param bytes data: Content of the texture.
-    :param int alignment: The byte alignment 1, 2, 4 or 8.
-    :param str dtype: Data type.
-
-.. py:method:: Context.texture_array
-
-    Create a :py:class:`TextureArray` object.
-
-    :param tuple size: The ``(width, height, layers)`` of the texture.
-    :param int components: The number of components 1, 2, 3 or 4.
-    :param bytes data: Content of the texture. The size must be ``(width, height * layers)`` so each layer is stacked vertically.
-    :param int alignment: The byte alignment 1, 2, 4 or 8.
-    :param str dtype: Data type.
-
-.. py:method:: Context.texture_cube
-
-    Create a :py:class:`TextureCube` object.
-
-    Note that the width and height of the cubemap must be the same
-    unless you are using a non-standard extension.
-
-    :param tuple size: The width, height of the texture. Each side of the cube will have this size.
-    :param int components: The number of components 1, 2, 3 or 4.
-    :param bytes data: Content of the texture. The data should be have the following ordering: positive_x, negative_x, positive_y, negative_y, positive_z, negative_z
-    :param int alignment: The byte alignment 1, 2, 4 or 8.
-    :param str dtype: Data type.
-    :param int internal_format: Override the internalformat of the texture (IF needed)
-
-.. py:method:: Context.depth_texture_cube
-
-    Create a :py:class:`TextureCube` object
-
-    :param tuple size: The width and height of the texture.
-    :param bytes data: Content of the texture.
-    :param int alignment: The byte alignment 1, 2, 4 or 8.
-
-.. py:method:: Context.external_texture
-
-    Create a :py:class:`Texture` object from an existing OpenGL texture object.
-
-    :param int glo: External OpenGL texture object.
-    :param tuple size: The width and height of the texture.
-    :param int components: The number of components 1, 2, 3 or 4.
-    :param int samples: The number of samples. Value 0 means no multisample format.
-    :param str dtype: Data type.
-
-.. py:method:: Context.simple_framebuffer
-
-    Creates a :py:class:`Framebuffer` with a single color attachment \
-    and depth buffer using :py:class:`moderngl.Renderbuffer` attachments.
-
-    :param tuple size: The width and height of the renderbuffer.
-    :param int components: The number of components 1, 2, 3 or 4.
-    :param int samples: The number of samples. Value 0 means no multisample format.
-    :param str dtype: Data type.
-
-.. py:method:: Context.framebuffer
-
-    A :py:class:`Framebuffer` is a collection of buffers that can be \
-    used as the destination for rendering. The buffers for Framebuffer \
-    objects reference images from either Textures or Renderbuffers.
-
-    :param color_attachments: A list of :py:class:`Texture` or :py:class:`Renderbuffer` objects.
-    :param depth_attachment: The depth attachment.
-
-.. py:method:: Context.renderbuffer
-
-    :py:class:`Renderbuffer` objects are OpenGL objects that contain images. \
-    They are created and used specifically with :py:class:`Framebuffer` objects.
-
-    :param tuple size: The width and height of the renderbuffer.
-    :param int components: The number of components 1, 2, 3 or 4.
-    :param int samples: The number of samples. Value 0 means no multisample format.
-    :param str dtype: Data type.
-
-.. py:method:: Context.depth_renderbuffer
-
-    :py:class:`Renderbuffer` objects are OpenGL objects that contain images. \
-    They are created and used specifically with :py:class:`Framebuffer` objects.
-
-    :param tuple size: The width and height of the renderbuffer.
-    :param int samples: The number of samples. Value 0 means no multisample format.
-
-.. py:method:: Context.scope
-
-    Create a :py:class:`Scope` object.
-
-    :param Framebuffer framebuffer: The framebuffer to use when entering.
-    :param int enable_only: The enable_only flags to set when entering.
-    :param tuple textures: List of (texture, binding) tuples.
-    :param tuple uniform_buffers: Tuple of (buffer, binding) tuples.
-    :param tuple storage_buffers: Tuple of (buffer, binding) tuples.
-    :param tuple samplers: Tuple of sampler bindings
-    :param int enable: Flags to enable for this vao such as depth testing and blending
-
-.. py:method:: Context.query
-
-    Create a :py:class:`Query` object.
-
-    :param bool samples: Query ``GL_SAMPLES_PASSED`` or not.
-    :param bool any_samples: Query ``GL_ANY_SAMPLES_PASSED`` or not.
-    :param bool time: Query ``GL_TIME_ELAPSED`` or not.
-    :param bool primitives: Query ``GL_PRIMITIVES_GENERATED`` or not.
-
-.. py:method:: Context.compute_shader
-
-    A :py:class:`ComputeShader` is a Shader Stage that is used entirely \
-    for computing arbitrary information. While it can do rendering, it \
-    is generally used for tasks not directly related to drawing.
-
-    :param str source: The source of the compute shader.
-
-.. py:method:: Context.sampler
-
-    Create a :py:class:`Sampler` object.
+    Samplers bind Textures to uniform samplers within a Program object.
+    Binding a Sampler object also binds the texture object attached to it.
 
     :param bool repeat_x: Repeat texture on x
     :param bool repeat_y: Repeat texture on y
@@ -274,28 +147,131 @@ ModernGL Objects
     :param float max_lod: Minimum level-of-detail parameter (Default ``1000.0``). This floating-point value limits the selection of the lowest resolution mipmap (highest mipmap level)
     :param Texture texture: The texture for this sampler
 
-.. py:method:: Context.clear_samplers
+.. py:method:: Context.depth_texture(size: Tuple[int, int], data: Any = None, samples: int = 0, alignment: int = 4) -> Texture
 
-    Unbinds samplers from texture units.
+    Returns a new :py:class:`Texture` object.
 
-    Sampler bindings do clear automatically between every frame,
-    but lingering samplers can still be a source of weird bugs during
-    the frame rendering. This methods provides a fairly brute force
-    and efficient way to ensure texture units are clear.
+    A depth texture can be used for sampler2D and sampler2DShadow uniforms and as a depth attachment for framebuffers.
 
-    :param int start: The texture unit index to start the clearing samplers
-    :param int stop: The texture unit index to stop clearing samplers
+    :param tuple size: The width and height of the texture.
+    :param bytes data: Content of the texture.
+    :param int samples: The number of samples. Value 0 means no multisample format.
+    :param int alignment: The byte alignment 1, 2, 4 or 8.
 
-    Example::
+.. py:method:: Context.texture3d(size: Tuple[int, int, int], components: int, data: Any = None, alignment: int = 1, dtype: str = 'f1') -> Texture3D
 
-        # Clear texture unit 0, 1, 2, 3, 4
-        ctx.clear_samplers(start=0, end=5)
+    Returns a new :py:class:`Texture3D` object.
 
-        # Clear texture unit 4, 5, 6, 7
-        ctx.clear_samplers(start=4, end=8)
+    :param tuple size: The width, height and depth of the texture.
+    :param int components: The number of components 1, 2, 3 or 4.
+    :param bytes data: Content of the texture.
+    :param int alignment: The byte alignment 1, 2, 4 or 8.
+    :param str dtype: Data type.
 
-.. py:method:: Context.release
+.. py:method:: Context.texture_array(size: Tuple[int, int, int], components: int, data: Any = None, *, alignment: int = 1, dtype: str = 'f1') -> TextureArray
 
+    Returns a new :py:class:`TextureArray` object.
+
+    :param tuple size: The ``(width, height, layers)`` of the texture.
+    :param int components: The number of components 1, 2, 3 or 4.
+    :param bytes data: Content of the texture. The size must be ``(width, height * layers)`` so each layer is stacked vertically.
+    :param int alignment: The byte alignment 1, 2, 4 or 8.
+    :param str dtype: Data type.
+
+.. py:method:: Context.texture_cube(size: Tuple[int, int], components: int, data: Any = None, alignment: int = 1, dtype: str = 'f1') -> TextureCube
+
+    Returns a new :py:class:`TextureCube` object.
+
+    Note that the width and height of the cubemap must be the same.
+
+    :param tuple size: The width, height of the texture. Each side of the cube will have this size.
+    :param int components: The number of components 1, 2, 3 or 4.
+    :param bytes data: Content of the texture. The data should be have the following ordering: positive_x, negative_x, positive_y, negative_y, positive_z, negative_z
+    :param int alignment: The byte alignment 1, 2, 4 or 8.
+    :param str dtype: Data type.
+    :param int internal_format: Override the internalformat of the texture (IF needed)
+
+.. py:method:: Context.depth_texture_cube(size: Tuple[int, int], data: Optional[Any] = None, alignment: int = 4) -> TextureCube
+
+    Returns a new :py:class:`TextureCube` object.
+
+    :param tuple size: The width and height of the texture.
+    :param bytes data: Content of the texture.
+    :param int alignment: The byte alignment 1, 2, 4 or 8.
+
+.. py:method:: Context.simple_framebuffer(...)
+
+    Deprecated, use :py:meth:`Context.framebuffer` instead.
+
+.. py:method:: Context.renderbuffer(size: Tuple[int, int], components: int = 4, samples: int = 0, dtype: str = 'f1') -> Renderbuffer
+
+    Returns a new :py:class:`Renderbuffer` object.
+
+    Similar to textures, renderbuffers can be attached to framebuffers as render targets, but they cannot be sampled as textures.
+
+    :param tuple size: The width and height of the renderbuffer.
+    :param int components: The number of components 1, 2, 3 or 4.
+    :param int samples: The number of samples. Value 0 means no multisample format.
+    :param str dtype: Data type.
+
+.. py:method:: Context.depth_renderbuffer(size: Tuple[int, int], samples: int = 0) -> Renderbuffer
+
+    Returns a new :py:class:`Renderbuffer` object.
+
+    :param tuple size: The width and height of the renderbuffer.
+    :param int samples: The number of samples. Value 0 means no multisample format.
+
+.. py:method:: Context.scope(framebuffer, enable_only, textures, uniform_buffers, storage_buffers, samplers)
+
+    Returns a new :py:class:`Scope` object.
+
+    Scope objects can be attached to VertexArray objects to minimize the possibility of rendering within the wrong scope.
+    VertexArrays with an attached scope always have the scope settings at render time.
+
+    :param Framebuffer framebuffer: The framebuffer to use when entering.
+    :param int enable_only: The enable_only flags to set when entering.
+    :param tuple textures: List of (texture, binding) tuples.
+    :param tuple uniform_buffers: Tuple of (buffer, binding) tuples.
+    :param tuple storage_buffers: Tuple of (buffer, binding) tuples.
+    :param tuple samplers: Tuple of sampler bindings
+
+.. py:method:: Context.query(samples: bool, any_samples: bool, time: bool, primitives: bool) -> Query
+
+    Returns a new :py:class:`Query` object.
+
+    :param bool samples: Query ``GL_SAMPLES_PASSED`` or not.
+    :param bool any_samples: Query ``GL_ANY_SAMPLES_PASSED`` or not.
+    :param bool time: Query ``GL_TIME_ELAPSED`` or not.
+    :param bool primitives: Query ``GL_PRIMITIVES_GENERATED`` or not.
+
+.. py:method:: Context.compute_shader(...)
+
+    A :py:class:`ComputeShader` is a Shader Stage that is used entirely \
+    for computing arbitrary information. While it can do rendering, it \
+    is generally used for tasks not directly related to drawing.
+
+    :param str source: The source of the compute shader.
+
+External Objects
+----------------
+
+External objects are only useful for interoperability with other libraries.
+
+.. py:method:: Context.external_buffer(glo: int, size: int, dynamic: bool) -> Buffer
+
+    TBD
+
+.. py:method:: Context.external_texture(glo: int, size: Tuple[int, int], components: int, samples: int, dtype: str) -> Texture
+
+    Returns a new :py:class:`Texture` object from an existing OpenGL texture object.
+
+    The content of the texture is referenced and it is not copied.
+
+    :param int glo: External OpenGL texture object.
+    :param tuple size: The width and height of the texture.
+    :param int components: The number of components 1, 2, 3 or 4.
+    :param int samples: The number of samples. Value 0 means no multisample format.
+    :param str dtype: Data type.
 
 Methods
 -------
@@ -425,6 +401,26 @@ Methods
 
     Wait for all drawing commands to finish.
 
+.. py:method:: Context.clear_samplers
+
+    Unbinds samplers from texture units.
+
+    Sampler bindings do clear automatically between every frame,
+    but lingering samplers can still be a source of weird bugs during
+    the frame rendering. This methods provides a fairly brute force
+    and efficient way to ensure texture units are clear.
+
+    :param int start: The texture unit index to start the clearing samplers
+    :param int stop: The texture unit index to stop clearing samplers
+
+    Example::
+
+        # Clear texture unit 0, 1, 2, 3, 4
+        ctx.clear_samplers(start=0, end=5)
+
+        # Clear texture unit 4, 5, 6, 7
+        ctx.clear_samplers(start=4, end=8)
+
 .. py:method:: Context.copy_buffer
 
     Copy buffer content.
@@ -478,6 +474,8 @@ Methods
     Keyword Args:
         barriers (int): Affected barriers, default moderngl.ALL_BARRIER_BITS.
         by_region (bool): Memory barrier mode by region. More read on https://registry.khronos.org/OpenGL-Refpages/gl4/html/glMemoryBarrier.xhtml
+
+.. py:method:: Context.release
 
 .. py:method:: Context.gc
 

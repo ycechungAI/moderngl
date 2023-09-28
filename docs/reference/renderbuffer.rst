@@ -1,38 +1,36 @@
 Renderbuffer
 ============
 
-.. py:currentmodule:: moderngl
-
-.. autoclass:: moderngl.Renderbuffer
+.. py:class:: Renderbuffer
 
 Create
 ------
 
-.. automethod:: Context.renderbuffer
+.. py:method:: Context.renderbuffer
    :noindex:
 
-.. automethod:: Context.depth_renderbuffer
+.. py:method:: Context.depth_renderbuffer
    :noindex:
 
 Methods
 -------
 
-.. automethod:: Renderbuffer.release
+.. py:method:: Renderbuffer.release
 
 Attributes
 ----------
 
-.. autoattribute:: Renderbuffer.width
-.. autoattribute:: Renderbuffer.height
-.. autoattribute:: Renderbuffer.size
-.. autoattribute:: Renderbuffer.samples
-.. autoattribute:: Renderbuffer.components
-.. autoattribute:: Renderbuffer.depth
-.. autoattribute:: Renderbuffer.dtype
-.. autoattribute:: Renderbuffer.glo
-.. autoattribute:: Renderbuffer.mglo
-.. autoattribute:: Renderbuffer.extra
-.. autoattribute:: Renderbuffer.ctx
+.. py:attribute:: Renderbuffer.width
+.. py:attribute:: Renderbuffer.height
+.. py:attribute:: Renderbuffer.size
+.. py:attribute:: Renderbuffer.samples
+.. py:attribute:: Renderbuffer.components
+.. py:attribute:: Renderbuffer.depth
+.. py:attribute:: Renderbuffer.dtype
+.. py:attribute:: Renderbuffer.glo
+.. py:attribute:: Renderbuffer.mglo
+.. py:attribute:: Renderbuffer.extra
+.. py:attribute:: Renderbuffer.ctx
 
 .. toctree::
     :maxdepth: 2

@@ -1,37 +1,35 @@
 Sampler
 =======
 
-.. py:currentmodule:: moderngl
-
-.. autoclass:: moderngl.Sampler
+.. py:class:: Sampler
 
 Create
 ------
 
-.. automethod:: Context.sampler
+.. py:method:: Context.sampler
    :noindex:
 
 Methods
 -------
 
-.. automethod:: Sampler.use
-.. automethod:: Sampler.clear
-.. automethod:: Sampler.assign
-.. automethod:: Sampler.release
+.. py:method:: Sampler.use
+.. py:method:: Sampler.clear
+.. py:method:: Sampler.assign
+.. py:method:: Sampler.release
 
 Attributes
 ----------
 
-.. autoattribute:: Sampler.texture
-.. autoattribute:: Sampler.repeat_x
-.. autoattribute:: Sampler.repeat_y
-.. autoattribute:: Sampler.repeat_z
-.. autoattribute:: Sampler.filter
-.. autoattribute:: Sampler.compare_func
-.. autoattribute:: Sampler.anisotropy
-.. autoattribute:: Sampler.border_color
-.. autoattribute:: Sampler.min_lod
-.. autoattribute:: Sampler.max_lod
-.. autoattribute:: Sampler.extra
-.. autoattribute:: Sampler.mglo
-.. autoattribute:: Sampler.ctx
+.. py:attribute:: Sampler.texture
+.. py:attribute:: Sampler.repeat_x
+.. py:attribute:: Sampler.repeat_y
+.. py:attribute:: Sampler.repeat_z
+.. py:attribute:: Sampler.filter
+.. py:attribute:: Sampler.compare_func
+.. py:attribute:: Sampler.anisotropy
+.. py:attribute:: Sampler.border_color
+.. py:attribute:: Sampler.min_lod
+.. py:attribute:: Sampler.max_lod
+.. py:attribute:: Sampler.extra
+.. py:attribute:: Sampler.mglo
+.. py:attribute:: Sampler.ctx

@@ -1,46 +1,44 @@
 Texture3D
 =========
 
-.. py:currentmodule:: moderngl
-
-.. autoclass:: moderngl.Texture3D
+.. py:class:: Texture3D
 
 Create
 ------
 
-.. automethod:: Context.texture3d
+.. py:method:: Context.texture3d
    :noindex:
 
 Methods
 -------
 
-.. automethod:: Texture3D.read
-.. automethod:: Texture3D.read_into
-.. automethod:: Texture3D.write
-.. automethod:: Texture3D.build_mipmaps
-.. automethod:: Texture3D.bind_to_image
-.. automethod:: Texture3D.use
-.. automethod:: Texture3D.release
-.. automethod:: Texture3D.get_handle
+.. py:method:: Texture3D.read
+.. py:method:: Texture3D.read_into
+.. py:method:: Texture3D.write
+.. py:method:: Texture3D.build_mipmaps
+.. py:method:: Texture3D.bind_to_image
+.. py:method:: Texture3D.use
+.. py:method:: Texture3D.release
+.. py:method:: Texture3D.get_handle
 
 Attributes
 ----------
 
-.. autoattribute:: Texture3D.repeat_x
-.. autoattribute:: Texture3D.repeat_y
-.. autoattribute:: Texture3D.repeat_z
-.. autoattribute:: Texture3D.filter
-.. autoattribute:: Texture3D.swizzle
-.. autoattribute:: Texture3D.width
-.. autoattribute:: Texture3D.height
-.. autoattribute:: Texture3D.depth
-.. autoattribute:: Texture3D.size
-.. autoattribute:: Texture3D.dtype
-.. autoattribute:: Texture3D.components
-.. autoattribute:: Texture3D.glo
-.. autoattribute:: Texture3D.mglo
-.. autoattribute:: Texture3D.extra
-.. autoattribute:: Texture3D.ctx
+.. py:attribute:: Texture3D.repeat_x
+.. py:attribute:: Texture3D.repeat_y
+.. py:attribute:: Texture3D.repeat_z
+.. py:attribute:: Texture3D.filter
+.. py:attribute:: Texture3D.swizzle
+.. py:attribute:: Texture3D.width
+.. py:attribute:: Texture3D.height
+.. py:attribute:: Texture3D.depth
+.. py:attribute:: Texture3D.size
+.. py:attribute:: Texture3D.dtype
+.. py:attribute:: Texture3D.components
+.. py:attribute:: Texture3D.glo
+.. py:attribute:: Texture3D.mglo
+.. py:attribute:: Texture3D.extra
+.. py:attribute:: Texture3D.ctx
 
 .. toctree::
     :maxdepth: 2

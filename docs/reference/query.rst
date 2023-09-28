@@ -1,26 +1,24 @@
 Query
 =====
 
-.. py:currentmodule:: moderngl
-
-.. autoclass:: moderngl.Query
+.. py:class:: Query
 
 Create
 ------
 
-.. automethod:: Context.query
+.. py:method:: Context.query
    :noindex:
 
 Attributes
 ----------
 
-.. autoattribute:: Query.samples
-.. autoattribute:: Query.primitives
-.. autoattribute:: Query.elapsed
-.. autoattribute:: Query.crender
-.. autoattribute:: Query.extra
-.. autoattribute:: Query.mglo
-.. autoattribute:: Query.ctx
+.. py:attribute:: Query.samples
+.. py:attribute:: Query.primitives
+.. py:attribute:: Query.elapsed
+.. py:attribute:: Query.crender
+.. py:attribute:: Query.extra
+.. py:attribute:: Query.mglo
+.. py:attribute:: Query.ctx
 
 Examples
 --------
