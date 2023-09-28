@@ -33,13 +33,10 @@ Methods
 
     The render primitive (mode) must be the same as the input primitive of the GeometryShader.
 
-    Args:
-        mode (int): By default :py:data:`TRIANGLES` will be used.
-        vertices (int): The number of vertices to transform.
-
-    Keyword Args:
-        first (int): The index of the first vertex to start with.
-        instances (int): The number of instances.
+    :param int mode: By default :py:data:`TRIANGLES` will be used.
+    :param int vertices: The number of vertices to transform.
+    :param int first: The index of the first vertex to start with.
+    :param int instances: The number of instances.
 
 .. py:method:: VertexArray.render_indirect(buffer: Buffer, mode: int | None = None, count: int = -1, first: int = 0) -> None
 
@@ -47,13 +44,10 @@ Methods
 
     The draw commands are 5 integers: (count, instanceCount, firstIndex, baseVertex, baseInstance).
 
-    Args:
-        buffer (Buffer): Indirect drawing commands.
-        mode (int): By default :py:data:`TRIANGLES` will be used.
-        count (int): The number of draws.
-
-    Keyword Args:
-        first (int): The index of the first indirect draw command.
+    :param Buffer buffer: Indirect drawing commands.
+    :param int mode: By default :py:data:`TRIANGLES` will be used.
+    :param int count: The number of draws.
+    :param int first: The index of the first indirect draw command.
 
 .. py:method:: VertexArray.transform(buffer: Buffer | List[Buffer], mode: int | None = None, vertices: int = -1, first: int = 0, instances: int = -1, buffer_offset: int = 0) -> None
 
@@ -63,31 +57,25 @@ Methods
     The transform primitive (mode) must be the same as
     the input primitive of the GeometryShader.
 
-    Args:
-        buffer (Buffer): The buffer to store the output.
-        mode (int): By default :py:data:`POINTS` will be used.
-        vertices (int): The number of vertices to transform.
-
-    Keyword Args:
-        first (int): The index of the first vertex to start with.
-        instances (int): The number of instances.
-        buffer_offset (int): Byte offset for the output buffer
+    :param Buffer buffer: The buffer to store the output.
+    :param int mode: By default :py:data:`POINTS` will be used.
+    :param int vertices: The number of vertices to transform.
+    :param int first: The index of the first vertex to start with.
+    :param int instances: The number of instances.
+    :param int buffer_offset: Byte offset for the output buffer
 
 .. py:method:: VertexArray.bind(attribute: int, cls: str, buffer: Buffer, fmt: str, offset: int = 0, stride: int = 0, divisor: int = 0, normalize: bool = False)
 
     Bind individual attributes to buffers.
 
-    Args:
-        location (int): The attribute location.
-        cls (str): The attribute class. Valid values are ``f``, ``i`` or ``d``.
-        buffer (Buffer): The buffer.
-        format (str): The buffer format.
-
-    Keyword Args:
-        offset (int): The offset.
-        stride (int): The stride.
-        divisor (int): The divisor.
-        normalize (bool): The normalize parameter, if applicable.
+    :param int location: The attribute location.
+    :param str cls: The attribute class. Valid values are ``f``, ``i`` or ``d``.
+    :param Buffer buffer: The buffer.
+    :param str format: The buffer format.
+    :param int offset: The offset.
+    :param int stride: The stride.
+    :param int divisor: The divisor.
+    :param bool normalize: The normalize parameter, if applicable.
 
 .. py:method:: VertexArray.release() -> None
 
@@ -151,8 +139,7 @@ Attributes
     :type: int
 
     The internal OpenGL object.
-
-    This values is provided for debug purposes only.
+    This values is provided for interoperability and debug purposes only.
 
 .. py:attribute:: VertexArray.extra
     :type: Any

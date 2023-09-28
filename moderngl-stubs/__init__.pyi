@@ -415,10 +415,10 @@ class Buffer:
     '''
 
     size: int
-    '''int: The size of the buffer in bytes.'''
+    '''The size of the buffer in bytes.'''
 
     dynamic: bool
-    '''bool: Is the buffer created with the dynamic flag?.'''
+    '''Is the buffer created with the dynamic flag?.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -427,11 +427,11 @@ class Buffer:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -471,9 +471,7 @@ class Buffer:
         Returns:
             bytes
         '''
-    def read_into(
-        self, buffer: Any, size: int = -1, *, offset: int = 0, write_offset: int = 0
-    ) -> None:
+    def read_into(self, buffer: Any, size: int = -1, *, offset: int = 0, write_offset: int = 0) -> None:
         '''
         Read the content into a buffer.
 
@@ -538,9 +536,7 @@ class Buffer:
             offset (int): The offset.
             chunk (bytes): The chunk to use repeatedly.
         '''
-    def bind_to_uniform_block(
-        self, binding: int = 0, *, offset: int = 0, size: int = -1
-    ) -> None:
+    def bind_to_uniform_block(self, binding: int = 0, *, offset: int = 0, size: int = -1) -> None:
         '''
         Bind the buffer to a uniform block.
 
@@ -551,9 +547,7 @@ class Buffer:
             offset (int): The offset.
             size (int): The size. Value ``-1`` means all.
         '''
-    def bind_to_storage_buffer(
-        self, binding: int = 0, *, offset: int = 0, size: int = -1
-    ) -> None:
+    def bind_to_storage_buffer(self, binding: int = 0, *, offset: int = 0, size: int = -1) -> None:
         '''
         Bind the buffer to a shader storage buffer.
 
@@ -2360,11 +2354,11 @@ class Framebuffer:
     '''
 
     viewport: Tuple[int, int, int, int]
-    '''tuple: Get or set the viewport of the framebuffer.'''
+    '''Get or set the viewport of the framebuffer.'''
 
     scissor: Tuple[int, int, int, int]
     '''
-    tuple: Get or set the scissor box of the framebuffer.
+    Get or set the scissor box of the framebuffer.
 
     When scissor testing is enabled fragments outside
     the defined scissor box will be discarded. This
@@ -2384,7 +2378,7 @@ class Framebuffer:
 
     color_mask: Tuple[bool, bool, bool, bool]
     '''
-    tuple: The color mask of the framebuffer.
+    The color mask of the framebuffer.
 
     Color masking controls what components in color attachments will be
     affected by fragment write operations.
@@ -2406,7 +2400,7 @@ class Framebuffer:
 
     depth_mask: bool
     '''
-    bool: The depth mask of the framebuffer.
+    The depth mask of the framebuffer.
 
     Depth mask enables or disables write operations to the depth buffer.
     This also applies when clearing the framebuffer.
@@ -2419,7 +2413,7 @@ class Framebuffer:
 
     width: int
     '''
-    int: The width of the framebuffer.
+    The width of the framebuffer.
 
     Framebuffers created by a window will only report its initial size.
     It's better get size information from the window itself.
@@ -2427,7 +2421,7 @@ class Framebuffer:
 
     height: int
     '''
-    int: The height of the framebuffer.
+    The height of the framebuffer.
 
     Framebuffers created by a window will only report its initial size.
     It's better get size information from the window itself.
@@ -2442,10 +2436,10 @@ class Framebuffer:
     '''
 
     samples: int
-    '''int: The samples of the framebuffer.'''
+    '''The samples of the framebuffer.'''
 
     bits: Dict[str, str]
-    '''dict: The bits of the framebuffer.'''
+    '''The bits of the framebuffer.'''
 
     color_attachments: Tuple[Union[Texture, Renderbuffer], ...]
     '''tuple: The color attachments of the framebuffer.'''

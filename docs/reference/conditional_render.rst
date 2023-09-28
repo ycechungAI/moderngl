@@ -3,6 +3,10 @@ ConditionalRender
 
 .. py:class:: ConditionalRender
 
+    This class represents a ConditionalRender object.
+
+    ConditionalRender objects can only be accessed from :py:class:`Query` objects.
+
 Examples
 --------
 

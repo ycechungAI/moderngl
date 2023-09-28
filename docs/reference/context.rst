@@ -521,8 +521,11 @@ Attributes
 .. py:attribute:: Context.error
 .. py:attribute:: Context.extensions
 .. py:attribute:: Context.info
-.. py:attribute:: Context.mglo
+
 .. py:attribute:: Context.extra
+    :type: Any
+
+    User defined data.
 
 Context Flags
 -------------

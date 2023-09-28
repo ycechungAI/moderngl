@@ -149,7 +149,7 @@ Attributes
     If this is a tranform program (no fragment shader).
 
 .. py:attribute:: Program.ctx
-    :type: int
+    :type: Context
 
     The context this object belongs to
 
@@ -157,8 +157,7 @@ Attributes
     :type: int
 
     The internal OpenGL object.
-
-    This values is provided for debug purposes only.
+    This values is provided for interoperability and debug purposes only.
 
 .. py:attribute:: Program.extra
     :type: int

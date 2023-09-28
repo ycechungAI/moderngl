@@ -3,6 +3,21 @@ Scope
 
 .. py:class:: Scope
 
+    This class represents a Scope object.
+
+    Responsibilities on enter:
+
+    - Set the enable flags.
+    - Bind the framebuffer.
+    - Assigning textures to texture locations.
+    - Assigning buffers to uniform buffers.
+    - Assigning buffers to shader storage buffers.
+
+    Responsibilities on exit:
+
+    - Restore the enable flags.
+    - Restore the framebuffer.
+
 Create
 ------
 
@@ -19,9 +34,15 @@ Methods
 Attributes
 ----------
 
-.. py:attribute:: Scope.extra
-.. py:attribute:: Scope.mglo
 .. py:attribute:: Scope.ctx
+    :type: Context
+
+    The context this object belongs to
+
+.. py:attribute:: Scope.extra
+    :type: Any
+
+    User defined data.
 
 Examples
 --------

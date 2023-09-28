@@ -3,6 +3,15 @@ Texture3D
 
 .. py:class:: Texture3D
 
+    A Texture is an OpenGL object that contains one or more images that all have the same image format.
+
+    A texture can be used in two ways. It can
+    be the source of a texture access from a Shader, or it can be used
+    as a render target.
+
+    A Texture3D object cannot be instantiated directly, it requires a context.
+    Use :py:meth:`Context.texture3d` to create one.
+
 Create
 ------
 
@@ -35,10 +44,22 @@ Attributes
 .. py:attribute:: Texture3D.size
 .. py:attribute:: Texture3D.dtype
 .. py:attribute:: Texture3D.components
-.. py:attribute:: Texture3D.glo
-.. py:attribute:: Texture3D.mglo
-.. py:attribute:: Texture3D.extra
+
 .. py:attribute:: Texture3D.ctx
+    :type: Context
+
+    The context this object belongs to
+
+.. py:attribute:: Texture3D.glo
+    :type: int
+
+    The internal OpenGL object.
+    This values is provided for interoperability and debug purposes only.
+
+.. py:attribute:: Texture3D.extra
+    :type: Any
+
+    User defined data.
 
 .. toctree::
     :maxdepth: 2

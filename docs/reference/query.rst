@@ -3,6 +3,8 @@ Query
 
 .. py:class:: Query
 
+    This class represents a Query object.
+
 Create
 ------
 
@@ -16,9 +18,16 @@ Attributes
 .. py:attribute:: Query.primitives
 .. py:attribute:: Query.elapsed
 .. py:attribute:: Query.crender
-.. py:attribute:: Query.extra
-.. py:attribute:: Query.mglo
+
 .. py:attribute:: Query.ctx
+    :type: Context
+
+    The context this object belongs to
+
+.. py:attribute:: Query.extra
+    :type: Any
+
+    User defined data.
 
 Examples
 --------
