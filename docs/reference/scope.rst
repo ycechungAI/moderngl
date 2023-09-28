@@ -3,6 +3,8 @@ Scope
 
 .. py:class:: Scope
 
+    Returned by :py:meth:`Context.scope`
+
     This class represents a Scope object.
 
     Responsibilities on enter:
@@ -17,12 +19,6 @@ Scope
 
     - Restore the enable flags.
     - Restore the framebuffer.
-
-Create
-------
-
-.. py:method:: Context.scope
-   :noindex:
 
 Methods
 -------
@@ -125,6 +121,3 @@ Examples
     # Scope objects only do as much as necessary.
     # Restoring the framebuffer and enable flags are lowcost operations and
     # without them you could get a hard time debugging the application.
-
-.. toctree::
-    :maxdepth: 2

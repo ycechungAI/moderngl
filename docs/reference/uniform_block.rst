@@ -3,6 +3,8 @@ UniformBlock
 
 .. py:class:: UniformBlock
 
+    Available in :py:meth:`Program.__getitem__`
+
 .. py:attribute:: UniformBlock.binding
     :type: int
 
@@ -32,6 +34,3 @@ UniformBlock
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

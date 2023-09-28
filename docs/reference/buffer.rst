@@ -3,6 +3,8 @@ Buffer
 
 .. py:class:: Buffer
 
+    Returned by :py:meth:`Context.buffer`
+
     Buffer objects are OpenGL objects that store an array of unformatted memory \
     allocated by the OpenGL context, (data allocated on the GPU).
 
@@ -13,12 +15,6 @@ Buffer
     Use :py:meth:`Context.buffer` to create one.
 
     Copy buffer content using :py:meth:`Context.copy_buffer`.
-
-Create
-------
-
-.. py:method:: Context.buffer
-    :noindex:
 
 Methods
 -------
@@ -110,6 +106,3 @@ Attributes
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

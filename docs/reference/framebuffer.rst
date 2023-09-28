@@ -3,27 +3,79 @@ Framebuffer
 
 .. py:class:: Framebuffer
 
+    Returned by :py:meth:`Context.framebuffer`
+
     A :py:class:`Framebuffer` is a collection of buffers that can be used as the destination for rendering.
 
     The buffers for Framebuffer objects reference images from either Textures or Renderbuffers.
-    Create a :py:class:`Framebuffer` using :py:meth:`Context.framebuffer`.
-
-Create
-------
-
-.. py:method:: Context.simple_framebuffer
-   :noindex:
-
-.. py:method:: Context.framebuffer
-   :noindex:
 
 Methods
 -------
 
-.. py:method:: Framebuffer.clear
-.. py:method:: Framebuffer.read
-.. py:method:: Framebuffer.read_into
-.. py:method:: Framebuffer.use
+.. py:method:: Framebuffer.clear(red: float = 0.0, green: float = 0.0, blue: float = 0.0, alpha: float = 0.0, depth: float = 1.0, viewport=..., color=...) -> None
+
+    Clear the framebuffer.
+
+    If a `viewport` passed in, a scissor test will be used to clear the given viewport.
+    This viewport take presence over the framebuffers :py:attr:`~moderngl.Framebuffer.scissor`.
+    Clearing can still be done with scissor if no viewport is passed in.
+
+    This method also respects the
+    :py:attr:`~moderngl.Framebuffer.color_mask` and
+    :py:attr:`~moderngl.Framebuffer.depth_mask`. It can for example be used to only clear
+    the depth or color buffer or specific components in the color buffer.
+
+    If the `viewport` is a 2-tuple it will clear the
+    ``(0, 0, width, height)`` where ``(width, height)`` is the 2-tuple.
+
+    If the `viewport` is a 4-tuple it will clear the given viewport.
+
+    :pname float red: color component.
+    :pname float green: color component.
+    :pname float blue: color component.
+    :pname float alpha: alpha component.
+    :pname float depth: depth value.
+    :pname tuple viewport: The viewport.
+    :pname tuple color: Optional tuple replacing the red, green, blue and alpha arguments
+
+.. py:method:: Framebuffer.read(viewport=..., components: int = 3, attachment: int = 0, alignment: int = 1, dtype: str = 'f1', clamp: bool = False) -> bytes
+
+    Read the content of the framebuffer.
+
+    :pname tuple viewport: The viewport.
+    :pname int components: The number of components to read.
+    :pname int attachment: The color attachment number. -1 for the depth attachment
+    :pname int alignment: The byte alignment of the pixels.
+    :pname str dtype: Data type.
+    :pname bool clamp: Clamps floating point values to ``[0.0, 1.0]``
+
+    .. code:: python
+
+        # Read the first color attachment's RGBA data
+        data = fbo.read(components=4)
+        # Read the second color attachment's RGB data
+        data = fbo.read(attachment=1)
+        # Read the depth attachment
+        data = fbo.read(attachment=-1)
+        # Read the lower left 10 x 10 pixels from the first color attachment
+        data = fbo.read(viewport=(0, 0, 10, 10))
+
+.. py:method:: Framebuffer.read_into(buffer, viewport, components: int = 3, attachment: int = 0, alignment: int = 1, dtype: str = 'f1', write_offset: int = 0) -> None
+
+    Read the content of the framebuffer into a buffer.
+
+    :param bytearray buffer: The buffer that will receive the pixels.
+    :param tuple viewport: The viewport.
+    :param int components: The number of components to read.
+    :param int attachment: The color attachment.
+    :param int alignment: The byte alignment of the pixels.
+    :param str dtype: Data type.
+    :param int write_offset: The write offset.
+
+.. py:method:: Framebuffer.use()
+
+    Bind the framebuffer.
+
 .. py:method:: Framebuffer.release
 
 Attributes
@@ -144,6 +196,3 @@ Attributes
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

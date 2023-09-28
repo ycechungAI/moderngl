@@ -3,6 +3,8 @@ Renderbuffer
 
 .. py:class:: Renderbuffer
 
+    Returned by :py:meth:`Context.renderbuffer` or :py:meth:`Context.depth_renderbuffer`
+
     Renderbuffer objects are OpenGL objects that contain images.
 
     They are created and used specifically with :py:class:`Framebuffer` objects.
@@ -14,15 +16,6 @@ Renderbuffer
     A Renderbuffer object cannot be instantiated directly, it requires a context.
     Use :py:meth:`Context.renderbuffer` or :py:meth:`Context.depth_renderbuffer`
     to create one.
-
-Create
-------
-
-.. py:method:: Context.renderbuffer
-   :noindex:
-
-.. py:method:: Context.depth_renderbuffer
-   :noindex:
 
 Methods
 -------
@@ -51,11 +44,7 @@ Attributes
     The internal OpenGL object.
     This values is provided for interoperability and debug purposes only.
 
-
 .. py:attribute:: Renderbuffer.extra
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

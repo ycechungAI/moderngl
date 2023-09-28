@@ -3,6 +3,8 @@ Program
 
 .. py:class:: Program
 
+    Returned by :py:meth:`Context.program`
+
     A Program object represents fully processed executable code in the OpenGL Shading Language, \
     for one or more Shader stages.
 
@@ -18,12 +20,6 @@ Program
     Uniform buffers can be bound using :py:meth:`Buffer.bind_to_uniform_block`
     or can be set individually. For more complex binding yielding higher
     performance consider using :py:class:`moderngl.Scope`.
-
-Create
-------
-
-.. py:method:: Context.program
-   :noindex:
 
 Methods
 -------
@@ -160,7 +156,7 @@ Attributes
     This values is provided for interoperability and debug purposes only.
 
 .. py:attribute:: Program.extra
-    :type: int
+    :type: Any
 
     User defined data.
 

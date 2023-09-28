@@ -3,6 +3,8 @@ TextureCube
 
 .. py:class:: TextureCube
 
+    Returned by :py:meth:`Context.texture_cube` and :py:meth:`Context.depth_texture_cube`
+
     Cubemaps are a texture using the type GL_TEXTURE_CUBE_MAP.
 
     They are similar to 2D textures in that they have two dimensions.
@@ -17,12 +19,6 @@ TextureCube
 
     A Texture3D object cannot be instantiated directly, it requires a context.
     Use :py:meth:`Context.texture_cube` to create one.
-
-Create
-------
-
-.. py:method:: Context.texture_cube
-   :noindex:
 
 Methods
 -------
@@ -60,6 +56,3 @@ Attributes
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

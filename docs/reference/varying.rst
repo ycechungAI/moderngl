@@ -3,6 +3,8 @@ Varying
 
 .. py:class:: Varying
 
+    Available in :py:meth:`Program.__getitem__`
+
     Represents a program output varying.
 
 .. py:attribute:: Varying.name
@@ -19,6 +21,3 @@ Varying
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

@@ -3,6 +3,8 @@ VertexArray
 
 .. py:class:: VertexArray
 
+    Returned by :py:meth:`Context.vertex_array`
+
     A VertexArray object is an OpenGL object that stores all of the state needed to supply vertex data.
 
     It stores the format of the vertex data
@@ -11,20 +13,7 @@ VertexArray
     In ModernGL, the VertexArray object also stores a reference
     for a :py:class:`Program` object.
 
-    A VertexArray object cannot be instantiated directly, it requires a context.
-    Use :py:meth:`Context.vertex_array` or :py:meth:`Context.simple_vertex_array`
-    to create one.
-
     Compared to OpenGL, :py:class:`VertexArray` also stores a :py:class:`Program` object.
-
-Create
-------
-
-.. py:method:: Context.simple_vertex_array
-   :noindex:
-
-.. py:method:: Context.vertex_array
-   :noindex:
 
 Methods
 -------
@@ -145,6 +134,3 @@ Attributes
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

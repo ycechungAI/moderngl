@@ -3,21 +3,24 @@ Query
 
 .. py:class:: Query
 
+    Returned by :py:meth:`Context.query`
+
     This class represents a Query object.
-
-Create
-------
-
-.. py:method:: Context.query
-   :noindex:
 
 Attributes
 ----------
 
 .. py:attribute:: Query.samples
+    :type: int
+
 .. py:attribute:: Query.primitives
+    :type: int
+
 .. py:attribute:: Query.elapsed
+    :type: int
+
 .. py:attribute:: Query.crender
+    :type: ConditionalRender
 
 .. py:attribute:: Query.ctx
     :type: Context
@@ -90,4 +93,6 @@ Examples
     to render 496 samples
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
+
+    conditional_render.rst

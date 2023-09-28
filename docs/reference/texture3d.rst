@@ -3,6 +3,8 @@ Texture3D
 
 .. py:class:: Texture3D
 
+    Returned by :py:meth:`Context.texture3d`
+
     A Texture is an OpenGL object that contains one or more images that all have the same image format.
 
     A texture can be used in two ways. It can
@@ -11,12 +13,6 @@ Texture3D
 
     A Texture3D object cannot be instantiated directly, it requires a context.
     Use :py:meth:`Context.texture3d` to create one.
-
-Create
-------
-
-.. py:method:: Context.texture3d
-   :noindex:
 
 Methods
 -------
@@ -60,6 +56,3 @@ Attributes
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

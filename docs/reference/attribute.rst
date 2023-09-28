@@ -3,6 +3,8 @@ Attribute
 
 .. py:class:: Attribute
 
+    Available in :py:meth:`Program.__getitem__`
+
     Represents a program input attribute.
 
 .. py:attribute:: Attribute.location
@@ -39,6 +41,3 @@ Attribute
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

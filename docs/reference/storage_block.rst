@@ -3,6 +3,8 @@ StorageBlock
 
 .. py:class:: StorageBlock
 
+    Available in :py:meth:`Program.__getitem__`
+
     Storage Blocks are OpenGL 4.3+ Program accessible data blocks.
     Compared to UniformBlocks they can be larger in size and also support write operations.
     For less than one page (64KB) read-only data use UniformBlocks.
@@ -36,6 +38,3 @@ StorageBlock
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

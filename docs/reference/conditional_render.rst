@@ -3,6 +3,8 @@ ConditionalRender
 
 .. py:class:: ConditionalRender
 
+    Available in :py:attr:`Query.crender`
+
     This class represents a ConditionalRender object.
 
     ConditionalRender objects can only be accessed from :py:class:`Query` objects.
@@ -20,6 +22,3 @@ Examples
     with query.crender:
         print('This will always get printed')
         vao2.render()  # But this will be rendered only if vao1 has passing samples.
-
-.. toctree::
-    :maxdepth: 2

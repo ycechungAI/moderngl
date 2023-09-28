@@ -3,6 +3,8 @@ TextureArray
 
 .. py:class:: TextureArray
 
+    Returned by :py:meth:`Context.texture_array`
+
     An Array Texture is a Texture where each mipmap level contains an array of images of the same size.
 
     Array textures may have Mipmaps, but each mipmap
@@ -10,12 +12,6 @@ TextureArray
 
     A TextureArray object cannot be instantiated directly, it requires a context.
     Use :py:meth:`Context.texture_array` to create one.
-
-Create
-------
-
-.. py:method:: Context.texture_array
-   :noindex:
 
 Methods
 -------
@@ -59,6 +55,3 @@ Attributes
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

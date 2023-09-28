@@ -3,6 +3,8 @@ ComputeShader
 
 .. py:class:: ComputeShader
 
+    Returned by :py:meth:`Context.compute_shader`
+
     A Compute Shader is a Shader Stage that is used entirely for computing arbitrary information.
 
     While it can do rendering, it is generally used
@@ -12,12 +14,6 @@ ComputeShader
     - Storage buffers can be bound using :py:meth:`Buffer.bind_to_storage_buffer`.
     - Uniform buffers can be bound using :py:meth:`Buffer.bind_to_uniform_block`.
     - Images can be bound using :py:meth:`Texture.bind_to_image`.
-
-Create
-------
-
-.. py:method:: Context.compute_shader
-   :noindex:
 
 Methods
 -------
@@ -110,6 +106,3 @@ Attributes
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

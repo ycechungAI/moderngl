@@ -3,6 +3,8 @@ Texture
 
 .. py:class:: Texture
 
+    Returned by :py:meth:`Context.texture` and :py:meth:`Context.depth_texture`
+
     A Texture is an OpenGL object that contains one or more images that all have the same image format.
 
     A texture can be used in two ways. It can
@@ -12,15 +14,6 @@ Texture
     A Texture object cannot be instantiated directly, it requires a context.
     Use :py:meth:`Context.texture` or :py:meth:`Context.depth_texture`
     to create one.
-
-Create
-------
-
-.. py:method:: Context.texture
-   :noindex:
-
-.. py:method:: Context.depth_texture
-   :noindex:
 
 Methods
 -------
@@ -66,6 +59,3 @@ Attributes
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

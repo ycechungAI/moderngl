@@ -3,6 +3,8 @@ Uniform
 
 .. py:class:: Uniform
 
+    Available in :py:meth:`Program.__getitem__`
+
     A uniform is a global GLSL variable declared with the 'uniform' storage qualifier.
 
     These act as parameters that the user of a shader program can pass to that program.
@@ -57,6 +59,3 @@ Attributes
     :type: Any
 
     User defined data.
-
-.. toctree::
-    :maxdepth: 2

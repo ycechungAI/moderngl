@@ -3,6 +3,8 @@ Context
 
 .. py:class:: Context
 
+    Returned by :py:meth:`moderngl.create_context`
+
     Class exposing OpenGL features.
 
     ModernGL objects can be created from this class.
@@ -669,6 +671,3 @@ ContextManager
 
     ctx = ContextManager.get_default_context()
     print(ctx.version_code)
-
-.. toctree::
-    :maxdepth: 2

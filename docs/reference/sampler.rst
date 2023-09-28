@@ -3,6 +3,8 @@ Sampler
 
 .. py:class:: Sampler
 
+    Returned by :py:meth:`Context.sampler`
+
     A Sampler Object is an OpenGL Object that stores the sampling parameters for a Texture access inside of a shader.
 
     When a sampler object is bound to a texture image unit,
@@ -18,12 +20,6 @@ Sampler
 
     Sampler bindings do clear automatically between every frame so a texture unit
     need at least one bind/use per frame.
-
-Create
-------
-
-.. py:method:: Context.sampler
-   :noindex:
 
 Methods
 -------
@@ -57,7 +53,6 @@ Attributes
 
     The internal OpenGL object.
     This values is provided for interoperability and debug purposes only.
-
 
 .. py:attribute:: Sampler.extra
     :type: Any
