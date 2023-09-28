@@ -1,91 +1,530 @@
 Context
 =======
 
-.. py:currentmodule:: moderngl
+.. py:class:: Context
 
-.. autoclass:: moderngl.Context
+    Class exposing OpenGL features.
+
+    ModernGL objects can be created from this class.
 
 Create
 ------
 
-.. autofunction:: moderngl.create_context
-.. autofunction:: moderngl.create_standalone_context
+.. py:function:: moderngl.create_context(require: int = 330, standalone: bool = False) -> Context
+
+    Create a ModernGL context by loading OpenGL functions from an existing OpenGL context. An OpenGL context must exists.
+    Other backend specific settings are passed as keyword arguments.
+
+    Context sharing is known to not work properly, please avoid using it.
+    There is a paramter `share` for that to attempt to create a shared context.
+
+    :param int require: OpenGL version code
+    :param bool standalone: Headless flag
+
+    Example::
+
+        # Accept the current context version
+        ctx = moderngl.create_context()
+
+        # Require at least OpenGL 4.3
+        ctx = moderngl.create_context(require=430)
+
+        # Create a headless context requiring OpenGL 4.3
+        ctx = moderngl.create_context(require=430, standalone=True)
+
+.. py:function:: moderngl.create_standalone_context(...) -> Context
+
+    Deprecated, please prefer using `create_context(..., standalone=True)`.
 
 ModernGL Objects
 ----------------
 
-.. automethod:: Context.program
-.. automethod:: Context.simple_vertex_array
-.. automethod:: Context.vertex_array
-.. automethod:: Context.buffer
-.. automethod:: Context.texture
-.. automethod:: Context.depth_texture
-.. automethod:: Context.texture3d
-.. automethod:: Context.texture_array
-.. automethod:: Context.texture_cube
-.. automethod:: Context.external_texture
-.. automethod:: Context.simple_framebuffer
-.. automethod:: Context.framebuffer
-.. automethod:: Context.renderbuffer
-.. automethod:: Context.depth_renderbuffer
-.. automethod:: Context.scope
-.. automethod:: Context.query
-.. automethod:: Context.compute_shader
-.. automethod:: Context.sampler
-.. automethod:: Context.clear_samplers
-.. automethod:: Context.release
+.. py:method:: Context.program(vertex_shader: str, fragment_shader: str, geometry_shader: str, tess_control_shader: str, tess_evaluation_shader: str, varyings: Tuple[str, ...], fragment_outputs: Dict[str, int], varyings_capture_mode: str = 'interleaved') -> Program
+
+    Create a :py:class:`Program` object.
+
+    The ``varyings`` are only used when a transform program is created
+    to specify the names of the output varyings to capture in the output buffer.
+
+    ``fragment_outputs`` can be used to programmatically map named fragment
+    shader outputs to a framebuffer attachment numbers. This can also be done
+    by using ``layout(location=N)`` in the fragment shader.
+
+    :param str vertex_shader: The vertex shader source.
+    :param str fragment_shader: The fragment shader source.
+    :param str geometry_shader: The geometry shader source.
+    :param str tess_control_shader: The tessellation control shader source.
+    :param str tess_evaluation_shader: The tessellation evaluation shader source.
+    :param list varyings: A list of varyings.
+    :param dict fragment_outputs: A dictionary of fragment outputs.
+
+.. py:method:: Context.simple_vertex_array
+
+    Deprecated, use :py:meth:`Context.vertex_array` instead.
+
+    :param Program program: The program used when rendering.
+    :param Buffer buffer: The buffer.
+    :param list attributes: A list of attribute names.
+    :param int index_element_size: byte size of each index element, 1, 2 or 4.
+    :param Buffer index_buffer: An index buffer.
+    :param int mode: The default draw mode (for example: ``TRIANGLES``)
+
+.. py:method:: Context.vertex_array
+
+    Create a :py:class:`VertexArray` object.
+
+    The vertex array describes how buffers are read by a shader program.
+    We need to supply buffer formats and attributes names. The attribute names
+    are defined by the user in the glsl code and can be anything.
+
+    :param Program program: The program used when rendering
+    :param list content: A list of (buffer, format, attributes). See :ref:`buffer-format-label`.
+    :param Buffer index_buffer: An index buffer (optional)
+    :param int index_element_size: byte size of each index element, 1, 2 or 4.
+    :param bool skip_errors: Ignore errors during creation
+    :param int mode: The default draw mode (for example: ``TRIANGLES``)
+
+    Examples::
+
+        # Empty vertext array (no attribute input)
+        vao = ctx.vertex_array(program)
+
+        # Simple version with a single buffer
+        vao = ctx.vertex_array(program, buffer, 'in_position', 'in_normal')
+        vao = ctx.vertex_array(program, buffer, 'in_position', 'in_normal', index_buffer=ibo)
+
+        # Multiple buffers
+        vao = ctx.vertex_array(program, [
+            (buffer1, '3f', 'in_position'),
+            (buffer2, '3f', 'in_normal'),
+        ])
+        vao = ctx.vertex_array(program, [
+                (buffer1, '3f', 'in_position'),
+                (buffer2, '3f', 'in_normal'),
+            ],
+            index_buffer=ibo,
+            index_element_size=2,  # 16 bit / 'u2' index buffer
+        )
+
+    This method also supports arguments for :py:meth:`Context.simple_vertex_array`.
+
+.. py:method:: Context.buffer
+
+    Create a :py:class:`Buffer` object.
+
+    :param bytes data: Content of the new buffer.
+    :param int reserve: The number of bytes to reserve.
+    :param bool dynamic: Treat buffer as dynamic.
+
+.. py:method:: Context.texture
+
+    Create a :py:class:`Texture` object.
+
+    .. Warning:: Do not play with ``internal_format`` unless you know exactly
+                    you are doing. This is an override to support sRGB and
+                    compressed textures if needed.
+
+    :param tuple size: The width and height of the texture.
+    :param int components: The number of components 1, 2, 3 or 4.
+    :param bytes data: Content of the texture.
+    :param int samples: The number of samples. Value 0 means no multisample format.
+    :param int alignment: The byte alignment 1, 2, 4 or 8.
+    :param str dtype: Data type.
+    :param int internal_format: Override the internalformat of the texture (IF needed)
+
+.. py:method:: Context.depth_texture
+
+    Create a :py:class:`Texture` object.
+
+    :param tuple size: The width and height of the texture.
+    :param bytes data: Content of the texture.
+    :param int samples: The number of samples. Value 0 means no multisample format.
+    :param int alignment: The byte alignment 1, 2, 4 or 8.
+
+.. py:method:: Context.texture3d
+
+    Create a :py:class:`Texture3D` object.
+
+    :param tuple size: The width, height and depth of the texture.
+    :param int components: The number of components 1, 2, 3 or 4.
+    :param bytes data: Content of the texture.
+    :param int alignment: The byte alignment 1, 2, 4 or 8.
+    :param str dtype: Data type.
+
+.. py:method:: Context.texture_array
+
+    Create a :py:class:`TextureArray` object.
+
+    :param tuple size: The ``(width, height, layers)`` of the texture.
+    :param int components: The number of components 1, 2, 3 or 4.
+    :param bytes data: Content of the texture. The size must be ``(width, height * layers)`` so each layer is stacked vertically.
+    :param int alignment: The byte alignment 1, 2, 4 or 8.
+    :param str dtype: Data type.
+
+.. py:method:: Context.texture_cube
+
+    Create a :py:class:`TextureCube` object.
+
+    Note that the width and height of the cubemap must be the same
+    unless you are using a non-standard extension.
+
+    :param tuple size: The width, height of the texture. Each side of the cube will have this size.
+    :param int components: The number of components 1, 2, 3 or 4.
+    :param bytes data: Content of the texture. The data should be have the following ordering: positive_x, negative_x, positive_y, negative_y, positive_z, negative_z
+    :param int alignment: The byte alignment 1, 2, 4 or 8.
+    :param str dtype: Data type.
+    :param int internal_format: Override the internalformat of the texture (IF needed)
+
+.. py:method:: Context.depth_texture_cube
+
+    Create a :py:class:`TextureCube` object
+
+    :param tuple size: The width and height of the texture.
+    :param bytes data: Content of the texture.
+    :param int alignment: The byte alignment 1, 2, 4 or 8.
+
+.. py:method:: Context.external_texture
+
+    Create a :py:class:`Texture` object from an existing OpenGL texture object.
+
+    :param int glo: External OpenGL texture object.
+    :param tuple size: The width and height of the texture.
+    :param int components: The number of components 1, 2, 3 or 4.
+    :param int samples: The number of samples. Value 0 means no multisample format.
+    :param str dtype: Data type.
+
+.. py:method:: Context.simple_framebuffer
+
+    Creates a :py:class:`Framebuffer` with a single color attachment \
+    and depth buffer using :py:class:`moderngl.Renderbuffer` attachments.
+
+    :param tuple size: The width and height of the renderbuffer.
+    :param int components: The number of components 1, 2, 3 or 4.
+    :param int samples: The number of samples. Value 0 means no multisample format.
+    :param str dtype: Data type.
+
+.. py:method:: Context.framebuffer
+
+    A :py:class:`Framebuffer` is a collection of buffers that can be \
+    used as the destination for rendering. The buffers for Framebuffer \
+    objects reference images from either Textures or Renderbuffers.
+
+    :param color_attachments: A list of :py:class:`Texture` or :py:class:`Renderbuffer` objects.
+    :param depth_attachment: The depth attachment.
+
+.. py:method:: Context.renderbuffer
+
+    :py:class:`Renderbuffer` objects are OpenGL objects that contain images. \
+    They are created and used specifically with :py:class:`Framebuffer` objects.
+
+    :param tuple size: The width and height of the renderbuffer.
+    :param int components: The number of components 1, 2, 3 or 4.
+    :param int samples: The number of samples. Value 0 means no multisample format.
+    :param str dtype: Data type.
+
+.. py:method:: Context.depth_renderbuffer
+
+    :py:class:`Renderbuffer` objects are OpenGL objects that contain images. \
+    They are created and used specifically with :py:class:`Framebuffer` objects.
+
+    :param tuple size: The width and height of the renderbuffer.
+    :param int samples: The number of samples. Value 0 means no multisample format.
+
+.. py:method:: Context.scope
+
+    Create a :py:class:`Scope` object.
+
+    :param Framebuffer framebuffer: The framebuffer to use when entering.
+    :param int enable_only: The enable_only flags to set when entering.
+    :param tuple textures: List of (texture, binding) tuples.
+    :param tuple uniform_buffers: Tuple of (buffer, binding) tuples.
+    :param tuple storage_buffers: Tuple of (buffer, binding) tuples.
+    :param tuple samplers: Tuple of sampler bindings
+    :param int enable: Flags to enable for this vao such as depth testing and blending
+
+.. py:method:: Context.query
+
+    Create a :py:class:`Query` object.
+
+    :param bool samples: Query ``GL_SAMPLES_PASSED`` or not.
+    :param bool any_samples: Query ``GL_ANY_SAMPLES_PASSED`` or not.
+    :param bool time: Query ``GL_TIME_ELAPSED`` or not.
+    :param bool primitives: Query ``GL_PRIMITIVES_GENERATED`` or not.
+
+.. py:method:: Context.compute_shader
+
+    A :py:class:`ComputeShader` is a Shader Stage that is used entirely \
+    for computing arbitrary information. While it can do rendering, it \
+    is generally used for tasks not directly related to drawing.
+
+    :param str source: The source of the compute shader.
+
+.. py:method:: Context.sampler
+
+    Create a :py:class:`Sampler` object.
+
+    :param bool repeat_x: Repeat texture on x
+    :param bool repeat_y: Repeat texture on y
+    :param bool repeat_z: Repeat texture on z
+    :param tuple filter: The min and max filter
+    :param float anisotropy: Number of samples for anisotropic filtering. Any value greater than 1.0 counts as a use of anisotropic filtering
+    :param str compare_func: Compare function for depth textures
+    :param tuple border_color: The (r, g, b, a) color for the texture border. When this value is set the ``repeat_`` values are overridden setting the texture wrap to return the border color when outside ``[0, 1]`` range.
+    :param float min_lod: Minimum level-of-detail parameter (Default ``-1000.0``). This floating-point value limits the selection of highest resolution mipmap (lowest mipmap level)
+    :param float max_lod: Minimum level-of-detail parameter (Default ``1000.0``). This floating-point value limits the selection of the lowest resolution mipmap (highest mipmap level)
+    :param Texture texture: The texture for this sampler
+
+.. py:method:: Context.clear_samplers
+
+    Unbinds samplers from texture units.
+
+    Sampler bindings do clear automatically between every frame,
+    but lingering samplers can still be a source of weird bugs during
+    the frame rendering. This methods provides a fairly brute force
+    and efficient way to ensure texture units are clear.
+
+    :param int start: The texture unit index to start the clearing samplers
+    :param int stop: The texture unit index to stop clearing samplers
+
+    Example::
+
+        # Clear texture unit 0, 1, 2, 3, 4
+        ctx.clear_samplers(start=0, end=5)
+
+        # Clear texture unit 4, 5, 6, 7
+        ctx.clear_samplers(start=4, end=8)
+
+.. py:method:: Context.release
+
 
 Methods
 -------
 
-.. automethod:: Context.clear
-.. automethod:: Context.enable_only
-.. automethod:: Context.enable
-.. automethod:: Context.disable
-.. automethod:: Context.enable_direct
-.. automethod:: Context.disable_direct
-.. automethod:: Context.finish
-.. automethod:: Context.copy_buffer
-.. automethod:: Context.copy_framebuffer
-.. automethod:: Context.detect_framebuffer
-.. automethod:: Context.memory_barrier
-.. automethod:: Context.gc
-.. automethod:: Context.__enter__
-.. automethod:: Context.__exit__
+.. py:method:: Context.clear
+
+    Clear the bound framebuffer.
+
+    If a `viewport` passed in, a scissor test will be used to clear the given viewport.
+    This viewport take prescense over the framebuffers :py:attr:`~moderngl.Framebuffer.scissor`.
+    Clearing can still be done with scissor if no viewport is passed in.
+
+    This method also respects the
+    :py:attr:`~moderngl.Framebuffer.color_mask` and
+    :py:attr:`~moderngl.Framebuffer.depth_mask`. It can for example be used to only clear
+    the depth or color buffer or specific components in the color buffer.
+
+    If the `viewport` is a 2-tuple it will clear the
+    ``(0, 0, width, height)`` where ``(width, height)`` is the 2-tuple.
+
+    If the `viewport` is a 4-tuple it will clear the given viewport.
+
+    Args:
+        red (float): color component.
+        green (float): color component.
+        blue (float): color component.
+        alpha (float): alpha component.
+        depth (float): depth value.
+
+    Keyword Args:
+        viewport (tuple): The viewport.
+        color (tuple): Optional rgba color tuple
+
+.. py:method:: Context.enable_only
+
+    Clears all existing flags applying new ones.
+
+    Note that the enum values defined in moderngl
+    are not the same as the ones in opengl.
+    These are defined as bit flags so we can logical
+    `or` them together.
+
+    Available flags:
+
+    - :py:data:`moderngl.NOTHING`
+    - :py:data:`moderngl.BLEND`
+    - :py:data:`moderngl.DEPTH_TEST`
+    - :py:data:`moderngl.CULL_FACE`
+    - :py:data:`moderngl.RASTERIZER_DISCARD`
+    - :py:data:`moderngl.PROGRAM_POINT_SIZE`
+
+    Examples::
+
+        # Disable all flags
+        ctx.enable_only(moderngl.NOTHING)
+
+        # Ensure only depth testing and face culling is enabled
+        ctx.enable_only(moderngl.DEPTH_TEST | moderngl.CULL_FACE)
+
+    Args:
+        flags (EnableFlag): The flags to enable
+
+.. py:method:: Context.enable
+
+    Enable flags.
+
+    Note that the enum values defined in moderngl
+    are not the same as the ones in opengl.
+    These are defined as bit flags so we can logical
+    `or` them together.
+
+    For valid flags, please see :py:meth:`enable_only`.
+
+    Examples::
+
+        # Enable a single flag
+        ctx.enable(moderngl.DEPTH_TEST)
+
+        # Enable multiple flags
+        ctx.enable(moderngl.DEPTH_TEST | moderngl.CULL_FACE | moderngl.BLEND)
+
+    Args:
+        flag (int): The flags to enable.
+
+.. py:method:: Context.disable
+
+    Disable flags.
+
+    For valid flags, please see :py:meth:`enable_only`.
+
+    Examples::
+
+        # Only disable depth testing
+        ctx.disable(moderngl.DEPTH_TEST)
+
+        # Disable depth testing and face culling
+        ctx.disable(moderngl.DEPTH_TEST | moderngl.CULL_FACE)
+
+    Args:
+        flag (int): The flags to disable.
+
+.. py:method:: Context.enable_direct
+
+    Gives direct access to ``glEnable`` so unsupported capabilities in ModernGL can be enabled.
+
+    Do not use this to set already supported context flags.
+
+    Example::
+
+        # Enum value from the opengl registry
+        GL_CONSERVATIVE_RASTERIZATION_NV = 0x9346
+        ctx.enable_direct(GL_CONSERVATIVE_RASTERIZATION_NV)
+
+.. py:method:: Context.disable_direct
+
+    Gives direct access to ``glDisable`` so unsupported capabilities in ModernGL can be disabled.
+
+    Do not use this to set already supported context flags.
+
+    Example::
+
+        # Enum value from the opengl registry
+        GL_CONSERVATIVE_RASTERIZATION_NV = 0x9346
+        ctx.disable_direct(GL_CONSERVATIVE_RASTERIZATION_NV)
+
+.. py:method:: Context.finish
+
+    Wait for all drawing commands to finish.
+
+.. py:method:: Context.copy_buffer
+
+    Copy buffer content.
+
+    Args:
+        dst (Buffer): The destination buffer.
+        src (Buffer): The source buffer.
+        size (int): The number of bytes to copy.
+
+    Keyword Args:
+        read_offset (int): The read offset.
+        write_offset (int): The write offset.
+
+.. py:method:: Context.copy_framebuffer
+
+    Copy framebuffer content.
+
+    Use this method to:
+
+        - blit framebuffers.
+        - copy framebuffer content into a texture.
+        - downsample framebuffers. (it will allow to read the framebuffer's content)
+        - downsample a framebuffer directly to a texture.
+
+    Args:
+        dst (Framebuffer or Texture): Destination framebuffer or texture.
+        src (Framebuffer): Source framebuffer.
+
+.. py:method:: Context.detect_framebuffer
+
+    Detect a framebuffer.
+
+    This is already done when creating a context,
+    but if the underlying window library for some changes the default framebuffer
+    during the lifetime of the application this might be necessary.
+
+    Args:
+        glo (int): Framebuffer object.
+
+.. py:method:: Context.memory_barrier
+
+    Applying a memory barrier.
+
+    The memory barrier is needed in particular to correctly change buffers or textures
+    between each shader. If the same buffer is changed in two shaders,
+    it can cause an effect like 'depth fighting' on a buffer or texture.
+
+    The method should be used between :py:class:`Program` -s, between :py:class:`ComputeShader` -s,
+    and between :py:class:`Program` -s and :py:class:`ComputeShader` -s.
+
+    Keyword Args:
+        barriers (int): Affected barriers, default moderngl.ALL_BARRIER_BITS.
+        by_region (bool): Memory barrier mode by region. More read on https://registry.khronos.org/OpenGL-Refpages/gl4/html/glMemoryBarrier.xhtml
+
+.. py:method:: Context.gc
+
+    TBD
+
+.. py:method:: Context.__enter__
+
+    TBD
+
+.. py:method:: Context.__exit__
+
+    TBD
+
 
 Attributes
 ----------
 
-.. autoattribute:: Context.gc_mode
-.. autoattribute:: Context.objects
-.. autoattribute:: Context.line_width
-.. autoattribute:: Context.point_size
-.. autoattribute:: Context.depth_func
-.. autoattribute:: Context.depth_clamp_range
-.. autoattribute:: Context.blend_func
-.. autoattribute:: Context.blend_equation
-.. autoattribute:: Context.viewport
-.. autoattribute:: Context.scissor
-.. autoattribute:: Context.version_code
-.. autoattribute:: Context.screen
-.. autoattribute:: Context.fbo
-.. autoattribute:: Context.front_face
-.. autoattribute:: Context.cull_face
-.. autoattribute:: Context.wireframe
-.. autoattribute:: Context.max_samples
-.. autoattribute:: Context.max_integer_samples
-.. autoattribute:: Context.max_texture_units
-.. autoattribute:: Context.default_texture_unit
-.. autoattribute:: Context.max_anisotropy
-.. autoattribute:: Context.multisample
-.. autoattribute:: Context.patch_vertices
-.. autoattribute:: Context.provoking_vertex
-.. autoattribute:: Context.polygon_offset
-.. autoattribute:: Context.error
-.. autoattribute:: Context.extensions
-.. autoattribute:: Context.info
-.. autoattribute:: Context.mglo
-.. autoattribute:: Context.extra
+.. py:attribute:: Context.gc_mode
+.. py:attribute:: Context.objects
+.. py:attribute:: Context.line_width
+.. py:attribute:: Context.point_size
+.. py:attribute:: Context.depth_func
+.. py:attribute:: Context.depth_clamp_range
+.. py:attribute:: Context.blend_func
+.. py:attribute:: Context.blend_equation
+.. py:attribute:: Context.viewport
+.. py:attribute:: Context.scissor
+.. py:attribute:: Context.version_code
+.. py:attribute:: Context.screen
+.. py:attribute:: Context.fbo
+.. py:attribute:: Context.front_face
+.. py:attribute:: Context.cull_face
+.. py:attribute:: Context.wireframe
+.. py:attribute:: Context.max_samples
+.. py:attribute:: Context.max_integer_samples
+.. py:attribute:: Context.max_texture_units
+.. py:attribute:: Context.default_texture_unit
+.. py:attribute:: Context.max_anisotropy
+.. py:attribute:: Context.multisample
+.. py:attribute:: Context.patch_vertices
+.. py:attribute:: Context.provoking_vertex
+.. py:attribute:: Context.polygon_offset
+.. py:attribute:: Context.error
+.. py:attribute:: Context.extensions
+.. py:attribute:: Context.info
+.. py:attribute:: Context.mglo
+.. py:attribute:: Context.extra
 
 Context Flags
 -------------
@@ -108,28 +547,28 @@ These values are available in the ``Context`` object and in the
     # From context
     ctx.enable_only(ctx.DEPTH_TEST | ctx.CULL_FACE)
 
-.. autoattribute:: Context.NOTHING
-.. autoattribute:: Context.BLEND
-.. autoattribute:: Context.DEPTH_TEST
-.. autoattribute:: Context.CULL_FACE
-.. autoattribute:: Context.RASTERIZER_DISCARD
-.. autoattribute:: Context.PROGRAM_POINT_SIZE
+.. py:attribute:: Context.NOTHING
+.. py:attribute:: Context.BLEND
+.. py:attribute:: Context.DEPTH_TEST
+.. py:attribute:: Context.CULL_FACE
+.. py:attribute:: Context.RASTERIZER_DISCARD
+.. py:attribute:: Context.PROGRAM_POINT_SIZE
 
 Primitive Modes
 ---------------
 
-.. autoattribute:: Context.POINTS
-.. autoattribute:: Context.LINES
-.. autoattribute:: Context.LINE_LOOP
-.. autoattribute:: Context.LINE_STRIP
-.. autoattribute:: Context.TRIANGLES
-.. autoattribute:: Context.TRIANGLE_STRIP
-.. autoattribute:: Context.TRIANGLE_FAN
-.. autoattribute:: Context.LINES_ADJACENCY
-.. autoattribute:: Context.LINE_STRIP_ADJACENCY
-.. autoattribute:: Context.TRIANGLES_ADJACENCY
-.. autoattribute:: Context.TRIANGLE_STRIP_ADJACENCY
-.. autoattribute:: Context.PATCHES
+.. py:attribute:: Context.POINTS
+.. py:attribute:: Context.LINES
+.. py:attribute:: Context.LINE_LOOP
+.. py:attribute:: Context.LINE_STRIP
+.. py:attribute:: Context.TRIANGLES
+.. py:attribute:: Context.TRIANGLE_STRIP
+.. py:attribute:: Context.TRIANGLE_FAN
+.. py:attribute:: Context.LINES_ADJACENCY
+.. py:attribute:: Context.LINE_STRIP_ADJACENCY
+.. py:attribute:: Context.TRIANGLES_ADJACENCY
+.. py:attribute:: Context.TRIANGLE_STRIP_ADJACENCY
+.. py:attribute:: Context.PATCHES
 
 Texture Filters
 ~~~~~~~~~~~~~~~
@@ -137,12 +576,12 @@ Texture Filters
 Also available in the :py:class:`Context` instance
 including mode details.
 
-.. autoattribute:: Context.NEAREST
-.. autoattribute:: Context.LINEAR
-.. autoattribute:: Context.NEAREST_MIPMAP_NEAREST
-.. autoattribute:: Context.LINEAR_MIPMAP_NEAREST
-.. autoattribute:: Context.NEAREST_MIPMAP_LINEAR
-.. autoattribute:: Context.LINEAR_MIPMAP_LINEAR
+.. py:attribute:: Context.NEAREST
+.. py:attribute:: Context.LINEAR
+.. py:attribute:: Context.NEAREST_MIPMAP_NEAREST
+.. py:attribute:: Context.LINEAR_MIPMAP_NEAREST
+.. py:attribute:: Context.NEAREST_MIPMAP_LINEAR
+.. py:attribute:: Context.LINEAR_MIPMAP_LINEAR
 
 Blend Functions
 ---------------
@@ -155,40 +594,40 @@ to control blending operations.
     # Default value
     ctx.blend_func = ctx.SRC_ALPHA, ctx.ONE_MINUS_SRC_ALPHA
 
-.. autoattribute:: Context.ZERO
-.. autoattribute:: Context.ONE
-.. autoattribute:: Context.SRC_COLOR
-.. autoattribute:: Context.ONE_MINUS_SRC_COLOR
-.. autoattribute:: Context.SRC_ALPHA
-.. autoattribute:: Context.ONE_MINUS_SRC_ALPHA
-.. autoattribute:: Context.DST_ALPHA
-.. autoattribute:: Context.ONE_MINUS_DST_ALPHA
-.. autoattribute:: Context.DST_COLOR
-.. autoattribute:: Context.ONE_MINUS_DST_COLOR
+.. py:attribute:: Context.ZERO
+.. py:attribute:: Context.ONE
+.. py:attribute:: Context.SRC_COLOR
+.. py:attribute:: Context.ONE_MINUS_SRC_COLOR
+.. py:attribute:: Context.SRC_ALPHA
+.. py:attribute:: Context.ONE_MINUS_SRC_ALPHA
+.. py:attribute:: Context.DST_ALPHA
+.. py:attribute:: Context.ONE_MINUS_DST_ALPHA
+.. py:attribute:: Context.DST_COLOR
+.. py:attribute:: Context.ONE_MINUS_DST_COLOR
 
 Blend Function Shortcuts
 ------------------------
 
-.. autoattribute:: Context.DEFAULT_BLENDING
-.. autoattribute:: Context.ADDITIVE_BLENDING
-.. autoattribute:: Context.PREMULTIPLIED_ALPHA
+.. py:attribute:: Context.DEFAULT_BLENDING
+.. py:attribute:: Context.ADDITIVE_BLENDING
+.. py:attribute:: Context.PREMULTIPLIED_ALPHA
 
 Blend Equations
 ---------------
 
 Used with :py:attr:`Context.blend_equation`.
 
-.. autoattribute:: Context.FUNC_ADD
-.. autoattribute:: Context.FUNC_SUBTRACT
-.. autoattribute:: Context.FUNC_REVERSE_SUBTRACT
-.. autoattribute:: Context.MIN
-.. autoattribute:: Context.MAX
+.. py:attribute:: Context.FUNC_ADD
+.. py:attribute:: Context.FUNC_SUBTRACT
+.. py:attribute:: Context.FUNC_REVERSE_SUBTRACT
+.. py:attribute:: Context.MIN
+.. py:attribute:: Context.MAX
 
 Other Enums
 -----------
 
-.. autoattribute:: Context.FIRST_VERTEX_CONVENTION
-.. autoattribute:: Context.LAST_VERTEX_CONVENTION
+.. py:attribute:: Context.FIRST_VERTEX_CONVENTION
+.. py:attribute:: Context.LAST_VERTEX_CONVENTION
 
 Examples
 --------
