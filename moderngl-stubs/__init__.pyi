@@ -486,31 +486,6 @@ class StorageBlock:
     Internal moderngl core object
     '''
 
-class Subroutine:
-    '''
-    This class represents a program subroutine.
-    '''
-
-    index: int
-    '''
-    int: The index of the subroutine.
-    '''
-
-    name: str
-    '''
-    str: The name of the subroutine.
-    '''
-
-    extra: Any
-    '''
-    Attribute for storing user defined objects
-    '''
-
-    mglo: Any
-    '''
-    Internal moderngl core object
-    '''
-
 class Varying:
     '''
     This class represents a program varying.
@@ -873,16 +848,15 @@ class ComputeShader:
         '''
     def get(
         self, key: str, default: Any
-    ) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    ) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         '''
-        Returns a Uniform, UniformBlock, Subroutine, Attribute or Varying.
+        Returns a Uniform, UniformBlock, Attribute or Varying.
 
         Args:
             default: This is the value to be returned in case key does not exist.
 
         Returns:
-            :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Subroutine`,
-            :py:class:`Attribute` or :py:class:`Varying`
+            :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Attribute` or :py:class:`Varying`
         '''
     def release(self) -> None:
         '''Release the ModernGL object.'''
@@ -2751,9 +2725,9 @@ class Program:
 
     def __getitem__(
         self, key: str
-    ) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    ) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         '''
-        Get a member such as uniforms, uniform blocks, subroutines, attributes and varyings by name.
+        Get a member such as uniforms, uniform blocks, attributes and varyings by name.
 
         .. code-block:: python
 
@@ -2853,9 +2827,6 @@ class Program:
     (from ``layout(output_primitive, max_vertices = vert_count) out;``)
     '''
 
-    subroutines: Tuple[str, ...]
-    '''tuple: The subroutine uniforms.'''
-
     mglo: Any
     '''Internal representation for debug purposes only.'''
 
@@ -2874,16 +2845,15 @@ class Program:
 
     def get(
         self, key: str, default: Any
-    ) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    ) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         '''
-        Returns a Uniform, UniformBlock, Subroutine, Attribute or Varying.
+        Returns a Uniform, UniformBlock, Attribute or Varying.
 
         Args:
             default: This is the value to be returned in case key does not exist.
 
         Returns:
-            :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Subroutine`,
-            :py:class:`Attribute` or :py:class:`Varying`
+            :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Attribute` or :py:class:`Varying`
         '''
     def release(self) -> None:
         '''Release the ModernGL object.'''
@@ -4531,7 +4501,7 @@ class VertexArray:
     as well as the Buffer objects providing the vertex data arrays.
 
     In ModernGL, the VertexArray object also stores a reference
-    for a :py:class:`Program` object, and some Subroutine information.
+    for a :py:class:`Program` object.
 
     A VertexArray object cannot be instantiated directly, it requires a context.
     Use :py:meth:`Context.vertex_array` or :py:meth:`Context.simple_vertex_array`
@@ -4576,13 +4546,6 @@ class VertexArray:
 
     instances: int
     '''int: Get or set the number of instances to render.'''
-
-    subroutines: Tuple[int, ...]
-    '''
-    tuple: The subroutines assigned to the VertexArray.
-
-    The subroutines used when rendering or transforming primitives.
-    '''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''

@@ -27,7 +27,6 @@ Attributes
 .. autoattribute:: Program.geometry_input
 .. autoattribute:: Program.geometry_output
 .. autoattribute:: Program.geometry_vertices
-.. autoattribute:: Program.subroutines
 .. autoattribute:: Program.glo
 .. autoattribute:: Program.mglo
 .. autoattribute:: Program.extra
@@ -90,6 +89,5 @@ Program Members
 
     uniform.rst
     uniform_block.rst
-    subroutine.rst
     attribute.rst
     varying.rst
