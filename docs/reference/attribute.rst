@@ -3,6 +3,8 @@ Attribute
 
 .. py:class:: Attribute
 
+    Represents a program input attribute.
+
 .. py:attribute:: Attribute.location
     :type: int
 
@@ -12,8 +14,7 @@ Attribute
 .. py:attribute:: Attribute.array_length
     :type: int
 
-    If the attribute is an array the array_length.
-    is the length of the array otherwise `1`.
+    If the attribute is an array the array_length is the length of the array otherwise `1`.
 
 .. py:attribute:: Attribute.dimension
     :type: int
