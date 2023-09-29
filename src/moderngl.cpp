@@ -2995,11 +2995,16 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
     int num_varyings = 0;
     int num_uniforms = 0;
     int num_uniform_blocks = 0;
+    int num_storage_blocks = 0;
 
     gl.GetProgramiv(program->program_obj, GL_ACTIVE_ATTRIBUTES, &num_attributes);
     gl.GetProgramiv(program->program_obj, GL_TRANSFORM_FEEDBACK_VARYINGS, &num_varyings);
     gl.GetProgramiv(program->program_obj, GL_ACTIVE_UNIFORMS, &num_uniforms);
     gl.GetProgramiv(program->program_obj, GL_ACTIVE_UNIFORM_BLOCKS, &num_uniform_blocks);
+
+    if (self->version_code >= 430) {
+        gl.GetProgramInterfaceiv(program->program_obj, GL_SHADER_STORAGE_BLOCK, GL_ACTIVE_RESOURCES, &num_storage_blocks);
+    }
 
     int num_subroutine_uniforms = num_vertex_shader_subroutine_uniforms + num_fragment_shader_subroutine_uniforms + num_geometry_shader_subroutine_uniforms + num_tess_evaluation_shader_subroutine_uniforms + num_tess_control_shader_subroutine_uniforms;
 
@@ -3091,6 +3096,22 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
         PyObject * item = PyObject_CallMethod(
             helper, "make_uniform_block", "(siiiO)",
             name, program->program_obj, index, size, self
+        );
+
+        PyDict_SetItemString(members_dict, name, item);
+        Py_DECREF(item);
+    }
+
+    for(int i = 0; i < num_storage_blocks; ++i) {
+        int name_len = 0;
+        char name[256];
+
+        gl.GetProgramResourceName(program_obj, GL_SHADER_STORAGE_BLOCK, i, 256, &name_len, name);
+        clean_glsl_name(name, name_len);
+
+        PyObject * item = PyObject_CallMethod(
+            helper, "make_storage_block", "(siiO)",
+            name, program_obj, i, self
         );
 
         PyDict_SetItemString(members_dict, name, item);
