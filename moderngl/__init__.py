@@ -1,8 +1,7 @@
 import warnings
 from collections import deque
-from typing import Any, Deque, Dict, Generator, List, Optional, Set, Tuple, Union
 
-from _moderngl import Attribute, Error, InvalidObject, Subroutine, Uniform, UniformBlock, Varying, StorageBlock  # noqa
+from _moderngl import Attribute, Error, InvalidObject, StorageBlock, Subroutine, Uniform, UniformBlock, Varying
 from _moderngl import parse_spv_inputs as _parse_spv
 
 try:
@@ -27,67 +26,66 @@ class Buffer:
         self.extra = None
         raise TypeError()
 
-    def __del__(self) -> None:
-        if not hasattr(self, "ctx"):
+    def __del__(self):
+        if not hasattr(self, 'ctx'):
             return
 
-        if self.ctx.gc_mode == "auto":
+        if self.ctx.gc_mode == 'auto':
             self.release()
-        elif self.ctx.gc_mode == "context_gc":
+        elif self.ctx.gc_mode == 'context_gc':
             self.ctx.objects.append(self.mglo)
 
     @property
-    def size(self) -> int:
+    def size(self):
         return self.mglo.size()
 
     @property
-    def dynamic(self) -> bool:
+    def dynamic(self):
         return self._dynamic
 
     @property
-    def glo(self) -> int:
+    def glo(self):
         return self._glo
 
-    def write(self, data: Any, *, offset: int = 0) -> None:
+    def write(self, data, offset=0):
         self.mglo.write(data, offset)
 
-    def write_chunks(self, data: Any, start: int, step: int, count: int) -> None:
+    def write_chunks(self, data, start, step, count):
         self.mglo.write_chunks(data, start, step, count)
 
-    def read(self, size: int = -1, *, offset: int = 0) -> bytes:
+    def read(self, size=-1, offset=0):
         return self.mglo.read(size, offset)
 
-    def read_into(self, buffer: Any, size: int = -1, *, offset: int = 0, write_offset: int = 0) -> None:
+    def read_into(self, buffer, size=-1, offset=0, write_offset=0):
         return self.mglo.read_into(buffer, size, offset, write_offset)
 
-    def read_chunks(self, chunk_size: int, start: int, step: int, count: int) -> bytes:
+    def read_chunks(self, chunk_size, start, step, count):
         return self.mglo.read_chunks(chunk_size, start, step, count)
 
     def read_chunks_into(
         self,
-        buffer: Any,
-        chunk_size: int,
-        start: int,
-        step: int,
-        count: int,
-        *,
-        write_offset: int = 0
-    ) -> None:
+        buffer,
+        chunk_size,
+        start,
+        step,
+        count,
+        write_offset=0,
+    ):
         return self.mglo.read(buffer, chunk_size, start, step, count, write_offset)
 
-    def clear(self, size: int = -1, *, offset: int = 0, chunk: Any = None) -> None:
+    def clear(self, size=-1, offset=0, chunk=None):
         self.mglo.clear(size, offset, chunk)
 
-    def bind_to_uniform_block(self, binding: int = 0, *, offset: int = 0, size: int = -1) -> None:
+    def bind_to_uniform_block(self, binding=0, offset=0, size=-1):
         self.mglo.bind_to_uniform_block(binding, offset, size)
 
-    def bind_to_storage_buffer(self, binding: int = 0, *, offset: int = 0, size: int = -1) -> None:
+    def bind_to_storage_buffer(self, binding=0, offset=0, size=-1):
         self.mglo.bind_to_storage_buffer(binding, offset, size)
 
-    def orphan(self, size: int = -1) -> None:
+    def orphan(self, size=-1):
         self.mglo.orphan(size)
 
-    def release(self) -> None:
+    def release(self):
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
             self.mglo = InvalidObject()
@@ -95,7 +93,7 @@ class Buffer:
     def bind(self, *attribs, layout=None):
         return (self, layout, *attribs)
 
-    def assign(self, index: int) -> Tuple["Buffer", int]:
+    def assign(self, index):
         return (self, index)
 
 
@@ -124,19 +122,19 @@ class Query:
         self.mglo.begin()
         return self
 
-    def __exit__(self, *args: Tuple[Any]):
+    def __exit__(self, *args):
         self.mglo.end()
 
     @property
-    def samples(self) -> int:
+    def samples(self):
         return self.mglo.samples
 
     @property
-    def primitives(self) -> int:
+    def primitives(self):
         return self.mglo.primitives
 
     @property
-    def elapsed(self) -> int:
+    def elapsed(self):
         return self.mglo.elapsed
 
 
@@ -149,38 +147,38 @@ class ComputeShader:
         self.extra = None
         raise TypeError()
 
-    def __del__(self) -> None:
-        if not hasattr(self, "ctx"):
+    def __del__(self):
+        if not hasattr(self, 'ctx'):
             return
 
-        if self.ctx.gc_mode == "auto":
+        if self.ctx.gc_mode == 'auto':
             self.release()
-        elif self.ctx.gc_mode == "context_gc":
+        elif self.ctx.gc_mode == 'context_gc':
             self.ctx.objects.append(self.mglo)
 
-    def __getitem__(self, key: str) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    def __getitem__(self, key):
         return self._members[key]
 
-    def __setitem__(self, key: str, value: Any):
+    def __setitem__(self, key, value):
         self._members[key].value = value
 
-    def __iter__(self) -> Generator[str, None, None]:
+    def __iter__(self):
         yield from self._members
 
     @property
-    def glo(self) -> int:
+    def glo(self):
         return self._glo
 
-    def run(self, group_x: int = 1, group_y: int = 1, group_z: int = 1) -> None:
+    def run(self, group_x=1, group_y=1, group_z=1):
         return self.mglo.run(group_x, group_y, group_z)
 
-    def run_indirect(self, buffer: 'Buffer', offset: int = 0) -> None:
+    def run_indirect(self, buffer, offset=0):
         return self.mglo.run_indirect(buffer.mglo, offset)
 
-    def get(self, key: str, default: Any) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    def get(self, key, default):
         return self._members.get(key, default)
 
-    def release(self) -> None:
+    def release(self):
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
             self.mglo = InvalidObject()
@@ -192,15 +190,15 @@ class Framebuffer:
         self._color_attachments = None
         self._depth_attachment = None
         self._size = (None, None)
-        self._samples: int = None
-        self._glo: int = None
-        self.ctx: Context = None
+        self._samples = None
+        self._glo = None
+        self.ctx = None
         self._is_reference = None
-        self.extra: Any = None
+        self.extra = None
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, "ctx"):
+        if not hasattr(self, 'ctx'):
             return
 
         # Don't delete default framebuffer or a reference
@@ -208,26 +206,26 @@ class Framebuffer:
             return
 
         # If object was initialized properly (ctx present) and gc_mode is auto
-        if self.ctx.gc_mode == "auto":
+        if self.ctx.gc_mode == 'auto':
             self.release()
-        elif self.ctx.gc_mode == "context_gc":
+        elif self.ctx.gc_mode == 'context_gc':
             self.ctx.objects.append(self.mglo)
 
     @property
-    def viewport(self) -> Tuple[int, int, int, int]:
+    def viewport(self):
         return self.mglo.viewport
 
     @viewport.setter
-    def viewport(self, value: Tuple[int, int, int, int]) -> None:
+    def viewport(self, value):
         x, y, w, h = value
         self.mglo.viewport = (int(x), int(y), int(w), int(h))
 
     @property
-    def scissor(self) -> Tuple[int, int, int, int]:
+    def scissor(self):
         return self.mglo.scissor
 
     @scissor.setter
-    def scissor(self, value: Tuple[int, int, int, int]) -> None:
+    def scissor(self, value):
         if value is None:
             self.mglo.scissor = None
         else:
@@ -235,64 +233,63 @@ class Framebuffer:
             self.mglo.scissor = (int(x), int(y), int(w), int(h))
 
     @property
-    def color_mask(self) -> Tuple[bool, bool, bool, bool]:
+    def color_mask(self):
         return self.mglo.color_mask
 
     @color_mask.setter
-    def color_mask(self, value: Tuple[bool, bool, bool, bool]) -> None:
+    def color_mask(self, value):
         self.mglo.color_mask = value
 
     @property
-    def depth_mask(self) -> bool:
+    def depth_mask(self):
         return self.mglo.depth_mask
 
     @depth_mask.setter
-    def depth_mask(self, value: bool) -> None:
+    def depth_mask(self, value):
         self.mglo.depth_mask = value
 
     @property
-    def width(self) -> int:
+    def width(self):
         return self._size[0]
 
     @property
-    def height(self) -> int:
+    def height(self):
         return self._size[1]
 
     @property
-    def size(self) -> tuple:
+    def size(self):
         return self._size
 
     @property
-    def samples(self) -> int:
+    def samples(self):
         return self._samples
 
     @property
-    def bits(self) -> Dict[str, str]:
+    def bits(self):
         return self.mglo.bits
 
     @property
-    def color_attachments(self) -> Tuple[Union['Texture', 'Renderbuffer'], ...]:
+    def color_attachments(self):
         return self._color_attachments
 
     @property
-    def depth_attachment(self) -> Union['Texture', 'Renderbuffer']:
+    def depth_attachment(self):
         return self._depth_attachment
 
     @property
-    def glo(self) -> int:
+    def glo(self):
         return self._glo
 
     def clear(
         self,
-        red: float = 0.0,
-        green: float = 0.0,
-        blue: float = 0.0,
-        alpha: float = 0.0,
-        depth: float = 1.0,
-        *,
-        viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
-        color: Optional[Tuple[float, float, float, float]] = None,
-    ) -> None:
+        red=0.0,
+        green=0.0,
+        blue=0.0,
+        alpha=0.0,
+        depth=1.0,
+        viewport=None,
+        color=None,
+    ):
         if color is not None:
             red, green, blue, alpha, *_ = tuple(color) + (0.0, 0.0, 0.0, 0.0)
 
@@ -301,39 +298,37 @@ class Framebuffer:
 
         self.mglo.clear(red, green, blue, alpha, depth, viewport)
 
-    def use(self) -> None:
+    def use(self):
         self.ctx.fbo = self
         self.mglo.use()
 
     def read(
         self,
-        viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
-        components: int = 3,
-        *,
-        attachment: int = 0,
-        alignment: int = 1,
-        dtype: str = 'f1',
-        clamp: bool = False,
-    ) -> bytes:
+        viewport=None,
+        components=3,
+        attachment=0,
+        alignment=1,
+        dtype='f1',
+        clamp=False,
+    ):
         return self.mglo.read(viewport, components, attachment, alignment, clamp, dtype)
 
     def read_into(
         self,
-        buffer: Any,
-        viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
-        components: int = 3,
-        *,
-        attachment: int = 0,
-        alignment: int = 1,
-        dtype: str = 'f1',
-        write_offset: int = 0,
-    ) -> None:
+        buffer,
+        viewport=None,
+        components=3,
+        attachment=0,
+        alignment=1,
+        dtype='f1',
+        write_offset=0,
+    ):
         if type(buffer) is Buffer:
             buffer = buffer.mglo
 
         return self.mglo.read_into(buffer, viewport, components, attachment, alignment, dtype, write_offset)
 
-    def release(self) -> None:
+    def release(self):
         if not isinstance(self.mglo, InvalidObject):
             self._color_attachments = None
             self._depth_attachment = None
@@ -356,51 +351,51 @@ class Program:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, "ctx"):
+        if not hasattr(self, 'ctx'):
             return
 
-        if self.ctx.gc_mode == "auto":
+        if self.ctx.gc_mode == 'auto':
             self.release()
-        elif self.ctx.gc_mode == "context_gc":
+        elif self.ctx.gc_mode == 'context_gc':
             self.ctx.objects.append(self.mglo)
 
-    def __getitem__(self, key: str) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    def __getitem__(self, key):
         return self._members[key]
 
-    def __setitem__(self, key: str, value: Any) -> None:
+    def __setitem__(self, key, value):
         self._members[key].value = value
 
-    def __iter__(self) -> Generator[str, None, None]:
+    def __iter__(self):
         yield from self._members
 
     @property
-    def is_transform(self) -> bool:
+    def is_transform(self):
         return self._is_transform
 
     @property
-    def geometry_input(self) -> int:
+    def geometry_input(self):
         return self._geom[0]
 
     @property
-    def geometry_output(self) -> int:
+    def geometry_output(self):
         return self._geom[1]
 
     @property
-    def geometry_vertices(self) -> int:
+    def geometry_vertices(self):
         return self._geom[2]
 
     @property
-    def subroutines(self) -> Tuple[str, ...]:
+    def subroutines(self):
         return self._subroutines
 
     @property
-    def glo(self) -> int:
+    def glo(self):
         return self._glo
 
-    def get(self, key: str, default: Any) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    def get(self, key, default):
         return self._members.get(key, default)
 
-    def release(self) -> None:
+    def release(self):
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
             self.mglo = InvalidObject()
@@ -419,48 +414,48 @@ class Renderbuffer:
         self.extra = None
         raise TypeError()
 
-    def __del__(self) -> None:
-        if not hasattr(self, "ctx"):
+    def __del__(self):
+        if not hasattr(self, 'ctx'):
             return
 
-        if self.ctx.gc_mode == "auto":
+        if self.ctx.gc_mode == 'auto':
             self.release()
-        elif self.ctx.gc_mode == "context_gc":
+        elif self.ctx.gc_mode == 'context_gc':
             self.ctx.objects.append(self.mglo)
 
     @property
-    def width(self) -> int:
+    def width(self):
         return self._size[0]
 
     @property
-    def height(self) -> int:
+    def height(self):
         return self._size[1]
 
     @property
-    def size(self) -> tuple:
+    def size(self):
         return self._size
 
     @property
-    def samples(self) -> int:
+    def samples(self):
         return self._samples
 
     @property
-    def components(self) -> int:
+    def components(self):
         return self._components
 
     @property
-    def depth(self) -> bool:
+    def depth(self):
         return self._depth
 
     @property
-    def dtype(self) -> str:
+    def dtype(self):
         return self._dtype
 
     @property
-    def glo(self) -> int:
+    def glo(self):
         return self._glo
 
-    def release(self) -> None:
+    def release(self):
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
             self.mglo = InvalidObject()
@@ -476,100 +471,100 @@ class Sampler:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, "ctx"):
+        if not hasattr(self, 'ctx'):
             return
 
-        if self.ctx.gc_mode == "auto":
+        if self.ctx.gc_mode == 'auto':
             self.release()
-        elif self.ctx.gc_mode == "context_gc":
+        elif self.ctx.gc_mode == 'context_gc':
             self.ctx.objects.append(self.mglo)
 
-    def use(self, location: int = 0) -> None:
+    def use(self, location=0):
         if self.texture is not None:
             self.texture.use(location)
         self.mglo.use(location)
 
-    def clear(self, location: int = 0) -> None:
+    def clear(self, location=0):
         self.mglo.clear(location)
 
-    def release(self) -> None:
+    def release(self):
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
             self.mglo = InvalidObject()
 
     @property
-    def repeat_x(self) -> bool:
+    def repeat_x(self):
         return self.mglo.repeat_x
 
     @repeat_x.setter
-    def repeat_x(self, value: bool) -> None:
+    def repeat_x(self, value):
         self.mglo.repeat_x = value
 
     @property
-    def repeat_y(self) -> bool:
+    def repeat_y(self):
         return self.mglo.repeat_y
 
     @repeat_y.setter
-    def repeat_y(self, value: bool) -> None:
+    def repeat_y(self, value):
         self.mglo.repeat_y = value
 
     @property
-    def repeat_z(self) -> bool:
+    def repeat_z(self):
         return self.mglo.repeat_z
 
     @repeat_z.setter
-    def repeat_z(self, value: bool) -> None:
+    def repeat_z(self, value):
         self.mglo.repeat_z = value
 
     @property
-    def filter(self) -> Tuple[int, int]:
+    def filter(self):
         return self.mglo.filter
 
     @filter.setter
-    def filter(self, value: Tuple[int, int]) -> None:
+    def filter(self, value):
         self.mglo.filter = value
 
     @property
-    def compare_func(self) -> str:
+    def compare_func(self):
         return self.mglo.compare_func
 
     @compare_func.setter
-    def compare_func(self, value: str) -> None:
+    def compare_func(self, value):
         self.mglo.compare_func = value
 
     @property
-    def anisotropy(self) -> float:
+    def anisotropy(self):
         return self.mglo.anisotropy
 
     @anisotropy.setter
-    def anisotropy(self, value: float) -> None:
+    def anisotropy(self, value):
         self.mglo.anisotropy = value
 
     @property
-    def border_color(self) -> Tuple[float, float, float, float]:
+    def border_color(self):
         return self.mglo.border_color
 
     @border_color.setter
-    def border_color(self, value: Tuple[float, float, float, float]) -> None:
+    def border_color(self, value):
         self.mglo.border_color = value
 
     @property
-    def min_lod(self) -> float:
+    def min_lod(self):
         return self.mglo.min_lod
 
     @min_lod.setter
-    def min_lod(self, value: float) -> None:
+    def min_lod(self, value):
         self.mglo.min_lod = value
 
     @property
-    def max_lod(self) -> float:
+    def max_lod(self):
         return self.mglo.max_lod
 
     @max_lod.setter
-    def max_lod(self, value: float) -> None:
+    def max_lod(self, value):
         self.mglo.max_lod = value
 
-    def assign(self, index: int) -> Tuple["Sampler", int]:
+    def assign(self, index):
         return (self, index)
 
 
@@ -590,19 +585,19 @@ class Scope:
         self.mglo.begin()
         return self
 
-    def __exit__(self, *args: Tuple[Any]):
+    def __exit__(self, *args):
         self.mglo.end()
 
     def __del__(self):
-        if not hasattr(self, "ctx"):
+        if not hasattr(self, 'ctx'):
             return
 
-        if self.ctx.gc_mode == "auto":
+        if self.ctx.gc_mode == 'auto':
             self.release()
-        elif self.ctx.gc_mode == "context_gc":
+        elif self.ctx.gc_mode == 'context_gc':
             self.ctx.objects.append(self.mglo)
 
-    def release(self) -> None:
+    def release(self):
         if not isinstance(self.mglo, InvalidObject):
             self._framebuffer = None
             self._textures = None
@@ -627,105 +622,104 @@ class Texture:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, "ctx"):
+        if not hasattr(self, 'ctx'):
             return
 
-        if self.ctx.gc_mode == "auto":
+        if self.ctx.gc_mode == 'auto':
             self.release()
-        elif self.ctx.gc_mode == "context_gc":
+        elif self.ctx.gc_mode == 'context_gc':
             self.ctx.objects.append(self.mglo)
 
     @property
-    def repeat_x(self) -> bool:
+    def repeat_x(self):
         return self.mglo.repeat_x
 
     @repeat_x.setter
-    def repeat_x(self, value: bool) -> None:
+    def repeat_x(self, value):
         self.mglo.repeat_x = value
 
     @property
-    def repeat_y(self) -> bool:
+    def repeat_y(self):
         return self.mglo.repeat_y
 
     @repeat_y.setter
-    def repeat_y(self, value: bool) -> None:
+    def repeat_y(self, value):
         self.mglo.repeat_y = value
 
     @property
-    def filter(self) -> Tuple[int, int]:
+    def filter(self):
         return self.mglo.filter
 
     @filter.setter
-    def filter(self, value: Tuple[int, int]) -> None:
+    def filter(self, value):
         self.mglo.filter = value
 
     @property
-    def anisotropy(self) -> float:
+    def anisotropy(self):
         return self.mglo.anisotropy
 
     @anisotropy.setter
-    def anisotropy(self, value: float) -> None:
+    def anisotropy(self, value):
         self.mglo.anisotropy = value
 
     @property
-    def swizzle(self) -> str:
+    def swizzle(self):
         return self.mglo.swizzle
 
     @swizzle.setter
-    def swizzle(self, value: str) -> None:
+    def swizzle(self, value):
         self.mglo.swizzle = value
 
     @property
-    def compare_func(self) -> str:
+    def compare_func(self):
         return self.mglo.compare_func
 
     @compare_func.setter
-    def compare_func(self, value: str) -> None:
+    def compare_func(self, value):
         self.mglo.compare_func = value
 
     @property
-    def width(self) -> int:
+    def width(self):
         return self._size[0]
 
     @property
-    def height(self) -> int:
+    def height(self):
         return self._size[1]
 
     @property
-    def size(self) -> tuple:
+    def size(self):
         return self._size
 
     @property
-    def components(self) -> int:
+    def components(self):
         return self._components
 
     @property
-    def samples(self) -> int:
+    def samples(self):
         return self._samples
 
     @property
-    def dtype(self) -> str:
+    def dtype(self):
         return self._dtype
 
     @property
-    def depth(self) -> bool:
+    def depth(self):
         return self._depth
 
     @property
-    def glo(self) -> int:
+    def glo(self):
         return self._glo
 
-    def read(self, *, level: int = 0, alignment: int = 1) -> bytes:
+    def read(self, level=0, alignment=1):
         return self.mglo.read(level, alignment)
 
     def read_into(
         self,
-        buffer: Any,
-        *,
-        level: int = 0,
-        alignment: int = 1,
-        write_offset: int = 0,
-    ) -> None:
+        buffer,
+        level=0,
+        alignment=1,
+        write_offset=0,
+    ):
         if type(buffer) is Buffer:
             buffer = buffer.mglo
 
@@ -733,30 +727,36 @@ class Texture:
 
     def write(
         self,
-        data: Any,
-        viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
-        *,
-        level: int = 0,
-        alignment: int = 1,
-    ) -> None:
+        data,
+        viewport=None,
+        level=0,
+        alignment=1,
+    ):
         if type(data) is Buffer:
             data = data.mglo
 
         self.mglo.write(data, viewport, level, alignment)
 
-    def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
+    def build_mipmaps(self, base=0, max_level=1000):
         self.mglo.build_mipmaps(base, max_level)
 
-    def use(self, location: int = 0) -> None:
+    def use(self, location=0):
         self.mglo.use(location)
 
-    def bind_to_image(self, unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0) -> None:
+    def bind_to_image(
+        self,
+        unit,
+        read=True,
+        write=True,
+        level=0,
+        format=0,
+    ):
         self.mglo.bind(unit, read, write, level, format)
 
-    def get_handle(self, resident: bool = True) -> int:
+    def get_handle(self, resident=True):
         return self.mglo.get_handle(resident)
 
-    def release(self) -> None:
+    def release(self):
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
             self.mglo = InvalidObject()
@@ -775,92 +775,91 @@ class Texture3D:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, "ctx"):
+        if not hasattr(self, 'ctx'):
             return
 
-        if self.ctx.gc_mode == "auto":
+        if self.ctx.gc_mode == 'auto':
             self.release()
-        elif self.ctx.gc_mode == "context_gc":
+        elif self.ctx.gc_mode == 'context_gc':
             self.ctx.objects.append(self.mglo)
 
     @property
-    def repeat_x(self) -> bool:
+    def repeat_x(self):
         return self.mglo.repeat_x
 
     @repeat_x.setter
-    def repeat_x(self, value: bool) -> None:
+    def repeat_x(self, value):
         self.mglo.repeat_x = value
 
     @property
-    def repeat_y(self) -> bool:
+    def repeat_y(self):
         return self.mglo.repeat_y
 
     @repeat_y.setter
-    def repeat_y(self, value: bool) -> None:
+    def repeat_y(self, value):
         self.mglo.repeat_y = value
 
     @property
-    def repeat_z(self) -> bool:
+    def repeat_z(self):
         return self.mglo.repeat_z
 
     @repeat_z.setter
-    def repeat_z(self, value: bool) -> None:
+    def repeat_z(self, value):
         self.mglo.repeat_z = value
 
     @property
-    def filter(self) -> Tuple[int, int]:
+    def filter(self):
         return self.mglo.filter
 
     @filter.setter
-    def filter(self, value: Tuple[int, int]) -> None:
+    def filter(self, value):
         self.mglo.filter = value
 
     @property
-    def swizzle(self) -> str:
+    def swizzle(self):
         return self.mglo.swizzle
 
     @swizzle.setter
-    def swizzle(self, value: str) -> None:
+    def swizzle(self, value):
         self.mglo.swizzle = value
 
     @property
-    def width(self) -> int:
+    def width(self):
         return self._size[0]
 
     @property
-    def height(self) -> int:
+    def height(self):
         return self._size[1]
 
     @property
-    def depth(self) -> int:
+    def depth(self):
         return self._size[2]
 
     @property
-    def size(self) -> tuple:
+    def size(self):
         return self._size
 
     @property
-    def components(self) -> int:
+    def components(self):
         return self._components
 
     @property
-    def dtype(self) -> str:
+    def dtype(self):
         return self._dtype
 
     @property
-    def glo(self) -> int:
+    def glo(self):
         return self._glo
 
-    def read(self, *, alignment: int = 1) -> bytes:
+    def read(self, alignment=1):
         return self.mglo.read(alignment)
 
     def read_into(
         self,
-        buffer: Any,
-        *,
-        alignment: int = 1,
-        write_offset: int = 0,
-    ) -> None:
+        buffer,
+        alignment=1,
+        write_offset=0,
+    ):
         if type(buffer) is Buffer:
             buffer = buffer.mglo
 
@@ -868,29 +867,35 @@ class Texture3D:
 
     def write(
         self,
-        data: Any,
-        viewport: Optional[Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int]]] = None,
-        *,
-        alignment: int = 1,
-    ) -> None:
+        data,
+        viewport=None,
+        alignment=1,
+    ):
         if type(data) is Buffer:
             data = data.mglo
 
         self.mglo.write(data, viewport, alignment)
 
-    def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
+    def build_mipmaps(self, base=0, max_level=1000):
         self.mglo.build_mipmaps(base, max_level)
 
-    def use(self, location: int = 0) -> None:
+    def use(self, location=0):
         self.mglo.use(location)
 
-    def bind_to_image(self, unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0) -> None:
+    def bind_to_image(
+        self,
+        unit,
+        read=True,
+        write=True,
+        level=0,
+        format=0,
+    ):
         self.mglo.bind(unit, read, write, level, format)
 
-    def get_handle(self, resident: bool = True) -> int:
+    def get_handle(self, resident=True):
         return self.mglo.get_handle(resident)
 
-    def release(self) -> None:
+    def release(self):
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
             self.mglo = InvalidObject()
@@ -908,78 +913,77 @@ class TextureCube:
         self.extra = None
         raise TypeError()
 
-    def __del__(self) -> None:
-        if not hasattr(self, "ctx"):
+    def __del__(self):
+        if not hasattr(self, 'ctx'):
             return
 
-        if self.ctx.gc_mode == "auto":
+        if self.ctx.gc_mode == 'auto':
             self.release()
-        elif self.ctx.gc_mode == "context_gc":
+        elif self.ctx.gc_mode == 'context_gc':
             self.ctx.objects.append(self.mglo)
 
     @property
-    def size(self) -> Tuple[int, int]:
+    def size(self):
         return self._size
 
     @property
-    def components(self) -> int:
+    def components(self):
         return self._components
 
     @property
-    def dtype(self) -> str:
+    def dtype(self):
         return self._dtype
 
     @property
-    def filter(self) -> Tuple[int, int]:
+    def filter(self):
         return self.mglo.filter
 
     @filter.setter
-    def filter(self, value: Tuple[int, int]) -> None:
+    def filter(self, value):
         self.mglo.filter = value
 
     @property
-    def swizzle(self) -> str:
+    def swizzle(self):
         return self.mglo.swizzle
 
     @swizzle.setter
-    def swizzle(self, value: str) -> None:
+    def swizzle(self, value):
         self.mglo.swizzle = value
 
     @property
-    def compare_func(self) -> str:
+    def compare_func(self):
         return self.mglo.compare_func
 
     @compare_func.setter
-    def compare_func(self, value: str) -> None:
+    def compare_func(self, value):
         self.mglo.compare_func = value
 
     @property
-    def anisotropy(self) -> float:
+    def anisotropy(self):
         return self.mglo.anisotropy
 
     @anisotropy.setter
-    def anisotropy(self, value: float) -> None:
+    def anisotropy(self, value):
         self.mglo.anisotropy = value
 
     @property
-    def depth(self) -> bool:
+    def depth(self):
         return self._depth
 
     @property
-    def glo(self) -> int:
+    def glo(self):
         return self._glo
 
-    def read(self, face: int, *, alignment: int = 1) -> bytes:
+    def read(self, face, alignment=1):
         return self.mglo.read(face, alignment)
 
     def read_into(
         self,
-        buffer: Any,
-        face: int,
-        *,
-        alignment: int = 1,
-        write_offset: int = 0,
-    ) -> None:
+        buffer,
+        face,
+        alignment=1,
+        write_offset=0,
+    ):
         if type(buffer) is Buffer:
             buffer = buffer.mglo
 
@@ -987,30 +991,36 @@ class TextureCube:
 
     def write(
         self,
-        face: int,
-        data: Any,
-        viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
-        *,
-        alignment: int = 1,
-    ) -> None:
+        face,
+        data,
+        viewport=None,
+        alignment=1,
+    ):
         if type(data) is Buffer:
             data = data.mglo
 
         self.mglo.write(face, data, viewport, alignment)
 
-    def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
+    def build_mipmaps(self, base=0, max_level=1000):
         self.mglo.build_mipmaps(base, max_level)
 
-    def use(self, location: int = 0) -> None:
+    def use(self, location=0):
         self.mglo.use(location)
 
-    def bind_to_image(self, unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0) -> None:
+    def bind_to_image(
+        self,
+        unit,
+        read=True,
+        write=True,
+        level=0,
+        format=0,
+    ):
         self.mglo.bind(unit, read, write, level, format)
 
-    def get_handle(self, resident: bool = True) -> int:
+    def get_handle(self, resident=True):
         return self.mglo.get_handle(resident)
 
-    def release(self) -> None:
+    def release(self):
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
             self.mglo = InvalidObject()
@@ -1030,92 +1040,91 @@ class TextureArray:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, "ctx"):
+        if not hasattr(self, 'ctx'):
             return
 
-        if self.ctx.gc_mode == "auto":
+        if self.ctx.gc_mode == 'auto':
             self.release()
-        elif self.ctx.gc_mode == "context_gc":
+        elif self.ctx.gc_mode == 'context_gc':
             self.ctx.objects.append(self.mglo)
 
     @property
-    def repeat_x(self) -> bool:
+    def repeat_x(self):
         return self.mglo.repeat_x
 
     @repeat_x.setter
-    def repeat_x(self, value: bool) -> None:
+    def repeat_x(self, value):
         self.mglo.repeat_x = value
 
     @property
-    def repeat_y(self) -> bool:
+    def repeat_y(self):
         return self.mglo.repeat_y
 
     @repeat_y.setter
-    def repeat_y(self, value: bool) -> None:
+    def repeat_y(self, value):
         self.mglo.repeat_y = value
 
     @property
-    def filter(self) -> Tuple[int, int]:
+    def filter(self):
         return self.mglo.filter
 
     @filter.setter
-    def filter(self, value: Tuple[int, int]) -> None:
+    def filter(self, value):
         self.mglo.filter = value
 
     @property
-    def swizzle(self) -> str:
+    def swizzle(self):
         return self.mglo.swizzle
 
     @swizzle.setter
-    def swizzle(self, value: str) -> None:
+    def swizzle(self, value):
         self.mglo.swizzle = value
 
     @property
-    def anisotropy(self) -> float:
+    def anisotropy(self):
         return self.mglo.anisotropy
 
     @anisotropy.setter
-    def anisotropy(self, value: float) -> None:
+    def anisotropy(self, value):
         self.mglo.anisotropy = value
 
     @property
-    def width(self) -> int:
+    def width(self):
         return self._size[0]
 
     @property
-    def height(self) -> int:
+    def height(self):
         return self._size[1]
 
     @property
-    def layers(self) -> int:
+    def layers(self):
         return self._size[2]
 
     @property
-    def size(self) -> tuple:
+    def size(self):
         return self._size
 
     @property
-    def components(self) -> int:
+    def components(self):
         return self._components
 
     @property
-    def dtype(self) -> str:
+    def dtype(self):
         return self._dtype
 
     @property
-    def glo(self) -> int:
+    def glo(self):
         return self._glo
 
-    def read(self, *, alignment: int = 1) -> bytes:
+    def read(self, alignment=1):
         return self.mglo.read(alignment)
 
     def read_into(
         self,
-        buffer: Any,
-        *,
-        alignment: int = 1,
-        write_offset: int = 0,
-    ) -> None:
+        buffer,
+        alignment=1,
+        write_offset=0,
+    ):
         if type(buffer) is Buffer:
             buffer = buffer.mglo
 
@@ -1123,29 +1132,35 @@ class TextureArray:
 
     def write(
         self,
-        data: Any,
-        viewport: Optional[Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int]]] = None,
-        *,
-        alignment: int = 1,
-    ) -> None:
+        data,
+        viewport=None,
+        alignment=1,
+    ):
         if type(data) is Buffer:
             data = data.mglo
 
         self.mglo.write(data, viewport, alignment)
 
-    def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
+    def build_mipmaps(self, base=0, max_level=1000):
         self.mglo.build_mipmaps(base, max_level)
 
-    def use(self, location: int = 0) -> None:
+    def use(self, location=0):
         self.mglo.use(location)
 
-    def bind_to_image(self, unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0) -> None:
+    def bind_to_image(
+        self,
+        unit,
+        read=True,
+        write=True,
+        level=0,
+        format=0,
+    ):
         self.mglo.bind(unit, read, write, level, format)
 
-    def get_handle(self, resident: bool = True) -> int:
+    def get_handle(self, resident=True):
         return self.mglo.get_handle(resident)
 
-    def release(self) -> None:
+    def release(self):
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
             self.mglo = InvalidObject()
@@ -1165,71 +1180,70 @@ class VertexArray:
         self.scope = None
         raise TypeError()
 
-    def __del__(self) -> None:
-        if not hasattr(self, "ctx"):
+    def __del__(self):
+        if not hasattr(self, 'ctx'):
             return
 
-        if self.ctx.gc_mode == "auto":
+        if self.ctx.gc_mode == 'auto':
             self.release()
-        elif self.ctx.gc_mode == "context_gc":
+        elif self.ctx.gc_mode == 'context_gc':
             self.ctx.objects.append(self.mglo)
 
     @property
-    def mode(self) -> int:
+    def mode(self):
         return self._mode
 
     @mode.setter
-    def mode(self, value: int) -> None:
+    def mode(self, value):
         self._mode = value
 
     @property
-    def program(self) -> 'Program':
+    def program(self):
         return self._program
 
     @property
-    def index_buffer(self) -> 'Buffer':
+    def index_buffer(self):
         return self._index_buffer
 
     @property
-    def index_element_size(self) -> int:
+    def index_element_size(self):
         return self._index_element_size
 
     @property
-    def vertices(self) -> int:
+    def vertices(self):
         return self.mglo.vertices
 
     @vertices.setter
-    def vertices(self, value: int) -> None:
+    def vertices(self, value):
         self.mglo.vertices = int(value)
 
     @property
-    def instances(self) -> int:
+    def instances(self):
         return self.mglo.instances
 
     @instances.setter
-    def instances(self, value: int) -> None:
+    def instances(self, value):
         self.mglo.instances = int(value)
 
     @property
-    def subroutines(self) -> Tuple[int, ...]:
+    def subroutines(self):
         return self.mglo.subroutines
 
     @subroutines.setter
-    def subroutines(self, value: Tuple[int, ...]) -> None:
+    def subroutines(self, value):
         self.mglo.subroutines = tuple(value)
 
     @property
-    def glo(self) -> int:
+    def glo(self):
         return self._glo
 
     def render(
         self,
-        mode: Optional[int] = None,
-        vertices: int = -1,
-        *,
-        first: int = 0,
-        instances: int = -1,
-    ) -> None:
+        mode=None,
+        vertices=-1,
+        first=0,
+        instances=-1,
+    ):
         if mode is None:
             mode = self._mode
 
@@ -1241,12 +1255,11 @@ class VertexArray:
 
     def render_indirect(
         self,
-        buffer: "Buffer",
-        mode: Optional[int] = None,
-        count: int = -1,
-        *,
-        first: int = 0,
-    ) -> None:
+        buffer,
+        mode=None,
+        count=-1,
+        first=0,
+    ):
         if mode is None:
             mode = self._mode
 
@@ -1258,14 +1271,13 @@ class VertexArray:
 
     def transform(
         self,
-        buffer: Union["Buffer", List["Buffer"]],
-        mode: Optional[int] = None,
-        vertices: int = -1,
-        *,
-        first: int = 0,
-        instances: int = -1,
-        buffer_offset: int = 0,
-    ) -> None:
+        buffer,
+        mode=None,
+        vertices=-1,
+        first=0,
+        instances=-1,
+        buffer_offset=0,
+    ):
         if mode is None:
             mode = self._mode
 
@@ -1282,19 +1294,18 @@ class VertexArray:
 
     def bind(
         self,
-        attribute: int,
-        cls: str,
-        buffer: "Buffer",
-        fmt: str,
-        *,
-        offset: int = 0,
-        stride: int = 0,
-        divisor: int = 0,
-        normalize: bool = False,
-    ) -> None:
+        attribute,
+        cls,
+        buffer,
+        fmt,
+        offset=0,
+        stride=0,
+        divisor=0,
+        normalize=False,
+    ):
         self.mglo.bind(attribute, cls, buffer.mglo, fmt, offset, stride, divisor, normalize)
 
-    def release(self) -> None:
+    def release(self):
         if not isinstance(self.mglo, InvalidObject):
             self._program = None
             self._index_buffer = None
@@ -1304,7 +1315,7 @@ class VertexArray:
 
 
 class Context:
-    _valid_gc_modes = [None, "context_gc", "auto"]
+    _valid_gc_modes = [None, 'context_gc', 'auto']
 
     # Context Flags
 
@@ -1395,29 +1406,29 @@ class Context:
         self.fbo = None
         self.extra = None
         self._gc_mode = None
-        self._objects: Deque[Any] = deque()
+        self._objects = deque()
         raise TypeError()
 
     def __del__(self):
-        if hasattr(self, "_gc_mode") and self._gc_mode == "auto":
+        if hasattr(self, '_gc_mode') and self._gc_mode == 'auto':
             self.release()
 
     @property
-    def gc_mode(self) -> Optional[str]:
+    def gc_mode(self):
         return self._gc_mode
 
     @gc_mode.setter
-    def gc_mode(self, value: Optional[str]) -> None:
+    def gc_mode(self, value):
         if value not in self._valid_gc_modes:
-            raise ValueError("Valid  gc modes:", self._valid_gc_modes)
+            raise ValueError('Valid  gc modes:', self._valid_gc_modes)
 
         self._gc_mode = value
 
     @property
-    def objects(self) -> Deque[Any]:
+    def objects(self):
         return self._objects
 
-    def gc(self) -> int:
+    def gc(self):
         count = 0
         # Keep iterating until there are no more objects.
         # An object deletion can trigger new objects to be added
@@ -1430,96 +1441,96 @@ class Context:
         return count
 
     @property
-    def line_width(self) -> float:
+    def line_width(self):
         return self.mglo.line_width
 
     @line_width.setter
-    def line_width(self, value: float) -> None:
+    def line_width(self, value):
         self.mglo.line_width = value
 
     @property
-    def point_size(self) -> float:
+    def point_size(self):
         return self.mglo.point_size
 
     @point_size.setter
-    def point_size(self, value: float) -> None:
+    def point_size(self, value):
         self.mglo.point_size = value
 
     @property
-    def depth_func(self) -> str:
+    def depth_func(self):
         raise NotImplementedError()
 
     @depth_func.setter
-    def depth_func(self, value: str) -> None:
+    def depth_func(self, value):
         self.mglo.depth_func = value
 
     @property
-    def blend_func(self) -> Tuple[int, int]:
+    def blend_func(self):
         raise NotImplementedError()
 
     @blend_func.setter
-    def blend_func(self, value: Tuple[int, int]) -> None:
+    def blend_func(self, value):
         self.mglo.blend_func = tuple(value)
 
     @property
-    def blend_equation(self) -> Tuple[int, int]:
+    def blend_equation(self):
         raise NotImplementedError()
 
     @blend_equation.setter
-    def blend_equation(self, value: Tuple[int, int]) -> None:
+    def blend_equation(self, value):
         if not isinstance(value, tuple):
             self.mglo.blend_equation = tuple([value])
         else:
             self.mglo.blend_equation = tuple(value)
 
     @property
-    def depth_clamp_range(self) -> Union[Tuple[float, float], None]:
+    def depth_clamp_range(self):
         raise NotImplementedError()
 
     @depth_clamp_range.setter
-    def depth_clamp_range(self, value: Union[Tuple[float, float], None]) -> None:
+    def depth_clamp_range(self, value):
         self.mglo.depth_clamp_range = value
 
     @property
-    def multisample(self) -> bool:
+    def multisample(self):
         raise NotImplementedError()
 
     @multisample.setter
-    def multisample(self, value: bool) -> None:
+    def multisample(self, value):
         self.mglo.multisample = value
 
     @property
-    def provoking_vertex(self) -> int:
+    def provoking_vertex(self):
         raise NotImplementedError()
 
     @provoking_vertex.setter
-    def provoking_vertex(self, value: int) -> None:
+    def provoking_vertex(self, value):
         self.mglo.provoking_vertex = value
 
     @property
-    def polygon_offset(self) -> Tuple[float, float]:
+    def polygon_offset(self):
         return self.mglo.polygon_offset
 
     @polygon_offset.setter
-    def polygon_offset(self, value: Tuple[float, float]) -> None:
+    def polygon_offset(self, value):
         factor, units = value
         self.mglo.polygon_offset = (float(factor), float(units))
 
     @property
-    def viewport(self) -> Tuple[int, int, int, int]:
+    def viewport(self):
         return self.mglo.fbo.viewport
 
     @viewport.setter
-    def viewport(self, value: Tuple[int, int, int, int]) -> None:
+    def viewport(self, value):
         x, y, w, h = value
         self.mglo.fbo.viewport = (int(x), int(y), int(w), int(h))
 
     @property
-    def scissor(self) -> Optional[Tuple[int, int, int, int]]:
+    def scissor(self):
         return self.mglo.fbo.scissor
 
     @scissor.setter
-    def scissor(self, value: Optional[Tuple[int, int, int, int]]) -> None:
+    def scissor(self, value):
         if value is None:
             self.mglo.fbo.scissor = None
         else:
@@ -1527,140 +1538,138 @@ class Context:
             self.mglo.fbo.scissor = (int(x), int(y), int(w), int(h))
 
     @property
-    def max_samples(self) -> int:
+    def max_samples(self):
         return self.mglo.max_samples
 
     @property
-    def max_integer_samples(self) -> int:
+    def max_integer_samples(self):
         return self.mglo.max_integer_samples
 
     @property
-    def max_texture_units(self) -> int:
+    def max_texture_units(self):
         return self.mglo.max_texture_units
 
     @property
-    def default_texture_unit(self) -> int:
+    def default_texture_unit(self):
         return self.mglo.default_texture_unit
 
     @default_texture_unit.setter
-    def default_texture_unit(self, value: int) -> None:
+    def default_texture_unit(self, value):
         self.mglo.default_texture_unit = value
 
     @property
-    def max_anisotropy(self) -> float:
+    def max_anisotropy(self):
         return self.mglo.max_anisotropy
 
     @property
-    def screen(self) -> 'Framebuffer':
+    def screen(self):
         return self._screen
 
     @property
-    def wireframe(self) -> bool:
+    def wireframe(self):
         return self.mglo.wireframe
 
     @wireframe.setter
-    def wireframe(self, value: bool) -> None:
+    def wireframe(self, value):
         self.mglo.wireframe = value
 
     @property
-    def front_face(self) -> str:
+    def front_face(self):
         return self.mglo.front_face
 
     @front_face.setter
-    def front_face(self, value: str) -> None:
+    def front_face(self, value):
         self.mglo.front_face = str(value)
 
     @property
-    def cull_face(self) -> str:
+    def cull_face(self):
         return self.mglo.cull_face
 
     @cull_face.setter
-    def cull_face(self, value: str) -> None:
+    def cull_face(self, value):
         self.mglo.cull_face = str(value)
 
     @property
-    def patch_vertices(self) -> int:
+    def patch_vertices(self):
         return self.mglo.patch_vertices
 
     @patch_vertices.setter
-    def patch_vertices(self, value: int) -> None:
+    def patch_vertices(self, value):
         self.mglo.patch_vertices = value
 
     @property
-    def error(self) -> str:
+    def error(self):
         return self.mglo.error
 
     @property
-    def extensions(self) -> Set[str]:
+    def extensions(self):
         if self._extensions is None:
             self._extensions = self.mglo.extensions
 
         return self._extensions
 
     @property
-    def info(self) -> Dict[str, Any]:
+    def info(self):
         if self._info is None:
             self._info = self.mglo.info
 
         return self._info
 
     @property
-    def includes(self) -> Dict[str, str]:
+    def includes(self):
         return self.mglo.includes
 
     def clear(
         self,
-        red: float = 0.0,
-        green: float = 0.0,
-        blue: float = 0.0,
-        alpha: float = 0.0,
-        depth: float = 1.0,
-        *,
-        viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
-        color: Optional[Tuple[float, float, float, float]] = None,
-    ) -> None:
+        red=0.0,
+        green=0.0,
+        blue=0.0,
+        alpha=0.0,
+        depth=1.0,
+        viewport=None,
+        color=None,
+    ):
         if color is not None:
             red, green, blue, alpha, *_ = tuple(color) + (0.0, 0.0, 0.0, 0.0)
 
         self.mglo.fbo.clear(red, green, blue, alpha, depth, viewport)
 
-    def enable_only(self, flags: int) -> None:
+    def enable_only(self, flags):
         self.mglo.enable_only(flags)
 
-    def enable(self, flags: int) -> None:
+    def enable(self, flags):
         self.mglo.enable(flags)
 
-    def disable(self, flags: int) -> None:
+    def disable(self, flags):
         self.mglo.disable(flags)
 
-    def enable_direct(self, enum: int) -> None:
+    def enable_direct(self, enum):
         self.mglo.enable_direct(enum)
 
-    def disable_direct(self, enum: int) -> None:
+    def disable_direct(self, enum):
         self.mglo.disable_direct(enum)
 
-    def finish(self) -> None:
+    def finish(self):
         self.mglo.finish()
 
     def copy_buffer(
         self,
         dst: Buffer,
         src: Buffer,
-        size: int = -1,
-        *,
-        read_offset: int = 0,
-        write_offset: int = 0
-    ) -> None:
+        size=-1,
+        read_offset=0,
+        write_offset=0,
+    ):
         self.mglo.copy_buffer(dst.mglo, src.mglo, size, read_offset, write_offset)
 
     def copy_framebuffer(
         self,
-        dst: Union[Framebuffer, Texture],
-        src: Framebuffer,
-    ) -> None:
+        dst,
+        src,
+    ):
         self.mglo.copy_framebuffer(dst.mglo, src.mglo)
 
-    def detect_framebuffer(self, glo: Optional[int] = None) -> 'Framebuffer':
+    def detect_framebuffer(self, glo=None):
         res = Framebuffer.__new__(Framebuffer)
         res.mglo, res._size, res._samples, res._glo = self.mglo.detect_framebuffer(glo)
         res._color_attachments = None
@@ -1672,11 +1681,10 @@ class Context:
 
     def buffer(
         self,
-        data: Optional[Any] = None,
-        *,
-        reserve: int = 0,
-        dynamic: bool = False,
-    ) -> Buffer:
+        data=None,
+        reserve=0,
+        dynamic=False,
+    ):
         if type(reserve) is str:
             reserve = mgl.strsize(reserve)
 
@@ -1689,13 +1697,12 @@ class Context:
 
     def external_texture(
         self,
-        glo: int,
-        size: Tuple[int, int],
-        components: int,
-        samples: int,
-        dtype: str,
-    ) -> 'Texture':
-
+        glo,
+        size,
+        components,
+        samples,
+        dtype,
+    ):
         res = Texture.__new__(Texture)
         res.mglo, res._glo = self.mglo.external_texture(glo, size, components, samples, dtype)
         res._size = size
@@ -1709,16 +1716,14 @@ class Context:
 
     def texture(
         self,
-        size: Tuple[int, int],
-        components: int,
-        data: Optional[Any] = None,
-        *,
-        samples: int = 0,
-        alignment: int = 1,
-        dtype: str = 'f1',
-        internal_format: Optional[int] = None,
-    ) -> 'Texture':
-
+        size,
+        components,
+        data=None,
+        samples=0,
+        alignment=1,
+        dtype='f1',
+        internal_format=None,
+    ):
         res = Texture.__new__(Texture)
         res.mglo, res._glo = self.mglo.texture(size, components, data, samples, alignment, dtype, internal_format or 0)
         res._size = size
@@ -1732,14 +1737,12 @@ class Context:
 
     def texture_array(
         self,
-        size: Tuple[int, int, int],
-        components: int,
-        data: Optional[Any] = None,
-        *,
-        alignment: int = 1,
-        dtype: str = 'f1',
-    ) -> 'TextureArray':
-
+        size,
+        components,
+        data=None,
+        alignment=1,
+        dtype='f1',
+    ):
         res = TextureArray.__new__(TextureArray)
         res.mglo, res._glo = self.mglo.texture_array(size, components, data, alignment, dtype)
         res._size = size
@@ -1751,14 +1754,12 @@ class Context:
 
     def texture3d(
         self,
-        size: Tuple[int, int, int],
-        components: int,
-        data: Optional[Any] = None,
-        *,
-        alignment: int = 1,
-        dtype: str = 'f1',
-    ) -> 'Texture3D':
-
+        size,
+        components,
+        data=None,
+        alignment=1,
+        dtype='f1',
+    ):
         res = Texture3D.__new__(Texture3D)
         res._size = size
         res._components = components
@@ -1770,15 +1771,13 @@ class Context:
 
     def texture_cube(
         self,
-        size: Tuple[int, int],
-        components: int,
-        data: Optional[Any] = None,
-        *,
-        alignment: int = 1,
-        dtype: str = 'f1',
-        internal_format: Optional[int] = None,
-    ) -> 'TextureCube':
-
+        size,
+        components,
+        data=None,
+        alignment=1,
+        dtype='f1',
+        internal_format=None,
+    ):
         res = TextureCube.__new__(TextureCube)
         res.mglo, res._glo = self.mglo.texture_cube(size, components, data, alignment, dtype, internal_format or 0)
         res._size = size
@@ -1790,13 +1789,11 @@ class Context:
 
     def depth_texture(
         self,
-        size: Tuple[int, int],
-        data: Optional[Any] = None,
-        *,
-        samples: int = 0,
-        alignment: int = 4,
-    ) -> 'Texture':
-
+        size,
+        data=None,
+        samples=0,
+        alignment=4,
+    ):
         res = Texture.__new__(Texture)
         res.mglo, res._glo = self.mglo.depth_texture(size, data, samples, alignment)
         res._size = size
@@ -1810,12 +1807,11 @@ class Context:
 
     def depth_texture_cube(
         self,
-        size: Tuple[int, int],
-        data: Optional[Any] = None,
-        *,
-        alignment: int = 4,
-    ) -> 'TextureCube':
-        """
+        size,
+        data=None,
+        alignment=4,
+    ):
+        '''
         Create a :py:class:`Texture` object.
 
         Args:
@@ -1828,7 +1824,7 @@ class Context:
 
         Returns:
             :py:class:`Texture` object
-        """
+        '''
         res = TextureCube.__new__(TextureCube)
         res.mglo, res._glo = self.mglo.depth_texture_cube(size, data, alignment)
         res._size = size
@@ -1839,33 +1835,34 @@ class Context:
         res.extra = None
         return res
 
-    def vertex_array(self, *args, **kwargs) -> 'VertexArray':
+    def vertex_array(self, *args, **kwargs):
         if len(args) > 2 and type(args[1]) is Buffer:
             return self.simple_vertex_array(*args, **kwargs)
         return self._vertex_array(*args, **kwargs)
 
     def _vertex_array(
         self,
-        program: Program,
-        content: Any,
-        index_buffer: Optional[Buffer] = None,
-        index_element_size: int = 4,
-        *,
-        skip_errors: bool = False,
-        mode: Optional[int] = None,
-    ) -> 'VertexArray':
+        program,
+        content,
+        index_buffer=None,
+        index_element_size=4,
+        skip_errors=False,
+        mode=None,
+    ):
         locations = program._attribute_locations
         types = program._attribute_types
         index_buffer_mglo = None if index_buffer is None else index_buffer.mglo
         mgl_content = tuple(
-            (a.mglo, b) + tuple(types[x] if type(x) is int else types[locations[x]] for x in c)
-            for a, b, *c in content
+            (a.mglo, b) + tuple(types[x] if type(x) is int else types[locations[x]] for x in c) for a, b, *c in content
         )
 
         res = VertexArray.__new__(VertexArray)
         res.mglo, res._glo = self.mglo.vertex_array(
-            program.mglo, mgl_content, index_buffer_mglo,
-            index_element_size, skip_errors,
+            program.mglo,
+            mgl_content,
+            index_buffer_mglo,
+            index_element_size,
+            skip_errors,
         )
         res._program = program
         res._index_buffer = index_buffer
@@ -1882,13 +1879,13 @@ class Context:
 
     def simple_vertex_array(
         self,
-        program: Program,
-        buffer: Buffer,
-        *attributes: Union[List[str], Tuple[str, ...]],
-        index_buffer: Optional[Buffer] = None,
-        index_element_size: int = 4,
-        mode: Optional[int] = None,
-    ) -> 'VertexArray':
+        program,
+        buffer,
+        *attributes,
+        index_buffer=None,
+        index_element_size=4,
+        mode=None,
+    ):
         if type(buffer) is list:
             raise SyntaxError('Change simple_vertex_array to vertex_array')
 
@@ -1897,18 +1894,16 @@ class Context:
 
     def program(
         self,
-        *,
-        vertex_shader: str,
-        fragment_shader: Optional[str] = None,
-        geometry_shader: Optional[str] = None,
-        tess_control_shader: Optional[str] = None,
-        tess_evaluation_shader: Optional[str] = None,
-        varyings: Tuple[str, ...] = (),
-        fragment_outputs: Optional[Dict[str, int]] = None,
-        attributes: Optional[List[str]] = None,
-        varyings_capture_mode: str = 'interleaved',
-    ) -> 'Program':
-
+        vertex_shader=None,
+        fragment_shader=None,
+        geometry_shader=None,
+        tess_control_shader=None,
+        tess_evaluation_shader=None,
+        varyings=(),
+        fragment_outputs=None,
+        attributes=None,
+        varyings_capture_mode='interleaved',
+    ):
         if varyings_capture_mode not in ('interleaved', 'separate'):
             raise ValueError('varyings_capture_mode must be interleaved or separate')
 
@@ -1922,8 +1917,14 @@ class Context:
 
         res = Program.__new__(Program)
         res.mglo, _members, res._subroutines, res._geom, res._glo = self.mglo.program(
-            vertex_shader, fragment_shader, geometry_shader, tess_control_shader, tess_evaluation_shader,
-            varyings, fragment_outputs, varyings_capture_mode == 'interleaved'
+            vertex_shader,
+            fragment_shader,
+            geometry_shader,
+            tess_control_shader,
+            tess_evaluation_shader,
+            varyings,
+            fragment_outputs,
+            varyings_capture_mode == 'interleaved',
         )
         res._members, res._attribute_locations, res._attribute_types = _members
 
@@ -1944,12 +1945,11 @@ class Context:
 
     def query(
         self,
-        *,
-        samples: bool = False,
-        any_samples: bool = False,
-        time: bool = False,
-        primitives: bool = False,
-    ) -> 'Query':
+        samples=False,
+        any_samples=False,
+        time=False,
+        primitives=False,
+    ):
         res = Query.__new__(Query)
         res.mglo = self.mglo.query(samples, any_samples, time, primitives)
         res.crender = None
@@ -1964,15 +1964,14 @@ class Context:
 
     def scope(
         self,
-        framebuffer: Optional[Framebuffer] = None,
-        enable_only: Optional[int] = None,
-        *,
-        textures: Tuple[Tuple[Texture, int], ...] = (),
-        uniform_buffers: Tuple[Tuple[Buffer, int], ...] = (),
-        storage_buffers: Tuple[Tuple[Buffer, int], ...] = (),
-        samplers: Tuple[Tuple[Sampler, int], ...] = (),
-        enable: Optional[int] = None,
-    ) -> 'Scope':
+        framebuffer=None,
+        enable_only=None,
+        textures=(),
+        uniform_buffers=(),
+        storage_buffers=(),
+        samplers=(),
+        enable=None,
+    ):
         if enable is not None:
             enable_only = enable
 
@@ -1986,8 +1985,14 @@ class Context:
         mgl_storage_buffers = tuple((buf.mglo, idx) for buf, idx in storage_buffers)
 
         res = Scope.__new__(Scope)
-        res.mglo = self.mglo.scope(framebuffer.mglo, enable_only, mgl_textures,
-                                   mgl_uniform_buffers, mgl_storage_buffers, samplers)
+        res.mglo = self.mglo.scope(
+            framebuffer.mglo,
+            enable_only,
+            mgl_textures,
+            mgl_uniform_buffers,
+            mgl_storage_buffers,
+            samplers,
+        )
         res.ctx = self
         res._framebuffer = framebuffer
         res._textures = textures
@@ -1999,12 +2004,11 @@ class Context:
 
     def simple_framebuffer(
         self,
-        size: Tuple[int, int],
-        components: int = 4,
-        *,
-        samples: int = 0,
-        dtype: str = 'f1',
-    ) -> 'Framebuffer':
+        size,
+        components=4,
+        samples=0,
+        dtype='f1',
+    ):
         return self.framebuffer(
             self.renderbuffer(size, components, samples=samples, dtype=dtype),
             self.depth_renderbuffer(size, samples=samples),
@@ -2012,9 +2016,9 @@ class Context:
 
     def framebuffer(
         self,
-        color_attachments: Any = (),
-        depth_attachment: Optional[Union[Texture, Renderbuffer]] = None,
-    ) -> 'Framebuffer':
+        color_attachments=(),
+        depth_attachment=None,
+    ):
         if type(color_attachments) is Texture or type(color_attachments) is Renderbuffer:
             color_attachments = (color_attachments,)
 
@@ -2032,10 +2036,10 @@ class Context:
 
     def empty_framebuffer(
         self,
-        size: Tuple[int, int],
-        layers: Optional[int] = 0,
-        samples: Optional[int] = 0,
-    ) -> 'Framebuffer':
+        size,
+        layers=0,
+        samples=0,
+    ):
         res = Framebuffer.__new__(Framebuffer)
         res.mglo, res._size, res._samples, res._glo = self.mglo.empty_framebuffer(size, layers, samples)
         res._color_attachments = ()
@@ -2047,12 +2051,11 @@ class Context:
 
     def renderbuffer(
         self,
-        size: Tuple[int, int],
-        components: int = 4,
-        *,
-        samples: int = 0,
-        dtype: str = 'f1',
-    ) -> 'Renderbuffer':
+        size,
+        components=4,
+        samples=0,
+        dtype='f1',
+    ):
         res = Renderbuffer.__new__(Renderbuffer)
         res.mglo, res._glo = self.mglo.renderbuffer(size, components, samples, dtype)
         res._size = size
@@ -2064,12 +2067,7 @@ class Context:
         res.extra = None
         return res
 
-    def depth_renderbuffer(
-        self,
-        size: Tuple[int, int],
-        *,
-        samples: int = 0
-    ) -> 'Renderbuffer':
+    def depth_renderbuffer(self, size, samples=0):
         res = Renderbuffer.__new__(Renderbuffer)
         res.mglo, res._glo = self.mglo.depth_renderbuffer(size, samples)
         res._size = size
@@ -2081,7 +2079,7 @@ class Context:
         res.extra = None
         return res
 
-    def compute_shader(self, source: str) -> 'ComputeShader':
+    def compute_shader(self, source):
         res = ComputeShader.__new__(ComputeShader)
         res.mglo, res._members, res._glo = self.mglo.compute_shader(source)
 
@@ -2091,17 +2089,17 @@ class Context:
 
     def sampler(
         self,
-        repeat_x: bool = True,
-        repeat_y: bool = True,
-        repeat_z: bool = True,
-        filter: Optional[Tuple[int, int]] = None,
-        anisotropy: float = 1.0,
-        compare_func: str = '?',
-        border_color: Optional[Tuple[float, float, float, float]] = None,
-        min_lod: float = -1000.0,
-        max_lod: float = 1000.0,
-        texture: Optional[Texture] = None,
-    ) -> Sampler:
+        repeat_x=True,
+        repeat_y=True,
+        repeat_z=True,
+        filter=None,
+        anisotropy=1.0,
+        compare_func='?',
+        border_color=None,
+        min_lod=-1000.0,
+        max_lod=1000.0,
+        texture=None,
+    ):
         res = Sampler.__new__(Sampler)
         res.mglo, res._glo = self.mglo.sampler()
         res.ctx = self
@@ -2119,13 +2117,13 @@ class Context:
         res.texture = texture
         return res
 
-    def memory_barrier(self, barriers: int = ALL_BARRIER_BITS, by_region: bool = False) -> None:
+    def memory_barrier(self, barriers=ALL_BARRIER_BITS, by_region=False):
         self.mglo.memory_barrier(barriers, by_region)
 
-    def clear_samplers(self, start: int = 0, end: int = -1) -> None:
+    def clear_samplers(self, start=0, end=-1):
         self.mglo.clear_samplers(start, end)
 
-    def core_profile_check(self) -> None:
+    def core_profile_check(self):
         profile_mask = self.info['GL_CONTEXT_PROFILE_MASK']
         if profile_mask != 1:
             warnings.warn('The window should request a CORE OpenGL profile')
@@ -2145,7 +2143,7 @@ class Context:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.mglo.__exit__(exc_type, exc_val, exc_tb)
 
-    def release(self) -> None:
+    def release(self):
         if _store.default_context is self:
             _store.default_context = None
         if not isinstance(self.mglo, InvalidObject):
@@ -2153,12 +2151,7 @@ class Context:
             self.mglo = InvalidObject()
 
 
-def create_context(
-    require: Optional[int] = None,
-    standalone: bool = False,
-    share: bool = False,
-    **settings: Dict[str, Any],
-) -> Context:
+def create_context(require=None, standalone=False, share=False, **settings):
     if require is None:
         require = 330
 
@@ -2177,8 +2170,7 @@ def create_context(
     ctx._objects = deque()
 
     if ctx.version_code < require:
-        raise ValueError('Requested OpenGL version {0}, got version {1}'.format(
-            require, ctx.version_code))
+        raise ValueError('Requested OpenGL version {0}, got version {1}'.format(require, ctx.version_code))
 
     if standalone:
         ctx._screen = None
@@ -2200,25 +2192,21 @@ def create_standalone_context(**kwargs):
     return create_context(standalone=True, **kwargs)
 
 
-def detect_format(
-    program: Program,
-    attributes: Any,
-    mode: str = 'mgl',
-) -> str:
-    def fmt(attr: Any) -> Tuple[int, str]:
+def detect_format(program, attributes, mode='mgl'):
+    def fmt(attr):
         # Translate shape format into attribute format
-        mgl_fmt = {
-            'd': 'f8',
-            'I': 'u'
-        }
+        mgl_fmt = {'d': 'f8', 'I': 'u'}
         # moderngl attribute format uses f, i and u
         if mode == 'mgl':
-            return attr.array_length * attr.dimension, mgl_fmt.get(attr.shape) or attr.shape
+            return (
+                attr.array_length * attr.dimension,
+                mgl_fmt.get(attr.shape) or attr.shape,
+            )
         # struct attribute format uses f, d, i and I
         elif mode == 'struct':
             return attr.array_length * attr.dimension, attr.shape
         else:
-            raise ValueError("invalid format mode: {0}".format(mode))
+            raise ValueError('invalid format mode: {0}'.format(mode))
 
     locations = program._attribute_locations
     types = program._attribute_types
@@ -2227,18 +2215,63 @@ def detect_format(
 
 def _resolve_module_constants(scope):
     _constants = [
-        'NOTHING', 'BLEND', 'DEPTH_TEST', 'CULL_FACE', 'RASTERIZER_DISCARD', 'PROGRAM_POINT_SIZE', 'POINTS', 'LINES',
-        'LINE_LOOP', 'LINE_STRIP', 'TRIANGLES', 'TRIANGLE_STRIP', 'TRIANGLE_FAN', 'LINES_ADJACENCY',
-        'LINE_STRIP_ADJACENCY', 'TRIANGLES_ADJACENCY', 'TRIANGLE_STRIP_ADJACENCY', 'PATCHES', 'NEAREST', 'LINEAR',
-        'NEAREST_MIPMAP_NEAREST', 'LINEAR_MIPMAP_NEAREST', 'NEAREST_MIPMAP_LINEAR', 'LINEAR_MIPMAP_LINEAR',
-        'ZERO', 'ONE', 'SRC_COLOR', 'ONE_MINUS_SRC_COLOR', 'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA', 'DST_ALPHA',
-        'ONE_MINUS_DST_ALPHA', 'DST_COLOR', 'ONE_MINUS_DST_COLOR', 'DEFAULT_BLENDING', 'ADDITIVE_BLENDING',
-        'PREMULTIPLIED_ALPHA', 'FUNC_ADD', 'FUNC_SUBTRACT', 'FUNC_REVERSE_SUBTRACT', 'MIN', 'MAX',
-        'FIRST_VERTEX_CONVENTION', 'LAST_VERTEX_CONVENTION', 'VERTEX_ATTRIB_ARRAY_BARRIER_BIT',
-        'ELEMENT_ARRAY_BARRIER_BIT', 'UNIFORM_BARRIER_BIT', 'TEXTURE_FETCH_BARRIER_BIT',
-        'SHADER_IMAGE_ACCESS_BARRIER_BIT', 'COMMAND_BARRIER_BIT', 'PIXEL_BUFFER_BARRIER_BIT',
-        'TEXTURE_UPDATE_BARRIER_BIT', 'BUFFER_UPDATE_BARRIER_BIT', 'FRAMEBUFFER_BARRIER_BIT',
-        'TRANSFORM_FEEDBACK_BARRIER_BIT', 'ATOMIC_COUNTER_BARRIER_BIT', 'SHADER_STORAGE_BARRIER_BIT',
+        'NOTHING',
+        'BLEND',
+        'DEPTH_TEST',
+        'CULL_FACE',
+        'RASTERIZER_DISCARD',
+        'PROGRAM_POINT_SIZE',
+        'POINTS',
+        'LINES',
+        'LINE_LOOP',
+        'LINE_STRIP',
+        'TRIANGLES',
+        'TRIANGLE_STRIP',
+        'TRIANGLE_FAN',
+        'LINES_ADJACENCY',
+        'LINE_STRIP_ADJACENCY',
+        'TRIANGLES_ADJACENCY',
+        'TRIANGLE_STRIP_ADJACENCY',
+        'PATCHES',
+        'NEAREST',
+        'LINEAR',
+        'NEAREST_MIPMAP_NEAREST',
+        'LINEAR_MIPMAP_NEAREST',
+        'NEAREST_MIPMAP_LINEAR',
+        'LINEAR_MIPMAP_LINEAR',
+        'ZERO',
+        'ONE',
+        'SRC_COLOR',
+        'ONE_MINUS_SRC_COLOR',
+        'SRC_ALPHA',
+        'ONE_MINUS_SRC_ALPHA',
+        'DST_ALPHA',
+        'ONE_MINUS_DST_ALPHA',
+        'DST_COLOR',
+        'ONE_MINUS_DST_COLOR',
+        'DEFAULT_BLENDING',
+        'ADDITIVE_BLENDING',
+        'PREMULTIPLIED_ALPHA',
+        'FUNC_ADD',
+        'FUNC_SUBTRACT',
+        'FUNC_REVERSE_SUBTRACT',
+        'MIN',
+        'MAX',
+        'FIRST_VERTEX_CONVENTION',
+        'LAST_VERTEX_CONVENTION',
+        'VERTEX_ATTRIB_ARRAY_BARRIER_BIT',
+        'ELEMENT_ARRAY_BARRIER_BIT',
+        'UNIFORM_BARRIER_BIT',
+        'TEXTURE_FETCH_BARRIER_BIT',
+        'SHADER_IMAGE_ACCESS_BARRIER_BIT',
+        'COMMAND_BARRIER_BIT',
+        'PIXEL_BUFFER_BARRIER_BIT',
+        'TEXTURE_UPDATE_BARRIER_BIT',
+        'BUFFER_UPDATE_BARRIER_BIT',
+        'FRAMEBUFFER_BARRIER_BIT',
+        'TRANSFORM_FEEDBACK_BARRIER_BIT',
+        'ATOMIC_COUNTER_BARRIER_BIT',
+        'SHADER_STORAGE_BARRIER_BIT',
         'ALL_BARRIER_BITS',
     ]
 

@@ -89,7 +89,9 @@ class Uniform:
         return self.ctx._set_uniform_handle(self.program_obj, self.location, value)
 
     def read(self):
-        return self.ctx._read_uniform(self.program_obj, self.location, self.gl_type, self.array_length, self.element_size)
+        return self.ctx._read_uniform(
+            self.program_obj, self.location, self.gl_type, self.array_length, self.element_size
+        )
 
     def write(self, data: Any):
         self.ctx._write_uniform(self.program_obj, self.location, self.gl_type, self.array_length, data)
@@ -196,39 +198,39 @@ class Error(Exception):
 
 ATTRIBUTE_LOOKUP_TABLE = {
     0x1404: (1, 0x1404, 1, 1, False, 'i'),
-    0x8b53: (2, 0x1404, 1, 2, False, 'i'),
-    0x8b54: (3, 0x1404, 1, 3, False, 'i'),
-    0x8b55: (4, 0x1404, 1, 4, False, 'i'),
+    0x8B53: (2, 0x1404, 1, 2, False, 'i'),
+    0x8B54: (3, 0x1404, 1, 3, False, 'i'),
+    0x8B55: (4, 0x1404, 1, 4, False, 'i'),
     0x1405: (1, 0x1405, 1, 1, False, 'i'),
-    0x8dc6: (2, 0x1405, 1, 2, False, 'i'),
-    0x8dc7: (3, 0x1405, 1, 3, False, 'i'),
-    0x8dc8: (4, 0x1405, 1, 4, False, 'i'),
+    0x8DC6: (2, 0x1405, 1, 2, False, 'i'),
+    0x8DC7: (3, 0x1405, 1, 3, False, 'i'),
+    0x8DC8: (4, 0x1405, 1, 4, False, 'i'),
     0x1406: (1, 0x1406, 1, 1, True, 'f'),
-    0x8b50: (2, 0x1406, 1, 2, True, 'f'),
-    0x8b51: (3, 0x1406, 1, 3, True, 'f'),
-    0x8b52: (4, 0x1406, 1, 4, True, 'f'),
-    0x140a: (1, 0x140a, 1, 1, False, 'd'),
-    0x8ffc: (2, 0x140a, 1, 2, False, 'd'),
-    0x8ffd: (3, 0x140a, 1, 3, False, 'd'),
-    0x8ffe: (4, 0x140a, 1, 4, False, 'd'),
-    0x8b5a: (4, 0x1406, 2, 2, True, 'f'),
-    0x8b65: (6, 0x1406, 2, 3, True, 'f'),
-    0x8b66: (8, 0x1406, 2, 4, True, 'f'),
-    0x8b67: (6, 0x1406, 3, 2, True, 'f'),
-    0x8b5b: (9, 0x1406, 3, 3, True, 'f'),
-    0x8b68: (12, 0x1406, 3, 4, True, 'f'),
-    0x8b69: (8, 0x1406, 4, 2, True, 'f'),
-    0x8b6a: (12, 0x1406, 4, 3, True, 'f'),
-    0x8b5c: (16, 0x1406, 4, 4, True, 'f'),
-    0x8f46: (4, 0x140a, 2, 2, False, 'd'),
-    0x8f49: (6, 0x140a, 2, 3, False, 'd'),
-    0x8f4a: (8, 0x140a, 2, 4, False, 'd'),
-    0x8f4b: (6, 0x140a, 3, 2, False, 'd'),
-    0x8f47: (9, 0x140a, 3, 3, False, 'd'),
-    0x8f4c: (12, 0x140a, 3, 4, False, 'd'),
-    0x8f4d: (8, 0x140a, 4, 2, False, 'd'),
-    0x8f4e: (12, 0x140a, 4, 3, False, 'd'),
-    0x8f48: (16, 0x140a, 4, 4, False, 'd'),
+    0x8B50: (2, 0x1406, 1, 2, True, 'f'),
+    0x8B51: (3, 0x1406, 1, 3, True, 'f'),
+    0x8B52: (4, 0x1406, 1, 4, True, 'f'),
+    0x140A: (1, 0x140A, 1, 1, False, 'd'),
+    0x8FFC: (2, 0x140A, 1, 2, False, 'd'),
+    0x8FFD: (3, 0x140A, 1, 3, False, 'd'),
+    0x8FFE: (4, 0x140A, 1, 4, False, 'd'),
+    0x8B5A: (4, 0x1406, 2, 2, True, 'f'),
+    0x8B65: (6, 0x1406, 2, 3, True, 'f'),
+    0x8B66: (8, 0x1406, 2, 4, True, 'f'),
+    0x8B67: (6, 0x1406, 3, 2, True, 'f'),
+    0x8B5B: (9, 0x1406, 3, 3, True, 'f'),
+    0x8B68: (12, 0x1406, 3, 4, True, 'f'),
+    0x8B69: (8, 0x1406, 4, 2, True, 'f'),
+    0x8B6A: (12, 0x1406, 4, 3, True, 'f'),
+    0x8B5C: (16, 0x1406, 4, 4, True, 'f'),
+    0x8F46: (4, 0x140A, 2, 2, False, 'd'),
+    0x8F49: (6, 0x140A, 2, 3, False, 'd'),
+    0x8F4A: (8, 0x140A, 2, 4, False, 'd'),
+    0x8F4B: (6, 0x140A, 3, 2, False, 'd'),
+    0x8F47: (9, 0x140A, 3, 3, False, 'd'),
+    0x8F4C: (12, 0x140A, 3, 4, False, 'd'),
+    0x8F4D: (8, 0x140A, 4, 2, False, 'd'),
+    0x8F4E: (12, 0x140A, 4, 3, False, 'd'),
+    0x8F48: (16, 0x140A, 4, 4, False, 'd'),
 }
 
 UNIFORM_LOOKUP_TABLE = {
@@ -383,46 +385,46 @@ class Spv:
     MAT2 = 1 << 20
     MAT3 = 1 << 21
     MAT4 = 1 << 22
-    
+
     NONE = 0
     UNKNOWN = 1 << 30
 
 
 TRANSLATION_TABLE_SPIRV_GLSL = {
     Spv.INT32: 0x1404,
-    Spv.INT32 | Spv.VEC2: 0x8b53,
-    Spv.INT32 | Spv.VEC3: 0x8b54,
-    Spv.INT32 | Spv.VEC4: 0x8b55,
+    Spv.INT32 | Spv.VEC2: 0x8B53,
+    Spv.INT32 | Spv.VEC3: 0x8B54,
+    Spv.INT32 | Spv.VEC4: 0x8B55,
     Spv.UINT32: 0x1405,
-    Spv.UINT32 | Spv.VEC2: 0x8dc6,
-    Spv.UINT32 | Spv.VEC3: 0x8dc7,
-    Spv.UINT32 | Spv.VEC4: 0x8dc8,
+    Spv.UINT32 | Spv.VEC2: 0x8DC6,
+    Spv.UINT32 | Spv.VEC3: 0x8DC7,
+    Spv.UINT32 | Spv.VEC4: 0x8DC8,
     Spv.FLOAT32: 0x1406,
-    Spv.FLOAT32 | Spv.VEC2: 0x8b50,
-    Spv.FLOAT32 | Spv.VEC3: 0x8b51,
-    Spv.FLOAT32 | Spv.VEC4: 0x8b52,
-    Spv.FLOAT64: 0x140a,
-    Spv.FLOAT64 | Spv.VEC2: 0x8ffc,
-    Spv.FLOAT64 | Spv.VEC3: 0x8ffd,
-    Spv.FLOAT64 | Spv.VEC4: 0x8ffe,
-    Spv.FLOAT32 | Spv.VEC2 | Spv.MAT2: 0x8b5a,
-    Spv.FLOAT32 | Spv.VEC3 | Spv.MAT2: 0x8b65,
-    Spv.FLOAT32 | Spv.VEC4 | Spv.MAT2: 0x8b66,
-    Spv.FLOAT32 | Spv.VEC2 | Spv.MAT3: 0x8b67,
-    Spv.FLOAT32 | Spv.VEC3 | Spv.MAT3: 0x8b5b,
-    Spv.FLOAT32 | Spv.VEC4 | Spv.MAT3: 0x8b68,
-    Spv.FLOAT32 | Spv.VEC2 | Spv.MAT4: 0x8b69,
-    Spv.FLOAT32 | Spv.VEC3 | Spv.MAT4: 0x8b6a,
-    Spv.FLOAT32 | Spv.VEC4 | Spv.MAT4: 0x8b5c,
-    Spv.FLOAT64 | Spv.VEC2 | Spv.MAT2: 0x8f46,
-    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT2: 0x8f49,
-    Spv.FLOAT64 | Spv.VEC4 | Spv.MAT2: 0x8f4a,
-    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT2: 0x8f4b,
-    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT3: 0x8f47,
-    Spv.FLOAT64 | Spv.VEC4 | Spv.MAT3: 0x8f4c,
-    Spv.FLOAT64 | Spv.VEC2 | Spv.MAT4: 0x8f4d,
-    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT4: 0x8f4e,
-    Spv.FLOAT64 | Spv.VEC4 | Spv.MAT4: 0x8f48,
+    Spv.FLOAT32 | Spv.VEC2: 0x8B50,
+    Spv.FLOAT32 | Spv.VEC3: 0x8B51,
+    Spv.FLOAT32 | Spv.VEC4: 0x8B52,
+    Spv.FLOAT64: 0x140A,
+    Spv.FLOAT64 | Spv.VEC2: 0x8FFC,
+    Spv.FLOAT64 | Spv.VEC3: 0x8FFD,
+    Spv.FLOAT64 | Spv.VEC4: 0x8FFE,
+    Spv.FLOAT32 | Spv.VEC2 | Spv.MAT2: 0x8B5A,
+    Spv.FLOAT32 | Spv.VEC3 | Spv.MAT2: 0x8B65,
+    Spv.FLOAT32 | Spv.VEC4 | Spv.MAT2: 0x8B66,
+    Spv.FLOAT32 | Spv.VEC2 | Spv.MAT3: 0x8B67,
+    Spv.FLOAT32 | Spv.VEC3 | Spv.MAT3: 0x8B5B,
+    Spv.FLOAT32 | Spv.VEC4 | Spv.MAT3: 0x8B68,
+    Spv.FLOAT32 | Spv.VEC2 | Spv.MAT4: 0x8B69,
+    Spv.FLOAT32 | Spv.VEC3 | Spv.MAT4: 0x8B6A,
+    Spv.FLOAT32 | Spv.VEC4 | Spv.MAT4: 0x8B5C,
+    Spv.FLOAT64 | Spv.VEC2 | Spv.MAT2: 0x8F46,
+    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT2: 0x8F49,
+    Spv.FLOAT64 | Spv.VEC4 | Spv.MAT2: 0x8F4A,
+    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT2: 0x8F4B,
+    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT3: 0x8F47,
+    Spv.FLOAT64 | Spv.VEC4 | Spv.MAT3: 0x8F4C,
+    Spv.FLOAT64 | Spv.VEC2 | Spv.MAT4: 0x8F4D,
+    Spv.FLOAT64 | Spv.VEC3 | Spv.MAT4: 0x8F4E,
+    Spv.FLOAT64 | Spv.VEC4 | Spv.MAT4: 0x8F48,
 }
 
 
@@ -447,7 +449,7 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
     extracted_types: Dict[int, Tuple[int, int]] = {}  # id : (spv_type, arr_length)
     extracted_location: Dict[int, int] = {}  # id : location
     while idx < num_tokens:
-        args, opcode = token(idx) >> 16, token(idx) & 0xffff
+        args, opcode = token(idx) >> 16, token(idx) & 0xFFFF
         if opcode == 5:  # OpName
             # We can extract the name of some ids
             name_start, name_end = (idx + 2) * 4, (idx + args) * 4
@@ -523,8 +525,7 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
             # OpConstant is needed to extract the length of arrays
             # However, it can be used for other purposes
             content_start, content_end = (idx + 3) * 4, (idx + args) * 4
-            extracted_constants[token(idx+2)] = (token(idx+1),
-                spv[content_start:content_end])
+            extracted_constants[token(idx + 2)] = (token(idx + 1), spv[content_start:content_end])
 
         idx += args
 
@@ -558,7 +559,7 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
             add_typ, multi_arr_length = assembly(thrw_typ)
             typ = add_typ | typ
             arr_length = arr_length * multi_arr_length
-        
+
         allowed_types[type_id] = (typ, -1, -1, arr_length if arr_length > 0 else 1)
 
         return typ, arr_length
@@ -571,12 +572,16 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
             extracted_types[ids] = (allowed_types[type_id][0], allowed_types[type_id][3])
 
     # Making a whole list
-    exrtacted_general_ids: List[int] = sorted(set([
-        *extracted_location.keys(),
-        *extracted_types.keys(),
-        *extracted_storage_class_id.keys(),
-        *extracted_names.keys(),
-    ]))
+    exrtacted_general_ids: List[int] = sorted(
+        set(
+            [
+                *extracted_location.keys(),
+                *extracted_types.keys(),
+                *extracted_storage_class_id.keys(),
+                *extracted_names.keys(),
+            ]
+        )
+    )
 
     extracted_collected: Dict[int, Tuple[str, int, int, int, int]] = {}  # id : variable_info
     for ids in exrtacted_general_ids:
@@ -620,5 +625,6 @@ def resolve_includes(ctx, source):
         return content
 
     import re
+
     source = re.sub(r'#include\s+"([^"]+)"', include, source)
     return source

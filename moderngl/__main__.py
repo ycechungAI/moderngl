@@ -9,7 +9,7 @@ import moderngl
 
 
 def main(argv: Optional[List[str]] = None) -> None:
-    """Entrypoint when running moderngl module."""
+    '''Entrypoint when running moderngl module.'''
     version = 'moderngl %s' % moderngl.__version__
 
     if os.path.isfile(os.path.join(os.path.dirname(__file__), 'README.md')):

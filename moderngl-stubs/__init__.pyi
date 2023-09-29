@@ -436,7 +436,7 @@ class Buffer:
     This values is provided for debug purposes only.
     '''
 
-    def write(self, data: Any, *, offset: int = 0) -> None:
+    def write(self, data: Any, offset: int = 0) -> None:
         '''
         Write the content.
 
@@ -458,7 +458,7 @@ class Buffer:
             step (int): Offset increment in bytes.
             count (int): The number of offsets.
         '''
-    def read(self, size: int = -1, *, offset: int = 0) -> bytes:
+    def read(self, size: int = -1, offset: int = 0) -> bytes:
         '''
         Read the content.
 
@@ -471,7 +471,7 @@ class Buffer:
         Returns:
             bytes
         '''
-    def read_into(self, buffer: Any, size: int = -1, *, offset: int = 0, write_offset: int = 0) -> None:
+    def read_into(self, buffer: Any, size: int = -1, offset: int = 0, write_offset: int = 0) -> None:
         '''
         Read the content into a buffer.
 
@@ -506,7 +506,6 @@ class Buffer:
         start: int,
         step: int,
         count: int,
-        *,
         write_offset: int = 0,
     ) -> None:
         '''
@@ -525,7 +524,7 @@ class Buffer:
         Keyword Args:
             write_offset (int): The write offset.
         '''
-    def clear(self, size: int = -1, *, offset: int = 0, chunk: Any = None) -> None:
+    def clear(self, size: int = -1, offset: int = 0, chunk: Any = None) -> None:
         '''
         Clear the content.
 
@@ -536,7 +535,7 @@ class Buffer:
             offset (int): The offset.
             chunk (bytes): The chunk to use repeatedly.
         '''
-    def bind_to_uniform_block(self, binding: int = 0, *, offset: int = 0, size: int = -1) -> None:
+    def bind_to_uniform_block(self, binding: int = 0, offset: int = 0, size: int = -1) -> None:
         '''
         Bind the buffer to a uniform block.
 
@@ -547,7 +546,7 @@ class Buffer:
             offset (int): The offset.
             size (int): The size. Value ``-1`` means all.
         '''
-    def bind_to_storage_buffer(self, binding: int = 0, *, offset: int = 0, size: int = -1) -> None:
+    def bind_to_storage_buffer(self, binding: int = 0, offset: int = 0, size: int = -1) -> None:
         '''
         Bind the buffer to a shader storage buffer.
 
@@ -719,9 +718,7 @@ class ComputeShader:
         '''
         Run the compute shader.
         '''
-    def get(
-        self, key: str, default: Any
-    ) -> Union[Uniform, UniformBlock, Attribute, Varying]:
+    def get(self, key: str, default: Any) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         '''
         Returns a Uniform, UniformBlock, Attribute or Varying.
 
@@ -1532,7 +1529,6 @@ class Context:
         blue: float = 0.0,
         alpha: float = 0.0,
         depth: float = 1.0,
-        *,
         viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
         color: Optional[Tuple[float, float, float, float]] = None,
     ) -> None:
@@ -1663,7 +1659,6 @@ class Context:
         dst: Buffer,
         src: Buffer,
         size: int = -1,
-        *,
         read_offset: int = 0,
         write_offset: int = 0,
     ) -> None:
@@ -1679,9 +1674,7 @@ class Context:
             read_offset (int): The read offset.
             write_offset (int): The write offset.
         '''
-    def copy_framebuffer(
-        self, dst: Union[Framebuffer, Texture], src: Framebuffer
-    ) -> None:
+    def copy_framebuffer(self, dst: Union[Framebuffer, Texture], src: Framebuffer) -> None:
         '''
         Copy framebuffer content.
 
@@ -1710,9 +1703,7 @@ class Context:
         Returns:
             :py:class:`Framebuffer` object
         '''
-    def memory_barrier(
-        self, barriers: Optional[int] = None, by_region: Optional[bool] = False
-    ) -> None:
+    def memory_barrier(self, barriers: Optional[int] = None, by_region: Optional[bool] = False) -> None:
         '''
         Applying a memory barrier.
 
@@ -1727,7 +1718,7 @@ class Context:
             barriers (int): Affected barriers, default moderngl.ALL_BARRIER_BITS.
             by_region (bool): Memory barrier mode by region. More read on https://registry.khronos.org/OpenGL-Refpages/gl4/html/glMemoryBarrier.xhtml
         '''
-    def buffer(self, data: Any = None, *, reserve: int = 0, dynamic: bool = False) -> Buffer:
+    def buffer(self, data: Any = None, reserve: int = 0, dynamic: bool = False) -> Buffer:
         '''
         Create a :py:class:`Buffer` object.
 
@@ -1764,7 +1755,6 @@ class Context:
         size: Tuple[int, int],
         components: int,
         data: Optional[Any] = None,
-        *,
         samples: int = 0,
         alignment: int = 1,
         dtype: str = 'f1',
@@ -1796,7 +1786,6 @@ class Context:
         size: Tuple[int, int, int],
         components: int,
         data: Optional[Any] = None,
-        *,
         alignment: int = 1,
         dtype: str = 'f1',
     ) -> TextureArray:
@@ -1821,7 +1810,6 @@ class Context:
         size: Tuple[int, int, int],
         components: int,
         data: Optional[Any] = None,
-        *,
         alignment: int = 1,
         dtype: str = 'f1',
     ) -> Texture3D:
@@ -1845,7 +1833,6 @@ class Context:
         size: Tuple[int, int],
         components: int,
         data: Optional[Any] = None,
-        *,
         alignment: int = 1,
         dtype: str = 'f1',
         internal_format: Optional[int] = None,
@@ -1875,7 +1862,6 @@ class Context:
         self,
         size: Tuple[int, int],
         data: Optional[Any] = None,
-        *,
         samples: int = 0,
         alignment: int = 4,
     ) -> Texture:
@@ -1897,7 +1883,6 @@ class Context:
         self,
         size: Tuple[int, int],
         data: Optional[Any] = None,
-        *,
         alignment: int = 4,
     ) -> TextureCube:
         '''
@@ -1965,7 +1950,6 @@ class Context:
         content: Any,
         index_buffer: Optional[Buffer] = None,
         index_element_size: int = 4,
-        *,
         skip_errors: bool = False,
         mode: Optional[int] = None,
     ) -> 'VertexArray':
@@ -2017,7 +2001,6 @@ class Context:
         '''
     def program(
         self,
-        *,
         vertex_shader: str | bytes | ConvertibleToShaderSource,
         fragment_shader: str | bytes | ConvertibleToShaderSource | None = None,
         geometry_shader: str | bytes | ConvertibleToShaderSource | None = None,
@@ -2050,7 +2033,6 @@ class Context:
         '''
     def query(
         self,
-        *,
         samples: bool = False,
         any_samples: bool = False,
         time: bool = False,
@@ -2069,7 +2051,6 @@ class Context:
         self,
         framebuffer: Optional[Framebuffer] = None,
         enable_only: Optional[int] = None,
-        *,
         textures: Tuple[Tuple[Texture, int], ...] = (),
         uniform_buffers: Tuple[Tuple[Buffer, int], ...] = (),
         storage_buffers: Tuple[Tuple[Buffer, int], ...] = (),
@@ -2094,7 +2075,6 @@ class Context:
         self,
         size: Tuple[int, int],
         components: int = 4,
-        *,
         samples: int = 0,
         dtype: str = 'f1',
     ) -> Framebuffer:
@@ -2144,7 +2124,6 @@ class Context:
         self,
         size: Tuple[int, int],
         components: int = 4,
-        *,
         samples: int = 0,
         dtype: str = 'f1',
     ) -> 'Renderbuffer':
@@ -2163,7 +2142,7 @@ class Context:
         Returns:
             :py:class:`Renderbuffer` object
         '''
-    def depth_renderbuffer(self, size: Tuple[int, int], *, samples: int = 0) -> 'Renderbuffer':
+    def depth_renderbuffer(self, size: Tuple[int, int], samples: int = 0) -> 'Renderbuffer':
         '''
         :py:class:`Renderbuffer` objects are OpenGL objects that contain images. \
         They are created and used specifically with :py:class:`Framebuffer` objects.
@@ -2177,9 +2156,7 @@ class Context:
         Returns:
             :py:class:`Renderbuffer` object
         '''
-    def compute_shader(
-        self, source: str | bytes | ConvertibleToShaderSource
-    ) -> 'ComputeShader':
+    def compute_shader(self, source: str | bytes | ConvertibleToShaderSource) -> 'ComputeShader':
         '''
         A :py:class:`ComputeShader` is a Shader Stage that is used entirely \
         for computing arbitrary information. While it can do rendering, it \
@@ -2470,7 +2447,6 @@ class Framebuffer:
         blue: float = 0.0,
         alpha: float = 0.0,
         depth: float = 1.0,
-        *,
         viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
         color: Optional[Tuple[float, float, float, float]] = None,
     ) -> None:
@@ -2508,7 +2484,6 @@ class Framebuffer:
         self,
         viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
         components: int = 3,
-        *,
         attachment: int = 0,
         alignment: int = 1,
         dtype: str = 'f1',
@@ -2546,7 +2521,6 @@ class Framebuffer:
         buffer: Any,
         viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
         components: int = 3,
-        *,
         attachment: int = 0,
         alignment: int = 1,
         dtype: str = 'f1',
@@ -2588,9 +2562,7 @@ class Program:
     performance consider using :py:class:`moderngl.Scope`.
     '''
 
-    def __getitem__(
-        self, key: str
-    ) -> Union[Uniform, UniformBlock, Attribute, Varying]:
+    def __getitem__(self, key: str) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         '''
         Get a member such as uniforms, uniform blocks, attributes and varyings by name.
 
@@ -2708,9 +2680,7 @@ class Program:
     This values is provided for debug purposes only.
     '''
 
-    def get(
-        self, key: str, default: Any
-    ) -> Union[Uniform, UniformBlock, Attribute, Varying]:
+    def get(self, key: str, default: Any) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         '''
         Returns a Uniform, UniformBlock, Attribute or Varying.
 
@@ -3158,7 +3128,7 @@ class Texture3D:
     This values is provided for debug purposes only.
     '''
 
-    def read(self, *, alignment: int = 1) -> bytes:
+    def read(self, alignment: int = 1) -> bytes:
         '''
         Read the pixel data as bytes into system memory.
 
@@ -3171,7 +3141,6 @@ class Texture3D:
     def read_into(
         self,
         buffer: Any,
-        *,
         alignment: int = 1,
         write_offset: int = 0,
     ) -> None:
@@ -3201,10 +3170,7 @@ class Texture3D:
     def write(
         self,
         data: Any,
-        viewport: Optional[
-            Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int]]
-        ] = None,
-        *,
+        viewport: Optional[Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int]]] = None,
         alignment: int = 1,
     ) -> None:
         r'''
@@ -3469,7 +3435,7 @@ class TextureArray:
     This values is provided for debug purposes only.
     '''
 
-    def read(self, *, alignment: int = 1) -> bytes:
+    def read(self, alignment: int = 1) -> bytes:
         '''
         Read the pixel data as bytes into system memory.
 
@@ -3482,7 +3448,6 @@ class TextureArray:
     def read_into(
         self,
         buffer: Any,
-        *,
         alignment: int = 1,
         write_offset: int = 0,
     ) -> None:
@@ -3512,10 +3477,7 @@ class TextureArray:
     def write(
         self,
         data: Any,
-        viewport: Optional[
-            Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int]]
-        ] = None,
-        *,
+        viewport: Optional[Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int]]] = None,
         alignment: int = 1,
     ) -> None:
         r'''
@@ -3799,7 +3761,7 @@ class TextureCube:
     This values is provided for debug purposes only.
     '''
 
-    def read(self, face: int, *, alignment: int = 1) -> bytes:
+    def read(self, face: int, alignment: int = 1) -> bytes:
         '''
         Read a face from the cubemap as bytes into system memory.
 
@@ -3822,7 +3784,6 @@ class TextureCube:
         self,
         buffer: Any,
         face: int,
-        *,
         alignment: int = 1,
         write_offset: int = 0,
     ) -> None:
@@ -3856,7 +3817,6 @@ class TextureCube:
         face: int,
         data: Any,
         viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
-        *,
         alignment: int = 1,
     ) -> None:
         r'''
@@ -4163,7 +4123,7 @@ class Texture:
     This values is provided for debug purposes only.
     '''
 
-    def read(self, *, level: int = 0, alignment: int = 1) -> bytes:
+    def read(self, level: int = 0, alignment: int = 1) -> bytes:
         '''
         Read the pixel data as bytes into system memory.
 
@@ -4182,7 +4142,6 @@ class Texture:
     def read_into(
         self,
         buffer: Any,
-        *,
         level: int = 0,
         alignment: int = 1,
         write_offset: int = 0,
@@ -4215,7 +4174,6 @@ class Texture:
         self,
         data: Any,
         viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
-        *,
         level: int = 0,
         alignment: int = 1,
     ) -> None:
@@ -4432,7 +4390,6 @@ class VertexArray:
         self,
         mode: Optional[int] = None,
         vertices: int = -1,
-        *,
         first: int = 0,
         instances: int = -1,
     ) -> None:
@@ -4452,7 +4409,6 @@ class VertexArray:
         buffer: Buffer,
         mode: Optional[int] = None,
         count: int = -1,
-        *,
         first: int = 0,
     ) -> None:
         '''
@@ -4473,7 +4429,6 @@ class VertexArray:
         buffer: Union[Buffer, List[Buffer]],
         mode: Optional[int] = None,
         vertices: int = -1,
-        *,
         first: int = 0,
         instances: int = -1,
         buffer_offset: int = 0,
@@ -4501,7 +4456,6 @@ class VertexArray:
         cls: str,
         buffer: Buffer,
         fmt: str,
-        *,
         offset: int = 0,
         stride: int = 0,
         divisor: int = 0,
