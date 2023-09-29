@@ -2185,31 +2185,8 @@ def create_context(
     return ctx
 
 
-def create_standalone_context(
-    require: Optional[int] = None,
-    share: bool = False,
-    **settings,
-) -> 'Context':
-    if require is None:
-        require = 330
-
-    mode = 'share' if share is True else 'standalone'
-
-    ctx = Context.__new__(Context)
-    ctx.mglo, ctx.version_code = mgl.create_context(glversion=require, mode=mode, **settings)
-    ctx._screen = None
-    ctx.fbo = None
-    ctx._info = None
-    ctx._extensions = None
-    ctx.extra = None
-    ctx._gc_mode = None
-    ctx._objects = deque()
-
-    if require is not None and ctx.version_code < require:
-        raise ValueError('Requested OpenGL version {0}, got version {1}'.format(
-            require, ctx.version_code))
-
-    return ctx
+def create_standalone_context(**kwargs):
+    return create_context(standalone=True, **kwargs)
 
 
 def detect_format(
