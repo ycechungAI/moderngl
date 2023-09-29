@@ -286,13 +286,15 @@ class Framebuffer:
         self.mglo.use()
 
     def read(self, viewport=None, components=3, attachment=0, alignment=1, dtype='f1', clamp=False):
-        return self.mglo.read(viewport, components, attachment, alignment, clamp, dtype)
+        res, mem = mgl.writable_bytes(mgl.expected_size(self.width, self.height, 1, components, alignment, dtype))
+        self.mglo.read_into(mem, viewport, components, attachment, alignment, clamp, dtype, 0)
+        return res
 
-    def read_into(self, buffer, viewport=None, components=3, attachment=0, alignment=1, dtype='f1', write_offset=0):
+    def read_into(self, buffer, viewport=None, components=3, attachment=0, alignment=1, dtype='f1', clamp=False, write_offset=0):
         if type(buffer) is Buffer:
             buffer = buffer.mglo
 
-        return self.mglo.read_into(buffer, viewport, components, attachment, alignment, dtype, write_offset)
+        return self.mglo.read_into(buffer, viewport, components, attachment, alignment, clamp, dtype, write_offset)
 
     def release(self):
         if not isinstance(self.mglo, InvalidObject):
