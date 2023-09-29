@@ -13,6 +13,10 @@ except ImportError:
 __version__ = '5.9.0.dev0'
 
 
+class _store:
+    default_context = None
+
+
 class Buffer:
     def __init__(self):
         self.mglo = None
@@ -2142,6 +2146,8 @@ class Context:
         self.mglo.__exit__(exc_type, exc_val, exc_tb)
 
     def release(self) -> None:
+        if _store.default_context is self:
+            _store.default_context = None
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
             self.mglo = InvalidObject()
@@ -2182,7 +2188,12 @@ def create_context(
         ctx.fbo = ctx.detect_framebuffer()  # Currently bound framebuffer
         ctx.mglo.fbo = ctx.fbo.mglo
 
+    _store.default_context = ctx
     return ctx
+
+
+def get_context():
+    return _store.default_context
 
 
 def create_standalone_context(**kwargs):
