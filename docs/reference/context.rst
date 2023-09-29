@@ -1034,27 +1034,27 @@ These values are available in the ``Context`` object and in the
     # From context
     ctx.enable_only(ctx.DEPTH_TEST | ctx.CULL_FACE)
 
-.. :py:attribute:: NOTHING
+.. :py:attribute:: Context.NOTHING
     :type: int
 
     Represents no states. Can be used with :py:meth:`Context.enable_only` to disable all states.
 
-.. :py:attribute:: BLEND
+.. :py:attribute:: Context.BLEND
     :type: int
 
     Enable/disable blending
 
-.. :py:attribute:: DEPTH_TEST
+.. :py:attribute:: Context.DEPTH_TEST
     :type: int
 
     Enable/disable depth testing
 
-.. :py:attribute:: CULL_FACE
+.. :py:attribute:: Context.CULL_FACE
     :type: int
 
     Enable/disable face culling
 
-.. :py:attribute:: RASTERIZER_DISCARD
+.. :py:attribute:: Context.RASTERIZER_DISCARD
     :type: int
 
     Enable/disable rasterization
@@ -1067,7 +1067,7 @@ These values are available in the ``Context`` object and in the
     If this value is not set in the shader the behavior is undefined. This means the points may
     or may not appear depending if the drivers enforce some default value for ``gl_PointSize``.
 
-.. :py:attribute:: PROGRAM_POINT_SIZE
+.. :py:attribute:: Context.PROGRAM_POINT_SIZE
     :type: int
 
     When disabled :py:attr:`Context.point_size` is used.
@@ -1075,18 +1075,18 @@ These values are available in the ``Context`` object and in the
 Primitive Modes
 ---------------
 
-.. py:attribute:: POINTS
+.. py:attribute:: Context.POINTS
     :type: int
 
     Each vertex represents a point
 
-.. py:attribute:: LINES
+.. py:attribute:: Context.LINES
     :type: int
 
     Vertices 0 and 1 are considered a line. Vertices 2 and 3 are considered a line.
     And so on. If the user specifies a non-even number of vertices, then the extra vertex is ignored.
 
-.. py:attribute:: LINE_LOOP
+.. py:attribute:: Context.LINE_LOOP
     :type: int
 
     As line strips, except that the first and last vertices are also used as a line.
@@ -1094,18 +1094,18 @@ Primitive Modes
     the drawing command is ignored. The line between the first and last vertices happens
     after all of the previous lines in the sequence.
 
-.. py:attribute:: LINE_STRIP
+.. py:attribute:: Context.LINE_STRIP
     :type: int
 
     The adjacent vertices are considered lines. Thus, if you pass n vertices, you will get n-1 lines.
     If the user only specifies 1 vertex, the drawing command is ignored.
 
-.. py:attribute:: TRIANGLES
+.. py:attribute:: Context.TRIANGLES
     :type: int
 
     Vertices 0, 1, and 2 form a triangle. Vertices 3, 4, and 5 form a triangle. And so on.
 
-.. py:attribute:: TRIANGLE_STRIP
+.. py:attribute:: Context.TRIANGLE_STRIP
     :type: int
 
     Every group of 3 adjacent vertices forms a triangle. The face direction of the
@@ -1113,7 +1113,7 @@ Primitive Modes
     will have its effective face order reversed, so the system compensates for that
     by testing it in the opposite way. A vertex stream of n length will generate n-2 triangles.
 
-.. py:attribute:: TRIANGLE_FAN
+.. py:attribute:: Context.TRIANGLE_FAN
     :type: int
 
     The first vertex is always held fixed. From there on, every group of 2 adjacent
@@ -1121,35 +1121,35 @@ Primitive Modes
     of triangles like so: (0, 1, 2) (0, 2, 3), (0, 3, 4), etc. A vertex stream of
     n length will generate n-2 triangles.
 
-.. py:attribute:: LINES_ADJACENCY
+.. py:attribute:: Context.LINES_ADJACENCY
     :type: int
 
     These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
     to work with for each input primitive. Data needs to be duplicated in buffers.
 
-.. py:attribute:: LINE_STRIP_ADJACENCY
+.. py:attribute:: Context.LINE_STRIP_ADJACENCY
     :type: int
 
     These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
     to work with for each input primitive. Data needs to be duplicated in buffers.
 
-.. py:attribute:: TRIANGLES_ADJACENCY
+.. py:attribute:: Context.TRIANGLES_ADJACENCY
     :type: int
 
     These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
     to work with for each input primitive. Data needs to be duplicated in buffers.
 
-.. py:attribute:: TRIANGLE_STRIP_ADJACENCY
+.. py:attribute:: Context.TRIANGLE_STRIP_ADJACENCY
     :type: int
 
     These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
     to work with for each input primitive. Data needs to be duplicated in buffers.
 
-.. py:attribute:: PATCHES
+.. py:attribute:: Context.PATCHES
     :type: int
 
     primitive type can only be used when Tessellation is active. It is a primitive
@@ -1165,13 +1165,13 @@ Also available in the :py:class:`Context` instance
 including mode details.
 
 
-.. py:attribute:: NEAREST
+.. py:attribute:: Context.NEAREST
     :type: int
 
     Returns the value of the texture element that is nearest
     (in Manhattan distance) to the specified texture coordinates.
 
-.. py:attribute:: LINEAR
+.. py:attribute:: Context.LINEAR
     :type: int
 
     Returns the weighted average of the four texture elements
@@ -1180,7 +1180,7 @@ including mode details.
     of a texture, depending on the values of texture repeat mode,
     and on the exact mapping.
 
-.. py:attribute:: NEAREST_MIPMAP_NEAREST
+.. py:attribute:: Context.NEAREST_MIPMAP_NEAREST
     :type: int
 
     Chooses the mipmap that most closely matches the size of the
@@ -1188,7 +1188,7 @@ including mode details.
     element closest to the specified texture coordinates) to produce
     a texture value.
 
-.. py:attribute:: LINEAR_MIPMAP_NEAREST
+.. py:attribute:: Context.LINEAR_MIPMAP_NEAREST
     :type: int
 
     Chooses the mipmap that most closely matches the size of the pixel
@@ -1196,7 +1196,7 @@ including mode details.
     of the four texture elements that are closest to the specified
     texture coordinates) to produce a texture value.
 
-.. py:attribute:: NEAREST_MIPMAP_LINEAR
+.. py:attribute:: Context.NEAREST_MIPMAP_LINEAR
     :type: int
 
     Chooses the two mipmaps that most closely match the size of the
@@ -1205,7 +1205,7 @@ including mode details.
     a texture value from each mipmap. The final texture value is a
     weighted average of those two values.
 
-.. py:attribute:: LINEAR_MIPMAP_LINEAR
+.. py:attribute:: Context.LINEAR_MIPMAP_LINEAR
     :type: int
 
     Chooses the two mipmaps that most closely match the size of the pixel
@@ -1226,52 +1226,52 @@ to control blending operations.
     # Default value
     ctx.blend_func = ctx.SRC_ALPHA, ctx.ONE_MINUS_SRC_ALPHA
 
-.. py:attribute:: ZERO
+.. py:attribute:: Context.ZERO
     :type: int
 
     (0,0,0,0)
 
-.. py:attribute:: ONE
+.. py:attribute:: Context.ONE
     :type: int
 
     (1,1,1,1)
 
-.. py:attribute:: SRC_COLOR
+.. py:attribute:: Context.SRC_COLOR
     :type: int
 
     (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
 
-.. py:attribute:: ONE_MINUS_SRC_COLOR
+.. py:attribute:: Context.ONE_MINUS_SRC_COLOR
     :type: int
 
     (1,1,1,1) - (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
 
-.. py:attribute:: SRC_ALPHA
+.. py:attribute:: Context.SRC_ALPHA
     :type: int
 
     (As0/kA,As0/kA,As0/kA,As0/kA)
 
-.. py:attribute:: ONE_MINUS_SRC_ALPHA
+.. py:attribute:: Context.ONE_MINUS_SRC_ALPHA
     :type: int
 
     (1,1,1,1) - (As0/kA,As0/kA,As0/kA,As0/kA)
 
-.. py:attribute:: DST_ALPHA
+.. py:attribute:: Context.DST_ALPHA
     :type: int
 
     (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
 
-.. py:attribute:: ONE_MINUS_DST_ALPHA
+.. py:attribute:: Context.ONE_MINUS_DST_ALPHA
     :type: int
 
     (1,1,1,1) - (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
 
-.. py:attribute:: DST_COLOR
+.. py:attribute:: Context.DST_COLOR
     :type: int
 
     (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
 
-.. py:attribute:: ONE_MINUS_DST_COLOR
+.. py:attribute:: Context.ONE_MINUS_DST_COLOR
     :type: int
 
     (1,1,1,1) - (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
@@ -1280,17 +1280,17 @@ to control blending operations.
 Blend Function Shortcuts
 ------------------------
 
-.. py:attribute:: DEFAULT_BLENDING
+.. py:attribute:: Context.DEFAULT_BLENDING
     :type: tuple
 
     Shotcut for the default blending ``SRC_ALPHA, ONE_MINUS_SRC_ALPHA``
 
-.. py:attribute:: ADDITIVE_BLENDING
+.. py:attribute:: Context.ADDITIVE_BLENDING
     :type: tuple
 
     Shotcut for additive blending ``ONE, ONE``
 
-.. py:attribute:: PREMULTIPLIED_ALPHA
+.. py:attribute:: Context.PREMULTIPLIED_ALPHA
     :type: tuple
 
     Shotcut for blend mode when using premultiplied alpha ``SRC_ALPHA, ONE``
@@ -1301,27 +1301,27 @@ Blend Equations
 
 Used with :py:attr:`Context.blend_equation`.
 
-.. py:attribute:: FUNC_ADD
+.. py:attribute:: Context.FUNC_ADD
     :type: int
 
     source + destination
 
-.. py:attribute:: FUNC_SUBTRACT
+.. py:attribute:: Context.FUNC_SUBTRACT
     :type: int
 
     source - destination
 
-.. py:attribute:: FUNC_REVERSE_SUBTRACT
+.. py:attribute:: Context.FUNC_REVERSE_SUBTRACT
     :type: int
 
     destination - source
 
-.. py:attribute:: MIN
+.. py:attribute:: Context.MIN
     :type: int
 
     Minimum of source and destination
 
-.. py:attribute:: MAX
+.. py:attribute:: Context.MAX
     :type: int
 
     Maximum of source and destination
@@ -1330,84 +1330,84 @@ Used with :py:attr:`Context.blend_equation`.
 Other Enums
 -----------
 
-.. py:attribute:: FIRST_VERTEX_CONVENTION
+.. py:attribute:: Context.FIRST_VERTEX_CONVENTION
     :type: int
 
     Specifies the first vertex should be used as the source of data for flat shaded varyings.
     Used with :py:attr:`Context.provoking_vertex`.
 
-.. py:attribute:: LAST_VERTEX_CONVENTION
+.. py:attribute:: Context.LAST_VERTEX_CONVENTION
     :type: int
 
     Specifies the last vertex should be used as the source of data for flat shaded varyings.
     Used with :py:attr:`Context.provoking_vertex`.
 
-.. py:attribute:: VERTEX_ATTRIB_ARRAY_BARRIER_BIT
+.. py:attribute:: Context.VERTEX_ATTRIB_ARRAY_BARRIER_BIT
     :type: int
 
     VERTEX_ATTRIB_ARRAY_BARRIER_BIT
 
-.. py:attribute:: ELEMENT_ARRAY_BARRIER_BIT
+.. py:attribute:: Context.ELEMENT_ARRAY_BARRIER_BIT
     :type: int
 
     ELEMENT_ARRAY_BARRIER_BIT
 
-.. py:attribute:: UNIFORM_BARRIER_BIT
+.. py:attribute:: Context.UNIFORM_BARRIER_BIT
     :type: int
 
     UNIFORM_BARRIER_BIT
 
-.. py:attribute:: TEXTURE_FETCH_BARRIER_BIT
+.. py:attribute:: Context.TEXTURE_FETCH_BARRIER_BIT
     :type: int
 
     TEXTURE_FETCH_BARRIER_BIT
 
-.. py:attribute:: SHADER_IMAGE_ACCESS_BARRIER_BIT
+.. py:attribute:: Context.SHADER_IMAGE_ACCESS_BARRIER_BIT
     :type: int
 
     SHADER_IMAGE_ACCESS_BARRIER_BIT
 
-.. py:attribute:: COMMAND_BARRIER_BIT
+.. py:attribute:: Context.COMMAND_BARRIER_BIT
     :type: int
 
     COMMAND_BARRIER_BIT
 
-.. py:attribute:: PIXEL_BUFFER_BARRIER_BIT
+.. py:attribute:: Context.PIXEL_BUFFER_BARRIER_BIT
     :type: int
 
     PIXEL_BUFFER_BARRIER_BIT
 
-.. py:attribute:: TEXTURE_UPDATE_BARRIER_BIT
+.. py:attribute:: Context.TEXTURE_UPDATE_BARRIER_BIT
     :type: int
 
     TEXTURE_UPDATE_BARRIER_BIT
 
-.. py:attribute:: BUFFER_UPDATE_BARRIER_BIT
+.. py:attribute:: Context.BUFFER_UPDATE_BARRIER_BIT
     :type: int
 
     BUFFER_UPDATE_BARRIER_BIT
 
-.. py:attribute:: FRAMEBUFFER_BARRIER_BIT
+.. py:attribute:: Context.FRAMEBUFFER_BARRIER_BIT
     :type: int
 
     FRAMEBUFFER_BARRIER_BIT
 
-.. py:attribute:: TRANSFORM_FEEDBACK_BARRIER_BIT
+.. py:attribute:: Context.TRANSFORM_FEEDBACK_BARRIER_BIT
     :type: int
 
     TRANSFORM_FEEDBACK_BARRIER_BIT
 
-.. py:attribute:: ATOMIC_COUNTER_BARRIER_BIT
+.. py:attribute:: Context.ATOMIC_COUNTER_BARRIER_BIT
     :type: int
 
     ATOMIC_COUNTER_BARRIER_BIT
 
-.. py:attribute:: SHADER_STORAGE_BARRIER_BIT
+.. py:attribute:: Context.SHADER_STORAGE_BARRIER_BIT
     :type: int
 
     SHADER_STORAGE_BARRIER_BIT
 
-.. py:attribute:: ALL_BARRIER_BITS
+.. py:attribute:: Context.ALL_BARRIER_BITS
     :type: int
 
     ALL_BARRIER_BITS
