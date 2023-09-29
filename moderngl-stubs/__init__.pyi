@@ -297,12 +297,12 @@ class UniformBlock:
 
     binding: int
     '''
-    int: The binding of the uniform block.
+    The binding of the uniform block.
     '''
 
     value: int
     '''
-    int: The value of the uniform block.
+    The value of the uniform block.
     '''
 
     name: str
@@ -312,12 +312,12 @@ class UniformBlock:
 
     index: int
     '''
-    int: The index of the uniform block.
+    The index of the uniform block.
     '''
 
     size: int
     '''
-    int: The size of the uniform block.
+    The size of the uniform block.
     '''
 
     extra: Any
@@ -337,12 +337,12 @@ class StorageBlock:
 
     binding: int
     '''
-    int: The binding of the storage block
+    The binding of the storage block
     '''
 
     value: int
     '''
-    int: The value of the storage block.
+    The value of the storage block.
     '''
 
     name: str
@@ -352,7 +352,7 @@ class StorageBlock:
 
     index: int
     '''
-    int: The index of the storage block.
+    The index of the storage block.
     '''
 
     extra: Any
@@ -372,7 +372,7 @@ class Varying:
 
     number: int
     '''
-    int: The number of the varying.
+    The number of the varying.
     '''
 
     name: str
@@ -645,11 +645,11 @@ class ComputeShader:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -745,7 +745,7 @@ class ConditionalRender:
     '''Internal representation for debug purposes only.'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     def __enter__(self): ...
     def __exit__(self, *args): ...
@@ -1011,7 +1011,7 @@ class Context:
     '''
 
     version_code: int
-    '''int: The OpenGL version code. Reports ``410`` for OpenGL 4.1'''
+    '''The OpenGL version code. Reports ``410`` for OpenGL 4.1'''
 
     gc_mode: str
     '''
@@ -1208,7 +1208,7 @@ class Context:
 
     provoking_vertex: int
     '''
-    int: Specifies the vertex to be used as the source of data for flat shaded varyings.
+    Specifies the vertex to be used as the source of data for flat shaded varyings.
 
     Flatshading a vertex shader varying output (ie. ``flat out vec3 pos``) means to assign
     all vetices of the primitive the same value for that output. The vertex from which
@@ -1318,19 +1318,19 @@ class Context:
     '''
 
     max_samples: int
-    '''int: The maximum supported number of samples for multisampling.'''
+    '''The maximum supported number of samples for multisampling.'''
 
     max_integer_samples: int
-    '''int: The max integer samples.'''
+    '''The max integer samples.'''
 
     max_texture_units: int
-    '''int: The max texture units.'''
+    '''The max texture units.'''
 
     default_texture_unit: int
-    '''int: The default texture unit.'''
+    '''The default texture unit.'''
 
     max_anisotropy: float
-    '''float: The maximum value supported for anisotropic filtering.'''
+    '''The maximum value supported for anisotropic filtering.'''
 
     screen: Framebuffer
     '''
@@ -1345,7 +1345,7 @@ class Context:
     '''
 
     wireframe: bool
-    '''bool: Wireframe settings for debugging.'''
+    '''Wireframe settings for debugging.'''
 
     front_face: str
     '''
@@ -1379,7 +1379,7 @@ class Context:
     '''
 
     patch_vertices: int
-    '''int: The number of vertices that will be used to make up a single patch primitive.'''
+    '''The number of vertices that will be used to make up a single patch primitive.'''
 
     error: str
     '''
@@ -1520,7 +1520,7 @@ class Context:
     '''Internal representation for debug purposes only.'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     fbo: Framebuffer
     '''Framebuffer: The active framebuffer. Set every time :py:meth:`Framebuffer.use()` is called.'''
@@ -2442,7 +2442,7 @@ class Framebuffer:
     '''The bits of the framebuffer.'''
 
     color_attachments: Tuple[Union[Texture, Renderbuffer], ...]
-    '''tuple: The color attachments of the framebuffer.'''
+    '''The color attachments of the framebuffer.'''
 
     depth_attachment: Union[Texture, Renderbuffer]
     '''Texture or Renderbuffer: The depth attachment of the framebuffer.'''
@@ -2454,11 +2454,11 @@ class Framebuffer:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -2662,11 +2662,11 @@ class Program:
 
         '''
     is_transform: bool
-    '''bool: If this is a tranform program (no fragment shader).'''
+    '''If this is a tranform program (no fragment shader).'''
 
     geometry_input: int
     '''
-    int: The geometry input primitive.
+    The geometry input primitive.
 
     The GeometryShader's input primitive if the GeometryShader exists.
     The geometry input primitive will be used for validation.
@@ -2677,7 +2677,7 @@ class Program:
 
     geometry_output: int
     '''
-    int: The geometry output primitive.
+    The geometry output primitive.
 
     The GeometryShader's output primitive if the GeometryShader exists.
     This can only be ``POINTS``, ``LINE_STRIP`` and ``TRIANGLE_STRIP``
@@ -2686,7 +2686,7 @@ class Program:
 
     geometry_vertices: int
     '''
-    int: The maximum number of vertices that.
+    The maximum number of vertices that.
 
     the geometry shader will output.
     (from ``layout(output_primitive, max_vertices = vert_count) out;``)
@@ -2699,11 +2699,11 @@ class Program:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -2748,13 +2748,13 @@ class Query:
     '''Can be used in a ``with`` statement.'''
 
     samples: int
-    '''int: The number of samples passed.'''
+    '''The number of samples passed.'''
 
     primitives: int
-    '''int: The number of primitives generated.'''
+    '''The number of primitives generated.'''
 
     elapsed: int
-    '''int: The time elapsed in nanoseconds.'''
+    '''The time elapsed in nanoseconds.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -2763,7 +2763,7 @@ class Query:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     def __enter__(self): ...
     def __exit__(self, *args: Tuple[Any]): ...
@@ -2784,25 +2784,25 @@ class Renderbuffer:
     '''
 
     width: int
-    '''int: The width of the renderbuffer.'''
+    '''The width of the renderbuffer.'''
 
     height: int
-    '''int: The height of the renderbuffer.'''
+    '''The height of the renderbuffer.'''
 
     size: tuple
-    '''tuple: The size of the renderbuffer.'''
+    '''The size of the renderbuffer.'''
 
     samples: int
-    '''int: The samples of the renderbuffer.'''
+    '''The samples of the renderbuffer.'''
 
     components: int
-    '''int: The components of the renderbuffer.'''
+    '''The components of the renderbuffer.'''
 
     depth: bool
-    '''bool: Is the renderbuffer a depth renderbuffer?.'''
+    '''Is the renderbuffer a depth renderbuffer?.'''
 
     dtype: str
-    '''str: Data type.'''
+    '''Data type.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -2811,11 +2811,11 @@ class Renderbuffer:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -2973,11 +2973,11 @@ class Sampler:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -3041,7 +3041,7 @@ class Scope:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
 class Texture3D:
     '''
@@ -3095,7 +3095,7 @@ class Texture3D:
     '''
 
     filter: Tuple[int, int]
-    '''tuple: The filter of the texture.'''
+    '''The filter of the texture.'''
 
     swizzle: str
     '''
@@ -3125,22 +3125,22 @@ class Texture3D:
     '''
 
     width: int
-    '''int: The width of the texture.'''
+    '''The width of the texture.'''
 
     height: int
-    '''int: The height of the texture.'''
+    '''The height of the texture.'''
 
     depth: int
-    '''int: The depth of the texture.'''
+    '''The depth of the texture.'''
 
     size: tuple
-    '''tuple: The size of the texture.'''
+    '''The size of the texture.'''
 
     components: int
-    '''int: The number of components of the texture.'''
+    '''The number of components of the texture.'''
 
     dtype: str
-    '''str: Data type.'''
+    '''Data type.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -3149,11 +3149,11 @@ class Texture3D:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -3436,22 +3436,22 @@ class TextureArray:
     '''
 
     width: int
-    '''int: The width of the texture array.'''
+    '''The width of the texture array.'''
 
     height: int
-    '''int: The height of the texture array.'''
+    '''The height of the texture array.'''
 
     layers: int
-    '''int: The number of layers of the texture array.'''
+    '''The number of layers of the texture array.'''
 
     size: tuple
-    '''tuple: The size of the texture array.'''
+    '''The size of the texture array.'''
 
     components: int
-    '''int: The number of components of the texture array.'''
+    '''The number of components of the texture array.'''
 
     dtype: str
-    '''str: Data type.'''
+    '''Data type.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -3460,11 +3460,11 @@ class TextureArray:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -3682,13 +3682,13 @@ class TextureCube:
     '''
 
     size: Tuple[int, int]
-    '''tuple: The size of the texture cube (single face).'''
+    '''The size of the texture cube (single face).'''
 
     components: int
-    '''int: The number of components of the texture.'''
+    '''The number of components of the texture.'''
 
     dtype: str
-    '''str: Data type.'''
+    '''Data type.'''
 
     filter: Tuple[int, int]
     '''
@@ -3787,14 +3787,14 @@ class TextureCube:
     '''The context this object belongs to'''
 
     depth: bool
-    '''bool: Is the texture a depth texture?.'''
+    '''Is the texture a depth texture?.'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -4127,25 +4127,25 @@ class Texture:
     '''
 
     width: int
-    '''int: The width of the texture.'''
+    '''The width of the texture.'''
 
     height: int
-    '''int: The height of the texture.'''
+    '''The height of the texture.'''
 
     size: tuple
-    '''tuple: The size of the texture.'''
+    '''The size of the texture.'''
 
     components: int
-    '''int: The number of components of the texture.'''
+    '''The number of components of the texture.'''
 
     samples: int
-    '''int: The number of samples set for the texture used in multisampling.'''
+    '''The number of samples set for the texture used in multisampling.'''
 
     dtype: str
-    '''str: Data type.'''
+    '''Data type.'''
 
     depth: bool
-    '''bool: Is the texture a depth texture?.'''
+    '''Is the texture a depth texture?.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -4154,11 +4154,11 @@ class Texture:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -4378,7 +4378,7 @@ class VertexArray:
 
     mode: int
     '''
-    int: Get or set the default rendering mode.
+    Get or set the default rendering mode.
 
     This value is used when ``mode`` is not passed in rendering calls.
 
@@ -4398,11 +4398,11 @@ class VertexArray:
     '''Buffer: '''
 
     index_element_size: int
-    '''int: '''
+    '''The size of an index in bytes'''
 
     vertices: int
     '''
-    int: The number of vertices detected.
+    The number of vertices detected.
 
     This is the minimum of the number of vertices possible per Buffer.
     The size of the index_buffer determines the number of vertices.
@@ -4410,7 +4410,7 @@ class VertexArray:
     '''
 
     instances: int
-    '''int: Get or set the number of instances to render.'''
+    '''Get or set the number of instances to render.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -4419,11 +4419,11 @@ class VertexArray:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''

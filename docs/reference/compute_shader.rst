@@ -20,21 +20,24 @@ Methods
 
 .. py:method:: ComputeShader.run(group_x: int = 1, group_y: int = 1, group_z: int = 1) -> None:
 
+    :param int group_x: Workgroup size x.
+    :param int group_y: Workgroup size y.
+    :param int group_z: Workgroup size z.
+
     Run the compute shader.
 
 .. py:method:: run_indirect(self, buffer: Buffer, offset: int = 0) -> None:
 
-    Run the compute shader indirectly from a buffer object.
+    Run the compute shader indirectly from a Buffer object.
+
+    :param Buffer buffer: the buffer containing a single workgroup size at offset.
+    :param int offset: the offset into the buffer in bytes.
 
 .. py:method:: ComputeShader.get(key, default)
 
     Returns a Uniform, UniformBlock or StorageBlock.
 
-    Args:
-        default: This is the value to be returned in case key does not exist.
-
-    Returns:
-        :py:class:`Uniform`, :py:class:`UniformBlock` or :py:class:`StorageBlock`
+    :param default: This is the value to be returned in case key does not exist.
 
 .. py:method:: ComputeShader.__getitem__(key)
 

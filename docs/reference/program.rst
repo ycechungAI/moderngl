@@ -28,11 +28,7 @@ Methods
 
     Returns a Uniform, UniformBlock, Attribute or Varying.
 
-    Args:
-        default: This is the value to be returned in case key does not exist.
-
-    Returns:
-        :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Attribute` or :py:class:`Varying`
+    :param default: This is the value to be returned in case key does not exist.
 
 .. py:method:: Program.__getitem__
 

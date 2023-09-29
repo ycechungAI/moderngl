@@ -26,12 +26,39 @@ Attributes
 ----------
 
 .. py:attribute:: Renderbuffer.width
+    :type: int
+
+    The width of the renderbuffer.
+
 .. py:attribute:: Renderbuffer.height
+    :type: int
+
+    The height of the renderbuffer.
+
 .. py:attribute:: Renderbuffer.size
+    :type: Tuple[int, int]
+
+    The size of the renderbuffer.
+
 .. py:attribute:: Renderbuffer.samples
+    :type: int
+
+    The number of samples for multisampling.
+
 .. py:attribute:: Renderbuffer.components
+    :type: int
+
+    The number components.
+
 .. py:attribute:: Renderbuffer.depth
+    :type: bool
+
+    Determines if the renderbuffer contains depth values.
+
 .. py:attribute:: Renderbuffer.dtype
+    :type: str
+
+    Data type.
 
 .. py:attribute:: Renderbuffer.ctx
     :type: Context

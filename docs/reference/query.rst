@@ -13,11 +13,17 @@ Attributes
 .. py:attribute:: Query.samples
     :type: int
 
+    The number of samples passed.
+
 .. py:attribute:: Query.primitives
     :type: int
 
+    The number of primitives generated.
+
 .. py:attribute:: Query.elapsed
     :type: int
+
+    The time elapsed in nanoseconds.
 
 .. py:attribute:: Query.crender
     :type: ConditionalRender

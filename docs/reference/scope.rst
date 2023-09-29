@@ -23,8 +23,6 @@ Scope
 Methods
 -------
 
-.. py:method:: Scope.__enter__
-.. py:method:: Scope.__exit__
 .. py:method:: Scope.release
 
 Attributes

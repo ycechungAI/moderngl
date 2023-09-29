@@ -30,24 +30,24 @@ Methods
 
     If the `viewport` is a 4-tuple it will clear the given viewport.
 
-    :pname float red: color component.
-    :pname float green: color component.
-    :pname float blue: color component.
-    :pname float alpha: alpha component.
-    :pname float depth: depth value.
-    :pname tuple viewport: The viewport.
-    :pname tuple color: Optional tuple replacing the red, green, blue and alpha arguments
+    :param float red: color component.
+    :param float green: color component.
+    :param float blue: color component.
+    :param float alpha: alpha component.
+    :param float depth: depth value.
+    :param tuple viewport: The viewport.
+    :param tuple color: Optional tuple replacing the red, green, blue and alpha arguments
 
 .. py:method:: Framebuffer.read(viewport=..., components: int = 3, attachment: int = 0, alignment: int = 1, dtype: str = 'f1', clamp: bool = False) -> bytes
 
     Read the content of the framebuffer.
 
-    :pname tuple viewport: The viewport.
-    :pname int components: The number of components to read.
-    :pname int attachment: The color attachment number. -1 for the depth attachment
-    :pname int alignment: The byte alignment of the pixels.
-    :pname str dtype: Data type.
-    :pname bool clamp: Clamps floating point values to ``[0.0, 1.0]``
+    :param tuple viewport: The viewport.
+    :param int components: The number of components to read.
+    :param int attachment: The color attachment number. -1 for the depth attachment
+    :param int alignment: The byte alignment of the pixels.
+    :param str dtype: Data type.
+    :param bool clamp: Clamps floating point values to ``[0.0, 1.0]``
 
     .. code:: python
 
