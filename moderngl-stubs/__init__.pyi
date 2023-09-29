@@ -1326,11 +1326,11 @@ class Context:
     max_texture_units: int
     '''The max texture units.'''
 
-    default_texture_unit: int
-    '''The default texture unit.'''
-
     max_anisotropy: float
     '''The maximum value supported for anisotropic filtering.'''
+
+    default_texture_unit: int
+    '''The default texture unit.'''
 
     screen: Framebuffer
     '''

@@ -477,52 +477,536 @@ Methods
         barriers (int): Affected barriers, default moderngl.ALL_BARRIER_BITS.
         by_region (bool): Memory barrier mode by region. More read on https://registry.khronos.org/OpenGL-Refpages/gl4/html/glMemoryBarrier.xhtml
 
+.. py:method:: Context.gc() -> int
+
+    Deletes OpenGL objects.
+    Returns the number of objects deleted.
+
+    This method must be called to garbage collect
+    OpenGL resources when ``gc_mode`` is ``'context_gc'```.
+
+    Calling this method with any other ``gc_mode`` configuration
+    has no effect and is perfectly safe.
+
 .. py:method:: Context.release
-
-.. py:method:: Context.gc
-
-    TBD
-
-.. py:method:: Context.__enter__
-
-    TBD
-
-.. py:method:: Context.__exit__
-
-    TBD
-
 
 Attributes
 ----------
 
 .. py:attribute:: Context.gc_mode
+    :type: str
+
+    The garbage collection mode.
+
+    The default mode is ``None`` meaning no automatic
+    garbage collection is done. Other modes are ``auto``
+    and ``context_gc``. Please see documentation for
+    the appropriate configuration.
+
+    Examples::
+
+        # Disable automatic garbage collection.
+        # Each objects needs to be explicitly released.
+        ctx.gc_mode = None
+
+        # Collect all dead objects in the context and
+        # release them by calling Context.gc()
+        ctx.gc_mode = 'context_gc'
+        ctx.gc()  # Deletes the collected objects
+
+        # Enable automatic garbage collection like
+        # we normally expect in python.
+        ctx.gc_mode = 'auto'
+
 .. py:attribute:: Context.objects
+    :type: deque
+
+    Moderngl objects scheduled for deletion.
+
+    These are deleted when calling :py:meth:`Context.gc`.
+
 .. py:attribute:: Context.line_width
+    :type: float
+
+    Set the default line width.
+
+    .. Warning:: A line width other than 1.0 is not guaranteed to work
+                    across different OpenGL implementations. For wide
+                    lines you should be using geometry shaders.
+
 .. py:attribute:: Context.point_size
+    :type: float
+
+    Set/get the point size.
+
+    Point size changes the pixel size of rendered points. The min and max values
+    are limited by ``POINT_SIZE_RANGE``.
+    This value usually at least ``(1, 100)``, but this depends on the drivers/vendors.
+
+    If variable point size is needed you can enable ``PROGRAM_POINT_SIZE``
+    and write to ``gl_PointSize`` in the vertex or geometry shader.
+
+    .. Note::
+
+        Using a geometry shader to create triangle strips from points is often a safer
+        way to render large points since you don't have have any size restrictions.
+
 .. py:attribute:: Context.depth_func
+    :type: str
+
+    Set the default depth func.
+
+    Example::
+
+        ctx.depth_func = '<='  # GL_LEQUAL
+        ctx.depth_func = '<'   # GL_LESS
+        ctx.depth_func = '>='  # GL_GEQUAL
+        ctx.depth_func = '>'   # GL_GREATER
+        ctx.depth_func = '=='  # GL_EQUAL
+        ctx.depth_func = '!='  # GL_NOTEQUAL
+        ctx.depth_func = '0'   # GL_NEVER
+        ctx.depth_func = '1'   # GL_ALWAYS
+
 .. py:attribute:: Context.depth_clamp_range
+    :type: Tuple[float, float]
+
+    Setting up depth clamp range (write only, by default ``None``).
+
+    ``ctx.depth_clamp_range`` offers uniform use of GL_DEPTH_CLAMP and glDepthRange.
+
+    ``GL_DEPTH_CLAMP`` is needed to disable clipping of fragments outside
+    near limit of projection matrix.
+    For example, this will allow you to draw between 0 and 1 in the Z (depth) coordinate,
+    even if ``near`` is set to 0.5 in the projection matrix.
+
+    .. note::
+
+        All fragments outside the ``near`` of the projection matrix will have a depth of ``near``.
+
+    See https://www.khronos.org/opengl/wiki/Vertex_Post-Processing#Depth_clamping for more info.
+
+    ``glDepthRange(nearVal, farVal)`` is needed to specify mapping of depth values from normalized device coordinates to window coordinates.
+    See https://registry.khronos.org/OpenGL-Refpages/gl4/html/glDepthRange.xhtml for more info.
+
+    Example::
+
+        # For glDisable(GL_DEPTH_CLAMP) and glDepthRange(0, 1)
+        ctx.depth_clamp_range = None
+
+        # For glEnable(GL_DEPTH_CLAMP) and glDepthRange(near, far)
+        ctx.depth_clamp_range = (near, far)
+
 .. py:attribute:: Context.blend_func
+    :type: tuple
+
+    Set the blend func (write only).
+
+    Blend func can be set for rgb and alpha separately if needed.
+
+    Supported blend functions are::
+
+        moderngl.ZERO
+        moderngl.ONE
+        moderngl.SRC_COLOR
+        moderngl.ONE_MINUS_SRC_COLOR
+        moderngl.DST_COLOR
+        moderngl.ONE_MINUS_DST_COLOR
+        moderngl.SRC_ALPHA
+        moderngl.ONE_MINUS_SRC_ALPHA
+        moderngl.DST_ALPHA
+        moderngl.ONE_MINUS_DST_ALPHA
+
+        # Shortcuts
+        moderngl.DEFAULT_BLENDING     # (SRC_ALPHA, ONE_MINUS_SRC_ALPHA)
+        moderngl.ADDITIVE_BLENDING    # (ONE, ONE)
+        moderngl.PREMULTIPLIED_ALPHA  # (SRC_ALPHA, ONE)
+
+    Example::
+
+        # For both rgb and alpha
+        ctx.blend_func = moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA
+
+        # Separate for rgb and alpha
+        ctx.blend_func = (
+            moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA,
+            moderngl.ONE, moderngl.ONE
+        )
+
 .. py:attribute:: Context.blend_equation
-.. py:attribute:: Context.viewport
-.. py:attribute:: Context.scissor
-.. py:attribute:: Context.version_code
-.. py:attribute:: Context.screen
-.. py:attribute:: Context.fbo
-.. py:attribute:: Context.front_face
-.. py:attribute:: Context.cull_face
-.. py:attribute:: Context.wireframe
-.. py:attribute:: Context.max_samples
-.. py:attribute:: Context.max_integer_samples
-.. py:attribute:: Context.max_texture_units
-.. py:attribute:: Context.default_texture_unit
-.. py:attribute:: Context.max_anisotropy
+    :type: tuple
+
+    Set the blend equation (write only).
+
+    Blend equations specify how source and destination colors are combined
+    in blending operations. By default ``FUNC_ADD`` is used.
+
+    Blend equation can be set for rgb and alpha separately if needed.
+
+    Supported functions are::
+
+        moderngl.FUNC_ADD               # source + destination
+        moderngl.FUNC_SUBTRACT          # source - destination
+        moderngl.FUNC_REVERSE_SUBTRACT  # destination - source
+        moderngl.MIN                    # Minimum of source and destination
+        moderngl.MAX                    # Maximum of source and destination
+
+    Example::
+
+        # For both rgb and alpha channel
+        ctx.blend_equation = moderngl.FUNC_ADD
+
+        # Separate for rgb and alpha channel
+        ctx.blend_equation = moderngl.FUNC_ADD, moderngl.MAX
+
 .. py:attribute:: Context.multisample
+    :type: bool
+
+    Enable/disable multisample mode (``GL_MULTISAMPLE``).
+
+    This property is write only.
+
+    Example::
+
+        # Enable
+        ctx.multisample = True
+        # Disable
+        ctx.multisample = False
+
+.. py:attribute:: Context.viewport
+    :type: tuple
+
+    Get or set the viewport of the active framebuffer.
+
+    Example::
+
+        >>> ctx.viewport
+        (0, 0, 1280, 720)
+        >>> ctx.viewport = (0, 0, 640, 360)
+        >>> ctx.viewport
+        (0, 0, 640, 360)
+
+    If no framebuffer is bound ``(0, 0, 0, 0)`` will be returned.
+
+.. py:attribute:: Context.scissor
+    :type: tuple
+
+    Get or set the scissor box for the active framebuffer.
+
+    When scissor testing is enabled fragments outside
+    the defined scissor box will be discarded. This
+    applies to rendered geometry or :py:meth:`Context.clear`.
+
+    Setting is value enables scissor testing in the framebuffer.
+    Setting the scissor to ``None`` disables scissor testing
+    and reverts the scissor box to match the framebuffer size.
+
+    Example::
+
+        # Enable scissor testing
+        >>> ctx.scissor = 100, 100, 200, 100
+        # Disable scissor testing
+        >>> ctx.scissor = None
+
+    If no framebuffer is bound ``(0, 0, 0, 0)`` will be returned.
+
+.. py:attribute:: Context.version_code
+    :type: int
+
+
+
+.. py:attribute:: Context.screen
+    :type: Framebuffer
+
+    A Framebuffer instance representing the screen.
+
+    Normally set when creating a context with ``create_context()`` attaching to
+    an existing context. This is the special system framebuffer
+    represented by framebuffer ``id=0``.
+
+    When creating a standalone context this property is not set since
+    there are no default framebuffer.
+
+.. py:attribute:: Context.fbo
+    :type: Framebuffer
+
+
+
+.. py:attribute:: Context.front_face
+    :type: str
+
+    The front_face. Acceptable values are ``'ccw'`` (default) or ``'cw'``.
+
+    Face culling must be enabled for this to have any effect:
+    ``ctx.enable(moderngl.CULL_FACE)``.
+
+    Example::
+
+        # Triangles winded counter-clockwise considered front facing
+        ctx.front_face = 'ccw'
+        # Triangles winded clockwise considered front facing
+        ctx.front_face = 'cw'
+
+.. py:attribute:: Context.cull_face
+    :type: str
+
+    The face side to cull. Acceptable values are ``'back'`` (default) ``'front'`` or ``'front_and_back'``.
+
+    This is similar to :py:meth:`Context.front_face`
+
+    Face culling must be enabled for this to have any effect:
+    ``ctx.enable(moderngl.CULL_FACE)``.
+
+    Example::
+
+        ctx.cull_face = 'front'
+        ctx.cull_face = 'back'
+        ctx.cull_face = 'front_and_back'
+
+.. py:attribute:: Context.wireframe
+    :type: bool
+
+    Wireframe settings for debugging.
+
+.. py:attribute:: Context.max_samples
+    :type: int
+
+    The maximum supported number of samples for multisampling.
+
+.. py:attribute:: Context.max_integer_samples
+    :type: int
+
+    The max integer samples.
+
+.. py:attribute:: Context.max_texture_units
+    :type: int
+
+    The max texture units.
+
+.. py:attribute:: Context.max_anisotropy
+    :type: float
+
+    The maximum value supported for anisotropic filtering.
+
+.. py:attribute:: Context.default_texture_unit
+    :type: int
+
+    The default texture unit.
+
 .. py:attribute:: Context.patch_vertices
+    :type: int
+
+    The number of vertices that will be used to make up a single patch primitive.
+
 .. py:attribute:: Context.provoking_vertex
+    :type: int
+
+    Specifies the vertex to be used as the source of data for flat shaded varyings.
+
+    Flatshading a vertex shader varying output (ie. ``flat out vec3 pos``) means to assign
+    all vetices of the primitive the same value for that output. The vertex from which
+    these values is derived is known as the provoking vertex.
+
+    It can be configured to be the first or the last vertex.
+
+    This property is write only.
+
+    Example::
+
+        # Use first vertex
+        ctx.provoking_vertex = moderngl.FIRST_VERTEX_CONVENTION
+
+        # Use last vertex
+        ctx.provoking_vertex = moderngl.LAST_VERTEX_CONVENTION
+
 .. py:attribute:: Context.polygon_offset
+    :type: tuple
+
+    Get or set the current polygon offset.
+
+    The tuple values represents two float values: ``unit`` and a ``factor``::
+
+        ctx.polygon_offset = unit, factor
+
+    When drawing polygons, lines or points directly on top of
+    exiting geometry the result is often not visually pleasant.
+    We can experience z-fighting or partially fading fragments
+    due to different primitives not being rasterized in the exact
+    same way or simply depth buffer precision issues.
+
+    For example when visualizing polygons drawing a wireframe
+    version on top of the original mesh, these issues are
+    immediately apparent. Applying decals to surfaces is
+    another common example.
+
+    The official documentation states the following::
+
+        When enabled, the depth value of each fragment is added
+        to a calculated offset value. The offset is added before
+        the depth test is performed and before the depth value
+        is written into the depth buffer. The offset value o is calculated by:
+        o = m * factor + r * units
+        where m is the maximum depth slope of the polygon and r is the smallest
+        value guaranteed to produce a resolvable difference in window coordinate
+        depth values. The value r is an implementation-specific int.
+
+    In simpler terms: We use polygon offset to either add a positive offset to
+    the geometry (push it away from you) or a negative offset to geometry
+    (pull it towards you).
+
+    * ``units`` is a int offset to depth and will do the job alone
+        if we are working with geometry parallel to the near/far plane.
+    * The ``factor`` helps you handle sloped geometry (not parallel to near/far plane).
+
+    In most cases you can get away with ``[-1.0, 1.0]`` for both factor and units,
+    but definitely play around with the values. When both values are set to ``0``
+    polygon offset is disabled internally.
+
+    To just get started with something you can try::
+
+        # Either push the geomtry away or pull it towards you
+        # with support for handling small to medium sloped geometry
+        ctx.polygon_offset = 1.0, 1.0
+        ctx.polygon_offset = -1.0, -1.0
+
+        # Disable polygon offset
+        ctx.polygon_offset = 0, 0
+
 .. py:attribute:: Context.error
+    :type: str
+
+    The result of ``glGetError()`` but human readable.
+
+    This values is provided for debug purposes only and is likely to
+    reduce performace when used in a draw loop.
+
 .. py:attribute:: Context.extensions
+    :type: Set[str]
+
+    The extensions supported by the context.
+
+    All extensions names have a ``GL_`` prefix, so if the spec refers to ``ARB_compute_shader``
+    we need to look for ``GL_ARB_compute_shader``::
+
+        # If compute shaders are supported ...
+        >> 'GL_ARB_compute_shader' in ctx.extensions
+        True
+
+    Example data::
+
+        {
+            'GL_ARB_multi_bind',
+            'GL_ARB_shader_objects',
+            'GL_ARB_half_float_vertex',
+            'GL_ARB_map_buffer_alignment',
+            'GL_ARB_arrays_of_arrays',
+            'GL_ARB_pipeline_statistics_query',
+            'GL_ARB_provoking_vertex',
+            'GL_ARB_gpu_shader5',
+            'GL_ARB_uniform_buffer_object',
+            'GL_EXT_blend_equation_separate',
+            'GL_ARB_tessellation_shader',
+            'GL_ARB_multi_draw_indirect',
+            'GL_ARB_multisample',
+            .. etc ..
+        }
+
 .. py:attribute:: Context.info
+    :type: Dict[str, Any]
+
+    OpenGL Limits and information about the context.
+
+    Example::
+
+        # The maximum width and height of a texture
+        >> ctx.info['GL_MAX_TEXTURE_SIZE']
+        16384
+
+        # Vendor and renderer
+        >> ctx.info['GL_VENDOR']
+        NVIDIA Corporation
+        >> ctx.info['GL_RENDERER']
+        NVIDIA GeForce GT 650M OpenGL Engine
+
+    Example data::
+
+        {
+            'GL_VENDOR': 'NVIDIA Corporation',
+            'GL_RENDERER': 'NVIDIA GeForce GT 650M OpenGL Engine',
+            'GL_VERSION': '4.1 NVIDIA-10.32.0 355.11.10.10.40.102',
+            'GL_POINT_SIZE_RANGE': (1.0, 2047.0),
+            'GL_SMOOTH_LINE_WIDTH_RANGE': (0.5, 1.0),
+            'GL_ALIASED_LINE_WIDTH_RANGE': (1.0, 1.0),
+            'GL_POINT_FADE_THRESHOLD_SIZE': 1.0,
+            'GL_POINT_SIZE_GRANULARITY': 0.125,
+            'GL_SMOOTH_LINE_WIDTH_GRANULARITY': 0.125,
+            'GL_MIN_PROGRAM_TEXEL_OFFSET': -8.0,
+            'GL_MAX_PROGRAM_TEXEL_OFFSET': 7.0,
+            'GL_MINOR_VERSION': 1,
+            'GL_MAJOR_VERSION': 4,
+            'GL_SAMPLE_BUFFERS': 0,
+            'GL_SUBPIXEL_BITS': 8,
+            'GL_CONTEXT_PROFILE_MASK': 1,
+            'GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT': 256,
+            'GL_DOUBLEBUFFER': False,
+            'GL_STEREO': False,
+            'GL_MAX_VIEWPORT_DIMS': (16384, 16384),
+            'GL_MAX_3D_TEXTURE_SIZE': 2048,
+            'GL_MAX_ARRAY_TEXTURE_LAYERS': 2048,
+            'GL_MAX_CLIP_DISTANCES': 8,
+            'GL_MAX_COLOR_ATTACHMENTS': 8,
+            'GL_MAX_COLOR_TEXTURE_SAMPLES': 8,
+            'GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS': 233472,
+            'GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS': 231424,
+            'GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS': 80,
+            'GL_MAX_COMBINED_UNIFORM_BLOCKS': 70,
+            'GL_MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS': 233472,
+            'GL_MAX_CUBE_MAP_TEXTURE_SIZE': 16384,
+            'GL_MAX_DEPTH_TEXTURE_SAMPLES': 8,
+            'GL_MAX_DRAW_BUFFERS': 8,
+            'GL_MAX_DUAL_SOURCE_DRAW_BUFFERS': 1,
+            'GL_MAX_ELEMENTS_INDICES': 150000,
+            'GL_MAX_ELEMENTS_VERTICES': 1048575,
+            'GL_MAX_FRAGMENT_INPUT_COMPONENTS': 128,
+            'GL_MAX_FRAGMENT_UNIFORM_COMPONENTS': 4096,
+            'GL_MAX_FRAGMENT_UNIFORM_VECTORS': 1024,
+            'GL_MAX_FRAGMENT_UNIFORM_BLOCKS': 14,
+            'GL_MAX_GEOMETRY_INPUT_COMPONENTS': 128,
+            'GL_MAX_GEOMETRY_OUTPUT_COMPONENTS': 128,
+            'GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS': 16,
+            'GL_MAX_GEOMETRY_UNIFORM_BLOCKS': 14,
+            'GL_MAX_GEOMETRY_UNIFORM_COMPONENTS': 2048,
+            'GL_MAX_INTEGER_SAMPLES': 1,
+            'GL_MAX_SAMPLES': 8,
+            'GL_MAX_RECTANGLE_TEXTURE_SIZE': 16384,
+            'GL_MAX_RENDERBUFFER_SIZE': 16384,
+            'GL_MAX_SAMPLE_MASK_WORDS': 1,
+            'GL_MAX_SERVER_WAIT_TIMEOUT': -1,
+            'GL_MAX_TEXTURE_BUFFER_SIZE': 134217728,
+            'GL_MAX_TEXTURE_IMAGE_UNITS': 16,
+            'GL_MAX_TEXTURE_LOD_BIAS': 15,
+            'GL_MAX_TEXTURE_SIZE': 16384,
+            'GL_MAX_UNIFORM_BUFFER_BINDINGS': 70,
+            'GL_MAX_UNIFORM_BLOCK_SIZE': 65536,
+            'GL_MAX_VARYING_COMPONENTS': 0,
+            'GL_MAX_VARYING_VECTORS': 31,
+            'GL_MAX_VARYING_FLOATS': 0,
+            'GL_MAX_VERTEX_ATTRIBS': 16,
+            'GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS': 16,
+            'GL_MAX_VERTEX_UNIFORM_COMPONENTS': 4096,
+            'GL_MAX_VERTEX_UNIFORM_VECTORS': 1024,
+            'GL_MAX_VERTEX_OUTPUT_COMPONENTS': 128,
+            'GL_MAX_VERTEX_UNIFORM_BLOCKS': 14,
+            'GL_MAX_VERTEX_ATTRIB_RELATIVE_OFFSET': 0,
+            'GL_MAX_VERTEX_ATTRIB_BINDINGS': 0,
+            'GL_VIEWPORT_BOUNDS_RANGE': (-32768, 32768),
+            'GL_VIEWPORT_SUBPIXEL_BITS': 0,
+            'GL_MAX_VIEWPORTS': 16
+        }
+
+.. py:attribute:: Context.includes
+    :type: Dict[str, str]
+
+    Mapping used for include statements.
 
 .. py:attribute:: Context.extra
     :type: Any
@@ -550,28 +1034,129 @@ These values are available in the ``Context`` object and in the
     # From context
     ctx.enable_only(ctx.DEPTH_TEST | ctx.CULL_FACE)
 
-.. py:attribute:: Context.NOTHING
-.. py:attribute:: Context.BLEND
-.. py:attribute:: Context.DEPTH_TEST
-.. py:attribute:: Context.CULL_FACE
-.. py:attribute:: Context.RASTERIZER_DISCARD
-.. py:attribute:: Context.PROGRAM_POINT_SIZE
+.. :py:attribute:: NOTHING
+    :type: int
+
+    Represents no states. Can be used with :py:meth:`Context.enable_only` to disable all states.
+
+.. :py:attribute:: BLEND
+    :type: int
+
+    Enable/disable blending
+
+.. :py:attribute:: DEPTH_TEST
+    :type: int
+
+    Enable/disable depth testing
+
+.. :py:attribute:: CULL_FACE
+    :type: int
+
+    Enable/disable face culling
+
+.. :py:attribute:: RASTERIZER_DISCARD
+    :type: int
+
+    Enable/disable rasterization
+
+    Context flag: Enables ``gl_PointSize`` in vertex or geometry shaders.
+
+    When enabled we can write to ``gl_PointSize`` in the vertex shader to specify the point size
+    for each individual point.
+
+    If this value is not set in the shader the behavior is undefined. This means the points may
+    or may not appear depending if the drivers enforce some default value for ``gl_PointSize``.
+
+.. :py:attribute:: PROGRAM_POINT_SIZE
+    :type: int
+
+    When disabled :py:attr:`Context.point_size` is used.
 
 Primitive Modes
 ---------------
 
-.. py:attribute:: Context.POINTS
-.. py:attribute:: Context.LINES
-.. py:attribute:: Context.LINE_LOOP
-.. py:attribute:: Context.LINE_STRIP
-.. py:attribute:: Context.TRIANGLES
-.. py:attribute:: Context.TRIANGLE_STRIP
-.. py:attribute:: Context.TRIANGLE_FAN
-.. py:attribute:: Context.LINES_ADJACENCY
-.. py:attribute:: Context.LINE_STRIP_ADJACENCY
-.. py:attribute:: Context.TRIANGLES_ADJACENCY
-.. py:attribute:: Context.TRIANGLE_STRIP_ADJACENCY
-.. py:attribute:: Context.PATCHES
+.. py:attribute:: POINTS
+    :type: int
+
+    Each vertex represents a point
+
+.. py:attribute:: LINES
+    :type: int
+
+    Vertices 0 and 1 are considered a line. Vertices 2 and 3 are considered a line.
+    And so on. If the user specifies a non-even number of vertices, then the extra vertex is ignored.
+
+.. py:attribute:: LINE_LOOP
+    :type: int
+
+    As line strips, except that the first and last vertices are also used as a line.
+    Thus, you get n lines for n input vertices. If the user only specifies 1 vertex,
+    the drawing command is ignored. The line between the first and last vertices happens
+    after all of the previous lines in the sequence.
+
+.. py:attribute:: LINE_STRIP
+    :type: int
+
+    The adjacent vertices are considered lines. Thus, if you pass n vertices, you will get n-1 lines.
+    If the user only specifies 1 vertex, the drawing command is ignored.
+
+.. py:attribute:: TRIANGLES
+    :type: int
+
+    Vertices 0, 1, and 2 form a triangle. Vertices 3, 4, and 5 form a triangle. And so on.
+
+.. py:attribute:: TRIANGLE_STRIP
+    :type: int
+
+    Every group of 3 adjacent vertices forms a triangle. The face direction of the
+    strip is determined by the winding of the first triangle. Each successive triangle
+    will have its effective face order reversed, so the system compensates for that
+    by testing it in the opposite way. A vertex stream of n length will generate n-2 triangles.
+
+.. py:attribute:: TRIANGLE_FAN
+    :type: int
+
+    The first vertex is always held fixed. From there on, every group of 2 adjacent
+    vertices form a triangle with the first. So with a vertex stream, you get a list
+    of triangles like so: (0, 1, 2) (0, 2, 3), (0, 3, 4), etc. A vertex stream of
+    n length will generate n-2 triangles.
+
+.. py:attribute:: LINES_ADJACENCY
+    :type: int
+
+    These are special primitives that are expected to be used specifically with
+    geomtry shaders. These primitives give the geometry shader more vertices
+    to work with for each input primitive. Data needs to be duplicated in buffers.
+
+.. py:attribute:: LINE_STRIP_ADJACENCY
+    :type: int
+
+    These are special primitives that are expected to be used specifically with
+    geomtry shaders. These primitives give the geometry shader more vertices
+    to work with for each input primitive. Data needs to be duplicated in buffers.
+
+.. py:attribute:: TRIANGLES_ADJACENCY
+    :type: int
+
+    These are special primitives that are expected to be used specifically with
+    geomtry shaders. These primitives give the geometry shader more vertices
+    to work with for each input primitive. Data needs to be duplicated in buffers.
+
+.. py:attribute:: TRIANGLE_STRIP_ADJACENCY
+    :type: int
+
+    These are special primitives that are expected to be used specifically with
+    geomtry shaders. These primitives give the geometry shader more vertices
+    to work with for each input primitive. Data needs to be duplicated in buffers.
+
+.. py:attribute:: PATCHES
+    :type: int
+
+    primitive type can only be used when Tessellation is active. It is a primitive
+    with a user-defined number of vertices, which is then tessellated based on the
+    control and evaluation shaders into regular points, lines, or triangles, depending
+    on the TES's settings.
+
 
 Texture Filters
 ~~~~~~~~~~~~~~~
@@ -579,12 +1164,56 @@ Texture Filters
 Also available in the :py:class:`Context` instance
 including mode details.
 
-.. py:attribute:: Context.NEAREST
-.. py:attribute:: Context.LINEAR
-.. py:attribute:: Context.NEAREST_MIPMAP_NEAREST
-.. py:attribute:: Context.LINEAR_MIPMAP_NEAREST
-.. py:attribute:: Context.NEAREST_MIPMAP_LINEAR
-.. py:attribute:: Context.LINEAR_MIPMAP_LINEAR
+
+.. py:attribute:: NEAREST
+    :type: int
+
+    Returns the value of the texture element that is nearest
+    (in Manhattan distance) to the specified texture coordinates.
+
+.. py:attribute:: LINEAR
+    :type: int
+
+    Returns the weighted average of the four texture elements
+    that are closest to the specified texture coordinates.
+    These can include items wrapped or repeated from other parts
+    of a texture, depending on the values of texture repeat mode,
+    and on the exact mapping.
+
+.. py:attribute:: NEAREST_MIPMAP_NEAREST
+    :type: int
+
+    Chooses the mipmap that most closely matches the size of the
+    pixel being textured and uses the ``NEAREST`` criterion (the texture
+    element closest to the specified texture coordinates) to produce
+    a texture value.
+
+.. py:attribute:: LINEAR_MIPMAP_NEAREST
+    :type: int
+
+    Chooses the mipmap that most closely matches the size of the pixel
+    being textured and uses the ``LINEAR`` criterion (a weighted average
+    of the four texture elements that are closest to the specified
+    texture coordinates) to produce a texture value.
+
+.. py:attribute:: NEAREST_MIPMAP_LINEAR
+    :type: int
+
+    Chooses the two mipmaps that most closely match the size of the
+    pixel being textured and uses the ``NEAREST`` criterion (the texture
+    element closest to the specified texture coordinates ) to produce
+    a texture value from each mipmap. The final texture value is a
+    weighted average of those two values.
+
+.. py:attribute:: LINEAR_MIPMAP_LINEAR
+    :type: int
+
+    Chooses the two mipmaps that most closely match the size of the pixel
+    being textured and uses the ``LINEAR`` criterion (a weighted average
+    of the texture elements that are closest to the specified texture
+    coordinates) to produce a texture value from each mipmap.
+    The final texture value is a weighted average of those two values.
+
 
 Blend Functions
 ---------------
@@ -597,40 +1226,191 @@ to control blending operations.
     # Default value
     ctx.blend_func = ctx.SRC_ALPHA, ctx.ONE_MINUS_SRC_ALPHA
 
-.. py:attribute:: Context.ZERO
-.. py:attribute:: Context.ONE
-.. py:attribute:: Context.SRC_COLOR
-.. py:attribute:: Context.ONE_MINUS_SRC_COLOR
-.. py:attribute:: Context.SRC_ALPHA
-.. py:attribute:: Context.ONE_MINUS_SRC_ALPHA
-.. py:attribute:: Context.DST_ALPHA
-.. py:attribute:: Context.ONE_MINUS_DST_ALPHA
-.. py:attribute:: Context.DST_COLOR
-.. py:attribute:: Context.ONE_MINUS_DST_COLOR
+.. py:attribute:: ZERO
+    :type: int
+
+    (0,0,0,0)
+
+.. py:attribute:: ONE
+    :type: int
+
+    (1,1,1,1)
+
+.. py:attribute:: SRC_COLOR
+    :type: int
+
+    (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
+
+.. py:attribute:: ONE_MINUS_SRC_COLOR
+    :type: int
+
+    (1,1,1,1) - (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)
+
+.. py:attribute:: SRC_ALPHA
+    :type: int
+
+    (As0/kA,As0/kA,As0/kA,As0/kA)
+
+.. py:attribute:: ONE_MINUS_SRC_ALPHA
+    :type: int
+
+    (1,1,1,1) - (As0/kA,As0/kA,As0/kA,As0/kA)
+
+.. py:attribute:: DST_ALPHA
+    :type: int
+
+    (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
+
+.. py:attribute:: ONE_MINUS_DST_ALPHA
+    :type: int
+
+    (1,1,1,1) - (Ad/kA,Ad/kA,Ad/kA,Ad/kA)
+
+.. py:attribute:: DST_COLOR
+    :type: int
+
+    (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
+
+.. py:attribute:: ONE_MINUS_DST_COLOR
+    :type: int
+
+    (1,1,1,1) - (Rd/kR,Gd/kG,Bd/kB,Ad/kA)
+
 
 Blend Function Shortcuts
 ------------------------
 
-.. py:attribute:: Context.DEFAULT_BLENDING
-.. py:attribute:: Context.ADDITIVE_BLENDING
-.. py:attribute:: Context.PREMULTIPLIED_ALPHA
+.. py:attribute:: DEFAULT_BLENDING
+    :type: tuple
+
+    Shotcut for the default blending ``SRC_ALPHA, ONE_MINUS_SRC_ALPHA``
+
+.. py:attribute:: ADDITIVE_BLENDING
+    :type: tuple
+
+    Shotcut for additive blending ``ONE, ONE``
+
+.. py:attribute:: PREMULTIPLIED_ALPHA
+    :type: tuple
+
+    Shotcut for blend mode when using premultiplied alpha ``SRC_ALPHA, ONE``
+
 
 Blend Equations
 ---------------
 
 Used with :py:attr:`Context.blend_equation`.
 
-.. py:attribute:: Context.FUNC_ADD
-.. py:attribute:: Context.FUNC_SUBTRACT
-.. py:attribute:: Context.FUNC_REVERSE_SUBTRACT
-.. py:attribute:: Context.MIN
-.. py:attribute:: Context.MAX
+.. py:attribute:: FUNC_ADD
+    :type: int
+
+    source + destination
+
+.. py:attribute:: FUNC_SUBTRACT
+    :type: int
+
+    source - destination
+
+.. py:attribute:: FUNC_REVERSE_SUBTRACT
+    :type: int
+
+    destination - source
+
+.. py:attribute:: MIN
+    :type: int
+
+    Minimum of source and destination
+
+.. py:attribute:: MAX
+    :type: int
+
+    Maximum of source and destination
+
 
 Other Enums
 -----------
 
-.. py:attribute:: Context.FIRST_VERTEX_CONVENTION
-.. py:attribute:: Context.LAST_VERTEX_CONVENTION
+.. py:attribute:: FIRST_VERTEX_CONVENTION
+    :type: int
+
+    Specifies the first vertex should be used as the source of data for flat shaded varyings.
+    Used with :py:attr:`Context.provoking_vertex`.
+
+.. py:attribute:: LAST_VERTEX_CONVENTION
+    :type: int
+
+    Specifies the last vertex should be used as the source of data for flat shaded varyings.
+    Used with :py:attr:`Context.provoking_vertex`.
+
+.. py:attribute:: VERTEX_ATTRIB_ARRAY_BARRIER_BIT
+    :type: int
+
+    VERTEX_ATTRIB_ARRAY_BARRIER_BIT
+
+.. py:attribute:: ELEMENT_ARRAY_BARRIER_BIT
+    :type: int
+
+    ELEMENT_ARRAY_BARRIER_BIT
+
+.. py:attribute:: UNIFORM_BARRIER_BIT
+    :type: int
+
+    UNIFORM_BARRIER_BIT
+
+.. py:attribute:: TEXTURE_FETCH_BARRIER_BIT
+    :type: int
+
+    TEXTURE_FETCH_BARRIER_BIT
+
+.. py:attribute:: SHADER_IMAGE_ACCESS_BARRIER_BIT
+    :type: int
+
+    SHADER_IMAGE_ACCESS_BARRIER_BIT
+
+.. py:attribute:: COMMAND_BARRIER_BIT
+    :type: int
+
+    COMMAND_BARRIER_BIT
+
+.. py:attribute:: PIXEL_BUFFER_BARRIER_BIT
+    :type: int
+
+    PIXEL_BUFFER_BARRIER_BIT
+
+.. py:attribute:: TEXTURE_UPDATE_BARRIER_BIT
+    :type: int
+
+    TEXTURE_UPDATE_BARRIER_BIT
+
+.. py:attribute:: BUFFER_UPDATE_BARRIER_BIT
+    :type: int
+
+    BUFFER_UPDATE_BARRIER_BIT
+
+.. py:attribute:: FRAMEBUFFER_BARRIER_BIT
+    :type: int
+
+    FRAMEBUFFER_BARRIER_BIT
+
+.. py:attribute:: TRANSFORM_FEEDBACK_BARRIER_BIT
+    :type: int
+
+    TRANSFORM_FEEDBACK_BARRIER_BIT
+
+.. py:attribute:: ATOMIC_COUNTER_BARRIER_BIT
+    :type: int
+
+    ATOMIC_COUNTER_BARRIER_BIT
+
+.. py:attribute:: SHADER_STORAGE_BARRIER_BIT
+    :type: int
+
+    SHADER_STORAGE_BARRIER_BIT
+
+.. py:attribute:: ALL_BARRIER_BITS
+    :type: int
+
+    ALL_BARRIER_BITS
 
 Examples
 --------
