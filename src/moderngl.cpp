@@ -40,6 +40,7 @@ enum SHADER_SLOT_ENUM {
     GEOMETRY_SHADER_SLOT,
     TESS_EVALUATION_SHADER_SLOT,
     TESS_CONTROL_SHADER_SLOT,
+    COMPUTE_SHADER_SLOT,
     NUM_SHADER_SLOTS,
 };
 
@@ -49,6 +50,7 @@ static const int SHADER_TYPE[] = {
     GL_GEOMETRY_SHADER,
     GL_TESS_CONTROL_SHADER,
     GL_TESS_EVALUATION_SHADER,
+    GL_COMPUTE_SHADER,
 };
 
 struct MGLBuffer;
@@ -159,6 +161,7 @@ struct MGLProgram {
     int num_tess_control_shader_subroutines;
     int geometry_vertices;
     int num_varyings;
+    bool compute;
     bool released;
 };
 
@@ -2899,19 +2902,20 @@ PyObject * MGLFramebuffer_get_bits(MGLFramebuffer * self, void * closure) {
 }
 
 PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
-    PyObject * shaders[5];
+    PyObject * shaders[6];
     PyObject * outputs;
     PyObject * fragment_outputs;
     int interleaved;
 
     int args_ok = PyArg_ParseTuple(
         args,
-        "OOOOOOOp",
+        "OOOOOOOOp",
         &shaders[0],
         &shaders[1],
         &shaders[2],
         &shaders[3],
         &shaders[4],
+        &shaders[5],
         &outputs,
         &fragment_outputs,
         &interleaved
@@ -2946,7 +2950,7 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
         return 0;
     }
 
-    int shader_objs[] = {0, 0, 0, 0, 0};
+    int shader_objs[] = {0, 0, 0, 0, 0, 0};
 
     for (int i = 0; i < NUM_SHADER_SLOTS; ++i) {
         if (shaders[i] == Py_None) {
@@ -2954,7 +2958,6 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
         }
 
         int shader_obj = gl.CreateShader(SHADER_TYPE[i]);
-
         if (!shader_obj) {
             MGLError_Set("cannot create shader");
             return 0;
@@ -3005,6 +3008,7 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
                 "geometry_shader",
                 "tess_control_shader",
                 "tess_evaluation_shader",
+                "compute_shader",
             };
 
             const char * SHADER_NAME_UNDERLINE[] = {
@@ -3013,6 +3017,7 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
                 "===============",
                 "===================",
                 "======================",
+                "==============",
             };
 
             const char * message = "GLSL Compiler failed";
@@ -3452,27 +3457,19 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
     int subroutines_base = 0;
 
     if (program->context->version_code >= 400) {
-        const int shader_type[5] = {
-            GL_VERTEX_SHADER,
-            GL_FRAGMENT_SHADER,
-            GL_GEOMETRY_SHADER,
-            GL_TESS_EVALUATION_SHADER,
-            GL_TESS_CONTROL_SHADER,
-        };
-
-        for (int st = 0; st < 5; ++st) {
+        for (int st = 0; st < NUM_SHADER_SLOTS; ++st) {
             int num_subroutines = 0;
-            gl.GetProgramStageiv(program_obj, shader_type[st], GL_ACTIVE_SUBROUTINES, &num_subroutines);
+            gl.GetProgramStageiv(program_obj, SHADER_TYPE[st], GL_ACTIVE_SUBROUTINES, &num_subroutines);
 
             int num_subroutine_uniforms = 0;
-            gl.GetProgramStageiv(program_obj, shader_type[st], GL_ACTIVE_SUBROUTINE_UNIFORMS, &num_subroutine_uniforms);
+            gl.GetProgramStageiv(program_obj, SHADER_TYPE[st], GL_ACTIVE_SUBROUTINE_UNIFORMS, &num_subroutine_uniforms);
 
             for (int i = 0; i < num_subroutines; ++i) {
                 int name_len = 0;
                 char name[256];
 
-                gl.GetActiveSubroutineName(program_obj, shader_type[st], i, 256, &name_len, name);
-                int index = gl.GetSubroutineIndex(program_obj, shader_type[st], name);
+                gl.GetActiveSubroutineName(program_obj, SHADER_TYPE[st], i, 256, &name_len, name);
+                int index = gl.GetSubroutineIndex(program_obj, SHADER_TYPE[st], name);
 
                 PyObject * item = PyObject_CallMethod(helper, "make_subroutine", "(si)", name, index);
                 PyDict_SetItemString(members_dict, name, item);
@@ -3483,8 +3480,8 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
                 int name_len = 0;
                 char name[256];
 
-                gl.GetActiveSubroutineUniformName(program_obj, shader_type[st], i, 256, &name_len, name);
-                int location = subroutine_uniforms_base + gl.GetSubroutineUniformLocation(program_obj, shader_type[st], name);
+                gl.GetActiveSubroutineUniformName(program_obj, SHADER_TYPE[st], i, 256, &name_len, name);
+                int location = subroutine_uniforms_base + gl.GetSubroutineUniformLocation(program_obj, SHADER_TYPE[st], name);
                 PyTuple_SET_ITEM(subroutine_uniforms_lst, location, PyUnicode_FromStringAndSize(name, name_len));
             }
 
@@ -3517,6 +3514,38 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
     PyTuple_SET_ITEM(result, 3, geom_info);
     PyTuple_SET_ITEM(result, 4, PyLong_FromLong(program->program_obj));
     return result;
+}
+
+PyObject * MGLProgram_run(MGLProgram * self, PyObject * args) {
+    unsigned x;
+    unsigned y;
+    unsigned z;
+
+    if (!PyArg_ParseTuple( args, "III", &x, &y, &z)) {
+        return 0;
+    }
+
+    const GLMethods & gl = self->context->gl;
+
+    gl.UseProgram(self->program_obj);
+    gl.DispatchCompute(x, y, z);
+    Py_RETURN_NONE;
+}
+
+PyObject * MGLProgram_run_indirect(MGLProgram * self, PyObject * args) {
+    MGLBuffer * buffer;
+    Py_ssize_t offset = 0;
+
+    if (!PyArg_ParseTuple(args, "O!|n", MGLBuffer_type, &buffer, &offset)) {
+        return 0;
+    }
+
+    const GLMethods & gl = self->context->gl;
+
+    gl.UseProgram(self->program_obj);
+    gl.BindBuffer(GL_DISPATCH_INDIRECT_BUFFER, buffer->buffer_obj);
+    gl.DispatchComputeIndirect((GLintptr)offset);
+    Py_RETURN_NONE;
 }
 
 PyObject * MGLProgram_release(MGLProgram * self, PyObject * args) {
@@ -10097,6 +10126,8 @@ PyMethodDef MGLFramebuffer_methods[] = {
 };
 
 PyMethodDef MGLProgram_methods[] = {
+    {(char *)"run", (PyCFunction)MGLProgram_run, METH_VARARGS},
+    {(char *)"run_indirect", (PyCFunction)MGLProgram_run_indirect, METH_VARARGS},
     {(char *)"release", (PyCFunction)MGLProgram_release, METH_NOARGS},
     {},
 };

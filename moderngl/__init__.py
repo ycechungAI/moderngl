@@ -1682,6 +1682,7 @@ class Context:
             geometry_shader,
             tess_control_shader,
             tess_evaluation_shader,
+            None,
             varyings,
             fragment_outputs,
             varyings_capture_mode == 'interleaved',
