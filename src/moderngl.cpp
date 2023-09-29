@@ -7266,7 +7266,7 @@ PyObject * MGLTextureCube_get_swizzle(MGLTextureCube * self, void * closure) {
 
 int MGLTextureCube_set_swizzle(MGLTextureCube * self, PyObject * value, void * closure) {
     const char * swizzle = PyUnicode_AsUTF8(value);
-    
+
     if (self->depth) {
         MGLError_Set("cannot set swizzle for depth textures");
         return -1;
@@ -8924,7 +8924,7 @@ int MGLContext_set_depth_func(MGLContext * self, PyObject * value) {
 
 PyObject * MGLContext_get_depth_clamp_range(MGLContext * self) {
     if (self->depth_clamp) {
-        return Py_BuildValue("dd", self->depth_range[0], 
+        return Py_BuildValue("dd", self->depth_range[0],
                              self->depth_range[1]);
     }
     return Py_None;
@@ -8935,7 +8935,7 @@ int MGLContext_set_depth_clamp_range(MGLContext * self, PyObject * value) {
         self->depth_clamp = false;
         self->depth_range[0] = 0.0;
         self->depth_range[1] = 1.0;
-        
+
         self->gl.Disable(GL_DEPTH_CLAMP);
         self->gl.DepthRange(self->depth_range[0], self->depth_range[1]);
         return 0;
@@ -8943,7 +8943,7 @@ int MGLContext_set_depth_clamp_range(MGLContext * self, PyObject * value) {
         self->depth_clamp = true;
         self->depth_range[0] = PyFloat_AsDouble(PyTuple_GetItem(value, 0));
         self->depth_range[1] = PyFloat_AsDouble(PyTuple_GetItem(value, 1));
-        
+
         self->gl.Enable(GL_DEPTH_CLAMP);
         self->gl.DepthRange(self->depth_range[0], self->depth_range[1]);
         return 0;
