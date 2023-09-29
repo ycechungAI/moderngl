@@ -307,7 +307,7 @@ class UniformBlock:
 
     name: str
     '''
-    str: The name of the uniform block.
+    The name of the uniform block.
     '''
 
     index: int
@@ -347,7 +347,7 @@ class StorageBlock:
 
     name: str
     '''
-    str: The name of the storage block.
+    The name of the storage block.
     '''
 
     index: int
@@ -377,7 +377,7 @@ class Varying:
 
     name: str
     '''
-    str: The name of the varying.
+    The name of the varying.
     '''
 
     extra: Any
@@ -1015,7 +1015,7 @@ class Context:
 
     gc_mode: str
     '''
-    Optional[str]: The garbage collection mode.
+    The garbage collection mode.
 
     The default mode is ``None`` meaning no automatic
     garbage collection is done. Other modes are ``auto``
@@ -1060,7 +1060,7 @@ class Context:
         '''
     line_width: float
     '''
-    float: Set the default line width.
+    Set the default line width.
 
     .. Warning:: A line width other than 1.0 is not guaranteed to work
                     across different OpenGL implementations. For wide
@@ -1070,7 +1070,7 @@ class Context:
 
     point_size: float
     '''
-    float: Set/get the point size.
+    Set/get the point size.
 
     Point size changes the pixel size of rendered points. The min and max values
     are limited by ``POINT_SIZE_RANGE``.
@@ -1087,7 +1087,7 @@ class Context:
 
     depth_func: str
     '''
-    str: Set the default depth func.
+    Set the default depth func.
 
     Example::
 
@@ -1349,7 +1349,7 @@ class Context:
 
     front_face: str
     '''
-    str: The front_face. Acceptable values are ``'ccw'`` (default) or ``'cw'``.
+    The front_face. Acceptable values are ``'ccw'`` (default) or ``'cw'``.
 
     Face culling must be enabled for this to have any effect:
     ``ctx.enable(moderngl.CULL_FACE)``.
@@ -1364,7 +1364,7 @@ class Context:
 
     cull_face: str
     '''
-    str: The face side to cull. Acceptable values are ``'back'`` (default) ``'front'`` or ``'front_and_back'``.
+    The face side to cull. Acceptable values are ``'back'`` (default) ``'front'`` or ``'front_and_back'``.
 
     This is similar to :py:meth:`Context.front_face`
 
@@ -1383,7 +1383,7 @@ class Context:
 
     error: str
     '''
-    str: The result of ``glGetError()`` but human readable.
+    The result of ``glGetError()`` but human readable.
 
     This values is provided for debug purposes only and is likely to
     reduce performace when used in a draw loop.
@@ -1523,7 +1523,7 @@ class Context:
     '''Attribute for storing user defined objects'''
 
     fbo: Framebuffer
-    '''Framebuffer: The active framebuffer. Set every time :py:meth:`Framebuffer.use()` is called.'''
+    '''The active framebuffer. Set every time :py:meth:`Framebuffer.use()` is called.'''
 
     def clear(
         self,
@@ -2445,7 +2445,7 @@ class Framebuffer:
     '''The color attachments of the framebuffer.'''
 
     depth_attachment: Union[Texture, Renderbuffer]
-    '''Texture or Renderbuffer: The depth attachment of the framebuffer.'''
+    '''The depth attachment of the framebuffer.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -2923,7 +2923,7 @@ class Sampler:
 
     anisotropy: float
     '''
-    float: Number of samples for anisotropic filtering (Default ``1.0``).
+    Number of samples for anisotropic filtering (Default ``1.0``).
 
     The value will be clamped in range ``1.0`` and ``ctx.max_anisotropy``.
 
@@ -2951,14 +2951,14 @@ class Sampler:
 
     min_lod: float
     '''
-    float: Minimum level-of-detail parameter (Default ``-1000.0``).
+    Minimum level-of-detail parameter (Default ``-1000.0``).
 
     This floating-point value limits the selection of highest resolution mipmap (lowest mipmap level)
     '''
 
     max_lod: float
     '''
-    float: Minimum level-of-detail parameter (Default ``1000.0``).
+    Minimum level-of-detail parameter (Default ``1000.0``).
 
     This floating-point value limits the selection of the lowest resolution mipmap (highest mipmap level)
     '''
@@ -3422,7 +3422,7 @@ class TextureArray:
 
     anisotropy: float
     '''
-    float: Number of samples for anisotropic filtering (Default ``1.0``).
+    Number of samples for anisotropic filtering (Default ``1.0``).
 
     The value will be clamped in range ``1.0`` and ``ctx.max_anisotropy``.
 
@@ -3767,7 +3767,7 @@ class TextureCube:
 
     anisotropy: float
     '''
-    float: Number of samples for anisotropic filtering (Default ``1.0``).
+    Number of samples for anisotropic filtering (Default ``1.0``).
 
     The value will be clamped in range ``1.0`` and ``ctx.max_anisotropy``.
 
@@ -4052,7 +4052,7 @@ class Texture:
 
     anisotropy: float
     '''
-    float: Number of samples for anisotropic filtering (Default ``1.0``).
+    Number of samples for anisotropic filtering (Default ``1.0``).
 
     The value will be clamped in range ``1.0`` and ``ctx.max_anisotropy``.
 
@@ -4395,7 +4395,7 @@ class VertexArray:
     '''
 
     index_buffer: Buffer
-    '''Buffer: '''
+    '''Index buffer'''
 
     index_element_size: int
     '''The size of an index in bytes'''
