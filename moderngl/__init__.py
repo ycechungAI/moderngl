@@ -1601,20 +1601,6 @@ class Context:
         return res
 
     def depth_texture_cube(self, size, data=None, alignment=4):
-        '''
-        Create a :py:class:`Texture` object.
-
-        Args:
-            size (tuple): The width and height of the texture.
-            data (bytes): Content of the texture.
-
-        Keyword Args:
-            samples (int): The number of samples. Value 0 means no multisample format.
-            alignment (int): The byte alignment 1, 2, 4 or 8.
-
-        Returns:
-            :py:class:`Texture` object
-        '''
         res = TextureCube.__new__(TextureCube)
         res.mglo, res._glo = self.mglo.depth_texture_cube(size, data, alignment)
         res._size = size
