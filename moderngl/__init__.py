@@ -286,7 +286,9 @@ class Framebuffer:
         self.mglo.use()
 
     def read(self, viewport=None, components=3, attachment=0, alignment=1, dtype='f1', clamp=False):
-        res, mem = mgl.writable_bytes(mgl.expected_size(self.width, self.height, 1, components, alignment, dtype))
+        if viewport is None:
+            viewport = (0, 0, self.width, self.height)
+        res, mem = mgl.writable_bytes(mgl.expected_size(viewport[2], viewport[3], 1, components, alignment, dtype))
         self.mglo.read_into(mem, viewport, components, attachment, alignment, clamp, dtype, 0)
         return res
 
