@@ -1803,7 +1803,7 @@ class Context:
 
     def renderbuffer(self, size, components=4, samples=0, dtype='f1'):
         res = Renderbuffer.__new__(Renderbuffer)
-        res.mglo, res._glo = self.mglo.renderbuffer(size, components, samples, dtype)
+        res.mglo, res._glo = self.mglo.texture(size, components, None, samples, 1, dtype, 0, True)
         res._size = size
         res._components = components
         res._samples = samples
@@ -1815,7 +1815,7 @@ class Context:
 
     def depth_renderbuffer(self, size, samples=0):
         res = Renderbuffer.__new__(Renderbuffer)
-        res.mglo, res._glo = self.mglo.depth_renderbuffer(size, samples)
+        res.mglo, res._glo = self.mglo.depth_renderbuffer(size, None, samples, 1, True)
         res._size = size
         res._components = 1
         res._samples = samples
