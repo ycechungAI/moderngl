@@ -10,7 +10,6 @@
 PyObject * helper;
 PyObject * moderngl_error;
 PyTypeObject * MGLBuffer_type;
-PyTypeObject * MGLComputeShader_type;
 PyTypeObject * MGLContext_type;
 PyTypeObject * MGLFramebuffer_type;
 PyTypeObject * MGLProgram_type;
@@ -54,7 +53,6 @@ static const int SHADER_TYPE[] = {
 };
 
 struct MGLBuffer;
-struct MGLComputeShader;
 struct MGLContext;
 struct MGLFramebuffer;
 struct MGLProgram;
@@ -80,14 +78,6 @@ struct MGLBuffer {
     int buffer_obj;
     Py_ssize_t size;
     bool dynamic;
-    bool released;
-};
-
-struct MGLComputeShader {
-    PyObject_HEAD
-    MGLContext * context;
-    int program_obj;
-    int shader_obj;
     bool released;
 };
 
@@ -1464,252 +1454,6 @@ int MGLBuffer_tp_as_buffer_get_view(MGLBuffer * self, Py_buffer * view, int flag
 void MGLBuffer_tp_as_buffer_release_view(MGLBuffer * self, Py_buffer * view) {
     const GLMethods & gl = self->context->gl;
     gl.UnmapBuffer(GL_ARRAY_BUFFER);
-}
-
-PyObject * MGLContext_compute_shader(MGLContext * self, PyObject * args) {
-    PyObject * source;
-
-    if (!PyArg_ParseTuple(args, "O", &source)) {
-        return 0;
-    }
-
-    MGLComputeShader * compute_shader = PyObject_New(MGLComputeShader, MGLComputeShader_type);
-    compute_shader->released = false;
-
-    Py_INCREF(self);
-    compute_shader->context = self;
-
-    const GLMethods & gl = self->gl;
-
-    int program_obj = gl.CreateProgram();
-
-    if (!program_obj) {
-        MGLError_Set("cannot create program");
-        return 0;
-    }
-
-    int shader_obj = gl.CreateShader(GL_COMPUTE_SHADER);
-
-    if (!shader_obj) {
-        MGLError_Set("cannot create the shader object");
-        return 0;
-    }
-
-    if (PyObject_HasAttrString(source, "to_shader_source")) {
-        source = PyObject_CallMethod(source, "to_shader_source", NULL);
-        if (!source) {
-            return NULL;
-        }
-    } else {
-        Py_INCREF(source);
-    }
-
-    if (PyUnicode_Check(source)) {
-        const char * source_str = PyUnicode_AsUTF8(source);
-        gl.ShaderSource(shader_obj, 1, &source_str, NULL);
-        gl.CompileShader(shader_obj);
-    } else if (PyBytes_Check(source)) {
-        unsigned * spv = (unsigned *)PyBytes_AsString(source);
-        if (spv[0] == 0x07230203) {
-            int spv_length = (int)PyBytes_Size(source);
-            gl.ShaderBinary(1, (unsigned *)&shader_obj, GL_SHADER_BINARY_FORMAT_SPIR_V, spv, spv_length);
-            gl.SpecializeShader(shader_obj, "main", 0, NULL, NULL);
-        } else {
-            const char * source_str = PyBytes_AsString(source);
-            gl.ShaderSource(shader_obj, 1, &source_str, NULL);
-            gl.CompileShader(shader_obj);
-        }
-    } else {
-        MGLError_Set("wrong shader source type");
-        return NULL;
-    }
-
-    Py_DECREF(source);
-
-    int compiled = GL_FALSE;
-    gl.GetShaderiv(shader_obj, GL_COMPILE_STATUS, &compiled);
-
-    if (!compiled) {
-        const char * message = "GLSL Compiler failed";
-        const char * title = "ComputeShader";
-        const char * underline = "=============";
-
-        int log_len = 0;
-        gl.GetShaderiv(shader_obj, GL_INFO_LOG_LENGTH, &log_len);
-
-        char * log = new char[log_len];
-        gl.GetShaderInfoLog(shader_obj, log_len, &log_len, log);
-
-        gl.DeleteShader(shader_obj);
-
-        MGLError_Set("%s\n\n%s\n%s\n%s\n", message, title, underline, log);
-
-        delete[] log;
-        return 0;
-    }
-
-    gl.AttachShader(program_obj, shader_obj);
-    gl.LinkProgram(program_obj);
-
-    int linked = GL_FALSE;
-    gl.GetProgramiv(program_obj, GL_LINK_STATUS, &linked);
-
-    if (!linked) {
-        const char * message = "GLSL Linker failed";
-        const char * title = "ComputeShader";
-        const char * underline = "=============";
-
-        int log_len = 0;
-        gl.GetProgramiv(program_obj, GL_INFO_LOG_LENGTH, &log_len);
-
-        char * log = new char[log_len];
-        gl.GetProgramInfoLog(program_obj, log_len, &log_len, log);
-
-        gl.DeleteProgram(program_obj);
-
-        MGLError_Set("%s\n\n%s\n%s\n%s\n", message, title, underline, log);
-
-        delete[] log;
-        return 0;
-    }
-
-    compute_shader->shader_obj = shader_obj;
-    compute_shader->program_obj = program_obj;
-
-    Py_INCREF(compute_shader);
-
-    int num_uniforms = 0;
-    int num_uniform_blocks = 0;
-    int num_storage_blocks = 0;
-
-    gl.GetProgramiv(program_obj, GL_ACTIVE_UNIFORMS, &num_uniforms);
-    gl.GetProgramiv(program_obj, GL_ACTIVE_UNIFORM_BLOCKS, &num_uniform_blocks);
-    gl.GetProgramInterfaceiv(program_obj, GL_SHADER_STORAGE_BLOCK, GL_ACTIVE_RESOURCES, &num_storage_blocks);
-
-    PyObject * members_dict = PyDict_New();
-
-    for (int i = 0; i < num_uniforms; ++i) {
-        int type = 0;
-        int array_length = 0;
-        int name_len = 0;
-        char name[256];
-
-        gl.GetActiveUniform(program_obj, i, 256, &name_len, &array_length, (GLenum *)&type, name);
-        int location = gl.GetUniformLocation(program_obj, name);
-
-        clean_glsl_name(name, name_len);
-
-        if (location < 0) {
-            continue;
-        }
-
-        PyObject * item = PyObject_CallMethod(
-            helper, "make_uniform", "(siiiiO)",
-            name, type, program_obj, location, array_length, self
-        );
-
-        PyDict_SetItemString(members_dict, name, item);
-        Py_DECREF(item);
-    }
-
-    for (int i = 0; i < num_uniform_blocks; ++i) {
-        int size = 0;
-        int name_len = 0;
-        char name[256];
-
-        gl.GetActiveUniformBlockName(program_obj, i, 256, &name_len, name);
-        int index = gl.GetUniformBlockIndex(program_obj, name);
-        gl.GetActiveUniformBlockiv(program_obj, index, GL_UNIFORM_BLOCK_DATA_SIZE, &size);
-
-        clean_glsl_name(name, name_len);
-
-        PyObject * item = PyObject_CallMethod(
-            helper, "make_uniform_block", "(siiiO)",
-            name, program_obj, index, size, self
-        );
-
-        PyDict_SetItemString(members_dict, name, item);
-        Py_DECREF(item);
-    }
-
-    for(int i = 0; i < num_storage_blocks; ++i) {
-        int name_len = 0;
-        char name[256];
-
-        gl.GetProgramResourceName(program_obj, GL_SHADER_STORAGE_BLOCK, i, 256, &name_len, name);
-        clean_glsl_name(name, name_len);
-
-        PyObject * item = PyObject_CallMethod(
-            helper, "make_storage_block", "(siiO)",
-            name, program_obj, i, self
-        );
-
-        PyDict_SetItemString(members_dict, name, item);
-        Py_DECREF(item);
-    }
-
-    PyObject * result = PyTuple_New(3);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)compute_shader);
-    PyTuple_SET_ITEM(result, 1, members_dict);
-    PyTuple_SET_ITEM(result, 2, PyLong_FromLong(compute_shader->program_obj));
-    return result;
-}
-
-PyObject * MGLComputeShader_run(MGLComputeShader * self, PyObject * args) {
-    unsigned x;
-    unsigned y;
-    unsigned z;
-
-    int args_ok = PyArg_ParseTuple(
-        args,
-        "III",
-        &x,
-        &y,
-        &z
-    );
-
-    if (!args_ok) {
-        return 0;
-    }
-
-    const GLMethods & gl = self->context->gl;
-
-    gl.UseProgram(self->program_obj);
-    gl.DispatchCompute(x, y, z);
-
-    Py_RETURN_NONE;
-}
-
-PyObject * MGLComputeShader_run_indirect(MGLComputeShader * self, PyObject * args) {
-    MGLBuffer * buffer;
-    Py_ssize_t offset = 0;
-
-    if (!PyArg_ParseTuple(args, "O!|n", MGLBuffer_type, &buffer, &offset)) {
-        return 0;
-    }
-
-    const GLMethods & gl = self->context->gl;
-
-    gl.UseProgram(self->program_obj);
-    gl.BindBuffer(GL_DISPATCH_INDIRECT_BUFFER, buffer->buffer_obj);
-    gl.DispatchComputeIndirect((GLintptr)offset);
-
-    Py_RETURN_NONE;
-}
-
-PyObject * MGLComputeShader_release(MGLComputeShader * self) {
-    if (self->released) {
-        Py_RETURN_NONE;
-    }
-    self->released = true;
-
-    const GLMethods & gl = self->context->gl;
-    gl.DeleteShader(self->shader_obj);
-    gl.DeleteProgram(self->program_obj);
-
-    Py_DECREF(self->context);
-    Py_DECREF(self);
-    Py_RETURN_NONE;
 }
 
 PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
@@ -10017,13 +9761,6 @@ PyMethodDef MGLBuffer_methods[] = {
     {},
 };
 
-PyMethodDef MGLComputeShader_methods[] = {
-    {(char *)"run", (PyCFunction)MGLComputeShader_run, METH_VARARGS},
-    {(char *)"run_indirect", (PyCFunction)MGLComputeShader_run_indirect, METH_VARARGS},
-    {(char *)"release", (PyCFunction)MGLComputeShader_release, METH_VARARGS},
-    {},
-};
-
 PyMethodDef MGLContext_methods[] = {
     {(char *)"enable_only", (PyCFunction)MGLContext_enable_only, METH_VARARGS},
     {(char *)"enable", (PyCFunction)MGLContext_enable, METH_VARARGS},
@@ -10050,7 +9787,6 @@ PyMethodDef MGLContext_methods[] = {
     {(char *)"empty_framebuffer", (PyCFunction)MGLContext_empty_framebuffer, METH_VARARGS},
     {(char *)"renderbuffer", (PyCFunction)MGLContext_renderbuffer, METH_VARARGS},
     {(char *)"depth_renderbuffer", (PyCFunction)MGLContext_depth_renderbuffer, METH_VARARGS},
-    {(char *)"compute_shader", (PyCFunction)MGLContext_compute_shader, METH_VARARGS},
     {(char *)"query", (PyCFunction)MGLContext_query, METH_VARARGS},
     {(char *)"scope", (PyCFunction)MGLContext_scope, METH_VARARGS},
     {(char *)"sampler", (PyCFunction)MGLContext_sampler, METH_VARARGS},
@@ -10291,12 +10027,6 @@ PyType_Slot MGLBuffer_slots[] = {
     {},
 };
 
-PyType_Slot MGLComputeShader_slots[] = {
-    {Py_tp_methods, MGLComputeShader_methods},
-    {Py_tp_dealloc, (void *)default_dealloc},
-    {},
-};
-
 PyType_Slot MGLContext_slots[] = {
     {Py_tp_methods, MGLContext_methods},
     {Py_tp_getset, MGLContext_getset},
@@ -10379,7 +10109,6 @@ PyType_Slot MGLSampler_slots[] = {
 };
 
 PyType_Spec MGLBuffer_spec = {"mgl.Buffer", sizeof(MGLBuffer), 0, Py_TPFLAGS_DEFAULT, MGLBuffer_slots};
-PyType_Spec MGLComputeShader_spec = {"mgl.ComputeShader", sizeof(MGLComputeShader), 0, Py_TPFLAGS_DEFAULT, MGLComputeShader_slots};
 PyType_Spec MGLContext_spec = {"mgl.Context", sizeof(MGLContext), 0, Py_TPFLAGS_DEFAULT, MGLContext_slots};
 PyType_Spec MGLFramebuffer_spec = {"mgl.Framebuffer", sizeof(MGLFramebuffer), 0, Py_TPFLAGS_DEFAULT, MGLFramebuffer_slots};
 PyType_Spec MGLProgram_spec = {"mgl.Program", sizeof(MGLProgram), 0, Py_TPFLAGS_DEFAULT, MGLProgram_slots};
@@ -10416,7 +10145,6 @@ extern "C" PyObject * PyInit_mgl() {
     moderngl_error = PyObject_GetAttrString(helper, "Error");
 
     MGLBuffer_type = (PyTypeObject *)PyType_FromSpec(&MGLBuffer_spec);
-    MGLComputeShader_type = (PyTypeObject *)PyType_FromSpec(&MGLComputeShader_spec);
     MGLContext_type = (PyTypeObject *)PyType_FromSpec(&MGLContext_spec);
     MGLFramebuffer_type = (PyTypeObject *)PyType_FromSpec(&MGLFramebuffer_spec);
     MGLProgram_type = (PyTypeObject *)PyType_FromSpec(&MGLProgram_spec);

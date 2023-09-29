@@ -1815,7 +1815,18 @@ class Context:
 
     def compute_shader(self, source):
         res = ComputeShader.__new__(ComputeShader)
-        res.mglo, res._members, res._glo = self.mglo.compute_shader(source)
+        res.mglo, _members, _, _, res._glo = self.mglo.program(
+            None,
+            None,
+            None,
+            None,
+            None,
+            source,
+            (),
+            {},
+            False,
+        )
+        res._members = _members[0]
 
         res.ctx = self
         res.extra = None
