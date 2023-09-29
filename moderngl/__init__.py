@@ -1546,9 +1546,21 @@ class Context:
         res.extra = None
         return res
 
-    def texture(self, size, components, data=None, samples=0, alignment=1, dtype='f1', internal_format=None):
+    def texture(
+        self,
+        size,
+        components,
+        data=None,
+        samples=0,
+        alignment=1,
+        dtype='f1',
+        internal_format=None,
+        renderbuffer=False,
+    ):
         res = Texture.__new__(Texture)
-        res.mglo, res._glo = self.mglo.texture(size, components, data, samples, alignment, dtype, internal_format or 0)
+        res.mglo, res._glo = self.mglo.texture(
+            size, components, data, samples, alignment, dtype, internal_format or 0, renderbuffer
+        )
         res._size = size
         res._components = components
         res._samples = samples
@@ -1588,9 +1600,9 @@ class Context:
         res.extra = None
         return res
 
-    def depth_texture(self, size, data=None, samples=0, alignment=4):
+    def depth_texture(self, size, data=None, samples=0, alignment=4, renderbuffer=False):
         res = Texture.__new__(Texture)
-        res.mglo, res._glo = self.mglo.depth_texture(size, data, samples, alignment)
+        res.mglo, res._glo = self.mglo.depth_texture(size, data, samples, alignment, renderbuffer)
         res._size = size
         res._components = 1
         res._samples = samples

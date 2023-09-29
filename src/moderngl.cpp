@@ -4251,10 +4251,11 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
     const char * dtype;
     Py_ssize_t dtype_size;
     int internal_format_override;
+    int use_renderbuffer;
 
     int args_ok = PyArg_ParseTuple(
         args,
-        "(II)IOIIs#I",
+        "(II)IOIIs#Ip",
         &width,
         &height,
         &components,
@@ -4263,7 +4264,8 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
         &alignment,
         &dtype,
         &dtype_size,
-        &internal_format_override
+        &internal_format_override,
+        &use_renderbuffer
     );
 
     if (!args_ok) {
@@ -4290,11 +4292,59 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
         return 0;
     }
 
+    if (data != Py_None && use_renderbuffer) {
+        MGLError_Set("renderbuffers are not writable directly");
+        return 0;
+    }
+
     MGLDataType * data_type = from_dtype(dtype, dtype_size);
 
     if (!data_type) {
         MGLError_Set("invalid dtype");
         return 0;
+    }
+
+    if (use_renderbuffer) {
+        const GLMethods & gl = self->gl;
+
+        MGLRenderbuffer * renderbuffer = PyObject_New(MGLRenderbuffer, MGLRenderbuffer_type);
+        renderbuffer->released = false;
+
+        int format = data_type->internal_format[components];
+
+        renderbuffer->renderbuffer_obj = 0;
+        gl.GenRenderbuffers(1, (GLuint *)&renderbuffer->renderbuffer_obj);
+
+        if (!renderbuffer->renderbuffer_obj) {
+            MGLError_Set("cannot create renderbuffer");
+            Py_DECREF(renderbuffer);
+            return 0;
+        }
+
+        gl.BindRenderbuffer(GL_RENDERBUFFER, renderbuffer->renderbuffer_obj);
+
+        if (samples == 0) {
+            gl.RenderbufferStorage(GL_RENDERBUFFER, format, width, height);
+        } else {
+            gl.RenderbufferStorageMultisample(GL_RENDERBUFFER, samples, format, width, height);
+        }
+
+        renderbuffer->width = width;
+        renderbuffer->height = height;
+        renderbuffer->components = components;
+        renderbuffer->samples = samples;
+        renderbuffer->data_type = data_type;
+        renderbuffer->depth = false;
+
+        Py_INCREF(self);
+        renderbuffer->context = self;
+
+        Py_INCREF(renderbuffer);
+
+        PyObject * result = PyTuple_New(2);
+        PyTuple_SET_ITEM(result, 0, (PyObject *)renderbuffer);
+        PyTuple_SET_ITEM(result, 1, PyLong_FromLong(renderbuffer->renderbuffer_obj));
+        return result;
     }
 
     int expected_size = width * components * data_type->size;
@@ -4401,15 +4451,17 @@ PyObject * MGLContext_depth_texture(MGLContext * self, PyObject * args) {
 
     int samples;
     int alignment;
+    int use_renderbuffer;
 
     int args_ok = PyArg_ParseTuple(
         args,
-        "(II)OII",
+        "(II)OIIp",
         &width,
         &height,
         &data,
         &samples,
-        &alignment
+        &alignment,
+        &use_renderbuffer
     );
 
     if (!args_ok) {
@@ -4424,6 +4476,52 @@ PyObject * MGLContext_depth_texture(MGLContext * self, PyObject * args) {
     if (data != Py_None && samples) {
         MGLError_Set("multisample textures are not writable directly");
         return 0;
+    }
+
+    if (data != Py_None && use_renderbuffer) {
+        MGLError_Set("renderbuffers are not writable directly");
+        return 0;
+    }
+
+    if (use_renderbuffer) {
+        const GLMethods & gl = self->gl;
+
+        MGLRenderbuffer * renderbuffer = PyObject_New(MGLRenderbuffer, MGLRenderbuffer_type);
+        renderbuffer->released = false;
+
+        renderbuffer->renderbuffer_obj = 0;
+        gl.GenRenderbuffers(1, (GLuint *)&renderbuffer->renderbuffer_obj);
+
+        if (!renderbuffer->renderbuffer_obj) {
+            MGLError_Set("cannot create renderbuffer");
+            Py_DECREF(renderbuffer);
+            return 0;
+        }
+
+        gl.BindRenderbuffer(GL_RENDERBUFFER, renderbuffer->renderbuffer_obj);
+
+        if (samples == 0) {
+            gl.RenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+        } else {
+            gl.RenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH_COMPONENT24, width, height);
+        }
+
+        renderbuffer->width = width;
+        renderbuffer->height = height;
+        renderbuffer->components = 1;
+        renderbuffer->samples = samples;
+        renderbuffer->data_type = from_dtype("f4", 2);
+        renderbuffer->depth = true;
+
+        Py_INCREF(self);
+        renderbuffer->context = self;
+
+        Py_INCREF(renderbuffer);
+
+        PyObject * result = PyTuple_New(2);
+        PyTuple_SET_ITEM(result, 0, (PyObject *)renderbuffer);
+        PyTuple_SET_ITEM(result, 1, PyLong_FromLong(renderbuffer->renderbuffer_obj));
+        return result;
     }
 
     int expected_size = width * 4;
