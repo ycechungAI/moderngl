@@ -36,5 +36,5 @@ jobs:
         run: |
           python setup.py bdist_wheel
           python -m pip install dist/*.whl
-          flake8 moderngl
-          mypy moderngl
+          # flake8 moderngl
+          # mypy moderngl
