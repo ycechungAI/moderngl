@@ -62,15 +62,7 @@ class Buffer:
     def read_chunks(self, chunk_size, start, step, count):
         return self.mglo.read_chunks(chunk_size, start, step, count)
 
-    def read_chunks_into(
-        self,
-        buffer,
-        chunk_size,
-        start,
-        step,
-        count,
-        write_offset=0,
-    ):
+    def read_chunks_into(self, buffer, chunk_size, start, step, count, write_offset=0):
         return self.mglo.read(buffer, chunk_size, start, step, count, write_offset)
 
     def clear(self, size=-1, offset=0, chunk=None):
@@ -280,16 +272,7 @@ class Framebuffer:
     def glo(self):
         return self._glo
 
-    def clear(
-        self,
-        red=0.0,
-        green=0.0,
-        blue=0.0,
-        alpha=0.0,
-        depth=1.0,
-        viewport=None,
-        color=None,
-    ):
+    def clear(self, red=0.0, green=0.0, blue=0.0, alpha=0.0, depth=1.0, viewport=None, color=None):
         if color is not None:
             red, green, blue, alpha, *_ = tuple(color) + (0.0, 0.0, 0.0, 0.0)
 
@@ -302,27 +285,10 @@ class Framebuffer:
         self.ctx.fbo = self
         self.mglo.use()
 
-    def read(
-        self,
-        viewport=None,
-        components=3,
-        attachment=0,
-        alignment=1,
-        dtype='f1',
-        clamp=False,
-    ):
+    def read(self, viewport=None, components=3, attachment=0, alignment=1, dtype='f1', clamp=False):
         return self.mglo.read(viewport, components, attachment, alignment, clamp, dtype)
 
-    def read_into(
-        self,
-        buffer,
-        viewport=None,
-        components=3,
-        attachment=0,
-        alignment=1,
-        dtype='f1',
-        write_offset=0,
-    ):
+    def read_into(self, buffer, viewport=None, components=3, attachment=0, alignment=1, dtype='f1', write_offset=0):
         if type(buffer) is Buffer:
             buffer = buffer.mglo
 
@@ -713,25 +679,13 @@ class Texture:
     def read(self, level=0, alignment=1):
         return self.mglo.read(level, alignment)
 
-    def read_into(
-        self,
-        buffer,
-        level=0,
-        alignment=1,
-        write_offset=0,
-    ):
+    def read_into(self, buffer, level=0, alignment=1, write_offset=0):
         if type(buffer) is Buffer:
             buffer = buffer.mglo
 
         return self.mglo.read_into(buffer, level, alignment, write_offset)
 
-    def write(
-        self,
-        data,
-        viewport=None,
-        level=0,
-        alignment=1,
-    ):
+    def write(self, data, viewport=None, level=0, alignment=1):
         if type(data) is Buffer:
             data = data.mglo
 
@@ -743,14 +697,7 @@ class Texture:
     def use(self, location=0):
         self.mglo.use(location)
 
-    def bind_to_image(
-        self,
-        unit,
-        read=True,
-        write=True,
-        level=0,
-        format=0,
-    ):
+    def bind_to_image(self, unit, read=True, write=True, level=0, format=0):
         self.mglo.bind(unit, read, write, level, format)
 
     def get_handle(self, resident=True):
@@ -854,23 +801,13 @@ class Texture3D:
     def read(self, alignment=1):
         return self.mglo.read(alignment)
 
-    def read_into(
-        self,
-        buffer,
-        alignment=1,
-        write_offset=0,
-    ):
+    def read_into(self, buffer, alignment=1, write_offset=0):
         if type(buffer) is Buffer:
             buffer = buffer.mglo
 
         return self.mglo.read_into(buffer, alignment, write_offset)
 
-    def write(
-        self,
-        data,
-        viewport=None,
-        alignment=1,
-    ):
+    def write(self, data, viewport=None, alignment=1):
         if type(data) is Buffer:
             data = data.mglo
 
@@ -882,14 +819,7 @@ class Texture3D:
     def use(self, location=0):
         self.mglo.use(location)
 
-    def bind_to_image(
-        self,
-        unit,
-        read=True,
-        write=True,
-        level=0,
-        format=0,
-    ):
+    def bind_to_image(self, unit, read=True, write=True, level=0, format=0):
         self.mglo.bind(unit, read, write, level, format)
 
     def get_handle(self, resident=True):
@@ -977,25 +907,13 @@ class TextureCube:
     def read(self, face, alignment=1):
         return self.mglo.read(face, alignment)
 
-    def read_into(
-        self,
-        buffer,
-        face,
-        alignment=1,
-        write_offset=0,
-    ):
+    def read_into(self, buffer, face, alignment=1, write_offset=0):
         if type(buffer) is Buffer:
             buffer = buffer.mglo
 
         return self.mglo.read_into(buffer, face, alignment, write_offset)
 
-    def write(
-        self,
-        face,
-        data,
-        viewport=None,
-        alignment=1,
-    ):
+    def write(self, face, data, viewport=None, alignment=1):
         if type(data) is Buffer:
             data = data.mglo
 
@@ -1007,14 +925,7 @@ class TextureCube:
     def use(self, location=0):
         self.mglo.use(location)
 
-    def bind_to_image(
-        self,
-        unit,
-        read=True,
-        write=True,
-        level=0,
-        format=0,
-    ):
+    def bind_to_image(self, unit, read=True, write=True, level=0, format=0):
         self.mglo.bind(unit, read, write, level, format)
 
     def get_handle(self, resident=True):
@@ -1119,23 +1030,13 @@ class TextureArray:
     def read(self, alignment=1):
         return self.mglo.read(alignment)
 
-    def read_into(
-        self,
-        buffer,
-        alignment=1,
-        write_offset=0,
-    ):
+    def read_into(self, buffer, alignment=1, write_offset=0):
         if type(buffer) is Buffer:
             buffer = buffer.mglo
 
         return self.mglo.read_into(buffer, alignment, write_offset)
 
-    def write(
-        self,
-        data,
-        viewport=None,
-        alignment=1,
-    ):
+    def write(self, data, viewport=None, alignment=1):
         if type(data) is Buffer:
             data = data.mglo
 
@@ -1147,14 +1048,7 @@ class TextureArray:
     def use(self, location=0):
         self.mglo.use(location)
 
-    def bind_to_image(
-        self,
-        unit,
-        read=True,
-        write=True,
-        level=0,
-        format=0,
-    ):
+    def bind_to_image(self, unit, read=True, write=True, level=0, format=0):
         self.mglo.bind(unit, read, write, level, format)
 
     def get_handle(self, resident=True):
@@ -1237,13 +1131,7 @@ class VertexArray:
     def glo(self):
         return self._glo
 
-    def render(
-        self,
-        mode=None,
-        vertices=-1,
-        first=0,
-        instances=-1,
-    ):
+    def render(self, mode=None, vertices=-1, first=0, instances=-1):
         if mode is None:
             mode = self._mode
 
@@ -1253,13 +1141,7 @@ class VertexArray:
         else:
             self.mglo.render(mode, vertices, first, instances)
 
-    def render_indirect(
-        self,
-        buffer,
-        mode=None,
-        count=-1,
-        first=0,
-    ):
+    def render_indirect(self, buffer, mode=None, count=-1, first=0):
         if mode is None:
             mode = self._mode
 
@@ -1269,15 +1151,7 @@ class VertexArray:
         else:
             self.mglo.render_indirect(buffer.mglo, mode, count, first)
 
-    def transform(
-        self,
-        buffer,
-        mode=None,
-        vertices=-1,
-        first=0,
-        instances=-1,
-        buffer_offset=0,
-    ):
+    def transform(self, buffer, mode=None, vertices=-1, first=0, instances=-1, buffer_offset=0):
         if mode is None:
             mode = self._mode
 
@@ -1292,17 +1166,7 @@ class VertexArray:
         else:
             self.mglo.transform(outputs, mode, vertices, first, instances, buffer_offset)
 
-    def bind(
-        self,
-        attribute,
-        cls,
-        buffer,
-        fmt,
-        offset=0,
-        stride=0,
-        divisor=0,
-        normalize=False,
-    ):
+    def bind(self, attribute, cls, buffer, fmt, offset=0, stride=0, divisor=0, normalize=False):
         self.mglo.bind(attribute, cls, buffer.mglo, fmt, offset, stride, divisor, normalize)
 
     def release(self):
@@ -1619,16 +1483,7 @@ class Context:
     def includes(self):
         return self.mglo.includes
 
-    def clear(
-        self,
-        red=0.0,
-        green=0.0,
-        blue=0.0,
-        alpha=0.0,
-        depth=1.0,
-        viewport=None,
-        color=None,
-    ):
+    def clear(self, red=0.0, green=0.0, blue=0.0, alpha=0.0, depth=1.0, viewport=None, color=None):
         if color is not None:
             red, green, blue, alpha, *_ = tuple(color) + (0.0, 0.0, 0.0, 0.0)
 
@@ -1652,21 +1507,10 @@ class Context:
     def finish(self):
         self.mglo.finish()
 
-    def copy_buffer(
-        self,
-        dst: Buffer,
-        src: Buffer,
-        size=-1,
-        read_offset=0,
-        write_offset=0,
-    ):
+    def copy_buffer(self, dst: Buffer, src: Buffer, size=-1, read_offset=0, write_offset=0):
         self.mglo.copy_buffer(dst.mglo, src.mglo, size, read_offset, write_offset)
 
-    def copy_framebuffer(
-        self,
-        dst,
-        src,
-    ):
+    def copy_framebuffer(self, dst, src):
         self.mglo.copy_framebuffer(dst.mglo, src.mglo)
 
     def detect_framebuffer(self, glo=None):
@@ -1679,12 +1523,7 @@ class Context:
         res.extra = None
         return res
 
-    def buffer(
-        self,
-        data=None,
-        reserve=0,
-        dynamic=False,
-    ):
+    def buffer(self, data=None, reserve=0, dynamic=False):
         if type(reserve) is str:
             reserve = mgl.strsize(reserve)
 
@@ -1695,14 +1534,7 @@ class Context:
         res.extra = None
         return res
 
-    def external_texture(
-        self,
-        glo,
-        size,
-        components,
-        samples,
-        dtype,
-    ):
+    def external_texture(self, glo, size, components, samples, dtype):
         res = Texture.__new__(Texture)
         res.mglo, res._glo = self.mglo.external_texture(glo, size, components, samples, dtype)
         res._size = size
@@ -1714,16 +1546,7 @@ class Context:
         res.extra = None
         return res
 
-    def texture(
-        self,
-        size,
-        components,
-        data=None,
-        samples=0,
-        alignment=1,
-        dtype='f1',
-        internal_format=None,
-    ):
+    def texture(self, size, components, data=None, samples=0, alignment=1, dtype='f1', internal_format=None):
         res = Texture.__new__(Texture)
         res.mglo, res._glo = self.mglo.texture(size, components, data, samples, alignment, dtype, internal_format or 0)
         res._size = size
@@ -1735,14 +1558,7 @@ class Context:
         res.extra = None
         return res
 
-    def texture_array(
-        self,
-        size,
-        components,
-        data=None,
-        alignment=1,
-        dtype='f1',
-    ):
+    def texture_array(self, size, components, data=None, alignment=1, dtype='f1'):
         res = TextureArray.__new__(TextureArray)
         res.mglo, res._glo = self.mglo.texture_array(size, components, data, alignment, dtype)
         res._size = size
@@ -1752,14 +1568,7 @@ class Context:
         res.extra = None
         return res
 
-    def texture3d(
-        self,
-        size,
-        components,
-        data=None,
-        alignment=1,
-        dtype='f1',
-    ):
+    def texture3d(self, size, components, data=None, alignment=1, dtype='f1'):
         res = Texture3D.__new__(Texture3D)
         res._size = size
         res._components = components
@@ -1769,15 +1578,7 @@ class Context:
         res.extra = None
         return res
 
-    def texture_cube(
-        self,
-        size,
-        components,
-        data=None,
-        alignment=1,
-        dtype='f1',
-        internal_format=None,
-    ):
+    def texture_cube(self, size, components, data=None, alignment=1, dtype='f1', internal_format=None):
         res = TextureCube.__new__(TextureCube)
         res.mglo, res._glo = self.mglo.texture_cube(size, components, data, alignment, dtype, internal_format or 0)
         res._size = size
@@ -1787,13 +1588,7 @@ class Context:
         res.extra = None
         return res
 
-    def depth_texture(
-        self,
-        size,
-        data=None,
-        samples=0,
-        alignment=4,
-    ):
+    def depth_texture(self, size, data=None, samples=0, alignment=4):
         res = Texture.__new__(Texture)
         res.mglo, res._glo = self.mglo.depth_texture(size, data, samples, alignment)
         res._size = size
@@ -1805,12 +1600,7 @@ class Context:
         res.extra = None
         return res
 
-    def depth_texture_cube(
-        self,
-        size,
-        data=None,
-        alignment=4,
-    ):
+    def depth_texture_cube(self, size, data=None, alignment=4):
         '''
         Create a :py:class:`Texture` object.
 
@@ -1840,15 +1630,7 @@ class Context:
             return self.simple_vertex_array(*args, **kwargs)
         return self._vertex_array(*args, **kwargs)
 
-    def _vertex_array(
-        self,
-        program,
-        content,
-        index_buffer=None,
-        index_element_size=4,
-        skip_errors=False,
-        mode=None,
-    ):
+    def _vertex_array(self, program, content, index_buffer=None, index_element_size=4, skip_errors=False, mode=None):
         locations = program._attribute_locations
         types = program._attribute_types
         index_buffer_mglo = None if index_buffer is None else index_buffer.mglo
@@ -1877,15 +1659,7 @@ class Context:
         res.scope = None
         return res
 
-    def simple_vertex_array(
-        self,
-        program,
-        buffer,
-        *attributes,
-        index_buffer=None,
-        index_element_size=4,
-        mode=None,
-    ):
+    def simple_vertex_array(self, program, buffer, *attributes, index_buffer=None, index_element_size=4, mode=None):
         if type(buffer) is list:
             raise SyntaxError('Change simple_vertex_array to vertex_array')
 
@@ -1943,13 +1717,7 @@ class Context:
         res.extra = None
         return res
 
-    def query(
-        self,
-        samples=False,
-        any_samples=False,
-        time=False,
-        primitives=False,
-    ):
+    def query(self, samples=False, any_samples=False, time=False, primitives=False):
         res = Query.__new__(Query)
         res.mglo = self.mglo.query(samples, any_samples, time, primitives)
         res.crender = None
@@ -2002,23 +1770,13 @@ class Context:
         res.extra = None
         return res
 
-    def simple_framebuffer(
-        self,
-        size,
-        components=4,
-        samples=0,
-        dtype='f1',
-    ):
+    def simple_framebuffer(self, size, components=4, samples=0, dtype='f1'):
         return self.framebuffer(
             self.renderbuffer(size, components, samples=samples, dtype=dtype),
             self.depth_renderbuffer(size, samples=samples),
         )
 
-    def framebuffer(
-        self,
-        color_attachments=(),
-        depth_attachment=None,
-    ):
+    def framebuffer(self, color_attachments=(), depth_attachment=None):
         if type(color_attachments) is Texture or type(color_attachments) is Renderbuffer:
             color_attachments = (color_attachments,)
 
@@ -2034,12 +1792,7 @@ class Context:
         res.extra = None
         return res
 
-    def empty_framebuffer(
-        self,
-        size,
-        layers=0,
-        samples=0,
-    ):
+    def empty_framebuffer(self, size, layers=0, samples=0):
         res = Framebuffer.__new__(Framebuffer)
         res.mglo, res._size, res._samples, res._glo = self.mglo.empty_framebuffer(size, layers, samples)
         res._color_attachments = ()
@@ -2049,13 +1802,7 @@ class Context:
         res.extra = None
         return res
 
-    def renderbuffer(
-        self,
-        size,
-        components=4,
-        samples=0,
-        dtype='f1',
-    ):
+    def renderbuffer(self, size, components=4, samples=0, dtype='f1'):
         res = Renderbuffer.__new__(Renderbuffer)
         res.mglo, res._glo = self.mglo.renderbuffer(size, components, samples, dtype)
         res._size = size
