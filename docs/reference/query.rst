@@ -1,26 +1,42 @@
 Query
 =====
 
-.. py:currentmodule:: moderngl
+.. py:class:: Query
 
-.. autoclass:: moderngl.Query
+    Returned by :py:meth:`Context.query`
 
-Create
-------
-
-.. automethod:: Context.query
-   :noindex:
+    This class represents a Query object.
 
 Attributes
 ----------
 
-.. autoattribute:: Query.samples
-.. autoattribute:: Query.primitives
-.. autoattribute:: Query.elapsed
-.. autoattribute:: Query.crender
-.. autoattribute:: Query.extra
-.. autoattribute:: Query.mglo
-.. autoattribute:: Query.ctx
+.. py:attribute:: Query.samples
+    :type: int
+
+    The number of samples passed.
+
+.. py:attribute:: Query.primitives
+    :type: int
+
+    The number of primitives generated.
+
+.. py:attribute:: Query.elapsed
+    :type: int
+
+    The time elapsed in nanoseconds.
+
+.. py:attribute:: Query.crender
+    :type: ConditionalRender
+
+.. py:attribute:: Query.ctx
+    :type: Context
+
+    The context this object belongs to
+
+.. py:attribute:: Query.extra
+    :type: Any
+
+    User defined data.
 
 Examples
 --------
@@ -83,4 +99,6 @@ Examples
     to render 496 samples
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
+
+    conditional_render.rst

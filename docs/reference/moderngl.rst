@@ -1,114 +1,222 @@
-.. py:module:: moderngl
-.. py:currentmodule:: moderngl
-
 moderngl
 ========
 
-Attributes
-----------
+.. py:module:: moderngl
 
-Attributes available in the root ``moderngl`` module.
-Some may be listed in their original sub-module,
-but they are imported during initialization.
+.. code-block:: python
+
+    import moderngl
+
+    window = ...
+    ctx = moderngl.create_context()
+    # store a ref to ctx
+
+The module object itself is responsible for creating a :py:class:`Context` object.
+
+.. py:function:: moderngl.create_context(require: int = 330, standalone: bool = False) -> Context
+
+    Create a ModernGL context by loading OpenGL functions from an existing OpenGL context.
+    An OpenGL context must exist. Call this after a window is created or opt for the windowless standalone mode.
+    Other backend specific settings are passed as keyword arguments.
+
+    Context sharing is known to not work properly, please avoid using it.
+    There is a paramter `share` for that to attempt to create a shared context.
+
+    :param int require: OpenGL version code
+    :param bool standalone: Headless flag
+
+    Example::
+
+        # Accept the current context version
+        ctx = moderngl.create_context()
+
+        # Require at least OpenGL 4.3
+        ctx = moderngl.create_context(require=430)
+
+        # Create a windowless context
+        ctx = moderngl.create_context(standalone=True)
+
+.. py:function:: moderngl.create_standalone_context(...) -> Context
+
+    Deprecated, use :py:func:`moderngl.create_context()` with the standalone parameter set.
 
 Context Flags
-~~~~~~~~~~~~~
+-------------
 
-Also available in the :py:class:`Context` instance
-including mode details.
+These were moved to :py:class:`Context`.
 
-.. autodata:: moderngl.NOTHING
-.. autodata:: moderngl.BLEND
-.. autodata:: moderngl.DEPTH_TEST
-.. autodata:: moderngl.CULL_FACE
-.. autodata:: moderngl.RASTERIZER_DISCARD
-.. autodata:: moderngl.PROGRAM_POINT_SIZE
+.. py:attribute:: moderngl.NOTHING
 
-Primitive Modes
-~~~~~~~~~~~~~~~
+    See :py:attr:`Context.NOTHING`
 
-Also available in the :py:class:`Context` instance
-including mode details.
+.. py:attribute:: moderngl.BLEND
 
-.. autodata:: moderngl.POINTS
-.. autodata:: moderngl.LINES
-.. autodata:: moderngl.LINE_LOOP
-.. autodata:: moderngl.LINE_STRIP
-.. autodata:: moderngl.TRIANGLES
-.. autodata:: moderngl.TRIANGLE_STRIP
-.. autodata:: moderngl.TRIANGLE_FAN
-.. autodata:: moderngl.LINES_ADJACENCY
-.. autodata:: moderngl.LINE_STRIP_ADJACENCY
-.. autodata:: moderngl.TRIANGLES_ADJACENCY
-.. autodata:: moderngl.TRIANGLE_STRIP_ADJACENCY
-.. autodata:: moderngl.PATCHES
+    See :py:attr:`Context.BLEND`
 
-Texture Filters
-~~~~~~~~~~~~~~~
+.. py:attribute:: moderngl.DEPTH_TEST
 
-Also available in the :py:class:`Context` instance
-including mode details.
+    See :py:attr:`Context.DEPTH_TEST`
 
-.. autodata:: moderngl.NEAREST
-.. autodata:: moderngl.LINEAR
-.. autodata:: moderngl.NEAREST_MIPMAP_NEAREST
-.. autodata:: moderngl.LINEAR_MIPMAP_NEAREST
-.. autodata:: moderngl.NEAREST_MIPMAP_LINEAR
-.. autodata:: moderngl.LINEAR_MIPMAP_LINEAR
+.. py:attribute:: moderngl.CULL_FACE
 
-Blend Functions
-~~~~~~~~~~~~~~~
+    See :py:attr:`Context.CULL_FACE`
 
-Also available in the :py:class:`Context` instance
-including mode details.
+.. py:attribute:: moderngl.RASTERIZER_DISCARD
 
-.. autodata:: moderngl.ZERO
-.. autodata:: moderngl.ONE
-.. autodata:: moderngl.SRC_COLOR
-.. autodata:: moderngl.ONE_MINUS_SRC_COLOR
-.. autodata:: moderngl.SRC_ALPHA
-.. autodata:: moderngl.ONE_MINUS_SRC_ALPHA
-.. autodata:: moderngl.DST_ALPHA
-.. autodata:: moderngl.ONE_MINUS_DST_ALPHA
-.. autodata:: moderngl.DST_COLOR
-.. autodata:: moderngl.ONE_MINUS_DST_COLOR
+    See :py:attr:`Context.RASTERIZER_DISCARD`
 
-Shortcuts
-^^^^^^^^^
+.. py:attribute:: moderngl.PROGRAM_POINT_SIZE
 
-.. autodata:: moderngl.DEFAULT_BLENDING
-.. autodata:: moderngl.ADDITIVE_BLENDING
-.. autodata:: moderngl.PREMULTIPLIED_ALPHA
+    See :py:attr:`Context.PROGRAM_POINT_SIZE`
 
-Blend Equations
-~~~~~~~~~~~~~~~
+.. py:attribute:: moderngl.POINTS
 
-Also available in the :py:class:`Context` instance
-including mode details.
+    See :py:attr:`Context.POINTS`
 
-.. autodata:: moderngl.FUNC_ADD
-.. autodata:: moderngl.FUNC_SUBTRACT
-.. autodata:: moderngl.FUNC_REVERSE_SUBTRACT
-.. autodata:: moderngl.MIN
-.. autodata:: moderngl.MAX
+.. py:attribute:: moderngl.LINES
 
-Provoking Vertex
-~~~~~~~~~~~~~~~~
+    See :py:attr:`Context.LINES`
 
-Also available in the :py:class:`Context` instance
-including mode details.
+.. py:attribute:: moderngl.LINE_LOOP
 
-.. autodata:: moderngl.FIRST_VERTEX_CONVENTION
-.. autodata:: moderngl.LAST_VERTEX_CONVENTION
+    See :py:attr:`Context.LINE_LOOP`
 
-Functions
----------
+.. py:attribute:: moderngl.LINE_STRIP
 
-Also see :py:class:`Context`.
+    See :py:attr:`Context.LINE_STRIP`
 
-.. autofunction:: create_context
-    :noindex:
-.. autofunction:: create_standalone_context
-    :noindex:
-.. autofunction:: detect_format
-    :noindex:
+.. py:attribute:: moderngl.TRIANGLES
+
+    See :py:attr:`Context.TRIANGLES`
+
+.. py:attribute:: moderngl.TRIANGLE_STRIP
+
+    See :py:attr:`Context.TRIANGLE_STRIP`
+
+.. py:attribute:: moderngl.TRIANGLE_FAN
+
+    See :py:attr:`Context.TRIANGLE_FAN`
+
+.. py:attribute:: moderngl.LINES_ADJACENCY
+
+    See :py:attr:`Context.LINES_ADJACENCY`
+
+.. py:attribute:: moderngl.LINE_STRIP_ADJACENCY
+
+    See :py:attr:`Context.LINE_STRIP_ADJACENCY`
+
+.. py:attribute:: moderngl.TRIANGLES_ADJACENCY
+
+    See :py:attr:`Context.TRIANGLES_ADJACENCY`
+
+.. py:attribute:: moderngl.TRIANGLE_STRIP_ADJACENCY
+
+    See :py:attr:`Context.TRIANGLE_STRIP_ADJACENCY`
+
+.. py:attribute:: moderngl.PATCHES
+
+    See :py:attr:`Context.PATCHES`
+
+.. py:attribute:: moderngl.NEAREST
+
+    See :py:attr:`Context.NEAREST`
+
+.. py:attribute:: moderngl.LINEAR
+
+    See :py:attr:`Context.LINEAR`
+
+.. py:attribute:: moderngl.NEAREST_MIPMAP_NEAREST
+
+    See :py:attr:`Context.NEAREST_MIPMAP_NEAREST`
+
+.. py:attribute:: moderngl.LINEAR_MIPMAP_NEAREST
+
+    See :py:attr:`Context.LINEAR_MIPMAP_NEAREST`
+
+.. py:attribute:: moderngl.NEAREST_MIPMAP_LINEAR
+
+    See :py:attr:`Context.NEAREST_MIPMAP_LINEAR`
+
+.. py:attribute:: moderngl.LINEAR_MIPMAP_LINEAR
+
+    See :py:attr:`Context.LINEAR_MIPMAP_LINEAR`
+
+.. py:attribute:: moderngl.ZERO
+
+    See :py:attr:`Context.ZERO`
+
+.. py:attribute:: moderngl.ONE
+
+    See :py:attr:`Context.ONE`
+
+.. py:attribute:: moderngl.SRC_COLOR
+
+    See :py:attr:`Context.SRC_COLOR`
+
+.. py:attribute:: moderngl.ONE_MINUS_SRC_COLOR
+
+    See :py:attr:`Context.ONE_MINUS_SRC_COLOR`
+
+.. py:attribute:: moderngl.SRC_ALPHA
+
+    See :py:attr:`Context.SRC_ALPHA`
+
+.. py:attribute:: moderngl.ONE_MINUS_SRC_ALPHA
+
+    See :py:attr:`Context.ONE_MINUS_SRC_ALPHA`
+
+.. py:attribute:: moderngl.DST_ALPHA
+
+    See :py:attr:`Context.DST_ALPHA`
+
+.. py:attribute:: moderngl.ONE_MINUS_DST_ALPHA
+
+    See :py:attr:`Context.ONE_MINUS_DST_ALPHA`
+
+.. py:attribute:: moderngl.DST_COLOR
+
+    See :py:attr:`Context.DST_COLOR`
+
+.. py:attribute:: moderngl.ONE_MINUS_DST_COLOR
+
+    See :py:attr:`Context.ONE_MINUS_DST_COLOR`
+
+.. py:attribute:: moderngl.DEFAULT_BLENDING
+
+    See :py:attr:`Context.DEFAULT_BLENDING`
+
+.. py:attribute:: moderngl.ADDITIVE_BLENDING
+
+    See :py:attr:`Context.ADDITIVE_BLENDING`
+
+.. py:attribute:: moderngl.PREMULTIPLIED_ALPHA
+
+    See :py:attr:`Context.PREMULTIPLIED_ALPHA`
+
+.. py:attribute:: moderngl.FUNC_ADD
+
+    See :py:attr:`Context.FUNC_ADD`
+
+.. py:attribute:: moderngl.FUNC_SUBTRACT
+
+    See :py:attr:`Context.FUNC_SUBTRACT`
+
+.. py:attribute:: moderngl.FUNC_REVERSE_SUBTRACT
+
+    See :py:attr:`Context.FUNC_REVERSE_SUBTRACT`
+
+.. py:attribute:: moderngl.MIN
+
+    See :py:attr:`Context.MIN`
+
+.. py:attribute:: moderngl.MAX
+
+    See :py:attr:`Context.MAX`
+
+.. py:attribute:: moderngl.FIRST_VERTEX_CONVENTION
+
+    See :py:attr:`Context.FIRST_VERTEX_CONVENTION`
+
+.. py:attribute:: moderngl.LAST_VERTEX_CONVENTION
+
+    See :py:attr:`Context.LAST_VERTEX_CONVENTION`

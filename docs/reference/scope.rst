@@ -1,29 +1,42 @@
 Scope
 =====
 
-.. py:currentmodule:: moderngl
+.. py:class:: Scope
 
-.. autoclass:: moderngl.Scope
+    Returned by :py:meth:`Context.scope`
 
-Create
-------
+    This class represents a Scope object.
 
-.. automethod:: Context.scope
-   :noindex:
+    Responsibilities on enter:
+
+    - Set the enable flags.
+    - Bind the framebuffer.
+    - Assigning textures to texture locations.
+    - Assigning buffers to uniform buffers.
+    - Assigning buffers to shader storage buffers.
+
+    Responsibilities on exit:
+
+    - Restore the enable flags.
+    - Restore the framebuffer.
 
 Methods
 -------
 
-.. automethod:: Scope.__enter__
-.. automethod:: Scope.__exit__
-.. automethod:: Scope.release
+.. py:method:: Scope.release
 
 Attributes
 ----------
 
-.. autoattribute:: Scope.extra
-.. autoattribute:: Scope.mglo
-.. autoattribute:: Scope.ctx
+.. py:attribute:: Scope.ctx
+    :type: Context
+
+    The context this object belongs to
+
+.. py:attribute:: Scope.extra
+    :type: Any
+
+    User defined data.
 
 Examples
 --------
@@ -106,6 +119,3 @@ Examples
     # Scope objects only do as much as necessary.
     # Restoring the framebuffer and enable flags are lowcost operations and
     # without them you could get a hard time debugging the application.
-
-.. toctree::
-    :maxdepth: 2

@@ -33,7 +33,6 @@ def test_shader_includes(ctx):
         ''',
     )
     assert program.glo > 0
-    assert program.subroutines == ()
 
     assert 'vert' in program
     assert 'pos' in program

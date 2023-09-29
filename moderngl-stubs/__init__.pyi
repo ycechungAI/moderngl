@@ -2,460 +2,223 @@ from __future__ import annotations
 
 from typing import Any, Deque, Dict, Generator, List, Optional, Protocol, Set, Tuple, Union
 
-
 class ConvertibleToShaderSource(Protocol):
-    def to_shader_source(self) -> str | bytes:
-        ...
-
-
-class Constant: ...
-
-
-POINTS: Constant
-'''
-Each vertex represents a point
-'''
-
-LINES: Constant
-'''
-Vertices 0 and 1 are considered a line. Vertices 2 and 3 are considered a line.
-And so on. If the user specifies a non-even number of vertices, then the extra vertex is ignored.
-'''
-
-LINE_LOOP: Constant
-'''
-As line strips, except that the first and last vertices are also used as a line.
-Thus, you get n lines for n input vertices. If the user only specifies 1 vertex,
-the drawing command is ignored. The line between the first and last vertices happens
-after all of the previous lines in the sequence.
-'''
-
-LINE_STRIP: Constant
-'''
-The adjacent vertices are considered lines. Thus, if you pass n vertices, you will get n-1 lines.
-If the user only specifies 1 vertex, the drawing command is ignored.
-'''
-
-TRIANGLES: Constant
-'''
-Vertices 0, 1, and 2 form a triangle. Vertices 3, 4, and 5 form a triangle. And so on.
-'''
-
-TRIANGLE_STRIP: Constant
-'''
-Every group of 3 adjacent vertices forms a triangle. The face direction of the
-strip is determined by the winding of the first triangle. Each successive triangle
-will have its effective face order reversed, so the system compensates for that
-by testing it in the opposite way. A vertex stream of n length will generate n-2 triangles.
-'''
-
-TRIANGLE_FAN: Constant
-'''
-The first vertex is always held fixed. From there on, every group of 2 adjacent
-vertices form a triangle with the first. So with a vertex stream, you get a list
-of triangles like so: (0, 1, 2) (0, 2, 3), (0, 3, 4), etc. A vertex stream of
-n length will generate n-2 triangles.
-'''
-
-LINES_ADJACENCY: Constant
-'''
-These are special primitives that are expected to be used specifically with
-geomtry shaders. These primitives give the geometry shader more vertices
-to work with for each input primitive. Data needs to be duplicated in buffers.
-'''
-
-LINE_STRIP_ADJACENCY: Constant
-'''
-These are special primitives that are expected to be used specifically with
-geomtry shaders. These primitives give the geometry shader more vertices
-to work with for each input primitive. Data needs to be duplicated in buffers.
-'''
-
-TRIANGLES_ADJACENCY: Constant
-'''
-These are special primitives that are expected to be used specifically with
-geomtry shaders. These primitives give the geometry shader more vertices
-to work with for each input primitive. Data needs to be duplicated in buffers.
-'''
-
-TRIANGLE_STRIP_ADJACENCY: Constant
-'''
-These are special primitives that are expected to be used specifically with
-geomtry shaders. These primitives give the geometry shader more vertices
-to work with for each input primitive. Data needs to be duplicated in buffers.
-'''
-
-PATCHES: Constant
-'''
-primitive type can only be used when Tessellation is active. It is a primitive
-with a user-defined number of vertices, which is then tessellated based on the
-control and evaluation shaders into regular points, lines, or triangles, depending
-on the TES's settings.
-'''
-
-NEAREST: Constant
-'''
-Returns the value of the texture element that is nearest
-(in Manhattan distance) to the specified texture coordinates.
-'''
-
-LINEAR: Constant
-'''
-Returns the weighted average of the four texture elements
-that are closest to the specified texture coordinates.
-These can include items wrapped or repeated from other parts
-of a texture, depending on the values of texture repeat mode,
-and on the exact mapping.
-'''
+    def to_shader_source(self) -> str | bytes: ...
 
-NEAREST_MIPMAP_NEAREST: Constant
-'''
-Chooses the mipmap that most closely matches the size of the
-pixel being textured and uses the ``NEAREST``` criterion (the texture
-element closest to the specified texture coordinates) to produce
-a texture value.
-'''
+POINTS: int
+'''ctx.POINTS'''
 
-LINEAR_MIPMAP_NEAREST: Constant
-'''
-Chooses the mipmap that most closely matches the size of the pixel
-being textured and uses the ``LINEAR`` criterion (a weighted average
-of the four texture elements that are closest to the specified
-texture coordinates) to produce a texture value.
-'''
+LINES: int
+'''ctx.LINES'''
 
-NEAREST_MIPMAP_LINEAR: Constant
-'''
-Chooses the two mipmaps that most closely match the size of the
-pixel being textured and uses the ``NEAREST`` criterion (the texture
-element closest to the specified texture coordinates ) to produce
-a texture value from each mipmap. The final texture value is a
-weighted average of those two values.
-'''
+LINE_LOOP: int
+'''ctx.LINE_LOOP'''
 
-LINEAR_MIPMAP_LINEAR: Constant
-'''
-Chooses the two mipmaps that most closely match the size of the pixel
-being textured and uses the ``LINEAR`` criterion (a weighted average
-of the texture elements that are closest to the specified texture
-coordinates) to produce a texture value from each mipmap.
-The final texture value is a weighted average of those two values.
-'''
+LINE_STRIP: int
+'''ctx.LINE_STRIP'''
 
-NOTHING: Constant
-'''Represents no states. Can be used with :py:meth:`Context.enable_only` to disable all states.'''
+TRIANGLES: int
+'''ctx.TRIANGLES'''
 
-BLEND: Constant
-'''Enable/disable blending'''
+TRIANGLE_STRIP: int
+'''ctx.TRIANGLE_STRIP'''
 
-DEPTH_TEST: Constant
-'''Enable/disable depth testing'''
-
-CULL_FACE: Constant
-'''Enable/disable face culling'''
-
-RASTERIZER_DISCARD: Constant
-'''Enable/disable rasterization'''
+TRIANGLE_FAN: int
+'''ctx.TRIANGLE_FAN'''
 
-PROGRAM_POINT_SIZE: Constant
-'''
-Context flag: Enables ``gl_PointSize`` in vertex or geometry shaders.
-
-When enabled we can write to ``gl_PointSize`` in the vertex shader to specify the point size
-for each individual point.
-
-If this value is not set in the shader the behavior is undefined. This means the points may
-or may not appear depending if the drivers enforce some default value for ``gl_PointSize``.
-
-When disabled :py:attr:`Context.point_size` is used.
-'''
-
-ZERO: Constant
-'''(0,0,0,0)'''
-
-ONE: Constant
-'''(1,1,1,1)'''
-
-SRC_COLOR: Constant
-'''(Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)'''
-
-ONE_MINUS_SRC_COLOR: Constant
-'''(1,1,1,1) - (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)'''
-
-SRC_ALPHA: Constant
-'''(As0/kA,As0/kA,As0/kA,As0/kA)'''
-
-ONE_MINUS_SRC_ALPHA: Constant
-'''(1,1,1,1) - (As0/kA,As0/kA,As0/kA,As0/kA)'''
-
-DST_ALPHA: Constant
-'''(Ad/kA,Ad/kA,Ad/kA,Ad/kA)'''
-
-ONE_MINUS_DST_ALPHA: Constant
-'''(1,1,1,1) - (Ad/kA,Ad/kA,Ad/kA,Ad/kA)'''
-
-DST_COLOR: Constant
-'''(Rd/kR,Gd/kG,Bd/kB,Ad/kA)'''
-
-ONE_MINUS_DST_COLOR: Constant
-'''(1,1,1,1) - (Rd/kR,Gd/kG,Bd/kB,Ad/kA)'''
-
-FUNC_ADD: Constant
-'''source + destination'''
-
-FUNC_SUBTRACT: Constant
-'''source - destination'''
-
-FUNC_REVERSE_SUBTRACT: Constant
-'''destination - source'''
-
-MIN: Constant
-'''Minimum of source and destination'''
-
-MAX: Constant
-'''Maximum of source and destination'''
-
-DEFAULT_BLENDING: Constant
-'''Shotcut for the default blending ``SRC_ALPHA, ONE_MINUS_SRC_ALPHA``'''
-
-ADDITIVE_BLENDING: Constant
-'''Shotcut for additive blending ``ONE, ONE``'''
-
-PREMULTIPLIED_ALPHA: Constant
-'''Shotcut for blend mode when using premultiplied alpha ``SRC_ALPHA, ONE``'''
-
-FIRST_VERTEX_CONVENTION: Constant
-'''
-Specifies the first vertex should be used as the source of data for flat shaded varyings.
-Used with :py:attr:`Context.provoking_vertex`.
-'''
-
-LAST_VERTEX_CONVENTION: Constant
-'''
-Specifies the last vertex should be used as the source of data for flat shaded varyings.
-Used with :py:attr:`Context.provoking_vertex`.
-'''
-
-VERTEX_ATTRIB_ARRAY_BARRIER_BIT: Constant
-'''
-VERTEX_ATTRIB_ARRAY_BARRIER_BIT
-'''
-
-ELEMENT_ARRAY_BARRIER_BIT: Constant
-'''
-ELEMENT_ARRAY_BARRIER_BIT
-'''
-
-UNIFORM_BARRIER_BIT: Constant
-'''
-UNIFORM_BARRIER_BIT
-'''
-
-TEXTURE_FETCH_BARRIER_BIT: Constant
-'''
-TEXTURE_FETCH_BARRIER_BIT
-'''
-
-SHADER_IMAGE_ACCESS_BARRIER_BIT: Constant
-'''
-SHADER_IMAGE_ACCESS_BARRIER_BIT
-'''
-
-COMMAND_BARRIER_BIT: Constant
-'''
-COMMAND_BARRIER_BIT
-'''
-
-PIXEL_BUFFER_BARRIER_BIT: Constant
-'''
-PIXEL_BUFFER_BARRIER_BIT
-'''
-
-TEXTURE_UPDATE_BARRIER_BIT: Constant
-'''
-TEXTURE_UPDATE_BARRIER_BIT
-'''
-
-BUFFER_UPDATE_BARRIER_BIT: Constant
-'''
-BUFFER_UPDATE_BARRIER_BIT
-'''
-
-FRAMEBUFFER_BARRIER_BIT: Constant
-'''
-FRAMEBUFFER_BARRIER_BIT
-'''
-
-TRANSFORM_FEEDBACK_BARRIER_BIT: Constant
-'''
-TRANSFORM_FEEDBACK_BARRIER_BIT
-'''
-
-ATOMIC_COUNTER_BARRIER_BIT: Constant
-'''
-ATOMIC_COUNTER_BARRIER_BIT
-'''
-
-SHADER_STORAGE_BARRIER_BIT: Constant
-'''
-SHADER_STORAGE_BARRIER_BIT
-'''
-
-ALL_BARRIER_BITS: Constant
-'''
-ALL_BARRIER_BITS
-'''
+LINES_ADJACENCY: int
+'''ctx.LINES_ADJACENCY'''
 
+LINE_STRIP_ADJACENCY: int
+'''ctx.LINE_STRIP_ADJACENCY'''
+
+TRIANGLES_ADJACENCY: int
+'''ctx.TRIANGLES_ADJACENCY'''
+
+TRIANGLE_STRIP_ADJACENCY: int
+'''ctx.TRIANGLE_STRIP_ADJACENCY'''
+
+PATCHES: int
+'''ctx.PATCHES'''
+
+NEAREST: int
+'''ctx.NEAREST'''
+
+LINEAR: int
+'''ctx.LINEAR'''
+
+NEAREST_MIPMAP_NEAREST: int
+'''ctx.NEAREST_MIPMAP_NEAREST'''
+
+LINEAR_MIPMAP_NEAREST: int
+'''ctx.LINEAR_MIPMAP_NEAREST'''
+
+NEAREST_MIPMAP_LINEAR: int
+'''ctx.NEAREST_MIPMAP_LINEAR'''
+
+LINEAR_MIPMAP_LINEAR: int
+'''ctx.LINEAR_MIPMAP_LINEAR'''
+
+NOTHING: int
+'''ctx.NOTHING'''
+
+BLEND: int
+'''ctx.BLEND'''
+
+DEPTH_TEST: int
+'''ctx.DEPTH_TEST'''
+
+CULL_FACE: int
+'''ctx.CULL_FACE'''
+
+RASTERIZER_DISCARD: int
+'''ctx.RASTERIZER_DISCARD'''
+
+PROGRAM_POINT_SIZE: int
+'''ctx.PROGRAM_POINT_SIZE'''
+
+ZERO: int
+'''ctx.ZERO'''
+
+ONE: int
+'''ctx.ONE'''
+
+SRC_COLOR: int
+'''ctx.SRC_COLOR'''
+
+ONE_MINUS_SRC_COLOR: int
+'''ctx.ONE_MINUS_SRC_COLOR'''
+
+SRC_ALPHA: int
+'''ctx.SRC_ALPHA'''
+
+ONE_MINUS_SRC_ALPHA: int
+'''ctx.ONE_MINUS_SRC_ALPHA'''
+
+DST_ALPHA: int
+'''ctx.DST_ALPHA'''
+
+ONE_MINUS_DST_ALPHA: int
+'''ctx.ONE_MINUS_DST_ALPHA'''
+
+DST_COLOR: int
+'''ctx.DST_COLOR'''
+
+ONE_MINUS_DST_COLOR: int
+'''ctx.ONE_MINUS_DST_COLOR'''
+
+FUNC_ADD: int
+'''ctx.FUNC_ADD'''
+
+FUNC_SUBTRACT: int
+'''ctx.FUNC_SUBTRACT'''
+
+FUNC_REVERSE_SUBTRACT: int
+'''ctx.FUNC_REVERSE_SUBTRACT'''
+
+MIN: int
+'''ctx.MIN'''
+
+MAX: int
+'''ctx.MAX'''
+
+DEFAULT_BLENDING: int
+'''ctx.DEFAULT_BLENDING'''
+
+ADDITIVE_BLENDING: int
+'''ctx.ADDITIVE_BLENDING'''
+
+PREMULTIPLIED_ALPHA: int
+'''ctx.PREMULTIPLIED_ALPHA'''
+
+FIRST_VERTEX_CONVENTION: int
+'''ctx.FIRST_VERTEX_CONVENTION'''
+
+LAST_VERTEX_CONVENTION: int
+'''ctx.LAST_VERTEX_CONVENTION'''
+
+VERTEX_ATTRIB_ARRAY_BARRIER_BIT: int
+'''ctx.VERTEX_ATTRIB_ARRAY_BARRIER_BIT'''
+
+ELEMENT_ARRAY_BARRIER_BIT: int
+'''ctx.ELEMENT_ARRAY_BARRIER_BIT'''
+
+UNIFORM_BARRIER_BIT: int
+'''ctx.UNIFORM_BARRIER_BIT'''
+
+TEXTURE_FETCH_BARRIER_BIT: int
+'''ctx.TEXTURE_FETCH_BARRIER_BIT'''
+
+SHADER_IMAGE_ACCESS_BARRIER_BIT: int
+'''ctx.SHADER_IMAGE_ACCESS_BARRIER_BIT'''
+
+COMMAND_BARRIER_BIT: int
+'''ctx.COMMAND_BARRIER_BIT'''
+
+PIXEL_BUFFER_BARRIER_BIT: int
+'''ctx.PIXEL_BUFFER_BARRIER_BIT'''
+
+TEXTURE_UPDATE_BARRIER_BIT: int
+'''ctx.TEXTURE_UPDATE_BARRIER_BIT'''
+
+BUFFER_UPDATE_BARRIER_BIT: int
+'''ctx.BUFFER_UPDATE_BARRIER_BIT'''
+
+FRAMEBUFFER_BARRIER_BIT: int
+'''ctx.FRAMEBUFFER_BARRIER_BIT'''
+
+TRANSFORM_FEEDBACK_BARRIER_BIT: int
+'''ctx.TRANSFORM_FEEDBACK_BARRIER_BIT'''
+
+ATOMIC_COUNTER_BARRIER_BIT: int
+'''ctx.ATOMIC_COUNTER_BARRIER_BIT'''
+
+SHADER_STORAGE_BARRIER_BIT: int
+'''ctx.SHADER_STORAGE_BARRIER_BIT'''
+
+ALL_BARRIER_BITS: int
+'''ctx.ALL_BARRIER_BITS'''
 
 class Attribute:
     '''
-    This class represents a program attribute.
+    Represents a program attribute.
     '''
 
     location: int
     '''
-    int: The location of the attribute.
-
+    The location of the attribute.
     The result of the glGetAttribLocation.
     '''
 
     array_length: int
     '''
-    int: If the attribute is an array the array_length.
-
-    is the length of the array otherwise `1`.
+    The length of the array and `1` for scalars.
     '''
 
     dimension: int
     '''
-    int: The attribute dimension.
-
-    +-----------+-----------+
-    | GLSL type | dimension |
-    +===========+===========+
-    | int       | 1         |
-    +-----------+-----------+
-    | ivec2     | 2         |
-    +-----------+-----------+
-    | ivec3     | 3         |
-    +-----------+-----------+
-    | ivec4     | 4         |
-    +-----------+-----------+
-    | uint      | 1         |
-    +-----------+-----------+
-    | uvec2     | 2         |
-    +-----------+-----------+
-    | uvec3     | 3         |
-    +-----------+-----------+
-    | uvec4     | 4         |
-    +-----------+-----------+
-    | float     | 1         |
-    +-----------+-----------+
-    | vec2      | 2         |
-    +-----------+-----------+
-    | vec3      | 3         |
-    +-----------+-----------+
-    | vec4      | 4         |
-    +-----------+-----------+
-    | double    | 1         |
-    +-----------+-----------+
-    | dvec2     | 2         |
-    +-----------+-----------+
-    | dvec3     | 3         |
-    +-----------+-----------+
-    | dvec4     | 4         |
-    +-----------+-----------+
-    | mat2      | 4         |
-    +-----------+-----------+
-    | mat2x3    | 6         |
-    +-----------+-----------+
-    | mat2x4    | 8         |
-    +-----------+-----------+
-    | mat3x2    | 6         |
-    +-----------+-----------+
-    | mat3      | 9         |
-    +-----------+-----------+
-    | mat3x4    | 12        |
-    +-----------+-----------+
-    | mat4x2    | 8         |
-    +-----------+-----------+
-    | mat4x3    | 12        |
-    +-----------+-----------+
-    | mat4      | 16        |
-    +-----------+-----------+
-    | dmat2     | 4         |
-    +-----------+-----------+
-    | dmat2x3   | 6         |
-    +-----------+-----------+
-    | dmat2x4   | 8         |
-    +-----------+-----------+
-    | dmat3x2   | 6         |
-    +-----------+-----------+
-    | dmat3     | 9         |
-    +-----------+-----------+
-    | dmat3x4   | 12        |
-    +-----------+-----------+
-    | dmat4x2   | 8         |
-    +-----------+-----------+
-    | dmat4x3   | 12        |
-    +-----------+-----------+
-    | dmat4     | 16        |
-    +-----------+-----------+
+    The attribute dimension.
     '''
 
     shape: int
     '''
-    str: The shape is a single character, representing the scalar type of the attribute.
-
-    +---------+--------------------------+
-    | shape   | GLSL types               |
-    +=========+==========================+
-    | ``'i'`` | int                      |
-    |         +--------------------------+
-    |         | ivec2 ivec3 ivec4        |
-    +---------+--------------------------+
-    | ``'I'`` | uint                     |
-    |         +--------------------------+
-    |         | uvec2 uvec3 uvec4        |
-    +---------+--------------------------+
-    | ``'f'`` | float                    |
-    |         +--------------------------+
-    |         | vec2 vec3 vec4           |
-    |         +--------------------------+
-    |         | mat2 mat3 mat4           |
-    |         +--------------------------+
-    |         | mat2x3 mat2x4 mat3x4     |
-    |         | mat4x2 mat4x2 mat4x3     |
-    +---------+--------------------------+
-    | ``'d'`` | double                   |
-    |         +--------------------------+
-    |         | dvec2 dvec3 dvec4        |
-    |         +--------------------------+
-    |         | dmat2 dmat3 dmat4        |
-    |         +--------------------------+
-    |         | dmat2x3 dmat2x4 dmat3x4  |
-    |         | dmat4x2 dmat4x2 dmat4x3  |
-    +---------+--------------------------+
+    A single character, representing the scalar type of the attribute.
     '''
 
     name: str
     '''
-    str: The attribute name.
-
-    The name will be filtered to have no array syntax on it's end.
-    Attribute name without ``'[0]'`` ending if any.
+    The Attribute name without array index suffixes.
     '''
 
     extra: Any
     '''
-    Attribute for storing user defined objects
+    User Data
     '''
 
     mglo: Any
     '''
     Internal moderngl core object
     '''
-
 
 class Uniform:
     '''
@@ -469,112 +232,23 @@ class Uniform:
 
     location: int
     '''
-    int: The location of the uniform.
-
-    The location holds the value returned by the glGetUniformLocation.
-    To set the value of the uniform use the :py:attr:`value` instead.
+    The location of the uniform.
     '''
 
     dimension: int
     '''
-    int: The dimension of the uniform.
-
-    +-----------------+-----------+
-    | GLSL type       | dimension |
-    +=================+===========+
-    | sampler2D       | 1         |
-    +-----------------+-----------+
-    | sampler2DCube   | 1         |
-    +-----------------+-----------+
-    | sampler2DShadow | 1         |
-    +-----------------+-----------+
-    | bool            | 1         |
-    +-----------------+-----------+
-    | bvec2           | 2         |
-    +-----------------+-----------+
-    | bvec3           | 3         |
-    +-----------------+-----------+
-    | bvec4           | 4         |
-    +-----------------+-----------+
-    | int             | 1         |
-    +-----------------+-----------+
-    | ivec2           | 2         |
-    +-----------------+-----------+
-    | ivec3           | 3         |
-    +-----------------+-----------+
-    | ivec4           | 4         |
-    +-----------------+-----------+
-    | uint            | 1         |
-    +-----------------+-----------+
-    | uvec2           | 2         |
-    +-----------------+-----------+
-    | uvec3           | 3         |
-    +-----------------+-----------+
-    | uvec4           | 4         |
-    +-----------------+-----------+
-    | float           | 1         |
-    +-----------------+-----------+
-    | vec2            | 2         |
-    +-----------------+-----------+
-    | vec3            | 3         |
-    +-----------------+-----------+
-    | vec4            | 4         |
-    +-----------------+-----------+
-    | double          | 1         |
-    +-----------------+-----------+
-    | dvec2           | 2         |
-    +-----------------+-----------+
-    | dvec3           | 3         |
-    +-----------------+-----------+
-    | dvec4           | 4         |
-    +-----------------+-----------+
-    | mat2            | 4         |
-    +-----------------+-----------+
-    | mat2x3          | 6         |
-    +-----------------+-----------+
-    | mat2x4          | 8         |
-    +-----------------+-----------+
-    | mat3x2          | 6         |
-    +-----------------+-----------+
-    | mat3            | 9         |
-    +-----------------+-----------+
-    | mat3x4          | 12        |
-    +-----------------+-----------+
-    | mat4x2          | 8         |
-    +-----------------+-----------+
-    | mat4x3          | 12        |
-    +-----------------+-----------+
-    | mat4            | 16        |
-    +-----------------+-----------+
-    | dmat2           | 4         |
-    +-----------------+-----------+
-    | dmat2x3         | 6         |
-    +-----------------+-----------+
-    | dmat2x4         | 8         |
-    +-----------------+-----------+
-    | dmat3x2         | 6         |
-    +-----------------+-----------+
-    | dmat3           | 9         |
-    +-----------------+-----------+
-    | dmat3x4         | 12        |
-    +-----------------+-----------+
-    | dmat4x2         | 8         |
-    +-----------------+-----------+
-    | dmat4x3         | 12        |
-    +-----------------+-----------+
-    | dmat4           | 16        |
-    +-----------------+-----------+
+    The dimension of the uniform.
     '''
 
     array_length: int
     '''
-    int: The length of the array of the uniform.
+    The length of the array of the uniform.
     The array_length is `1` for non array uniforms.
     '''
 
     name: str
     '''
-    str: The name of the uniform.
+    The name of the uniform.
 
     The name does not contain leading `[0]`.
     The name may contain `[ ]` when the uniform is part of a struct.
@@ -611,12 +285,10 @@ class Uniform:
         '''
         Read the value of the uniform.
         '''
-
     def write(self, data: Any) -> None:
         '''
         Write the value of the uniform.
         '''
-
 
 class UniformBlock:
     '''
@@ -625,27 +297,27 @@ class UniformBlock:
 
     binding: int
     '''
-    int: The binding of the uniform block.
+    The binding of the uniform block.
     '''
 
     value: int
     '''
-    int: The value of the uniform block.
+    The value of the uniform block.
     '''
 
     name: str
     '''
-    str: The name of the uniform block.
+    The name of the uniform block.
     '''
 
     index: int
     '''
-    int: The index of the uniform block.
+    The index of the uniform block.
     '''
 
     size: int
     '''
-    int: The size of the uniform block.
+    The size of the uniform block.
     '''
 
     extra: Any
@@ -657,7 +329,6 @@ class UniformBlock:
     '''
     Internal moderngl core object
     '''
-
 
 class StorageBlock:
     '''
@@ -666,22 +337,22 @@ class StorageBlock:
 
     binding: int
     '''
-    int: The binding of the storage block
+    The binding of the storage block
     '''
 
     value: int
     '''
-    int: The value of the storage block.
+    The value of the storage block.
     '''
 
     name: str
     '''
-    str: The name of the storage block.
+    The name of the storage block.
     '''
 
     index: int
     '''
-    int: The index of the storage block.
+    The index of the storage block.
     '''
 
     extra: Any
@@ -693,33 +364,6 @@ class StorageBlock:
     '''
     Internal moderngl core object
     '''
-
-
-class Subroutine:
-    '''
-    This class represents a program subroutine.
-    '''
-
-    index: int
-    '''
-    int: The index of the subroutine.
-    '''
-
-    name: str
-    '''
-    str: The name of the subroutine.
-    '''
-
-    extra: Any
-    '''
-    Attribute for storing user defined objects
-    '''
-
-    mglo: Any
-    '''
-    Internal moderngl core object
-    '''
-
 
 class Varying:
     '''
@@ -728,12 +372,12 @@ class Varying:
 
     number: int
     '''
-    int: The number of the varying.
+    The number of the varying.
     '''
 
     name: str
     '''
-    str: The name of the varying.
+    The name of the varying.
     '''
 
     extra: Any
@@ -746,18 +390,15 @@ class Varying:
     Internal moderngl core object
     '''
 
-
 class Error(Exception):
     '''
     Generic moderngl error.
     '''
 
-
 class InvalidObject:
     '''
     DEPRECATED
     '''
-
 
 class Buffer:
     '''
@@ -774,23 +415,23 @@ class Buffer:
     '''
 
     size: int
-    '''int: The size of the buffer in bytes.'''
+    '''The size of the buffer in bytes.'''
 
     dynamic: bool
-    '''bool: Is the buffer created with the dynamic flag?.'''
+    '''Is the buffer created with the dynamic flag?.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
 
-    ctx: 'Context'
+    ctx: Context
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -805,7 +446,6 @@ class Buffer:
         Keyword Args:
             offset (int): The offset in bytes.
         '''
-
     def write_chunks(self, data: Any, start: int, step: int, count: int) -> None:
         '''
         Split data to count equal parts.
@@ -818,7 +458,6 @@ class Buffer:
             step (int): Offset increment in bytes.
             count (int): The number of offsets.
         '''
-
     def read(self, size: int = -1, *, offset: int = 0) -> bytes:
         '''
         Read the content.
@@ -832,7 +471,6 @@ class Buffer:
         Returns:
             bytes
         '''
-
     def read_into(self, buffer: Any, size: int = -1, *, offset: int = 0, write_offset: int = 0) -> None:
         '''
         Read the content into a buffer.
@@ -845,7 +483,6 @@ class Buffer:
             offset (int): The read offset in bytes.
             write_offset (int): The write offset in bytes.
         '''
-
     def read_chunks(self, chunk_size: int, start: int, step: int, count: int) -> bytes:
         '''
         Read the content.
@@ -862,8 +499,16 @@ class Buffer:
         Returns:
             bytes
         '''
-
-    def read_chunks_into(self, buffer: Any, chunk_size: int, start: int, step: int, count: int, *, write_offset: int = 0) -> None:
+    def read_chunks_into(
+        self,
+        buffer: Any,
+        chunk_size: int,
+        start: int,
+        step: int,
+        count: int,
+        *,
+        write_offset: int = 0,
+    ) -> None:
         '''
         Read the content.
 
@@ -880,7 +525,6 @@ class Buffer:
         Keyword Args:
             write_offset (int): The write offset.
         '''
-
     def clear(self, size: int = -1, *, offset: int = 0, chunk: Any = None) -> None:
         '''
         Clear the content.
@@ -892,7 +536,6 @@ class Buffer:
             offset (int): The offset.
             chunk (bytes): The chunk to use repeatedly.
         '''
-
     def bind_to_uniform_block(self, binding: int = 0, *, offset: int = 0, size: int = -1) -> None:
         '''
         Bind the buffer to a uniform block.
@@ -904,7 +547,6 @@ class Buffer:
             offset (int): The offset.
             size (int): The size. Value ``-1`` means all.
         '''
-
     def bind_to_storage_buffer(self, binding: int = 0, *, offset: int = 0, size: int = -1) -> None:
         '''
         Bind the buffer to a shader storage buffer.
@@ -916,7 +558,6 @@ class Buffer:
             offset (int): The offset.
             size (int): The size. Value ``-1`` means all.
         '''
-
     def orphan(self, size: int = -1) -> None:
         '''
         Orphan the buffer with the option to specify a new size.
@@ -966,10 +607,8 @@ class Buffer:
 
             >> vbo.orphan(vbo.size * 2)
         '''
-
     def release(self) -> None:
         '''Release the ModernGL object.'''
-
     def bind(self, *attribs, layout=None):
         '''
         Helper method for binding a buffer.
@@ -977,15 +616,13 @@ class Buffer:
         Returns:
             (self, layout, attribs) tuple
         '''
-
-    def assign(self, index: int) -> Tuple['Buffer', int]:
+    def assign(self, index: int) -> Tuple[Buffer, int]:
         '''
         Helper method for assigning a buffer.
 
         Returns:
             (self, index) tuple
         '''
-
 
 class ComputeShader:
     '''
@@ -1004,15 +641,15 @@ class ComputeShader:
     mglo: Any
     '''Internal representation for debug purposes only.'''
 
-    ctx: 'Context'
+    ctx: Context
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -1036,7 +673,6 @@ class ComputeShader:
             # Set binding for a storage block (if supported)
             program['DataBlock'].binding = 0
         '''
-
     def __setitem__(self, key: str, value: Any):
         '''
         Set a value of uniform or uniform block.
@@ -1056,7 +692,6 @@ class ComputeShader:
             # Set binding for a storage block (if supported)
             program['DataBlock'].binding = 0
         '''
-
     def __iter__(self) -> Generator[str, None, None]:
         '''
         Yields the internal members names as strings.
@@ -1067,11 +702,10 @@ class ComputeShader:
                 obj = program[member]
                 print(member, obj)
                 if isinstance(obj, moderngl.StorageBlock):
-                    print("This is a storage block member")
+                    print('This is a storage block member')
 
         This includes all members such as uniforms, uniform blocks and storage blocks.
         '''
-
     def run(self, group_x: int = 1, group_y: int = 1, group_z: int = 1) -> None:
         '''
         Run the compute shader.
@@ -1081,27 +715,24 @@ class ComputeShader:
             group_y (int): The number of work groups to be launched in the Y dimension.
             group_z (int): The number of work groups to be launched in the Z dimension.
         '''
-
     def run_indirect(self, buffer: Buffer, offset: int = 0) -> None:
         '''
         Run the compute shader.
         '''
-
-    def get(self, key: str, default: Any) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    def get(
+        self, key: str, default: Any
+    ) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         '''
-        Returns a Uniform, UniformBlock, Subroutine, Attribute or Varying.
+        Returns a Uniform, UniformBlock, Attribute or Varying.
 
         Args:
             default: This is the value to be returned in case key does not exist.
 
         Returns:
-            :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Subroutine`,
-            :py:class:`Attribute` or :py:class:`Varying`
+            :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Attribute` or :py:class:`Varying`
         '''
-
     def release(self) -> None:
         '''Release the ModernGL object.'''
-
 
 class ConditionalRender:
     '''
@@ -1114,11 +745,10 @@ class ConditionalRender:
     '''Internal representation for debug purposes only.'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     def __enter__(self): ...
     def __exit__(self, *args): ...
-
 
 class Context:
     '''
@@ -1127,19 +757,19 @@ class Context:
     ModernGL objects can be created from this class.
     '''
 
-    NOTHING: Constant
+    NOTHING: int
     '''Represents no states. Can be used with :py:meth:`Context.enable_only` to disable all states.'''
 
-    BLEND: Constant
+    BLEND: int
     '''Enable/disable blending'''
 
-    DEPTH_TEST: Constant
+    DEPTH_TEST: int
     '''Enable/disable depth testing'''
 
-    CULL_FACE: Constant
+    CULL_FACE: int
     '''Enable/disable face culling'''
 
-    RASTERIZER_DISCARD: Constant
+    RASTERIZER_DISCARD: int
     '''Enable/disable rasterization
 
     Context flag: Enables ``gl_PointSize`` in vertex or geometry shaders.
@@ -1150,242 +780,242 @@ class Context:
     If this value is not set in the shader the behavior is undefined. This means the points may
     or may not appear depending if the drivers enforce some default value for ``gl_PointSize``.'''
 
-    PROGRAM_POINT_SIZE: Constant
+    PROGRAM_POINT_SIZE: int
     '''When disabled :py:attr:`Context.point_size` is used.'''
 
-    POINTS: Constant
+    POINTS: int
     '''Each vertex represents a point'''
 
-    LINES: Constant
+    LINES: int
     '''Vertices 0 and 1 are considered a line. Vertices 2 and 3 are considered a line.
     And so on. If the user specifies a non-even number of vertices, then the extra vertex is ignored.'''
 
-    LINE_LOOP: Constant
+    LINE_LOOP: int
     '''As line strips, except that the first and last vertices are also used as a line.
     Thus, you get n lines for n input vertices. If the user only specifies 1 vertex,
     the drawing command is ignored. The line between the first and last vertices happens
     after all of the previous lines in the sequence.'''
 
-    LINE_STRIP: Constant
+    LINE_STRIP: int
     '''The adjacent vertices are considered lines. Thus, if you pass n vertices, you will get n-1 lines.
     If the user only specifies 1 vertex, the drawing command is ignored.'''
 
-    TRIANGLES: Constant
+    TRIANGLES: int
     '''Vertices 0, 1, and 2 form a triangle. Vertices 3, 4, and 5 form a triangle. And so on.'''
 
-    TRIANGLE_STRIP: Constant
+    TRIANGLE_STRIP: int
     '''Every group of 3 adjacent vertices forms a triangle. The face direction of the
     strip is determined by the winding of the first triangle. Each successive triangle
     will have its effective face order reversed, so the system compensates for that
     by testing it in the opposite way. A vertex stream of n length will generate n-2 triangles.'''
 
-    TRIANGLE_FAN: Constant
+    TRIANGLE_FAN: int
     '''The first vertex is always held fixed. From there on, every group of 2 adjacent
     vertices form a triangle with the first. So with a vertex stream, you get a list
     of triangles like so: (0, 1, 2) (0, 2, 3), (0, 3, 4), etc. A vertex stream of
     n length will generate n-2 triangles.'''
 
-    LINES_ADJACENCY: Constant
+    LINES_ADJACENCY: int
     '''These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
     to work with for each input primitive. Data needs to be duplicated in buffers.'''
 
-    LINE_STRIP_ADJACENCY: Constant
+    LINE_STRIP_ADJACENCY: int
     '''These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
     to work with for each input primitive. Data needs to be duplicated in buffers.'''
 
-    TRIANGLES_ADJACENCY: Constant
+    TRIANGLES_ADJACENCY: int
     '''These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
     to work with for each input primitive. Data needs to be duplicated in buffers.'''
 
-    TRIANGLE_STRIP_ADJACENCY: Constant
+    TRIANGLE_STRIP_ADJACENCY: int
     '''These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
     to work with for each input primitive. Data needs to be duplicated in buffers.'''
 
-    PATCHES: Constant
+    PATCHES: int
     '''primitive type can only be used when Tessellation is active. It is a primitive
     with a user-defined number of vertices, which is then tessellated based on the
     control and evaluation shaders into regular points, lines, or triangles, depending
     on the TES's settings.'''
 
-    NEAREST: Constant
+    NEAREST: int
     '''Returns the value of the texture element that is nearest
     (in Manhattan distance) to the specified texture coordinates.'''
 
-    LINEAR: Constant
+    LINEAR: int
     '''Returns the weighted average of the four texture elements
     that are closest to the specified texture coordinates.
     These can include items wrapped or repeated from other parts
     of a texture, depending on the values of texture repeat mode,
     and on the exact mapping.'''
 
-    NEAREST_MIPMAP_NEAREST: Constant
+    NEAREST_MIPMAP_NEAREST: int
     '''Chooses the mipmap that most closely matches the size of the
     pixel being textured and uses the ``NEAREST`` criterion (the texture
     element closest to the specified texture coordinates) to produce
     a texture value.'''
 
-    LINEAR_MIPMAP_NEAREST: Constant
+    LINEAR_MIPMAP_NEAREST: int
     '''Chooses the mipmap that most closely matches the size of the pixel
     being textured and uses the ``LINEAR`` criterion (a weighted average
     of the four texture elements that are closest to the specified
     texture coordinates) to produce a texture value.'''
 
-    NEAREST_MIPMAP_LINEAR: Constant
+    NEAREST_MIPMAP_LINEAR: int
     '''Chooses the two mipmaps that most closely match the size of the
     pixel being textured and uses the ``NEAREST`` criterion (the texture
     element closest to the specified texture coordinates ) to produce
     a texture value from each mipmap. The final texture value is a
     weighted average of those two values.'''
 
-    LINEAR_MIPMAP_LINEAR: Constant
+    LINEAR_MIPMAP_LINEAR: int
     '''Chooses the two mipmaps that most closely match the size of the pixel
     being textured and uses the ``LINEAR`` criterion (a weighted average
     of the texture elements that are closest to the specified texture
     coordinates) to produce a texture value from each mipmap.
     The final texture value is a weighted average of those two values.'''
 
-    ZERO: Constant
+    ZERO: int
     '''(0,0,0,0)'''
 
-    ONE: Constant
+    ONE: int
     '''(1,1,1,1)'''
 
-    SRC_COLOR: Constant
+    SRC_COLOR: int
     '''(Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)'''
 
-    ONE_MINUS_SRC_COLOR: Constant
+    ONE_MINUS_SRC_COLOR: int
     '''(1,1,1,1) - (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)'''
 
-    SRC_ALPHA: Constant
+    SRC_ALPHA: int
     '''(As0/kA,As0/kA,As0/kA,As0/kA)'''
 
-    ONE_MINUS_SRC_ALPHA: Constant
+    ONE_MINUS_SRC_ALPHA: int
     '''(1,1,1,1) - (As0/kA,As0/kA,As0/kA,As0/kA)'''
 
-    DST_ALPHA: Constant
+    DST_ALPHA: int
     '''(Ad/kA,Ad/kA,Ad/kA,Ad/kA)'''
 
-    ONE_MINUS_DST_ALPHA: Constant
+    ONE_MINUS_DST_ALPHA: int
     '''(1,1,1,1) - (Ad/kA,Ad/kA,Ad/kA,Ad/kA)'''
 
-    DST_COLOR: Constant
+    DST_COLOR: int
     '''(Rd/kR,Gd/kG,Bd/kB,Ad/kA)'''
 
-    ONE_MINUS_DST_COLOR: Constant
+    ONE_MINUS_DST_COLOR: int
     '''(1,1,1,1) - (Rd/kR,Gd/kG,Bd/kB,Ad/kA)'''
 
-    DEFAULT_BLENDING: Constant
+    DEFAULT_BLENDING: int
     '''Shotcut for the default blending ``SRC_ALPHA, ONE_MINUS_SRC_ALPHA``'''
 
-    ADDITIVE_BLENDING: Constant
+    ADDITIVE_BLENDING: int
     '''Shotcut for additive blending ``ONE, ONE``'''
 
-    PREMULTIPLIED_ALPHA: Constant
+    PREMULTIPLIED_ALPHA: int
     '''Shotcut for blend mode when using premultiplied alpha ``SRC_ALPHA, ONE``'''
 
-    FUNC_ADD: Constant
+    FUNC_ADD: int
     '''source + destination'''
 
-    FUNC_SUBTRACT: Constant
+    FUNC_SUBTRACT: int
     '''source - destination'''
 
-    FUNC_REVERSE_SUBTRACT: Constant
+    FUNC_REVERSE_SUBTRACT: int
     '''destination - source'''
 
-    MIN: Constant
+    MIN: int
     '''Minimum of source and destination'''
 
-    MAX: Constant
+    MAX: int
     '''Maximum of source and destination'''
 
-    FIRST_VERTEX_CONVENTION: Constant
+    FIRST_VERTEX_CONVENTION: int
     '''Specifies the first vertex should be used as the source of data for flat shaded varyings.
     Used with :py:attr:`Context.provoking_vertex`.'''
 
-    LAST_VERTEX_CONVENTION: Constant
+    LAST_VERTEX_CONVENTION: int
     '''Specifies the last vertex should be used as the source of data for flat shaded varyings.
     Used with :py:attr:`Context.provoking_vertex`.'''
 
-    VERTEX_ATTRIB_ARRAY_BARRIER_BIT: Constant
+    VERTEX_ATTRIB_ARRAY_BARRIER_BIT: int
     '''
     VERTEX_ATTRIB_ARRAY_BARRIER_BIT
     '''
 
-    ELEMENT_ARRAY_BARRIER_BIT: Constant
+    ELEMENT_ARRAY_BARRIER_BIT: int
     '''
     ELEMENT_ARRAY_BARRIER_BIT
     '''
 
-    UNIFORM_BARRIER_BIT: Constant
+    UNIFORM_BARRIER_BIT: int
     '''
     UNIFORM_BARRIER_BIT
     '''
 
-    TEXTURE_FETCH_BARRIER_BIT: Constant
+    TEXTURE_FETCH_BARRIER_BIT: int
     '''
     TEXTURE_FETCH_BARRIER_BIT
     '''
 
-    SHADER_IMAGE_ACCESS_BARRIER_BIT: Constant
+    SHADER_IMAGE_ACCESS_BARRIER_BIT: int
     '''
     SHADER_IMAGE_ACCESS_BARRIER_BIT
     '''
 
-    COMMAND_BARRIER_BIT: Constant
+    COMMAND_BARRIER_BIT: int
     '''
     COMMAND_BARRIER_BIT
     '''
 
-    PIXEL_BUFFER_BARRIER_BIT: Constant
+    PIXEL_BUFFER_BARRIER_BIT: int
     '''
     PIXEL_BUFFER_BARRIER_BIT
     '''
 
-    TEXTURE_UPDATE_BARRIER_BIT: Constant
+    TEXTURE_UPDATE_BARRIER_BIT: int
     '''
     TEXTURE_UPDATE_BARRIER_BIT
     '''
 
-    BUFFER_UPDATE_BARRIER_BIT: Constant
+    BUFFER_UPDATE_BARRIER_BIT: int
     '''
     BUFFER_UPDATE_BARRIER_BIT
     '''
 
-    FRAMEBUFFER_BARRIER_BIT: Constant
+    FRAMEBUFFER_BARRIER_BIT: int
     '''
     FRAMEBUFFER_BARRIER_BIT
     '''
 
-    TRANSFORM_FEEDBACK_BARRIER_BIT: Constant
+    TRANSFORM_FEEDBACK_BARRIER_BIT: int
     '''
     TRANSFORM_FEEDBACK_BARRIER_BIT
     '''
 
-    ATOMIC_COUNTER_BARRIER_BIT: Constant
+    ATOMIC_COUNTER_BARRIER_BIT: int
     '''
     ATOMIC_COUNTER_BARRIER_BIT
     '''
 
-    SHADER_STORAGE_BARRIER_BIT: Constant
+    SHADER_STORAGE_BARRIER_BIT: int
     '''
     SHADER_STORAGE_BARRIER_BIT
     '''
 
-    ALL_BARRIER_BITS: Constant
+    ALL_BARRIER_BITS: int
     '''
     ALL_BARRIER_BITS
     '''
 
-    version_code :int
-    '''int: The OpenGL version code. Reports ``410`` for OpenGL 4.1'''
+    version_code: int
+    '''The OpenGL version code. Reports ``410`` for OpenGL 4.1'''
 
     gc_mode: str
     '''
-    Optional[str]: The garbage collection mode.
+    The garbage collection mode.
 
     The default mode is ``None`` meaning no automatic
     garbage collection is done. Other modes are ``auto``
@@ -1428,10 +1058,9 @@ class Context:
         Returns:
             int: Number of objects deleted
         '''
-
     line_width: float
     '''
-    float: Set the default line width.
+    Set the default line width.
 
     .. Warning:: A line width other than 1.0 is not guaranteed to work
                     across different OpenGL implementations. For wide
@@ -1441,7 +1070,7 @@ class Context:
 
     point_size: float
     '''
-    float: Set/get the point size.
+    Set/get the point size.
 
     Point size changes the pixel size of rendered points. The min and max values
     are limited by ``POINT_SIZE_RANGE``.
@@ -1458,7 +1087,7 @@ class Context:
 
     depth_func: str
     '''
-    str: Set the default depth func.
+    Set the default depth func.
 
     Example::
 
@@ -1579,7 +1208,7 @@ class Context:
 
     provoking_vertex: int
     '''
-    int: Specifies the vertex to be used as the source of data for flat shaded varyings.
+    Specifies the vertex to be used as the source of data for flat shaded varyings.
 
     Flatshading a vertex shader varying output (ie. ``flat out vec3 pos``) means to assign
     all vetices of the primitive the same value for that output. The vertex from which
@@ -1626,13 +1255,13 @@ class Context:
         o = m * factor + r * units
         where m is the maximum depth slope of the polygon and r is the smallest
         value guaranteed to produce a resolvable difference in window coordinate
-        depth values. The value r is an implementation-specific constant.
+        depth values. The value r is an implementation-specific int.
 
     In simpler terms: We use polygon offset to either add a positive offset to
     the geometry (push it away from you) or a negative offset to geometry
     (pull it towards you).
 
-    * ``units`` is a constant offset to depth and will do the job alone
+    * ``units`` is a int offset to depth and will do the job alone
         if we are working with geometry parallel to the near/far plane.
     * The ``factor`` helps you handle sloped geometry (not parallel to near/far plane).
 
@@ -1689,21 +1318,21 @@ class Context:
     '''
 
     max_samples: int
-    '''int: The maximum supported number of samples for multisampling.'''
+    '''The maximum supported number of samples for multisampling.'''
 
     max_integer_samples: int
-    '''int: The max integer samples.'''
+    '''The max integer samples.'''
 
     max_texture_units: int
-    '''int: The max texture units.'''
-
-    default_texture_unit: int
-    '''int: The default texture unit.'''
+    '''The max texture units.'''
 
     max_anisotropy: float
-    '''float: The maximum value supported for anisotropic filtering.'''
+    '''The maximum value supported for anisotropic filtering.'''
 
-    screen: 'Framebuffer'
+    default_texture_unit: int
+    '''The default texture unit.'''
+
+    screen: Framebuffer
     '''
     Framebuffer: A Framebuffer instance representing the screen.
 
@@ -1716,11 +1345,11 @@ class Context:
     '''
 
     wireframe: bool
-    '''bool: Wireframe settings for debugging.'''
+    '''Wireframe settings for debugging.'''
 
     front_face: str
     '''
-    str: The front_face. Acceptable values are ``'ccw'`` (default) or ``'cw'``.
+    The front_face. Acceptable values are ``'ccw'`` (default) or ``'cw'``.
 
     Face culling must be enabled for this to have any effect:
     ``ctx.enable(moderngl.CULL_FACE)``.
@@ -1735,7 +1364,7 @@ class Context:
 
     cull_face: str
     '''
-    str: The face side to cull. Acceptable values are ``'back'`` (default) ``'front'`` or ``'front_and_back'``.
+    The face side to cull. Acceptable values are ``'back'`` (default) ``'front'`` or ``'front_and_back'``.
 
     This is similar to :py:meth:`Context.front_face`
 
@@ -1750,11 +1379,11 @@ class Context:
     '''
 
     patch_vertices: int
-    '''int: The number of vertices that will be used to make up a single patch primitive.'''
+    '''The number of vertices that will be used to make up a single patch primitive.'''
 
     error: str
     '''
-    str: The result of ``glGetError()`` but human readable.
+    The result of ``glGetError()`` but human readable.
 
     This values is provided for debug purposes only and is likely to
     reduce performace when used in a draw loop.
@@ -1891,10 +1520,10 @@ class Context:
     '''Internal representation for debug purposes only.'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
-    fbo: 'Framebuffer'
-    '''Framebuffer: The active framebuffer. Set every time :py:meth:`Framebuffer.use()` is called.'''
+    fbo: Framebuffer
+    '''The active framebuffer. Set every time :py:meth:`Framebuffer.use()` is called.'''
 
     def clear(
         self,
@@ -1935,7 +1564,6 @@ class Context:
             viewport (tuple): The viewport.
             color (tuple): Optional rgba color tuple
         '''
-
     def enable_only(self, flags: int) -> None:
         '''
         Clears all existing flags applying new ones.
@@ -1965,7 +1593,6 @@ class Context:
         Args:
             flags (EnableFlag): The flags to enable
         '''
-
     def enable(self, flags: int) -> None:
         '''
         Enable flags.
@@ -1988,7 +1615,6 @@ class Context:
         Args:
             flag (int): The flags to enable.
         '''
-
     def disable(self, flags: int) -> None:
         '''
         Disable flags.
@@ -2006,7 +1632,6 @@ class Context:
         Args:
             flag (int): The flags to disable.
         '''
-
     def enable_direct(self, enum: int) -> None:
         '''
         Gives direct access to ``glEnable`` so unsupported capabilities in ModernGL can be enabled.
@@ -2019,7 +1644,6 @@ class Context:
             GL_CONSERVATIVE_RASTERIZATION_NV = 0x9346
             ctx.enable_direct(GL_CONSERVATIVE_RASTERIZATION_NV)
         '''
-
     def disable_direct(self, enum: int) -> None:
         '''
         Gives direct access to ``glDisable`` so unsupported capabilities in ModernGL can be disabled.
@@ -2032,10 +1656,8 @@ class Context:
             GL_CONSERVATIVE_RASTERIZATION_NV = 0x9346
             ctx.disable_direct(GL_CONSERVATIVE_RASTERIZATION_NV)
         '''
-
     def finish(self) -> None:
         '''Wait for all drawing commands to finish.'''
-
     def copy_buffer(
         self,
         dst: Buffer,
@@ -2043,7 +1665,7 @@ class Context:
         size: int = -1,
         *,
         read_offset: int = 0,
-        write_offset: int = 0
+        write_offset: int = 0,
     ) -> None:
         '''
         Copy buffer content.
@@ -2057,8 +1679,9 @@ class Context:
             read_offset (int): The read offset.
             write_offset (int): The write offset.
         '''
-
-    def copy_framebuffer(self, dst: Union['Framebuffer', 'Texture'], src: 'Framebuffer') -> None:
+    def copy_framebuffer(
+        self, dst: Union[Framebuffer, Texture], src: Framebuffer
+    ) -> None:
         '''
         Copy framebuffer content.
 
@@ -2073,8 +1696,7 @@ class Context:
             dst (Framebuffer or Texture): Destination framebuffer or texture.
             src (Framebuffer): Source framebuffer.
         '''
-
-    def detect_framebuffer(self, glo: Optional[int] = None) -> 'Framebuffer':
+    def detect_framebuffer(self, glo: Optional[int] = None) -> Framebuffer:
         '''
         Detect a framebuffer.
 
@@ -2088,30 +1710,24 @@ class Context:
         Returns:
             :py:class:`Framebuffer` object
         '''
-
-    def memory_barrier(self, barriers: Optional[int] = None, by_region: Optional[bool] = False) -> None:
+    def memory_barrier(
+        self, barriers: Optional[int] = None, by_region: Optional[bool] = False
+    ) -> None:
         '''
         Applying a memory barrier.
 
         The memory barrier is needed in particular to correctly change buffers or textures
-        between each shader. If the same buffer is changed in two shaders, 
-        it can cause an effect like "depth fighting" on a buffer or texture.
+        between each shader. If the same buffer is changed in two shaders,
+        it can cause an effect like 'depth fighting' on a buffer or texture.
 
-        The method should be used between :py:class:`Program` -s, between :py:class:`ComputeShader` -s, 
+        The method should be used between :py:class:`Program` -s, between :py:class:`ComputeShader` -s,
         and between :py:class:`Program` -s and :py:class:`ComputeShader` -s.
 
         Keyword Args:
             barriers (int): Affected barriers, default moderngl.ALL_BARRIER_BITS.
             by_region (bool): Memory barrier mode by region. More read on https://registry.khronos.org/OpenGL-Refpages/gl4/html/glMemoryBarrier.xhtml
         '''
-
-    def buffer(
-        self,
-        data: Optional[Any] = None,
-        *,
-        reserve: int = 0,
-        dynamic: bool = False,
-    ) -> Buffer:
+    def buffer(self, data: Any = None, *, reserve: int = 0, dynamic: bool = False) -> Buffer:
         '''
         Create a :py:class:`Buffer` object.
 
@@ -2125,7 +1741,6 @@ class Context:
         Returns:
             :py:class:`Buffer` object
         '''
-
     def external_texture(
         self,
         glo: int,
@@ -2133,7 +1748,7 @@ class Context:
         components: int,
         samples: int,
         dtype: str,
-    ) -> 'Texture':
+    ) -> Texture:
         '''
         Create a :py:class:`Texture` object from an existing OpenGL texture object.
 
@@ -2144,7 +1759,6 @@ class Context:
             samples (int): The number of samples. Value 0 means no multisample format.
             dtype (str): Data type.
         '''
-
     def texture(
         self,
         size: Tuple[int, int],
@@ -2155,7 +1769,7 @@ class Context:
         alignment: int = 1,
         dtype: str = 'f1',
         internal_format: Optional[int] = None,
-    ) -> 'Texture':
+    ) -> Texture:
         '''
         Create a :py:class:`Texture` object.
 
@@ -2177,7 +1791,6 @@ class Context:
         Returns:
             :py:class:`Texture` object
         '''
-
     def texture_array(
         self,
         size: Tuple[int, int, int],
@@ -2186,7 +1799,7 @@ class Context:
         *,
         alignment: int = 1,
         dtype: str = 'f1',
-    ) -> 'TextureArray':
+    ) -> TextureArray:
         '''
         Create a :py:class:`TextureArray` object.
 
@@ -2203,7 +1816,6 @@ class Context:
         Returns:
             :py:class:`Texture3D` object
         '''
-
     def texture3d(
         self,
         size: Tuple[int, int, int],
@@ -2212,7 +1824,7 @@ class Context:
         *,
         alignment: int = 1,
         dtype: str = 'f1',
-    ) -> 'Texture3D':
+    ) -> Texture3D:
         '''
         Create a :py:class:`Texture3D` object.
 
@@ -2228,7 +1840,6 @@ class Context:
         Returns:
             :py:class:`Texture3D` object
         '''
-
     def texture_cube(
         self,
         size: Tuple[int, int],
@@ -2238,7 +1849,7 @@ class Context:
         alignment: int = 1,
         dtype: str = 'f1',
         internal_format: Optional[int] = None,
-    ) -> 'TextureCube':
+    ) -> TextureCube:
         '''
         Create a :py:class:`TextureCube` object.
 
@@ -2260,7 +1871,6 @@ class Context:
         Returns:
             :py:class:`TextureCube` object
         '''
-
     def depth_texture(
         self,
         size: Tuple[int, int],
@@ -2268,7 +1878,7 @@ class Context:
         *,
         samples: int = 0,
         alignment: int = 4,
-    ) -> 'Texture':
+    ) -> Texture:
         '''
         Create a :py:class:`Texture` object.
 
@@ -2283,14 +1893,13 @@ class Context:
         Returns:
             :py:class:`Texture` object
         '''
-
     def depth_texture_cube(
-            self,
-            size: Tuple[int, int],
-            data: Optional[Any] = None,
-            *,
-            alignment: int = 4,
-    ) -> 'TextureCube':
+        self,
+        size: Tuple[int, int],
+        data: Optional[Any] = None,
+        *,
+        alignment: int = 4,
+    ) -> TextureCube:
         '''
         Create a :py:class:`TextureCube` object
 
@@ -2304,7 +1913,6 @@ class Context:
         Returns:
             :py:class:`TextureCube` object
         '''
-
     def vertex_array(self, *args, **kwargs) -> 'VertexArray':
         '''
         Create a :py:class:`VertexArray` object.
@@ -2351,10 +1959,9 @@ class Context:
         Returns:
             :py:class:`VertexArray` object
         '''
-
     def _vertex_array(
         self,
-        program: 'Program',
+        program: Program,
         content: Any,
         index_buffer: Optional[Buffer] = None,
         index_element_size: int = 4,
@@ -2379,10 +1986,9 @@ class Context:
         Returns:
             :py:class:`VertexArray` object
         '''
-
     def simple_vertex_array(
         self,
-        program: 'Program',
+        program: Program,
         buffer: Buffer,
         *attributes: Union[List[str], Tuple[str, ...]],
         index_buffer: Optional[Buffer] = None,
@@ -2409,7 +2015,6 @@ class Context:
         Returns:
             :py:class:`VertexArray` object
         '''
-
     def program(
         self,
         *,
@@ -2421,7 +2026,7 @@ class Context:
         varyings: Tuple[str, ...] = (),
         fragment_outputs: Optional[Dict[str, int]] = None,
         varyings_capture_mode: str = 'interleaved',
-    ) -> 'Program':
+    ) -> Program:
         '''
         Create a :py:class:`Program` object.
 
@@ -2443,7 +2048,6 @@ class Context:
         Returns:
             :py:class:`Program` object
         '''
-
     def query(
         self,
         *,
@@ -2461,13 +2065,12 @@ class Context:
             time (bool): Query ``GL_TIME_ELAPSED`` or not.
             primitives (bool): Query ``GL_PRIMITIVES_GENERATED`` or not.
         '''
-
     def scope(
         self,
-        framebuffer: Optional['Framebuffer'] = None,
+        framebuffer: Optional[Framebuffer] = None,
         enable_only: Optional[int] = None,
         *,
-        textures: Tuple[Tuple['Texture', int], ...] = (),
+        textures: Tuple[Tuple[Texture, int], ...] = (),
         uniform_buffers: Tuple[Tuple[Buffer, int], ...] = (),
         storage_buffers: Tuple[Tuple[Buffer, int], ...] = (),
         samplers: Tuple[Tuple['Sampler', int], ...] = (),
@@ -2487,7 +2090,6 @@ class Context:
             samplers (tuple): Tuple of sampler bindings
             enable (int): Flags to enable for this vao such as depth testing and blending
         '''
-
     def simple_framebuffer(
         self,
         size: Tuple[int, int],
@@ -2495,7 +2097,7 @@ class Context:
         *,
         samples: int = 0,
         dtype: str = 'f1',
-    ) -> 'Framebuffer':
+    ) -> Framebuffer:
         '''
         Creates a :py:class:`Framebuffer` with a single color attachment \
         and depth buffer using :py:class:`moderngl.Renderbuffer` attachments.
@@ -2511,12 +2113,11 @@ class Context:
         Returns:
             :py:class:`Framebuffer` object
         '''
-
     def framebuffer(
         self,
         color_attachments: Any = (),
-        depth_attachment: Optional[Union['Texture', 'Renderbuffer']] = None,
-    ) -> 'Framebuffer':
+        depth_attachment: Optional[Union[Texture, 'Renderbuffer']] = None,
+    ) -> Framebuffer:
         '''
         A :py:class:`Framebuffer` is a collection of buffers that can be \
         used as the destination for rendering. The buffers for Framebuffer \
@@ -2530,17 +2131,15 @@ class Context:
         Returns:
             :py:class:`Framebuffer` object
         '''
-
     def empty_framebuffer(
         self,
         size: Tuple[int, int],
         layers: Optional[int] = 0,
         samples: Optional[int] = 0,
-    ) -> 'Framebuffer':
+    ) -> Framebuffer:
         '''
         Empty Framebuffer
         '''
-
     def renderbuffer(
         self,
         size: Tuple[int, int],
@@ -2564,13 +2163,7 @@ class Context:
         Returns:
             :py:class:`Renderbuffer` object
         '''
-
-    def depth_renderbuffer(
-        self,
-        size: Tuple[int, int],
-        *,
-        samples: int = 0
-    ) -> 'Renderbuffer':
+    def depth_renderbuffer(self, size: Tuple[int, int], *, samples: int = 0) -> 'Renderbuffer':
         '''
         :py:class:`Renderbuffer` objects are OpenGL objects that contain images. \
         They are created and used specifically with :py:class:`Framebuffer` objects.
@@ -2584,8 +2177,9 @@ class Context:
         Returns:
             :py:class:`Renderbuffer` object
         '''
-
-    def compute_shader(self, source: str | bytes | ConvertibleToShaderSource) -> 'ComputeShader':
+    def compute_shader(
+        self, source: str | bytes | ConvertibleToShaderSource
+    ) -> 'ComputeShader':
         '''
         A :py:class:`ComputeShader` is a Shader Stage that is used entirely \
         for computing arbitrary information. While it can do rendering, it \
@@ -2597,7 +2191,6 @@ class Context:
         Returns:
             :py:class:`ComputeShader` object
         '''
-
     def sampler(
         self,
         repeat_x: bool = True,
@@ -2609,7 +2202,7 @@ class Context:
         border_color: Optional[Tuple[float, float, float, float]] = None,
         min_lod: float = -1000.0,
         max_lod: float = 1000.0,
-        texture: Optional['Texture'] = None,
+        texture: Optional[Texture] = None,
     ) -> 'Sampler':
         '''
         Create a :py:class:`Sampler` object.
@@ -2635,7 +2228,6 @@ class Context:
                                 lowest resolution mipmap (highest mipmap level)
             texture (Texture): The texture for this sampler
         '''
-
     def clear_samplers(self, start: int = 0, end: int = -1) -> None:
         '''
         Unbinds samplers from texture units.
@@ -2658,14 +2250,12 @@ class Context:
             # Clear texture unit 4, 5, 6, 7
             ctx.clear_samplers(start=4, end=8)
         '''
-
     def core_profile_check(self) -> None:
         '''
         Core profile check.
 
         FOR DEBUG PURPOSES ONLY
         '''
-
     def __enter__(self):
         '''
         Enters the context.
@@ -2680,14 +2270,12 @@ class Context:
         .. Warning:: Context switching can be risky unless you know what you are doing.
                      Use with care.
         '''
-
     def __exit__(self, exc_type, exc_val, exc_tb):
         '''
         Exit the context.
 
         See :py:meth:`Context.__enter__`
         '''
-
     def release(self) -> None:
         '''
         Release the ModernGL context.
@@ -2698,7 +2286,6 @@ class Context:
 
         Standalone contexts can normally be released.
         '''
-
 
 def create_context(
     require: Optional[int] = None,
@@ -2731,7 +2318,6 @@ def create_context(
         :py:class:`Context` object
     '''
 
-
 def create_standalone_context(
     require: Optional[int] = None,
     share: bool = False,
@@ -2759,7 +2345,6 @@ def create_standalone_context(
         :py:class:`Context` object
     '''
 
-
 class Framebuffer:
     '''
     A :py:class:`Framebuffer` is a collection of buffers that can be used as the destination for rendering.
@@ -2769,11 +2354,11 @@ class Framebuffer:
     '''
 
     viewport: Tuple[int, int, int, int]
-    '''tuple: Get or set the viewport of the framebuffer.'''
+    '''Get or set the viewport of the framebuffer.'''
 
     scissor: Tuple[int, int, int, int]
     '''
-    tuple: Get or set the scissor box of the framebuffer.
+    Get or set the scissor box of the framebuffer.
 
     When scissor testing is enabled fragments outside
     the defined scissor box will be discarded. This
@@ -2793,7 +2378,7 @@ class Framebuffer:
 
     color_mask: Tuple[bool, bool, bool, bool]
     '''
-    tuple: The color mask of the framebuffer.
+    The color mask of the framebuffer.
 
     Color masking controls what components in color attachments will be
     affected by fragment write operations.
@@ -2815,7 +2400,7 @@ class Framebuffer:
 
     depth_mask: bool
     '''
-    bool: The depth mask of the framebuffer.
+    The depth mask of the framebuffer.
 
     Depth mask enables or disables write operations to the depth buffer.
     This also applies when clearing the framebuffer.
@@ -2828,7 +2413,7 @@ class Framebuffer:
 
     width: int
     '''
-    int: The width of the framebuffer.
+    The width of the framebuffer.
 
     Framebuffers created by a window will only report its initial size.
     It's better get size information from the window itself.
@@ -2836,7 +2421,7 @@ class Framebuffer:
 
     height: int
     '''
-    int: The height of the framebuffer.
+    The height of the framebuffer.
 
     Framebuffers created by a window will only report its initial size.
     It's better get size information from the window itself.
@@ -2851,16 +2436,16 @@ class Framebuffer:
     '''
 
     samples: int
-    '''int: The samples of the framebuffer.'''
+    '''The samples of the framebuffer.'''
 
     bits: Dict[str, str]
-    '''dict: The bits of the framebuffer.'''
+    '''The bits of the framebuffer.'''
 
-    color_attachments: Tuple[Union['Texture', 'Renderbuffer'], ...]
-    '''tuple: The color attachments of the framebuffer.'''
+    color_attachments: Tuple[Union[Texture, Renderbuffer], ...]
+    '''The color attachments of the framebuffer.'''
 
-    depth_attachment: Union['Texture', 'Renderbuffer']
-    '''Texture or Renderbuffer: The depth attachment of the framebuffer.'''
+    depth_attachment: Union[Texture, Renderbuffer]
+    '''The depth attachment of the framebuffer.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -2869,11 +2454,11 @@ class Framebuffer:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -2917,10 +2502,8 @@ class Framebuffer:
             viewport (tuple): The viewport.
             color (tuple): Optional tuple replacing the red, green, blue and alpha arguments
         '''
-
     def use(self) -> None:
         '''Bind the framebuffer. Sets the target for rendering commands.'''
-
     def read(
         self,
         viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
@@ -2958,7 +2541,6 @@ class Framebuffer:
         Returns:
             bytes
         '''
-
     def read_into(
         self,
         buffer: Any,
@@ -2984,10 +2566,8 @@ class Framebuffer:
             dtype (str): Data type.
             write_offset (int): The write offset.
         '''
-
     def release(self) -> None:
         '''Release the ModernGL object.'''
-
 
 class Program:
     '''
@@ -3008,9 +2588,11 @@ class Program:
     performance consider using :py:class:`moderngl.Scope`.
     '''
 
-    def __getitem__(self, key: str) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    def __getitem__(
+        self, key: str
+    ) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         '''
-        Get a member such as uniforms, uniform blocks, subroutines, attributes and varyings by name.
+        Get a member such as uniforms, uniform blocks, attributes and varyings by name.
 
         .. code-block:: python
 
@@ -3024,7 +2606,6 @@ class Program:
             # Still when writing byte data we need to use the `write()` method
             program['color'].write(buffer)
         '''
-
     def __setitem__(self, key: str, value: Any) -> None:
         '''
         Set a value of uniform or uniform block.
@@ -3041,7 +2622,6 @@ class Program:
             uniform = program['cameraMatrix']
             uniform.write(camera_matrix)
         '''
-
     def __iter__(self) -> Generator[str, None, None]:
         '''
         Yields the internal members names as strings.
@@ -3081,13 +2661,12 @@ class Program:
             {'rotation': <Uniform: 0>, 'scale': <Uniform: 1>}
 
         '''
-
     is_transform: bool
-    '''bool: If this is a tranform program (no fragment shader).'''
+    '''If this is a tranform program (no fragment shader).'''
 
     geometry_input: int
     '''
-    int: The geometry input primitive.
+    The geometry input primitive.
 
     The GeometryShader's input primitive if the GeometryShader exists.
     The geometry input primitive will be used for validation.
@@ -3098,7 +2677,7 @@ class Program:
 
     geometry_output: int
     '''
-    int: The geometry output primitive.
+    The geometry output primitive.
 
     The GeometryShader's output primitive if the GeometryShader exists.
     This can only be ``POINTS``, ``LINE_STRIP`` and ``TRIANGLE_STRIP``
@@ -3107,14 +2686,11 @@ class Program:
 
     geometry_vertices: int
     '''
-    int: The maximum number of vertices that.
+    The maximum number of vertices that.
 
     the geometry shader will output.
     (from ``layout(output_primitive, max_vertices = vert_count) out;``)
     '''
-
-    subroutines: Tuple[str, ...]
-    '''tuple: The subroutine uniforms.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -3123,30 +2699,29 @@ class Program:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
 
-    def get(self, key: str, default: Any) -> Union[Uniform, UniformBlock, Subroutine, Attribute, Varying]:
+    def get(
+        self, key: str, default: Any
+    ) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         '''
-        Returns a Uniform, UniformBlock, Subroutine, Attribute or Varying.
+        Returns a Uniform, UniformBlock, Attribute or Varying.
 
         Args:
             default: This is the value to be returned in case key does not exist.
 
         Returns:
-            :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Subroutine`,
-            :py:class:`Attribute` or :py:class:`Varying`
+            :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Attribute` or :py:class:`Varying`
         '''
-
     def release(self) -> None:
         '''Release the ModernGL object.'''
-
 
 def detect_format(
     program: Program,
@@ -3166,7 +2741,6 @@ def detect_format(
         str
     '''
 
-
 class Query:
     '''This class represents a Query object.'''
 
@@ -3174,13 +2748,13 @@ class Query:
     '''Can be used in a ``with`` statement.'''
 
     samples: int
-    '''int: The number of samples passed.'''
+    '''The number of samples passed.'''
 
     primitives: int
-    '''int: The number of primitives generated.'''
+    '''The number of primitives generated.'''
 
     elapsed: int
-    '''int: The time elapsed in nanoseconds.'''
+    '''The time elapsed in nanoseconds.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -3189,12 +2763,10 @@ class Query:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     def __enter__(self): ...
-
     def __exit__(self, *args: Tuple[Any]): ...
-
 
 class Renderbuffer:
     '''
@@ -3212,25 +2784,25 @@ class Renderbuffer:
     '''
 
     width: int
-    '''int: The width of the renderbuffer.'''
+    '''The width of the renderbuffer.'''
 
     height: int
-    '''int: The height of the renderbuffer.'''
+    '''The height of the renderbuffer.'''
 
     size: tuple
-    '''tuple: The size of the renderbuffer.'''
+    '''The size of the renderbuffer.'''
 
     samples: int
-    '''int: The samples of the renderbuffer.'''
+    '''The samples of the renderbuffer.'''
 
     components: int
-    '''int: The components of the renderbuffer.'''
+    '''The components of the renderbuffer.'''
 
     depth: bool
-    '''bool: Is the renderbuffer a depth renderbuffer?.'''
+    '''Is the renderbuffer a depth renderbuffer?.'''
 
     dtype: str
-    '''str: Data type.'''
+    '''Data type.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -3239,18 +2811,17 @@ class Renderbuffer:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
 
     def release(self) -> None:
         '''Release the ModernGL object.'''
-
 
 class Sampler:
     '''
@@ -3352,7 +2923,7 @@ class Sampler:
 
     anisotropy: float
     '''
-    float: Number of samples for anisotropic filtering (Default ``1.0``).
+    Number of samples for anisotropic filtering (Default ``1.0``).
 
     The value will be clamped in range ``1.0`` and ``ctx.max_anisotropy``.
 
@@ -3380,14 +2951,14 @@ class Sampler:
 
     min_lod: float
     '''
-    float: Minimum level-of-detail parameter (Default ``-1000.0``).
+    Minimum level-of-detail parameter (Default ``-1000.0``).
 
     This floating-point value limits the selection of highest resolution mipmap (lowest mipmap level)
     '''
 
     max_lod: float
     '''
-    float: Minimum level-of-detail parameter (Default ``1000.0``).
+    Minimum level-of-detail parameter (Default ``1000.0``).
 
     This floating-point value limits the selection of the lowest resolution mipmap (highest mipmap level)
     '''
@@ -3402,11 +2973,11 @@ class Sampler:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -3418,7 +2989,6 @@ class Sampler:
         Args:
             location (int): The texture unit
         '''
-
     def clear(self, location: int = 0) -> None:
         '''
         Clear the sampler binding on a texture unit.
@@ -3426,10 +2996,8 @@ class Sampler:
         Args:
             location (int): The texture unit
         '''
-
     def release(self) -> None:
         '''Release/destroy the ModernGL object.'''
-
     def assign(self, index: int) -> Tuple['Sampler', int]:
         '''
         Helper method for assigning samplers to scopes.
@@ -3443,7 +3011,6 @@ class Sampler:
         Returns:
             (self, index) tuple
         '''
-
 
 class Scope:
     '''
@@ -3465,10 +3032,8 @@ class Scope:
 
     def __enter__(self): ...
     def __exit__(self, *args: Tuple[Any]): ...
-
     def release(self) -> None:
         '''Destroy the Scope object.'''
-
     mglo: Any
     '''Internal representation for debug purposes only.'''
 
@@ -3476,8 +3041,7 @@ class Scope:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
-
+    '''Attribute for storing user defined objects'''
 
 class Texture3D:
     '''
@@ -3531,7 +3095,7 @@ class Texture3D:
     '''
 
     filter: Tuple[int, int]
-    '''tuple: The filter of the texture.'''
+    '''The filter of the texture.'''
 
     swizzle: str
     '''
@@ -3561,22 +3125,22 @@ class Texture3D:
     '''
 
     width: int
-    '''int: The width of the texture.'''
+    '''The width of the texture.'''
 
     height: int
-    '''int: The height of the texture.'''
+    '''The height of the texture.'''
 
     depth: int
-    '''int: The depth of the texture.'''
+    '''The depth of the texture.'''
 
     size: tuple
-    '''tuple: The size of the texture.'''
+    '''The size of the texture.'''
 
     components: int
-    '''int: The number of components of the texture.'''
+    '''The number of components of the texture.'''
 
     dtype: str
-    '''str: Data type.'''
+    '''Data type.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -3585,11 +3149,11 @@ class Texture3D:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -3604,7 +3168,6 @@ class Texture3D:
         Returns:
             bytes
         '''
-
     def read_into(
         self,
         buffer: Any,
@@ -3635,11 +3198,12 @@ class Texture3D:
             alignment (int): The byte alignment of the pixels.
             write_offset (int): The write offset.
         '''
-
     def write(
         self,
         data: Any,
-        viewport: Optional[Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int]]] = None,
+        viewport: Optional[
+            Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int]]
+        ] = None,
         *,
         alignment: int = 1,
     ) -> None:
@@ -3665,7 +3229,6 @@ class Texture3D:
         Keyword Args:
             alignment (int): The byte alignment of the pixels.
         '''
-
     def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
         '''
         Generate mipmaps.
@@ -3677,7 +3240,6 @@ class Texture3D:
             base (int): The base level
             max_level (int): The maximum levels to generate
         '''
-
     def use(self, location: int = 0) -> None:
         '''
         Bind the texture to a texture unit.
@@ -3697,8 +3259,14 @@ class Texture3D:
         Args:
             location (int): The texture location/unit.
         '''
-
-    def bind_to_image(self, unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0) -> None:
+    def bind_to_image(
+        self,
+        unit: int,
+        read: bool = True,
+        write: bool = True,
+        level: int = 0,
+        format: int = 0,
+    ) -> None:
         '''
         Bind a texture to an image unit (OpenGL 4.2 required).
 
@@ -3741,7 +3309,6 @@ class Texture3D:
             level (int): Level of the texture to bind (default: ``0``).
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
         '''
-
     def get_handle(self, resident: bool = True) -> int:
         '''
         Handle for Bindless Textures.
@@ -3772,10 +3339,8 @@ class Texture3D:
         Keyword Args:
             resident (bool): Make the texture resident.
         '''
-
     def release(self) -> None:
         '''Release the ModernGL object.'''
-
 
 class TextureArray:
     '''
@@ -3857,7 +3422,7 @@ class TextureArray:
 
     anisotropy: float
     '''
-    float: Number of samples for anisotropic filtering (Default ``1.0``).
+    Number of samples for anisotropic filtering (Default ``1.0``).
 
     The value will be clamped in range ``1.0`` and ``ctx.max_anisotropy``.
 
@@ -3871,22 +3436,22 @@ class TextureArray:
     '''
 
     width: int
-    '''int: The width of the texture array.'''
+    '''The width of the texture array.'''
 
     height: int
-    '''int: The height of the texture array.'''
+    '''The height of the texture array.'''
 
     layers: int
-    '''int: The number of layers of the texture array.'''
+    '''The number of layers of the texture array.'''
 
     size: tuple
-    '''tuple: The size of the texture array.'''
+    '''The size of the texture array.'''
 
     components: int
-    '''int: The number of components of the texture array.'''
+    '''The number of components of the texture array.'''
 
     dtype: str
-    '''str: Data type.'''
+    '''Data type.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -3895,11 +3460,11 @@ class TextureArray:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -3914,7 +3479,6 @@ class TextureArray:
         Returns:
             bytes
         '''
-
     def read_into(
         self,
         buffer: Any,
@@ -3945,11 +3509,12 @@ class TextureArray:
             alignment (int): The byte alignment of the pixels.
             write_offset (int): The write offset.
         '''
-
     def write(
         self,
         data: Any,
-        viewport: Optional[Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int]]] = None,
+        viewport: Optional[
+            Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int]]
+        ] = None,
         *,
         alignment: int = 1,
     ) -> None:
@@ -3985,7 +3550,6 @@ class TextureArray:
         Keyword Args:
             alignment (int): The byte alignment of the pixels.
         '''
-
     def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
         '''
         Generate mipmaps.
@@ -3997,7 +3561,6 @@ class TextureArray:
             base (int): The base level
             max_level (int): The maximum levels to generate
         '''
-
     def use(self, location: int = 0) -> None:
         '''
         Bind the texture to a texture unit.
@@ -4017,8 +3580,14 @@ class TextureArray:
         Args:
             location (int): The texture location/unit.
         '''
-
-    def bind_to_image(self, unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0) -> None:
+    def bind_to_image(
+        self,
+        unit: int,
+        read: bool = True,
+        write: bool = True,
+        level: int = 0,
+        format: int = 0,
+    ) -> None:
         '''
         Bind a texture to an image unit (OpenGL 4.2 required).
 
@@ -4061,7 +3630,6 @@ class TextureArray:
             level (int): Level of the texture to bind (default: ``0``).
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
         '''
-
     def get_handle(self, resident: bool = True) -> int:
         '''
         Handle for Bindless Textures.
@@ -4092,10 +3660,8 @@ class TextureArray:
         Keyword Args:
             resident (bool): Make the texture resident.
         '''
-
     def release(self) -> None:
         '''Release the ModernGL object.'''
-
 
 class TextureCube:
     '''
@@ -4116,13 +3682,13 @@ class TextureCube:
     '''
 
     size: Tuple[int, int]
-    '''tuple: The size of the texture cube (single face).'''
+    '''The size of the texture cube (single face).'''
 
     components: int
-    '''int: The number of components of the texture.'''
+    '''The number of components of the texture.'''
 
     dtype: str
-    '''str: Data type.'''
+    '''Data type.'''
 
     filter: Tuple[int, int]
     '''
@@ -4201,7 +3767,7 @@ class TextureCube:
 
     anisotropy: float
     '''
-    float: Number of samples for anisotropic filtering (Default ``1.0``).
+    Number of samples for anisotropic filtering (Default ``1.0``).
 
     The value will be clamped in range ``1.0`` and ``ctx.max_anisotropy``.
 
@@ -4221,14 +3787,14 @@ class TextureCube:
     '''The context this object belongs to'''
 
     depth: bool
-    '''bool: Is the texture a depth texture?.'''
+    '''Is the texture a depth texture?.'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -4252,7 +3818,6 @@ class TextureCube:
         Keyword Args:
             alignment (int): The byte alignment of the pixels.
         '''
-
     def read_into(
         self,
         buffer: Any,
@@ -4286,7 +3851,6 @@ class TextureCube:
             alignment (int): The byte alignment of the pixels.
             write_offset (int): The write offset.
         '''
-
     def write(
         self,
         face: int,
@@ -4319,7 +3883,6 @@ class TextureCube:
         Keyword Args:
             alignment (int): The byte alignment of the pixels.
         '''
-
     def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
         '''
         Generate mipmaps.
@@ -4331,7 +3894,6 @@ class TextureCube:
             base (int): The base level
             max_level (int): The maximum levels to generate
         '''
-
     def use(self, location: int = 0) -> None:
         '''
         Bind the texture to a texture unit.
@@ -4351,8 +3913,14 @@ class TextureCube:
         Args:
             location (int): The texture location/unit.
         '''
-
-    def bind_to_image(self, unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0) -> None:
+    def bind_to_image(
+        self,
+        unit: int,
+        read: bool = True,
+        write: bool = True,
+        level: int = 0,
+        format: int = 0,
+    ) -> None:
         '''
         Bind a texture to an image unit (OpenGL 4.2 required).
 
@@ -4396,7 +3964,6 @@ class TextureCube:
             level (int): Level of the texture to bind (default: ``0``).
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
         '''
-
     def get_handle(self, resident: bool = True) -> int:
         '''
         Handle for Bindless Textures.
@@ -4427,10 +3994,8 @@ class TextureCube:
         Keyword Args:
             resident (bool): Make the texture resident.
         '''
-
     def release(self) -> None:
         '''Release the ModernGL object.'''
-
 
 class Texture:
     '''
@@ -4487,7 +4052,7 @@ class Texture:
 
     anisotropy: float
     '''
-    float: Number of samples for anisotropic filtering (Default ``1.0``).
+    Number of samples for anisotropic filtering (Default ``1.0``).
 
     The value will be clamped in range ``1.0`` and ``ctx.max_anisotropy``.
 
@@ -4562,25 +4127,25 @@ class Texture:
     '''
 
     width: int
-    '''int: The width of the texture.'''
+    '''The width of the texture.'''
 
     height: int
-    '''int: The height of the texture.'''
+    '''The height of the texture.'''
 
     size: tuple
-    '''tuple: The size of the texture.'''
+    '''The size of the texture.'''
 
     components: int
-    '''int: The number of components of the texture.'''
+    '''The number of components of the texture.'''
 
     samples: int
-    '''int: The number of samples set for the texture used in multisampling.'''
+    '''The number of samples set for the texture used in multisampling.'''
 
     dtype: str
-    '''str: Data type.'''
+    '''Data type.'''
 
     depth: bool
-    '''bool: Is the texture a depth texture?.'''
+    '''Is the texture a depth texture?.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -4589,11 +4154,11 @@ class Texture:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -4614,7 +4179,6 @@ class Texture:
         Returns:
             bytes
         '''
-
     def read_into(
         self,
         buffer: Any,
@@ -4647,7 +4211,6 @@ class Texture:
             alignment (int): The byte alignment of the pixels.
             write_offset (int): The write offset.
         '''
-
     def write(
         self,
         data: Any,
@@ -4686,7 +4249,6 @@ class Texture:
             level (int): The mipmap level.
             alignment (int): The byte alignment of the pixels.
         '''
-
     def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
         '''
         Generate mipmaps.
@@ -4698,7 +4260,6 @@ class Texture:
             base (int): The base level
             max_level (int): The maximum levels to generate
         '''
-
     def use(self, location: int = 0) -> None:
         '''
         Bind the texture to a texture unit.
@@ -4718,8 +4279,14 @@ class Texture:
         Args:
             location (int): The texture location/unit.
         '''
-
-    def bind_to_image(self, unit: int, read: bool = True, write: bool = True, level: int = 0, format: int = 0) -> None:
+    def bind_to_image(
+        self,
+        unit: int,
+        read: bool = True,
+        write: bool = True,
+        level: int = 0,
+        format: int = 0,
+    ) -> None:
         '''
         Bind a texture to an image unit (OpenGL 4.2 required).
 
@@ -4758,7 +4325,6 @@ class Texture:
             level (int): Level of the texture to bind (default: ``0``).
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
         '''
-
     def get_handle(self, resident: bool = True) -> int:
         '''
         Handle for Bindless Textures.
@@ -4789,10 +4355,8 @@ class Texture:
         Keyword Args:
             resident (bool): Make the texture resident.
         '''
-
     def release(self) -> None:
         '''Release the ModernGL object.'''
-
 
 class VertexArray:
     '''
@@ -4802,7 +4366,7 @@ class VertexArray:
     as well as the Buffer objects providing the vertex data arrays.
 
     In ModernGL, the VertexArray object also stores a reference
-    for a :py:class:`Program` object, and some Subroutine information.
+    for a :py:class:`Program` object.
 
     A VertexArray object cannot be instantiated directly, it requires a context.
     Use :py:meth:`Context.vertex_array` or :py:meth:`Context.simple_vertex_array`
@@ -4814,7 +4378,7 @@ class VertexArray:
 
     mode: int
     '''
-    int: Get or set the default rendering mode.
+    Get or set the default rendering mode.
 
     This value is used when ``mode`` is not passed in rendering calls.
 
@@ -4823,22 +4387,22 @@ class VertexArray:
         vao.mode = moderngl.TRIANGLE_STRIPS
     '''
 
-    program: 'Program'
+    program: Program
     '''
     Program: The program assigned to the VertexArray.
 
     The program used when rendering or transforming primitives.
     '''
 
-    index_buffer: 'Buffer'
-    '''Buffer: The index buffer if the index_buffer is set, otherwise ``None``.'''
+    index_buffer: Buffer
+    '''Index buffer'''
 
     index_element_size: int
-    '''int: The byte size of each element in the index buffer.'''
+    '''The size of an index in bytes'''
 
     vertices: int
     '''
-    int: The number of vertices detected.
+    The number of vertices detected.
 
     This is the minimum of the number of vertices possible per Buffer.
     The size of the index_buffer determines the number of vertices.
@@ -4846,14 +4410,7 @@ class VertexArray:
     '''
 
     instances: int
-    '''int: Get or set the number of instances to render.'''
-
-    subroutines: Tuple[int, ...]
-    '''
-    tuple: The subroutines assigned to the VertexArray.
-
-    The subroutines used when rendering or transforming primitives.
-    '''
+    '''Get or set the number of instances to render.'''
 
     mglo: Any
     '''Internal representation for debug purposes only.'''
@@ -4862,11 +4419,11 @@ class VertexArray:
     '''The context this object belongs to'''
 
     extra: Any
-    '''Any - Attribute for storing user defined objects'''
+    '''Attribute for storing user defined objects'''
 
     glo: int
     '''
-    int: The internal OpenGL object.
+    The internal OpenGL object.
 
     This values is provided for debug purposes only.
     '''
@@ -4890,10 +4447,9 @@ class VertexArray:
             first (int): The index of the first vertex to start with.
             instances (int): The number of instances.
         '''
-
     def render_indirect(
         self,
-        buffer: 'Buffer',
+        buffer: Buffer,
         mode: Optional[int] = None,
         count: int = -1,
         *,
@@ -4912,10 +4468,9 @@ class VertexArray:
         Keyword Args:
             first (int): The index of the first indirect draw command.
         '''
-
     def transform(
         self,
-        buffer: Union['Buffer', List['Buffer']],
+        buffer: Union[Buffer, List[Buffer]],
         mode: Optional[int] = None,
         vertices: int = -1,
         *,
@@ -4940,12 +4495,11 @@ class VertexArray:
             instances (int): The number of instances.
             buffer_offset (int): Byte offset for the output buffer
         '''
-
     def bind(
         self,
         attribute: int,
         cls: str,
-        buffer: 'Buffer',
+        buffer: Buffer,
         fmt: str,
         *,
         offset: int = 0,
@@ -4968,6 +4522,5 @@ class VertexArray:
             divisor (int): The divisor.
             normalize (bool): The normalize parameter, if applicable.
         '''
-
     def release(self) -> None:
         '''Release the ModernGL object.'''

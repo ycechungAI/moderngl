@@ -1,46 +1,58 @@
 Texture3D
 =========
 
-.. py:currentmodule:: moderngl
+.. py:class:: Texture3D
 
-.. autoclass:: moderngl.Texture3D
+    Returned by :py:meth:`Context.texture3d`
 
-Create
-------
+    A Texture is an OpenGL object that contains one or more images that all have the same image format.
 
-.. automethod:: Context.texture3d
-   :noindex:
+    A texture can be used in two ways. It can
+    be the source of a texture access from a Shader, or it can be used
+    as a render target.
+
+    A Texture3D object cannot be instantiated directly, it requires a context.
+    Use :py:meth:`Context.texture3d` to create one.
 
 Methods
 -------
 
-.. automethod:: Texture3D.read
-.. automethod:: Texture3D.read_into
-.. automethod:: Texture3D.write
-.. automethod:: Texture3D.build_mipmaps
-.. automethod:: Texture3D.bind_to_image
-.. automethod:: Texture3D.use
-.. automethod:: Texture3D.release
-.. automethod:: Texture3D.get_handle
+.. py:method:: Texture3D.read
+.. py:method:: Texture3D.read_into
+.. py:method:: Texture3D.write
+.. py:method:: Texture3D.build_mipmaps
+.. py:method:: Texture3D.bind_to_image
+.. py:method:: Texture3D.use
+.. py:method:: Texture3D.release
+.. py:method:: Texture3D.get_handle
 
 Attributes
 ----------
 
-.. autoattribute:: Texture3D.repeat_x
-.. autoattribute:: Texture3D.repeat_y
-.. autoattribute:: Texture3D.repeat_z
-.. autoattribute:: Texture3D.filter
-.. autoattribute:: Texture3D.swizzle
-.. autoattribute:: Texture3D.width
-.. autoattribute:: Texture3D.height
-.. autoattribute:: Texture3D.depth
-.. autoattribute:: Texture3D.size
-.. autoattribute:: Texture3D.dtype
-.. autoattribute:: Texture3D.components
-.. autoattribute:: Texture3D.glo
-.. autoattribute:: Texture3D.mglo
-.. autoattribute:: Texture3D.extra
-.. autoattribute:: Texture3D.ctx
+.. py:attribute:: Texture3D.repeat_x
+.. py:attribute:: Texture3D.repeat_y
+.. py:attribute:: Texture3D.repeat_z
+.. py:attribute:: Texture3D.filter
+.. py:attribute:: Texture3D.swizzle
+.. py:attribute:: Texture3D.width
+.. py:attribute:: Texture3D.height
+.. py:attribute:: Texture3D.depth
+.. py:attribute:: Texture3D.size
+.. py:attribute:: Texture3D.dtype
+.. py:attribute:: Texture3D.components
 
-.. toctree::
-    :maxdepth: 2
+.. py:attribute:: Texture3D.ctx
+    :type: Context
+
+    The context this object belongs to
+
+.. py:attribute:: Texture3D.glo
+    :type: int
+
+    The internal OpenGL object.
+    This values is provided for interoperability and debug purposes only.
+
+.. py:attribute:: Texture3D.extra
+    :type: Any
+
+    User defined data.

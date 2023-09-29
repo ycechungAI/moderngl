@@ -18,5 +18,4 @@ Reference
     renderbuffer.rst
     scope.rst
     query.rst
-    conditional_render.rst
     compute_shader.rst
