@@ -1034,27 +1034,27 @@ These values are available in the ``Context`` object and in the
     # From context
     ctx.enable_only(ctx.DEPTH_TEST | ctx.CULL_FACE)
 
-.. :py:attribute:: Context.NOTHING
+.. py:attribute:: Context.NOTHING
     :type: int
 
     Represents no states. Can be used with :py:meth:`Context.enable_only` to disable all states.
 
-.. :py:attribute:: Context.BLEND
+.. py:attribute:: Context.BLEND
     :type: int
 
     Enable/disable blending
 
-.. :py:attribute:: Context.DEPTH_TEST
+.. py:attribute:: Context.DEPTH_TEST
     :type: int
 
     Enable/disable depth testing
 
-.. :py:attribute:: Context.CULL_FACE
+.. py:attribute:: Context.CULL_FACE
     :type: int
 
     Enable/disable face culling
 
-.. :py:attribute:: Context.RASTERIZER_DISCARD
+.. py:attribute:: Context.RASTERIZER_DISCARD
     :type: int
 
     Enable/disable rasterization
@@ -1067,7 +1067,7 @@ These values are available in the ``Context`` object and in the
     If this value is not set in the shader the behavior is undefined. This means the points may
     or may not appear depending if the drivers enforce some default value for ``gl_PointSize``.
 
-.. :py:attribute:: Context.PROGRAM_POINT_SIZE
+.. py:attribute:: Context.PROGRAM_POINT_SIZE
     :type: int
 
     When disabled :py:attr:`Context.point_size` is used.
