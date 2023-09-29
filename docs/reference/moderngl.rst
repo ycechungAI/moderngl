@@ -40,6 +40,28 @@ The module object itself is responsible for creating a :py:class:`Context` objec
 
     Deprecated, use :py:func:`moderngl.create_context()` with the standalone parameter set.
 
+.. py:function:: moderngl.get_context() -> Context
+
+    Returns the previously created context object.
+
+    Example::
+
+        # my_app.py
+
+        from moderngl import create_context
+
+        ctx = create_context(...)
+
+        # my_renderer.py
+
+        from moderngl import get_context
+
+        class MyRenderer:
+            def __init__(self):
+                self.ctx = get_context()
+                self.program = ...
+                self.vao = ...
+
 Context Flags
 -------------
 
