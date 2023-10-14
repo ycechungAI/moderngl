@@ -155,7 +155,7 @@ python3 setup.py install
 
 ```sh
 pip install -r docs/requirements.txt
-python setup.py build_sphinx
+python -m sphinx docs build/sphinx
 ```
 
 ### Running tests
