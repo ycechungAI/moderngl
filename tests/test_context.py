@@ -116,6 +116,12 @@ def test_enable_direct(ctx_new):
     ctx.disable_direct(GL_PROGRAM_POINT_SIZE)
     assert ctx.error == "GL_NO_ERROR"
 
+def test_depth_clamp_range(ctx):
+    ctx.depth_clamp_range = 0, 1
+    assert ctx.error == "GL_NO_ERROR"
+
+    ctx.depth_clamp_range = None
+    assert ctx.error == "GL_NO_ERROR"
 
 def test_info(ctx):
     assert isinstance(ctx.info, dict)
