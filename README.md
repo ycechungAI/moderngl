@@ -68,13 +68,13 @@ With PyOpenGL, using the original OpenGL API, you have to write three lines to
 achieve a simple task like binding a VBO:
 
 ```py
-vbo1 = glGenBuffers(1)
-GL.glBindBuffer(GL_ARRAY_BUFFER, vbo1)
-GL.glBufferData(GL_ARRAY_BUFFER, b'Hello World!', GL_STATIC_DRAW)
+vbo1 = GL.glGenBuffers(1)
+GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo1)
+GL.glBufferData(GL.GL_ARRAY_BUFFER, b'Hello World!', GL.GL_STATIC_DRAW)
 
-vbo2 = glGenBuffers(1)
-GL.glBindBuffer(GL_ARRAY_BUFFER, vbo2)
-GL.glBufferData(GL_ARRAY_BUFFER, b'\x00' * 1024, GL_DYNAMIC_DRAW)
+vbo2 = GL.glGenBuffers(1)
+GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo2)
+GL.glBufferData(GL.GL_ARRAY_BUFFER, b'\x00' * 1024, GL.GL_DYNAMIC_DRAW)
 ```
 
 With ModernGL you need just one simple line per VBO to achieve the same
