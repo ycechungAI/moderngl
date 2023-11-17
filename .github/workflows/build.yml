@@ -2,9 +2,9 @@ name: build
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
 
   workflow_dispatch:
 
@@ -21,17 +21,17 @@ jobs:
         architecture: ['x64']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: setup
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           architecture: ${{ matrix.architecture }}
 
       - name: deps
-        run: python -m pip install -U pip wheel setuptools
+        run: python -m pip install -U pip wheel setuptools build
 
-      - name: wheel
+      - name: build
         run: |
-          python -m pip install .
+          python -m build
