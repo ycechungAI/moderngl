@@ -149,11 +149,10 @@ python -m sphinx docs build/sphinx
 ### Running tests
 
 ```sh
-pip install -r tests/requirements.txt
-pytest tests
+export LIBGL_ALWAYS_SOFTWARE=true
+python3 -m pip install glcontext pytest numpy scipy
+python3 -X dev -m pytest -s -vvv tests
 ```
-
-> Some of the tests may be skipped when the supported OpenGL version is below the requirements of the given test.
 
 ### Headless rendering
 
