@@ -6,402 +6,402 @@ class ConvertibleToShaderSource(Protocol):
     def to_shader_source(self) -> str | bytes: ...
 
 POINTS: int
-'''ctx.POINTS'''
+"""ctx.POINTS"""
 
 LINES: int
-'''ctx.LINES'''
+"""ctx.LINES"""
 
 LINE_LOOP: int
-'''ctx.LINE_LOOP'''
+"""ctx.LINE_LOOP"""
 
 LINE_STRIP: int
-'''ctx.LINE_STRIP'''
+"""ctx.LINE_STRIP"""
 
 TRIANGLES: int
-'''ctx.TRIANGLES'''
+"""ctx.TRIANGLES"""
 
 TRIANGLE_STRIP: int
-'''ctx.TRIANGLE_STRIP'''
+"""ctx.TRIANGLE_STRIP"""
 
 TRIANGLE_FAN: int
-'''ctx.TRIANGLE_FAN'''
+"""ctx.TRIANGLE_FAN"""
 
 LINES_ADJACENCY: int
-'''ctx.LINES_ADJACENCY'''
+"""ctx.LINES_ADJACENCY"""
 
 LINE_STRIP_ADJACENCY: int
-'''ctx.LINE_STRIP_ADJACENCY'''
+"""ctx.LINE_STRIP_ADJACENCY"""
 
 TRIANGLES_ADJACENCY: int
-'''ctx.TRIANGLES_ADJACENCY'''
+"""ctx.TRIANGLES_ADJACENCY"""
 
 TRIANGLE_STRIP_ADJACENCY: int
-'''ctx.TRIANGLE_STRIP_ADJACENCY'''
+"""ctx.TRIANGLE_STRIP_ADJACENCY"""
 
 PATCHES: int
-'''ctx.PATCHES'''
+"""ctx.PATCHES"""
 
 NEAREST: int
-'''ctx.NEAREST'''
+"""ctx.NEAREST"""
 
 LINEAR: int
-'''ctx.LINEAR'''
+"""ctx.LINEAR"""
 
 NEAREST_MIPMAP_NEAREST: int
-'''ctx.NEAREST_MIPMAP_NEAREST'''
+"""ctx.NEAREST_MIPMAP_NEAREST"""
 
 LINEAR_MIPMAP_NEAREST: int
-'''ctx.LINEAR_MIPMAP_NEAREST'''
+"""ctx.LINEAR_MIPMAP_NEAREST"""
 
 NEAREST_MIPMAP_LINEAR: int
-'''ctx.NEAREST_MIPMAP_LINEAR'''
+"""ctx.NEAREST_MIPMAP_LINEAR"""
 
 LINEAR_MIPMAP_LINEAR: int
-'''ctx.LINEAR_MIPMAP_LINEAR'''
+"""ctx.LINEAR_MIPMAP_LINEAR"""
 
 NOTHING: int
-'''ctx.NOTHING'''
+"""ctx.NOTHING"""
 
 BLEND: int
-'''ctx.BLEND'''
+"""ctx.BLEND"""
 
 DEPTH_TEST: int
-'''ctx.DEPTH_TEST'''
+"""ctx.DEPTH_TEST"""
 
 CULL_FACE: int
-'''ctx.CULL_FACE'''
+"""ctx.CULL_FACE"""
 
 RASTERIZER_DISCARD: int
-'''ctx.RASTERIZER_DISCARD'''
+"""ctx.RASTERIZER_DISCARD"""
 
 PROGRAM_POINT_SIZE: int
-'''ctx.PROGRAM_POINT_SIZE'''
+"""ctx.PROGRAM_POINT_SIZE"""
 
 ZERO: int
-'''ctx.ZERO'''
+"""ctx.ZERO"""
 
 ONE: int
-'''ctx.ONE'''
+"""ctx.ONE"""
 
 SRC_COLOR: int
-'''ctx.SRC_COLOR'''
+"""ctx.SRC_COLOR"""
 
 ONE_MINUS_SRC_COLOR: int
-'''ctx.ONE_MINUS_SRC_COLOR'''
+"""ctx.ONE_MINUS_SRC_COLOR"""
 
 SRC_ALPHA: int
-'''ctx.SRC_ALPHA'''
+"""ctx.SRC_ALPHA"""
 
 ONE_MINUS_SRC_ALPHA: int
-'''ctx.ONE_MINUS_SRC_ALPHA'''
+"""ctx.ONE_MINUS_SRC_ALPHA"""
 
 DST_ALPHA: int
-'''ctx.DST_ALPHA'''
+"""ctx.DST_ALPHA"""
 
 ONE_MINUS_DST_ALPHA: int
-'''ctx.ONE_MINUS_DST_ALPHA'''
+"""ctx.ONE_MINUS_DST_ALPHA"""
 
 DST_COLOR: int
-'''ctx.DST_COLOR'''
+"""ctx.DST_COLOR"""
 
 ONE_MINUS_DST_COLOR: int
-'''ctx.ONE_MINUS_DST_COLOR'''
+"""ctx.ONE_MINUS_DST_COLOR"""
 
 FUNC_ADD: int
-'''ctx.FUNC_ADD'''
+"""ctx.FUNC_ADD"""
 
 FUNC_SUBTRACT: int
-'''ctx.FUNC_SUBTRACT'''
+"""ctx.FUNC_SUBTRACT"""
 
 FUNC_REVERSE_SUBTRACT: int
-'''ctx.FUNC_REVERSE_SUBTRACT'''
+"""ctx.FUNC_REVERSE_SUBTRACT"""
 
 MIN: int
-'''ctx.MIN'''
+"""ctx.MIN"""
 
 MAX: int
-'''ctx.MAX'''
+"""ctx.MAX"""
 
 DEFAULT_BLENDING: int
-'''ctx.DEFAULT_BLENDING'''
+"""ctx.DEFAULT_BLENDING"""
 
 ADDITIVE_BLENDING: int
-'''ctx.ADDITIVE_BLENDING'''
+"""ctx.ADDITIVE_BLENDING"""
 
 PREMULTIPLIED_ALPHA: int
-'''ctx.PREMULTIPLIED_ALPHA'''
+"""ctx.PREMULTIPLIED_ALPHA"""
 
 FIRST_VERTEX_CONVENTION: int
-'''ctx.FIRST_VERTEX_CONVENTION'''
+"""ctx.FIRST_VERTEX_CONVENTION"""
 
 LAST_VERTEX_CONVENTION: int
-'''ctx.LAST_VERTEX_CONVENTION'''
+"""ctx.LAST_VERTEX_CONVENTION"""
 
 VERTEX_ATTRIB_ARRAY_BARRIER_BIT: int
-'''ctx.VERTEX_ATTRIB_ARRAY_BARRIER_BIT'''
+"""ctx.VERTEX_ATTRIB_ARRAY_BARRIER_BIT"""
 
 ELEMENT_ARRAY_BARRIER_BIT: int
-'''ctx.ELEMENT_ARRAY_BARRIER_BIT'''
+"""ctx.ELEMENT_ARRAY_BARRIER_BIT"""
 
 UNIFORM_BARRIER_BIT: int
-'''ctx.UNIFORM_BARRIER_BIT'''
+"""ctx.UNIFORM_BARRIER_BIT"""
 
 TEXTURE_FETCH_BARRIER_BIT: int
-'''ctx.TEXTURE_FETCH_BARRIER_BIT'''
+"""ctx.TEXTURE_FETCH_BARRIER_BIT"""
 
 SHADER_IMAGE_ACCESS_BARRIER_BIT: int
-'''ctx.SHADER_IMAGE_ACCESS_BARRIER_BIT'''
+"""ctx.SHADER_IMAGE_ACCESS_BARRIER_BIT"""
 
 COMMAND_BARRIER_BIT: int
-'''ctx.COMMAND_BARRIER_BIT'''
+"""ctx.COMMAND_BARRIER_BIT"""
 
 PIXEL_BUFFER_BARRIER_BIT: int
-'''ctx.PIXEL_BUFFER_BARRIER_BIT'''
+"""ctx.PIXEL_BUFFER_BARRIER_BIT"""
 
 TEXTURE_UPDATE_BARRIER_BIT: int
-'''ctx.TEXTURE_UPDATE_BARRIER_BIT'''
+"""ctx.TEXTURE_UPDATE_BARRIER_BIT"""
 
 BUFFER_UPDATE_BARRIER_BIT: int
-'''ctx.BUFFER_UPDATE_BARRIER_BIT'''
+"""ctx.BUFFER_UPDATE_BARRIER_BIT"""
 
 FRAMEBUFFER_BARRIER_BIT: int
-'''ctx.FRAMEBUFFER_BARRIER_BIT'''
+"""ctx.FRAMEBUFFER_BARRIER_BIT"""
 
 TRANSFORM_FEEDBACK_BARRIER_BIT: int
-'''ctx.TRANSFORM_FEEDBACK_BARRIER_BIT'''
+"""ctx.TRANSFORM_FEEDBACK_BARRIER_BIT"""
 
 ATOMIC_COUNTER_BARRIER_BIT: int
-'''ctx.ATOMIC_COUNTER_BARRIER_BIT'''
+"""ctx.ATOMIC_COUNTER_BARRIER_BIT"""
 
 SHADER_STORAGE_BARRIER_BIT: int
-'''ctx.SHADER_STORAGE_BARRIER_BIT'''
+"""ctx.SHADER_STORAGE_BARRIER_BIT"""
 
 ALL_BARRIER_BITS: int
-'''ctx.ALL_BARRIER_BITS'''
+"""ctx.ALL_BARRIER_BITS"""
 
 class Attribute:
-    '''
+    """
     Represents a program attribute.
-    '''
+    """
 
     location: int
-    '''
+    """
     The location of the attribute.
     The result of the glGetAttribLocation.
-    '''
+    """
 
     array_length: int
-    '''
+    """
     The length of the array and `1` for scalars.
-    '''
+    """
 
     dimension: int
-    '''
+    """
     The attribute dimension.
-    '''
+    """
 
     shape: int
-    '''
+    """
     A single character, representing the scalar type of the attribute.
-    '''
+    """
 
     name: str
-    '''
+    """
     The Attribute name without array index suffixes.
-    '''
+    """
 
     extra: Any
-    '''
+    """
     User Data
-    '''
+    """
 
     mglo: Any
-    '''
+    """
     Internal moderngl core object
-    '''
+    """
 
 class Uniform:
-    '''
+    """
     A uniform is a global GLSL variable declared with the 'uniform' storage qualifier.
 
     These act as parameters that the user of a shader program can pass to that program.
 
     In ModernGL, Uniforms can be accessed using :py:meth:`Program.__getitem__`
     or :py:meth:`Program.__iter__`
-    '''
+    """
 
     location: int
-    '''
+    """
     The location of the uniform.
-    '''
+    """
 
     dimension: int
-    '''
+    """
     The dimension of the uniform.
-    '''
+    """
 
     array_length: int
-    '''
+    """
     The length of the array of the uniform.
     The array_length is `1` for non array uniforms.
-    '''
+    """
 
     name: str
-    '''
+    """
     The name of the uniform.
 
     The name does not contain leading `[0]`.
     The name may contain `[ ]` when the uniform is part of a struct.
-    '''
+    """
 
     value: Any
-    '''
+    """
     The value of the uniform.
 
     Reading the value of the uniform may force the GPU to sync.
 
     The value must be a tuple for non array uniforms.
     The value must be a list of tuples for array uniforms.
-    '''
+    """
 
     handle: int
-    '''
+    """
     The handle of the uniform.
 
     Only valid for uniform textures when using Bindless Textures.
-    '''
+    """
 
     extra: Any
-    '''
+    """
     Attribute for storing user defined objects
-    '''
+    """
 
     mglo: Any
-    '''
+    """
     Internal moderngl core object
-    '''
+    """
 
     def read(self) -> bytes:
-        '''
+        """
         Read the value of the uniform.
-        '''
+        """
     def write(self, data: Any) -> None:
-        '''
+        """
         Write the value of the uniform.
-        '''
+        """
 
 class UniformBlock:
-    '''
+    """
     Uniform Block metadata
-    '''
+    """
 
     binding: int
-    '''
+    """
     The binding of the uniform block.
-    '''
+    """
 
     value: int
-    '''
+    """
     The value of the uniform block.
-    '''
+    """
 
     name: str
-    '''
+    """
     The name of the uniform block.
-    '''
+    """
 
     index: int
-    '''
+    """
     The index of the uniform block.
-    '''
+    """
 
     size: int
-    '''
+    """
     The size of the uniform block.
-    '''
+    """
 
     extra: Any
-    '''
+    """
     Attribute for storing user defined objects
-    '''
+    """
 
     mglo: Any
-    '''
+    """
     Internal moderngl core object
-    '''
+    """
 
 class StorageBlock:
-    '''
+    """
     Storage Block metadata
-    '''
+    """
 
     binding: int
-    '''
+    """
     The binding of the storage block
-    '''
+    """
 
     value: int
-    '''
+    """
     The value of the storage block.
-    '''
+    """
 
     name: str
-    '''
+    """
     The name of the storage block.
-    '''
+    """
 
     index: int
-    '''
+    """
     The index of the storage block.
-    '''
+    """
 
     extra: Any
-    '''
+    """
     Attribute for storing user defined objects
-    '''
+    """
 
     mglo: Any
-    '''
+    """
     Internal moderngl core object
-    '''
+    """
 
 class Varying:
-    '''
+    """
     This class represents a program varying.
-    '''
+    """
 
     number: int
-    '''
+    """
     The number of the varying.
-    '''
+    """
 
     name: str
-    '''
+    """
     The name of the varying.
-    '''
+    """
 
     extra: Any
-    '''
+    """
     Attribute for storing user defined objects
-    '''
+    """
 
     mglo: Any
-    '''
+    """
     Internal moderngl core object
-    '''
+    """
 
 class Error(Exception):
-    '''
+    """
     Generic moderngl error.
-    '''
+    """
 
 class InvalidObject:
-    '''
+    """
     DEPRECATED
-    '''
+    """
 
 class Buffer:
-    '''
+    """
     Buffer objects are OpenGL objects that store an array of unformatted memory \
     allocated by the OpenGL context, (data allocated on the GPU).
 
@@ -412,32 +412,32 @@ class Buffer:
     Use :py:meth:`Context.buffer` to create one.
 
     Copy buffer content using :py:meth:`Context.copy_buffer`.
-    '''
+    """
 
     size: int
-    '''The size of the buffer in bytes.'''
+    """The size of the buffer in bytes."""
 
     dynamic: bool
-    '''Is the buffer created with the dynamic flag?.'''
+    """Is the buffer created with the dynamic flag?."""
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
     ctx: Context
-    '''The context this object belongs to'''
+    """The context this object belongs to"""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     glo: int
-    '''
+    """
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
-    '''
+    """
 
     def write(self, data: Any, offset: int = 0) -> None:
-        '''
+        """
         Write the content.
 
         Args:
@@ -445,9 +445,9 @@ class Buffer:
 
         Keyword Args:
             offset (int): The offset in bytes.
-        '''
+        """
     def write_chunks(self, data: Any, start: int, step: int, count: int) -> None:
-        '''
+        """
         Split data to count equal parts.
 
         Write the chunks using offsets calculated from start, step and stop.
@@ -457,9 +457,9 @@ class Buffer:
             start (int): First offset in bytes.
             step (int): Offset increment in bytes.
             count (int): The number of offsets.
-        '''
+        """
     def read(self, size: int = -1, offset: int = 0) -> bytes:
-        '''
+        """
         Read the content.
 
         Args:
@@ -470,9 +470,9 @@ class Buffer:
 
         Returns:
             bytes
-        '''
+        """
     def read_into(self, buffer: Any, size: int = -1, offset: int = 0, write_offset: int = 0) -> None:
-        '''
+        """
         Read the content into a buffer.
 
         Args:
@@ -482,9 +482,9 @@ class Buffer:
         Keyword Args:
             offset (int): The read offset in bytes.
             write_offset (int): The write offset in bytes.
-        '''
+        """
     def read_chunks(self, chunk_size: int, start: int, step: int, count: int) -> bytes:
-        '''
+        """
         Read the content.
 
         Read and concatenate the chunks of size chunk_size
@@ -498,7 +498,7 @@ class Buffer:
 
         Returns:
             bytes
-        '''
+        """
     def read_chunks_into(
         self,
         buffer: Any,
@@ -508,7 +508,7 @@ class Buffer:
         count: int,
         write_offset: int = 0,
     ) -> None:
-        '''
+        """
         Read the content.
 
         Read and concatenate the chunks of size chunk_size
@@ -523,9 +523,9 @@ class Buffer:
 
         Keyword Args:
             write_offset (int): The write offset.
-        '''
+        """
     def clear(self, size: int = -1, offset: int = 0, chunk: Any = None) -> None:
-        '''
+        """
         Clear the content.
 
         Args:
@@ -534,9 +534,9 @@ class Buffer:
         Keyword Args:
             offset (int): The offset.
             chunk (bytes): The chunk to use repeatedly.
-        '''
+        """
     def bind_to_uniform_block(self, binding: int = 0, offset: int = 0, size: int = -1) -> None:
-        '''
+        """
         Bind the buffer to a uniform block.
 
         Args:
@@ -545,9 +545,9 @@ class Buffer:
         Keyword Args:
             offset (int): The offset.
             size (int): The size. Value ``-1`` means all.
-        '''
+        """
     def bind_to_storage_buffer(self, binding: int = 0, offset: int = 0, size: int = -1) -> None:
-        '''
+        """
         Bind the buffer to a shader storage buffer.
 
         Args:
@@ -556,9 +556,9 @@ class Buffer:
         Keyword Args:
             offset (int): The offset.
             size (int): The size. Value ``-1`` means all.
-        '''
+        """
     def orphan(self, size: int = -1) -> None:
-        '''
+        """
         Orphan the buffer with the option to specify a new size.
 
         It is also called buffer re-specification.
@@ -605,26 +605,26 @@ class Buffer:
             # We can also resize the buffer. In this case we double the size
 
             >> vbo.orphan(vbo.size * 2)
-        '''
+        """
     def release(self) -> None:
-        '''Release the ModernGL object.'''
+        """Release the ModernGL object."""
     def bind(self, *attribs, layout=None):
-        '''
+        """
         Helper method for binding a buffer.
 
         Returns:
             (self, layout, attribs) tuple
-        '''
+        """
     def assign(self, index: int) -> Tuple[Buffer, int]:
-        '''
+        """
         Helper method for assigning a buffer.
 
         Returns:
             (self, index) tuple
-        '''
+        """
 
 class ComputeShader:
-    '''
+    """
     A Compute Shader is a Shader Stage that is used entirely for computing arbitrary information.
 
     While it can do rendering, it is generally used
@@ -635,26 +635,26 @@ class ComputeShader:
     - Storage buffers can be bound using :py:meth:`Buffer.bind_to_storage_buffer`.
     - Uniform buffers can be bound using :py:meth:`Buffer.bind_to_uniform_block`.
     - Images can be bound using :py:meth:`Texture.bind_to_image`.
-    '''
+    """
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
     ctx: Context
-    '''The context this object belongs to'''
+    """The context this object belongs to"""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     glo: int
-    '''
+    """
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
-    '''
+    """
 
     def __getitem__(self, key: str) -> Union[Uniform, UniformBlock, StorageBlock]:
-        '''
+        """
         Get a member such as uniforms, uniform blocks and storage blocks.
 
         .. code-block:: python
@@ -671,9 +671,9 @@ class ComputeShader:
 
             # Set binding for a storage block (if supported)
             program['DataBlock'].binding = 0
-        '''
+        """
     def __setitem__(self, key: str, value: Any):
-        '''
+        """
         Set a value of uniform or uniform block.
 
         .. code-block:: python
@@ -690,9 +690,9 @@ class ComputeShader:
 
             # Set binding for a storage block (if supported)
             program['DataBlock'].binding = 0
-        '''
+        """
     def __iter__(self) -> Generator[str, None, None]:
-        '''
+        """
         Yields the internal members names as strings.
 
         Example::
@@ -704,22 +704,22 @@ class ComputeShader:
                     print('This is a storage block member')
 
         This includes all members such as uniforms, uniform blocks and storage blocks.
-        '''
+        """
     def run(self, group_x: int = 1, group_y: int = 1, group_z: int = 1) -> None:
-        '''
+        """
         Run the compute shader.
 
         Args:
             group_x (int): The number of work groups to be launched in the X dimension.
             group_y (int): The number of work groups to be launched in the Y dimension.
             group_z (int): The number of work groups to be launched in the Z dimension.
-        '''
+        """
     def run_indirect(self, buffer: Buffer, offset: int = 0) -> None:
-        '''
+        """
         Run the compute shader.
-        '''
+        """
     def get(self, key: str, default: Any) -> Union[Uniform, UniformBlock, Attribute, Varying]:
-        '''
+        """
         Returns a Uniform, UniformBlock, Attribute or Varying.
 
         Args:
@@ -727,47 +727,47 @@ class ComputeShader:
 
         Returns:
             :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Attribute` or :py:class:`Varying`
-        '''
+        """
     def release(self) -> None:
-        '''Release the ModernGL object.'''
+        """Release the ModernGL object."""
 
 class ConditionalRender:
-    '''
+    """
     This class represents a ConditionalRender object.
 
     ConditionalRender objects can only be accessed from :py:class:`Query` objects.
-    '''
+    """
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     def __enter__(self): ...
     def __exit__(self, *args): ...
 
 class Context:
-    '''
+    """
     Class exposing OpenGL features.
 
     ModernGL objects can be created from this class.
-    '''
+    """
 
     NOTHING: int
-    '''Represents no states. Can be used with :py:meth:`Context.enable_only` to disable all states.'''
+    """Represents no states. Can be used with :py:meth:`Context.enable_only` to disable all states."""
 
     BLEND: int
-    '''Enable/disable blending'''
+    """Enable/disable blending"""
 
     DEPTH_TEST: int
-    '''Enable/disable depth testing'''
+    """Enable/disable depth testing"""
 
     CULL_FACE: int
-    '''Enable/disable face culling'''
+    """Enable/disable face culling"""
 
     RASTERIZER_DISCARD: int
-    '''Enable/disable rasterization
+    """Enable/disable rasterization
 
     Context flag: Enables ``gl_PointSize`` in vertex or geometry shaders.
 
@@ -775,243 +775,243 @@ class Context:
     for each individual point.
 
     If this value is not set in the shader the behavior is undefined. This means the points may
-    or may not appear depending if the drivers enforce some default value for ``gl_PointSize``.'''
+    or may not appear depending if the drivers enforce some default value for ``gl_PointSize``."""
 
     PROGRAM_POINT_SIZE: int
-    '''When disabled :py:attr:`Context.point_size` is used.'''
+    """When disabled :py:attr:`Context.point_size` is used."""
 
     POINTS: int
-    '''Each vertex represents a point'''
+    """Each vertex represents a point"""
 
     LINES: int
-    '''Vertices 0 and 1 are considered a line. Vertices 2 and 3 are considered a line.
-    And so on. If the user specifies a non-even number of vertices, then the extra vertex is ignored.'''
+    """Vertices 0 and 1 are considered a line. Vertices 2 and 3 are considered a line.
+    And so on. If the user specifies a non-even number of vertices, then the extra vertex is ignored."""
 
     LINE_LOOP: int
-    '''As line strips, except that the first and last vertices are also used as a line.
+    """As line strips, except that the first and last vertices are also used as a line.
     Thus, you get n lines for n input vertices. If the user only specifies 1 vertex,
     the drawing command is ignored. The line between the first and last vertices happens
-    after all of the previous lines in the sequence.'''
+    after all of the previous lines in the sequence."""
 
     LINE_STRIP: int
-    '''The adjacent vertices are considered lines. Thus, if you pass n vertices, you will get n-1 lines.
-    If the user only specifies 1 vertex, the drawing command is ignored.'''
+    """The adjacent vertices are considered lines. Thus, if you pass n vertices, you will get n-1 lines.
+    If the user only specifies 1 vertex, the drawing command is ignored."""
 
     TRIANGLES: int
-    '''Vertices 0, 1, and 2 form a triangle. Vertices 3, 4, and 5 form a triangle. And so on.'''
+    """Vertices 0, 1, and 2 form a triangle. Vertices 3, 4, and 5 form a triangle. And so on."""
 
     TRIANGLE_STRIP: int
-    '''Every group of 3 adjacent vertices forms a triangle. The face direction of the
+    """Every group of 3 adjacent vertices forms a triangle. The face direction of the
     strip is determined by the winding of the first triangle. Each successive triangle
     will have its effective face order reversed, so the system compensates for that
-    by testing it in the opposite way. A vertex stream of n length will generate n-2 triangles.'''
+    by testing it in the opposite way. A vertex stream of n length will generate n-2 triangles."""
 
     TRIANGLE_FAN: int
-    '''The first vertex is always held fixed. From there on, every group of 2 adjacent
+    """The first vertex is always held fixed. From there on, every group of 2 adjacent
     vertices form a triangle with the first. So with a vertex stream, you get a list
     of triangles like so: (0, 1, 2) (0, 2, 3), (0, 3, 4), etc. A vertex stream of
-    n length will generate n-2 triangles.'''
+    n length will generate n-2 triangles."""
 
     LINES_ADJACENCY: int
-    '''These are special primitives that are expected to be used specifically with
+    """These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
-    to work with for each input primitive. Data needs to be duplicated in buffers.'''
+    to work with for each input primitive. Data needs to be duplicated in buffers."""
 
     LINE_STRIP_ADJACENCY: int
-    '''These are special primitives that are expected to be used specifically with
+    """These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
-    to work with for each input primitive. Data needs to be duplicated in buffers.'''
+    to work with for each input primitive. Data needs to be duplicated in buffers."""
 
     TRIANGLES_ADJACENCY: int
-    '''These are special primitives that are expected to be used specifically with
+    """These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
-    to work with for each input primitive. Data needs to be duplicated in buffers.'''
+    to work with for each input primitive. Data needs to be duplicated in buffers."""
 
     TRIANGLE_STRIP_ADJACENCY: int
-    '''These are special primitives that are expected to be used specifically with
+    """These are special primitives that are expected to be used specifically with
     geomtry shaders. These primitives give the geometry shader more vertices
-    to work with for each input primitive. Data needs to be duplicated in buffers.'''
+    to work with for each input primitive. Data needs to be duplicated in buffers."""
 
     PATCHES: int
-    '''primitive type can only be used when Tessellation is active. It is a primitive
+    """primitive type can only be used when Tessellation is active. It is a primitive
     with a user-defined number of vertices, which is then tessellated based on the
     control and evaluation shaders into regular points, lines, or triangles, depending
-    on the TES's settings.'''
+    on the TES's settings."""
 
     NEAREST: int
-    '''Returns the value of the texture element that is nearest
-    (in Manhattan distance) to the specified texture coordinates.'''
+    """Returns the value of the texture element that is nearest
+    (in Manhattan distance) to the specified texture coordinates."""
 
     LINEAR: int
-    '''Returns the weighted average of the four texture elements
+    """Returns the weighted average of the four texture elements
     that are closest to the specified texture coordinates.
     These can include items wrapped or repeated from other parts
     of a texture, depending on the values of texture repeat mode,
-    and on the exact mapping.'''
+    and on the exact mapping."""
 
     NEAREST_MIPMAP_NEAREST: int
-    '''Chooses the mipmap that most closely matches the size of the
+    """Chooses the mipmap that most closely matches the size of the
     pixel being textured and uses the ``NEAREST`` criterion (the texture
     element closest to the specified texture coordinates) to produce
-    a texture value.'''
+    a texture value."""
 
     LINEAR_MIPMAP_NEAREST: int
-    '''Chooses the mipmap that most closely matches the size of the pixel
+    """Chooses the mipmap that most closely matches the size of the pixel
     being textured and uses the ``LINEAR`` criterion (a weighted average
     of the four texture elements that are closest to the specified
-    texture coordinates) to produce a texture value.'''
+    texture coordinates) to produce a texture value."""
 
     NEAREST_MIPMAP_LINEAR: int
-    '''Chooses the two mipmaps that most closely match the size of the
+    """Chooses the two mipmaps that most closely match the size of the
     pixel being textured and uses the ``NEAREST`` criterion (the texture
     element closest to the specified texture coordinates ) to produce
     a texture value from each mipmap. The final texture value is a
-    weighted average of those two values.'''
+    weighted average of those two values."""
 
     LINEAR_MIPMAP_LINEAR: int
-    '''Chooses the two mipmaps that most closely match the size of the pixel
+    """Chooses the two mipmaps that most closely match the size of the pixel
     being textured and uses the ``LINEAR`` criterion (a weighted average
     of the texture elements that are closest to the specified texture
     coordinates) to produce a texture value from each mipmap.
-    The final texture value is a weighted average of those two values.'''
+    The final texture value is a weighted average of those two values."""
 
     ZERO: int
-    '''(0,0,0,0)'''
+    """(0,0,0,0)"""
 
     ONE: int
-    '''(1,1,1,1)'''
+    """(1,1,1,1)"""
 
     SRC_COLOR: int
-    '''(Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)'''
+    """(Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)"""
 
     ONE_MINUS_SRC_COLOR: int
-    '''(1,1,1,1) - (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)'''
+    """(1,1,1,1) - (Rs0/kR,Gs0/kG,Bs0/kB,As0/kA)"""
 
     SRC_ALPHA: int
-    '''(As0/kA,As0/kA,As0/kA,As0/kA)'''
+    """(As0/kA,As0/kA,As0/kA,As0/kA)"""
 
     ONE_MINUS_SRC_ALPHA: int
-    '''(1,1,1,1) - (As0/kA,As0/kA,As0/kA,As0/kA)'''
+    """(1,1,1,1) - (As0/kA,As0/kA,As0/kA,As0/kA)"""
 
     DST_ALPHA: int
-    '''(Ad/kA,Ad/kA,Ad/kA,Ad/kA)'''
+    """(Ad/kA,Ad/kA,Ad/kA,Ad/kA)"""
 
     ONE_MINUS_DST_ALPHA: int
-    '''(1,1,1,1) - (Ad/kA,Ad/kA,Ad/kA,Ad/kA)'''
+    """(1,1,1,1) - (Ad/kA,Ad/kA,Ad/kA,Ad/kA)"""
 
     DST_COLOR: int
-    '''(Rd/kR,Gd/kG,Bd/kB,Ad/kA)'''
+    """(Rd/kR,Gd/kG,Bd/kB,Ad/kA)"""
 
     ONE_MINUS_DST_COLOR: int
-    '''(1,1,1,1) - (Rd/kR,Gd/kG,Bd/kB,Ad/kA)'''
+    """(1,1,1,1) - (Rd/kR,Gd/kG,Bd/kB,Ad/kA)"""
 
     DEFAULT_BLENDING: int
-    '''Shotcut for the default blending ``SRC_ALPHA, ONE_MINUS_SRC_ALPHA``'''
+    """Shotcut for the default blending ``SRC_ALPHA, ONE_MINUS_SRC_ALPHA``"""
 
     ADDITIVE_BLENDING: int
-    '''Shotcut for additive blending ``ONE, ONE``'''
+    """Shotcut for additive blending ``ONE, ONE``"""
 
     PREMULTIPLIED_ALPHA: int
-    '''Shotcut for blend mode when using premultiplied alpha ``SRC_ALPHA, ONE``'''
+    """Shotcut for blend mode when using premultiplied alpha ``SRC_ALPHA, ONE``"""
 
     FUNC_ADD: int
-    '''source + destination'''
+    """source + destination"""
 
     FUNC_SUBTRACT: int
-    '''source - destination'''
+    """source - destination"""
 
     FUNC_REVERSE_SUBTRACT: int
-    '''destination - source'''
+    """destination - source"""
 
     MIN: int
-    '''Minimum of source and destination'''
+    """Minimum of source and destination"""
 
     MAX: int
-    '''Maximum of source and destination'''
+    """Maximum of source and destination"""
 
     FIRST_VERTEX_CONVENTION: int
-    '''Specifies the first vertex should be used as the source of data for flat shaded varyings.
-    Used with :py:attr:`Context.provoking_vertex`.'''
+    """Specifies the first vertex should be used as the source of data for flat shaded varyings.
+    Used with :py:attr:`Context.provoking_vertex`."""
 
     LAST_VERTEX_CONVENTION: int
-    '''Specifies the last vertex should be used as the source of data for flat shaded varyings.
-    Used with :py:attr:`Context.provoking_vertex`.'''
+    """Specifies the last vertex should be used as the source of data for flat shaded varyings.
+    Used with :py:attr:`Context.provoking_vertex`."""
 
     VERTEX_ATTRIB_ARRAY_BARRIER_BIT: int
-    '''
+    """
     VERTEX_ATTRIB_ARRAY_BARRIER_BIT
-    '''
+    """
 
     ELEMENT_ARRAY_BARRIER_BIT: int
-    '''
+    """
     ELEMENT_ARRAY_BARRIER_BIT
-    '''
+    """
 
     UNIFORM_BARRIER_BIT: int
-    '''
+    """
     UNIFORM_BARRIER_BIT
-    '''
+    """
 
     TEXTURE_FETCH_BARRIER_BIT: int
-    '''
+    """
     TEXTURE_FETCH_BARRIER_BIT
-    '''
+    """
 
     SHADER_IMAGE_ACCESS_BARRIER_BIT: int
-    '''
+    """
     SHADER_IMAGE_ACCESS_BARRIER_BIT
-    '''
+    """
 
     COMMAND_BARRIER_BIT: int
-    '''
+    """
     COMMAND_BARRIER_BIT
-    '''
+    """
 
     PIXEL_BUFFER_BARRIER_BIT: int
-    '''
+    """
     PIXEL_BUFFER_BARRIER_BIT
-    '''
+    """
 
     TEXTURE_UPDATE_BARRIER_BIT: int
-    '''
+    """
     TEXTURE_UPDATE_BARRIER_BIT
-    '''
+    """
 
     BUFFER_UPDATE_BARRIER_BIT: int
-    '''
+    """
     BUFFER_UPDATE_BARRIER_BIT
-    '''
+    """
 
     FRAMEBUFFER_BARRIER_BIT: int
-    '''
+    """
     FRAMEBUFFER_BARRIER_BIT
-    '''
+    """
 
     TRANSFORM_FEEDBACK_BARRIER_BIT: int
-    '''
+    """
     TRANSFORM_FEEDBACK_BARRIER_BIT
-    '''
+    """
 
     ATOMIC_COUNTER_BARRIER_BIT: int
-    '''
+    """
     ATOMIC_COUNTER_BARRIER_BIT
-    '''
+    """
 
     SHADER_STORAGE_BARRIER_BIT: int
-    '''
+    """
     SHADER_STORAGE_BARRIER_BIT
-    '''
+    """
 
     ALL_BARRIER_BITS: int
-    '''
+    """
     ALL_BARRIER_BITS
-    '''
+    """
 
     version_code: int
-    '''The OpenGL version code. Reports ``410`` for OpenGL 4.1'''
+    """The OpenGL version code. Reports ``410`` for OpenGL 4.1"""
 
     gc_mode: str
-    '''
+    """
     The garbage collection mode.
 
     The default mode is ``None`` meaning no automatic
@@ -1033,17 +1033,17 @@ class Context:
         # Enable automatic garbage collection like
         # we normally expect in python.
         ctx.gc_mode = 'auto'
-    '''
+    """
 
     objects: Deque[Any]
-    '''
+    """
     Moderngl objects scheduled for deletion.
 
     These are deleted when calling :py:meth:`Context.gc`.
-    '''
+    """
 
     def gc(self) -> int:
-        '''
+        """
         Deletes OpenGL objects.
 
         This method must be called to garbage collect
@@ -1054,19 +1054,19 @@ class Context:
 
         Returns:
             int: Number of objects deleted
-        '''
+        """
     line_width: float
-    '''
+    """
     Set the default line width.
 
     .. Warning:: A line width other than 1.0 is not guaranteed to work
                     across different OpenGL implementations. For wide
                     lines you should be using geometry shaders.
 
-    '''
+    """
 
     point_size: float
-    '''
+    """
     Set/get the point size.
 
     Point size changes the pixel size of rendered points. The min and max values
@@ -1080,10 +1080,10 @@ class Context:
 
         Using a geometry shader to create triangle strips from points is often a safer
         way to render large points since you don't have have any size restrictions.
-    '''
+    """
 
     depth_func: str
-    '''
+    """
     Set the default depth func.
 
     Example::
@@ -1096,10 +1096,10 @@ class Context:
         ctx.depth_func = '!='  # GL_NOTEQUAL
         ctx.depth_func = '0'   # GL_NEVER
         ctx.depth_func = '1'   # GL_ALWAYS
-    '''
+    """
 
     depth_clamp_range: Union[Tuple[float, float], None]
-    '''
+    """
     Setting up depth clamp range (write only, by default ``None``).
 
     ``ctx.depth_clamp_range`` offers uniform use of GL_DEPTH_CLAMP and glDepthRange.
@@ -1125,10 +1125,10 @@ class Context:
 
         # For glEnable(GL_DEPTH_CLAMP) and glDepthRange(near, far)
         ctx.depth_clamp_range = (near, far)
-    '''
+    """
 
     blend_func: Tuple[int, int]
-    '''
+    """
     tuple: Set the blend func (write only).
 
     Blend func can be set for rgb and alpha separately if needed.
@@ -1161,10 +1161,10 @@ class Context:
             moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA,
             moderngl.ONE, moderngl.ONE
         )
-    '''
+    """
 
     blend_equation: Tuple[int, int]
-    '''
+    """
     tuple: Set the blend equation (write only).
 
     Blend equations specify how source and destination colors are combined
@@ -1187,10 +1187,10 @@ class Context:
 
         # Separate for rgb and alpha channel
         ctx.blend_equation = moderngl.FUNC_ADD, moderngl.MAX
-    '''
+    """
 
     multisample: bool
-    '''
+    """
     bool: Enable/disable multisample mode (``GL_MULTISAMPLE``).
 
     This property is write only.
@@ -1201,10 +1201,10 @@ class Context:
         ctx.multisample = True
         # Disable
         ctx.multisample = False
-    '''
+    """
 
     provoking_vertex: int
-    '''
+    """
     Specifies the vertex to be used as the source of data for flat shaded varyings.
 
     Flatshading a vertex shader varying output (ie. ``flat out vec3 pos``) means to assign
@@ -1222,10 +1222,10 @@ class Context:
 
         # Use last vertex
         ctx.provoking_vertex = moderngl.LAST_VERTEX_CONVENTION
-    '''
+    """
 
     polygon_offset: Tuple[float, float]
-    '''
+    """
     tuple: Get or set the current polygon offset.
 
     The tuple values represents two float values: ``unit`` and a ``factor``::
@@ -1275,10 +1275,10 @@ class Context:
 
         # Disable polygon offset
         ctx.polygon_offset = 0, 0
-    '''
+    """
 
     viewport: Tuple[int, int, int, int]
-    '''
+    """
     tuple: Get or set the viewport of the active framebuffer.
 
     Example::
@@ -1290,10 +1290,10 @@ class Context:
         (0, 0, 640, 360)
 
     If no framebuffer is bound ``(0, 0, 0, 0)`` will be returned.
-    '''
+    """
 
     scissor: Optional[Tuple[int, int, int, int]]
-    '''
+    """
     tuple: Get or set the scissor box for the active framebuffer.
 
     When scissor testing is enabled fragments outside
@@ -1312,25 +1312,25 @@ class Context:
         >>> ctx.scissor = None
 
     If no framebuffer is bound ``(0, 0, 0, 0)`` will be returned.
-    '''
+    """
 
     max_samples: int
-    '''The maximum supported number of samples for multisampling.'''
+    """The maximum supported number of samples for multisampling."""
 
     max_integer_samples: int
-    '''The max integer samples.'''
+    """The max integer samples."""
 
     max_texture_units: int
-    '''The max texture units.'''
+    """The max texture units."""
 
     max_anisotropy: float
-    '''The maximum value supported for anisotropic filtering.'''
+    """The maximum value supported for anisotropic filtering."""
 
     default_texture_unit: int
-    '''The default texture unit.'''
+    """The default texture unit."""
 
     screen: Framebuffer
-    '''
+    """
     Framebuffer: A Framebuffer instance representing the screen.
 
     Normally set when creating a context with ``create_context()`` attaching to
@@ -1339,13 +1339,13 @@ class Context:
 
     When creating a standalone context this property is not set since
     there are no default framebuffer.
-    '''
+    """
 
     wireframe: bool
-    '''Wireframe settings for debugging.'''
+    """Wireframe settings for debugging."""
 
     front_face: str
-    '''
+    """
     The front_face. Acceptable values are ``'ccw'`` (default) or ``'cw'``.
 
     Face culling must be enabled for this to have any effect:
@@ -1357,10 +1357,10 @@ class Context:
         ctx.front_face = 'ccw'
         # Triangles winded clockwise considered front facing
         ctx.front_face = 'cw'
-    '''
+    """
 
     cull_face: str
-    '''
+    """
     The face side to cull. Acceptable values are ``'back'`` (default) ``'front'`` or ``'front_and_back'``.
 
     This is similar to :py:meth:`Context.front_face`
@@ -1373,21 +1373,21 @@ class Context:
         ctx.cull_face = 'front'
         ctx.cull_face = 'back'
         ctx.cull_face = 'front_and_back'
-    '''
+    """
 
     patch_vertices: int
-    '''The number of vertices that will be used to make up a single patch primitive.'''
+    """The number of vertices that will be used to make up a single patch primitive."""
 
     error: str
-    '''
+    """
     The result of ``glGetError()`` but human readable.
 
     This values is provided for debug purposes only and is likely to
     reduce performace when used in a draw loop.
-    '''
+    """
 
     extensions: Set[str]
-    '''
+    """
     Set[str]: The extensions supported by the context.
 
     All extensions names have a ``GL_`` prefix, so if the spec refers to ``ARB_compute_shader``
@@ -1415,10 +1415,10 @@ class Context:
             'GL_ARB_multisample',
             .. etc ..
         }
-    '''
+    """
 
     info: Dict[str, Any]
-    '''
+    """
     dict: OpenGL Limits and information about the context.
 
     Example::
@@ -1508,19 +1508,19 @@ class Context:
             'GL_VIEWPORT_SUBPIXEL_BITS': 0,
             'GL_MAX_VIEWPORTS': 16
         }
-    '''
+    """
 
     includes: Dict[str, str]
-    '''Mapping used for include statements.'''
+    """Mapping used for include statements."""
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     fbo: Framebuffer
-    '''The active framebuffer. Set every time :py:meth:`Framebuffer.use()` is called.'''
+    """The active framebuffer. Set every time :py:meth:`Framebuffer.use()` is called."""
 
     def clear(
         self,
@@ -1532,7 +1532,7 @@ class Context:
         viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
         color: Optional[Tuple[float, float, float, float]] = None,
     ) -> None:
-        '''
+        """
         Clear the bound framebuffer.
 
         If a `viewport` passed in, a scissor test will be used to clear the given viewport.
@@ -1559,9 +1559,9 @@ class Context:
         Keyword Args:
             viewport (tuple): The viewport.
             color (tuple): Optional rgba color tuple
-        '''
+        """
     def enable_only(self, flags: int) -> None:
-        '''
+        """
         Clears all existing flags applying new ones.
 
         Note that the enum values defined in moderngl
@@ -1588,9 +1588,9 @@ class Context:
 
         Args:
             flags (EnableFlag): The flags to enable
-        '''
+        """
     def enable(self, flags: int) -> None:
-        '''
+        """
         Enable flags.
 
         Note that the enum values defined in moderngl
@@ -1610,9 +1610,9 @@ class Context:
 
         Args:
             flag (int): The flags to enable.
-        '''
+        """
     def disable(self, flags: int) -> None:
-        '''
+        """
         Disable flags.
 
         For valid flags, please see :py:meth:`enable_only`.
@@ -1627,9 +1627,9 @@ class Context:
 
         Args:
             flag (int): The flags to disable.
-        '''
+        """
     def enable_direct(self, enum: int) -> None:
-        '''
+        """
         Gives direct access to ``glEnable`` so unsupported capabilities in ModernGL can be enabled.
 
         Do not use this to set already supported context flags.
@@ -1639,9 +1639,9 @@ class Context:
             # Enum value from the opengl registry
             GL_CONSERVATIVE_RASTERIZATION_NV = 0x9346
             ctx.enable_direct(GL_CONSERVATIVE_RASTERIZATION_NV)
-        '''
+        """
     def disable_direct(self, enum: int) -> None:
-        '''
+        """
         Gives direct access to ``glDisable`` so unsupported capabilities in ModernGL can be disabled.
 
         Do not use this to set already supported context flags.
@@ -1651,9 +1651,9 @@ class Context:
             # Enum value from the opengl registry
             GL_CONSERVATIVE_RASTERIZATION_NV = 0x9346
             ctx.disable_direct(GL_CONSERVATIVE_RASTERIZATION_NV)
-        '''
+        """
     def finish(self) -> None:
-        '''Wait for all drawing commands to finish.'''
+        """Wait for all drawing commands to finish."""
     def copy_buffer(
         self,
         dst: Buffer,
@@ -1662,7 +1662,7 @@ class Context:
         read_offset: int = 0,
         write_offset: int = 0,
     ) -> None:
-        '''
+        """
         Copy buffer content.
 
         Args:
@@ -1673,9 +1673,9 @@ class Context:
         Keyword Args:
             read_offset (int): The read offset.
             write_offset (int): The write offset.
-        '''
+        """
     def copy_framebuffer(self, dst: Union[Framebuffer, Texture], src: Framebuffer) -> None:
-        '''
+        """
         Copy framebuffer content.
 
         Use this method to:
@@ -1688,9 +1688,9 @@ class Context:
         Args:
             dst (Framebuffer or Texture): Destination framebuffer or texture.
             src (Framebuffer): Source framebuffer.
-        '''
+        """
     def detect_framebuffer(self, glo: Optional[int] = None) -> Framebuffer:
-        '''
+        """
         Detect a framebuffer.
 
         This is already done when creating a context,
@@ -1702,9 +1702,9 @@ class Context:
 
         Returns:
             :py:class:`Framebuffer` object
-        '''
+        """
     def memory_barrier(self, barriers: Optional[int] = None, by_region: Optional[bool] = False) -> None:
-        '''
+        """
         Applying a memory barrier.
 
         The memory barrier is needed in particular to correctly change buffers or textures
@@ -1717,9 +1717,9 @@ class Context:
         Keyword Args:
             barriers (int): Affected barriers, default moderngl.ALL_BARRIER_BITS.
             by_region (bool): Memory barrier mode by region. More read on https://registry.khronos.org/OpenGL-Refpages/gl4/html/glMemoryBarrier.xhtml
-        '''
+        """
     def buffer(self, data: Any = None, reserve: int = 0, dynamic: bool = False) -> Buffer:
-        '''
+        """
         Create a :py:class:`Buffer` object.
 
         Args:
@@ -1731,7 +1731,7 @@ class Context:
 
         Returns:
             :py:class:`Buffer` object
-        '''
+        """
     def external_texture(
         self,
         glo: int,
@@ -1740,7 +1740,7 @@ class Context:
         samples: int,
         dtype: str,
     ) -> Texture:
-        '''
+        """
         Create a :py:class:`Texture` object from an existing OpenGL texture object.
 
         Args:
@@ -1749,7 +1749,7 @@ class Context:
             components (int): The number of components 1, 2, 3 or 4.
             samples (int): The number of samples. Value 0 means no multisample format.
             dtype (str): Data type.
-        '''
+        """
     def texture(
         self,
         size: Tuple[int, int],
@@ -1757,10 +1757,10 @@ class Context:
         data: Optional[Any] = None,
         samples: int = 0,
         alignment: int = 1,
-        dtype: str = 'f1',
+        dtype: str = "f1",
         internal_format: Optional[int] = None,
     ) -> Texture:
-        '''
+        """
         Create a :py:class:`Texture` object.
 
         .. Warning:: Do not play with ``internal_format`` unless you know exactly
@@ -1780,16 +1780,16 @@ class Context:
 
         Returns:
             :py:class:`Texture` object
-        '''
+        """
     def texture_array(
         self,
         size: Tuple[int, int, int],
         components: int,
         data: Optional[Any] = None,
         alignment: int = 1,
-        dtype: str = 'f1',
+        dtype: str = "f1",
     ) -> TextureArray:
-        '''
+        """
         Create a :py:class:`TextureArray` object.
 
         Args:
@@ -1804,16 +1804,16 @@ class Context:
 
         Returns:
             :py:class:`Texture3D` object
-        '''
+        """
     def texture3d(
         self,
         size: Tuple[int, int, int],
         components: int,
         data: Optional[Any] = None,
         alignment: int = 1,
-        dtype: str = 'f1',
+        dtype: str = "f1",
     ) -> Texture3D:
-        '''
+        """
         Create a :py:class:`Texture3D` object.
 
         Args:
@@ -1827,17 +1827,17 @@ class Context:
 
         Returns:
             :py:class:`Texture3D` object
-        '''
+        """
     def texture_cube(
         self,
         size: Tuple[int, int],
         components: int,
         data: Optional[Any] = None,
         alignment: int = 1,
-        dtype: str = 'f1',
+        dtype: str = "f1",
         internal_format: Optional[int] = None,
     ) -> TextureCube:
-        '''
+        """
         Create a :py:class:`TextureCube` object.
 
         Note that the width and height of the cubemap must be the same
@@ -1857,7 +1857,7 @@ class Context:
 
         Returns:
             :py:class:`TextureCube` object
-        '''
+        """
     def depth_texture(
         self,
         size: Tuple[int, int],
@@ -1865,7 +1865,7 @@ class Context:
         samples: int = 0,
         alignment: int = 4,
     ) -> Texture:
-        '''
+        """
         Create a :py:class:`Texture` object.
 
         Args:
@@ -1878,14 +1878,14 @@ class Context:
 
         Returns:
             :py:class:`Texture` object
-        '''
+        """
     def depth_texture_cube(
         self,
         size: Tuple[int, int],
         data: Optional[Any] = None,
         alignment: int = 4,
     ) -> TextureCube:
-        '''
+        """
         Create a :py:class:`TextureCube` object
 
         Args:
@@ -1897,9 +1897,9 @@ class Context:
 
         Returns:
             :py:class:`TextureCube` object
-        '''
-    def vertex_array(self, *args, **kwargs) -> 'VertexArray':
-        '''
+        """
+    def vertex_array(self, *args, **kwargs) -> "VertexArray":
+        """
         Create a :py:class:`VertexArray` object.
 
         The vertex array describes how buffers are read by a shader program.
@@ -1943,7 +1943,7 @@ class Context:
 
         Returns:
             :py:class:`VertexArray` object
-        '''
+        """
     def _vertex_array(
         self,
         program: Program,
@@ -1952,8 +1952,8 @@ class Context:
         index_element_size: int = 4,
         skip_errors: bool = False,
         mode: Optional[int] = None,
-    ) -> 'VertexArray':
-        '''
+    ) -> "VertexArray":
+        """
         Create a :py:class:`VertexArray` object.
 
         Args:
@@ -1969,7 +1969,7 @@ class Context:
 
         Returns:
             :py:class:`VertexArray` object
-        '''
+        """
     def simple_vertex_array(
         self,
         program: Program,
@@ -1978,8 +1978,8 @@ class Context:
         index_buffer: Optional[Buffer] = None,
         index_element_size: int = 4,
         mode: Optional[int] = None,
-    ) -> 'VertexArray':
-        '''
+    ) -> "VertexArray":
+        """
         Create a :py:class:`VertexArray` object.
 
         .. Warning:: This method is deprecated and may be removed in the future.
@@ -1998,7 +1998,7 @@ class Context:
 
         Returns:
             :py:class:`VertexArray` object
-        '''
+        """
     def program(
         self,
         vertex_shader: str | bytes | ConvertibleToShaderSource,
@@ -2008,9 +2008,9 @@ class Context:
         tess_evaluation_shader: str | bytes | ConvertibleToShaderSource | None = None,
         varyings: Tuple[str, ...] = (),
         fragment_outputs: Optional[Dict[str, int]] = None,
-        varyings_capture_mode: str = 'interleaved',
+        varyings_capture_mode: str = "interleaved",
     ) -> Program:
-        '''
+        """
         Create a :py:class:`Program` object.
 
         The ``varyings`` are only used when a transform program is created
@@ -2030,15 +2030,15 @@ class Context:
             fragment_outputs (dict): A dictionary of fragment outputs.
         Returns:
             :py:class:`Program` object
-        '''
+        """
     def query(
         self,
         samples: bool = False,
         any_samples: bool = False,
         time: bool = False,
         primitives: bool = False,
-    ) -> 'Query':
-        '''
+    ) -> "Query":
+        """
         Create a :py:class:`Query` object.
 
         Keyword Args:
@@ -2046,7 +2046,7 @@ class Context:
             any_samples (bool): Query ``GL_ANY_SAMPLES_PASSED`` or not.
             time (bool): Query ``GL_TIME_ELAPSED`` or not.
             primitives (bool): Query ``GL_PRIMITIVES_GENERATED`` or not.
-        '''
+        """
     def scope(
         self,
         framebuffer: Optional[Framebuffer] = None,
@@ -2054,10 +2054,10 @@ class Context:
         textures: Tuple[Tuple[Texture, int], ...] = (),
         uniform_buffers: Tuple[Tuple[Buffer, int], ...] = (),
         storage_buffers: Tuple[Tuple[Buffer, int], ...] = (),
-        samplers: Tuple[Tuple['Sampler', int], ...] = (),
+        samplers: Tuple[Tuple["Sampler", int], ...] = (),
         enable: Optional[int] = None,
-    ) -> 'Scope':
-        '''
+    ) -> "Scope":
+        """
         Create a :py:class:`Scope` object.
 
         Args:
@@ -2070,15 +2070,15 @@ class Context:
             storage_buffers (tuple): Tuple of (buffer, binding) tuples.
             samplers (tuple): Tuple of sampler bindings
             enable (int): Flags to enable for this vao such as depth testing and blending
-        '''
+        """
     def simple_framebuffer(
         self,
         size: Tuple[int, int],
         components: int = 4,
         samples: int = 0,
-        dtype: str = 'f1',
+        dtype: str = "f1",
     ) -> Framebuffer:
-        '''
+        """
         Creates a :py:class:`Framebuffer` with a single color attachment \
         and depth buffer using :py:class:`moderngl.Renderbuffer` attachments.
 
@@ -2092,13 +2092,13 @@ class Context:
 
         Returns:
             :py:class:`Framebuffer` object
-        '''
+        """
     def framebuffer(
         self,
         color_attachments: Any = (),
-        depth_attachment: Optional[Union[Texture, 'Renderbuffer']] = None,
+        depth_attachment: Optional[Union[Texture, "Renderbuffer"]] = None,
     ) -> Framebuffer:
-        '''
+        """
         A :py:class:`Framebuffer` is a collection of buffers that can be \
         used as the destination for rendering. The buffers for Framebuffer \
         objects reference images from either Textures or Renderbuffers.
@@ -2110,24 +2110,24 @@ class Context:
 
         Returns:
             :py:class:`Framebuffer` object
-        '''
+        """
     def empty_framebuffer(
         self,
         size: Tuple[int, int],
         layers: Optional[int] = 0,
         samples: Optional[int] = 0,
     ) -> Framebuffer:
-        '''
+        """
         Empty Framebuffer
-        '''
+        """
     def renderbuffer(
         self,
         size: Tuple[int, int],
         components: int = 4,
         samples: int = 0,
-        dtype: str = 'f1',
-    ) -> 'Renderbuffer':
-        '''
+        dtype: str = "f1",
+    ) -> "Renderbuffer":
+        """
         :py:class:`Renderbuffer` objects are OpenGL objects that contain images. \
         They are created and used specifically with :py:class:`Framebuffer` objects.
 
@@ -2141,9 +2141,9 @@ class Context:
 
         Returns:
             :py:class:`Renderbuffer` object
-        '''
-    def depth_renderbuffer(self, size: Tuple[int, int], samples: int = 0) -> 'Renderbuffer':
-        '''
+        """
+    def depth_renderbuffer(self, size: Tuple[int, int], samples: int = 0) -> "Renderbuffer":
+        """
         :py:class:`Renderbuffer` objects are OpenGL objects that contain images. \
         They are created and used specifically with :py:class:`Framebuffer` objects.
 
@@ -2155,9 +2155,9 @@ class Context:
 
         Returns:
             :py:class:`Renderbuffer` object
-        '''
-    def compute_shader(self, source: str | bytes | ConvertibleToShaderSource) -> 'ComputeShader':
-        '''
+        """
+    def compute_shader(self, source: str | bytes | ConvertibleToShaderSource) -> "ComputeShader":
+        """
         A :py:class:`ComputeShader` is a Shader Stage that is used entirely \
         for computing arbitrary information. While it can do rendering, it \
         is generally used for tasks not directly related to drawing.
@@ -2167,7 +2167,7 @@ class Context:
 
         Returns:
             :py:class:`ComputeShader` object
-        '''
+        """
     def sampler(
         self,
         repeat_x: bool = True,
@@ -2175,13 +2175,13 @@ class Context:
         repeat_z: bool = True,
         filter: Optional[Tuple[int, int]] = None,
         anisotropy: float = 1.0,
-        compare_func: str = '?',
+        compare_func: str = "?",
         border_color: Optional[Tuple[float, float, float, float]] = None,
         min_lod: float = -1000.0,
         max_lod: float = 1000.0,
         texture: Optional[Texture] = None,
-    ) -> 'Sampler':
-        '''
+    ) -> "Sampler":
+        """
         Create a :py:class:`Sampler` object.
 
         Keyword Arguments:
@@ -2204,9 +2204,9 @@ class Context:
                                 This floating-point value limits the selection of the
                                 lowest resolution mipmap (highest mipmap level)
             texture (Texture): The texture for this sampler
-        '''
+        """
     def clear_samplers(self, start: int = 0, end: int = -1) -> None:
-        '''
+        """
         Unbinds samplers from texture units.
 
         Sampler bindings do clear automatically between every frame,
@@ -2226,15 +2226,15 @@ class Context:
 
             # Clear texture unit 4, 5, 6, 7
             ctx.clear_samplers(start=4, end=8)
-        '''
+        """
     def core_profile_check(self) -> None:
-        '''
+        """
         Core profile check.
 
         FOR DEBUG PURPOSES ONLY
-        '''
+        """
     def __enter__(self):
-        '''
+        """
         Enters the context.
 
         This should ideally be used with the ``with`` statement::
@@ -2246,15 +2246,15 @@ class Context:
 
         .. Warning:: Context switching can be risky unless you know what you are doing.
                      Use with care.
-        '''
+        """
     def __exit__(self, exc_type, exc_val, exc_tb):
-        '''
+        """
         Exit the context.
 
         See :py:meth:`Context.__enter__`
-        '''
+        """
     def release(self) -> None:
-        '''
+        """
         Release the ModernGL context.
 
         If the context is not standalone the standard
@@ -2262,7 +2262,7 @@ class Context:
         because the context was not created by moderngl.
 
         Standalone contexts can normally be released.
-        '''
+        """
 
 def create_context(
     require: Optional[int] = None,
@@ -2270,7 +2270,7 @@ def create_context(
     share: bool = False,
     **settings: Dict[str, Any],
 ) -> Context:
-    '''
+    """
     Create a ModernGL context by loading OpenGL functions from an existing OpenGL context. \
     An OpenGL context must exists.
 
@@ -2293,14 +2293,14 @@ def create_context(
 
     Returns:
         :py:class:`Context` object
-    '''
+    """
 
 def create_standalone_context(
     require: Optional[int] = None,
     share: bool = False,
     **settings: Dict[str, Any],
-) -> 'Context':
-    '''
+) -> "Context":
+    """
     Create a standalone/headless ModernGL context.
 
     The preferred way of making a context is through :py:func:`moderngl.create_context`.
@@ -2320,21 +2320,21 @@ def create_standalone_context(
 
     Returns:
         :py:class:`Context` object
-    '''
+    """
 
 class Framebuffer:
-    '''
+    """
     A :py:class:`Framebuffer` is a collection of buffers that can be used as the destination for rendering.
 
     The buffers for Framebuffer objects reference images from either Textures or Renderbuffers.
     Create a :py:class:`Framebuffer` using :py:meth:`Context.framebuffer`.
-    '''
+    """
 
     viewport: Tuple[int, int, int, int]
-    '''Get or set the viewport of the framebuffer.'''
+    """Get or set the viewport of the framebuffer."""
 
     scissor: Tuple[int, int, int, int]
-    '''
+    """
     Get or set the scissor box of the framebuffer.
 
     When scissor testing is enabled fragments outside
@@ -2351,10 +2351,10 @@ class Framebuffer:
         >>> ctx.scissor = 100, 100, 200, 100
         # Disable scissor testing
         >>> ctx.scissor = None
-    '''
+    """
 
     color_mask: Tuple[bool, bool, bool, bool]
-    '''
+    """
     The color mask of the framebuffer.
 
     Color masking controls what components in color attachments will be
@@ -2373,10 +2373,10 @@ class Framebuffer:
 
         # Block fragment writes to alpha channel
         fbo.color_mask = True, True, True, False
-    '''
+    """
 
     depth_mask: bool
-    '''
+    """
     The depth mask of the framebuffer.
 
     Depth mask enables or disables write operations to the depth buffer.
@@ -2386,59 +2386,59 @@ class Framebuffer:
     a very useful tool in many rendering techniques.
 
     Default value: ``True``
-    '''
+    """
 
     width: int
-    '''
+    """
     The width of the framebuffer.
 
     Framebuffers created by a window will only report its initial size.
     It's better get size information from the window itself.
-    '''
+    """
 
     height: int
-    '''
+    """
     The height of the framebuffer.
 
     Framebuffers created by a window will only report its initial size.
     It's better get size information from the window itself.
-    '''
+    """
 
     size: Tuple[int, int]
-    '''
+    """
     Tuple[int, int]: The size of the framebuffer.
 
     Framebuffers created by a window will only report its initial size.
     It's better get size information from the window itself.
-    '''
+    """
 
     samples: int
-    '''The samples of the framebuffer.'''
+    """The samples of the framebuffer."""
 
     bits: Dict[str, str]
-    '''The bits of the framebuffer.'''
+    """The bits of the framebuffer."""
 
     color_attachments: Tuple[Union[Texture, Renderbuffer], ...]
-    '''The color attachments of the framebuffer.'''
+    """The color attachments of the framebuffer."""
 
     depth_attachment: Union[Texture, Renderbuffer]
-    '''The depth attachment of the framebuffer.'''
+    """The depth attachment of the framebuffer."""
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
-    ctx: 'Context'
-    '''The context this object belongs to'''
+    ctx: "Context"
+    """The context this object belongs to"""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     glo: int
-    '''
+    """
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
-    '''
+    """
 
     def clear(
         self,
@@ -2450,7 +2450,7 @@ class Framebuffer:
         viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
         color: Optional[Tuple[float, float, float, float]] = None,
     ) -> None:
-        '''
+        """
         Clear the framebuffer.
 
         If a `viewport` passed in, a scissor test will be used to clear the given viewport.
@@ -2477,19 +2477,19 @@ class Framebuffer:
         Keyword Args:
             viewport (tuple): The viewport.
             color (tuple): Optional tuple replacing the red, green, blue and alpha arguments
-        '''
+        """
     def use(self) -> None:
-        '''Bind the framebuffer. Sets the target for rendering commands.'''
+        """Bind the framebuffer. Sets the target for rendering commands."""
     def read(
         self,
         viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
         components: int = 3,
         attachment: int = 0,
         alignment: int = 1,
-        dtype: str = 'f1',
+        dtype: str = "f1",
         clamp: bool = False,
     ) -> bytes:
-        '''
+        """
         Read the content of the framebuffer.
 
         .. code:: python
@@ -2515,7 +2515,7 @@ class Framebuffer:
 
         Returns:
             bytes
-        '''
+        """
     def read_into(
         self,
         buffer: Any,
@@ -2523,10 +2523,10 @@ class Framebuffer:
         components: int = 3,
         attachment: int = 0,
         alignment: int = 1,
-        dtype: str = 'f1',
+        dtype: str = "f1",
         write_offset: int = 0,
     ) -> None:
-        '''
+        """
         Read the content of the framebuffer into a buffer.
 
         Args:
@@ -2539,12 +2539,12 @@ class Framebuffer:
             alignment (int): The byte alignment of the pixels.
             dtype (str): Data type.
             write_offset (int): The write offset.
-        '''
+        """
     def release(self) -> None:
-        '''Release the ModernGL object.'''
+        """Release the ModernGL object."""
 
 class Program:
-    '''
+    """
     A Program object represents fully processed executable code in the OpenGL Shading Language, \
     for one or more Shader stages.
 
@@ -2560,10 +2560,10 @@ class Program:
     Uniform buffers can be bound using :py:meth:`Buffer.bind_to_uniform_block`
     or can be set individually. For more complex binding yielding higher
     performance consider using :py:class:`moderngl.Scope`.
-    '''
+    """
 
     def __getitem__(self, key: str) -> Union[Uniform, UniformBlock, Attribute, Varying]:
-        '''
+        """
         Get a member such as uniforms, uniform blocks, attributes and varyings by name.
 
         .. code-block:: python
@@ -2577,9 +2577,9 @@ class Program:
 
             # Still when writing byte data we need to use the `write()` method
             program['color'].write(buffer)
-        '''
+        """
     def __setitem__(self, key: str, value: Any) -> None:
-        '''
+        """
         Set a value of uniform or uniform block.
 
         .. code-block:: python
@@ -2593,9 +2593,9 @@ class Program:
 
             uniform = program['cameraMatrix']
             uniform.write(camera_matrix)
-        '''
+        """
     def __iter__(self) -> Generator[str, None, None]:
-        '''
+        """
         Yields the internal members names as strings.
 
         This includes all members such as uniforms, attributes etc.
@@ -2632,12 +2632,12 @@ class Program:
 
             {'rotation': <Uniform: 0>, 'scale': <Uniform: 1>}
 
-        '''
+        """
     is_transform: bool
-    '''If this is a tranform program (no fragment shader).'''
+    """If this is a tranform program (no fragment shader)."""
 
     geometry_input: int
-    '''
+    """
     The geometry input primitive.
 
     The GeometryShader's input primitive if the GeometryShader exists.
@@ -2645,43 +2645,43 @@ class Program:
     (from ``layout(input_primitive) in;``)
 
     This can only be ``POINTS``, ``LINES``, ``LINES_ADJACENCY``, ``TRIANGLES``, ``TRIANGLE_ADJACENCY``.
-    '''
+    """
 
     geometry_output: int
-    '''
+    """
     The geometry output primitive.
 
     The GeometryShader's output primitive if the GeometryShader exists.
     This can only be ``POINTS``, ``LINE_STRIP`` and ``TRIANGLE_STRIP``
     (from ``layout(output_primitive, max_vertices = vert_count) out;``)
-    '''
+    """
 
     geometry_vertices: int
-    '''
+    """
     The maximum number of vertices that.
 
     the geometry shader will output.
     (from ``layout(output_primitive, max_vertices = vert_count) out;``)
-    '''
+    """
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
-    ctx: 'Context'
-    '''The context this object belongs to'''
+    ctx: "Context"
+    """The context this object belongs to"""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     glo: int
-    '''
+    """
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
-    '''
+    """
 
     def get(self, key: str, default: Any) -> Union[Uniform, UniformBlock, Attribute, Varying]:
-        '''
+        """
         Returns a Uniform, UniformBlock, Attribute or Varying.
 
         Args:
@@ -2689,16 +2689,16 @@ class Program:
 
         Returns:
             :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Attribute` or :py:class:`Varying`
-        '''
+        """
     def release(self) -> None:
-        '''Release the ModernGL object.'''
+        """Release the ModernGL object."""
 
 def detect_format(
     program: Program,
     attributes: Any,
-    mode: str = 'mgl',
+    mode: str = "mgl",
 ) -> str:
-    '''
+    """
     Detect format for vertex attributes.
 
     The format returned does not contain padding.
@@ -2709,37 +2709,37 @@ def detect_format(
 
     Returns:
         str
-    '''
+    """
 
 class Query:
-    '''This class represents a Query object.'''
+    """This class represents a Query object."""
 
-    crender: Optional['ConditionalRender']
-    '''Can be used in a ``with`` statement.'''
+    crender: Optional["ConditionalRender"]
+    """Can be used in a ``with`` statement."""
 
     samples: int
-    '''The number of samples passed.'''
+    """The number of samples passed."""
 
     primitives: int
-    '''The number of primitives generated.'''
+    """The number of primitives generated."""
 
     elapsed: int
-    '''The time elapsed in nanoseconds.'''
+    """The time elapsed in nanoseconds."""
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
-    ctx: 'Context'
-    '''The context this object belongs to'''
+    ctx: "Context"
+    """The context this object belongs to"""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     def __enter__(self): ...
     def __exit__(self, *args: Tuple[Any]): ...
 
 class Renderbuffer:
-    '''
+    """
     Renderbuffer objects are OpenGL objects that contain images.
 
     They are created and used specifically with :py:class:`Framebuffer` objects.
@@ -2751,50 +2751,50 @@ class Renderbuffer:
     A Renderbuffer object cannot be instantiated directly, it requires a context.
     Use :py:meth:`Context.renderbuffer` or :py:meth:`Context.depth_renderbuffer`
     to create one.
-    '''
+    """
 
     width: int
-    '''The width of the renderbuffer.'''
+    """The width of the renderbuffer."""
 
     height: int
-    '''The height of the renderbuffer.'''
+    """The height of the renderbuffer."""
 
     size: tuple
-    '''The size of the renderbuffer.'''
+    """The size of the renderbuffer."""
 
     samples: int
-    '''The samples of the renderbuffer.'''
+    """The samples of the renderbuffer."""
 
     components: int
-    '''The components of the renderbuffer.'''
+    """The components of the renderbuffer."""
 
     depth: bool
-    '''Is the renderbuffer a depth renderbuffer?.'''
+    """Is the renderbuffer a depth renderbuffer?."""
 
     dtype: str
-    '''Data type.'''
+    """Data type."""
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
-    ctx: 'Context'
-    '''The context this object belongs to'''
+    ctx: "Context"
+    """The context this object belongs to"""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     glo: int
-    '''
+    """
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
-    '''
+    """
 
     def release(self) -> None:
-        '''Release the ModernGL object.'''
+        """Release the ModernGL object."""
 
 class Sampler:
-    '''
+    """
     A Sampler Object is an OpenGL Object that stores the sampling parameters for a Texture access inside of a shader.
 
     When a sampler object is bound to a texture image unit,
@@ -2810,10 +2810,10 @@ class Sampler:
 
     Sampler bindings do clear automatically between every frame so a texture unit
     need at least one bind/use per frame.
-    '''
+    """
 
     repeat_x: bool
-    '''
+    """
     bool: The x repeat flag for the sampler (Default ``True``).
 
     Example::
@@ -2823,10 +2823,10 @@ class Sampler:
 
         # Disable texture repeat (GL_CLAMP_TO_EDGE)
         sampler.repeat_x = False
-    '''
+    """
 
     repeat_y: bool
-    '''
+    """
     bool: The y repeat flag for the sampler (Default ``True``).
 
     Example::
@@ -2836,10 +2836,10 @@ class Sampler:
 
         # Disable texture repeat (GL_CLAMP_TO_EDGE)
         sampler.repeat_y = False
-    '''
+    """
 
     repeat_z: bool
-    '''
+    """
     bool: The z repeat flag for the sampler (Default ``True``).
 
     Example::
@@ -2849,10 +2849,10 @@ class Sampler:
 
         # Disable texture repeat (GL_CLAMP_TO_EDGE)
         sampler.repeat_z = False
-    '''
+    """
 
     filter: Tuple[int, int]
-    '''
+    """
     tuple: The minification and magnification filter for the sampler.
 
     (Default ``(moderngl.LINEAR. moderngl.LINEAR)``)
@@ -2863,10 +2863,10 @@ class Sampler:
         sampler.filter == (moderngl.LINEAR_MIPMAP_LINEAR, moderngl.LINEAR)
         sampler.filter == (moderngl.NEAREST_MIPMAP_LINEAR, moderngl.NEAREST)
         sampler.filter == (moderngl.LINEAR_MIPMAP_NEAREST, moderngl.NEAREST)
-    '''
+    """
 
     compare_func: str
-    '''
+    """
     tuple: The compare function for a depth textures (Default ``'?'``).
 
     By default samplers don't have depth comparison mode enabled.
@@ -2889,10 +2889,10 @@ class Sampler:
         sampler.compare_func = '!='  # GL_NOTEQUAL
         sampler.compare_func = '0'   # GL_NEVER
         sampler.compare_func = '1'   # GL_ALWAYS
-    '''
+    """
 
     anisotropy: float
-    '''
+    """
     Number of samples for anisotropic filtering (Default ``1.0``).
 
     The value will be clamped in range ``1.0`` and ``ctx.max_anisotropy``.
@@ -2904,10 +2904,10 @@ class Sampler:
 
         # Enable anisotropic filtering suggesting 16 samples as a maximum
         sampler.anisotropy = 16.0
-    '''
+    """
 
     border_color: Tuple[float, float, float, float]
-    '''
+    """
     tuple: The (r, g, b, a) color for the texture border (Default ``(0.0, 0.0, 0.0, 0.0)``).
 
     When setting this value the ``repeat_`` values are overridden setting the texture wrap to return
@@ -2917,59 +2917,59 @@ class Sampler:
 
         # Red border color
         sampler.border_color = (1.0, 0.0, 0.0, 0.0)
-    '''
+    """
 
     min_lod: float
-    '''
+    """
     Minimum level-of-detail parameter (Default ``-1000.0``).
 
     This floating-point value limits the selection of highest resolution mipmap (lowest mipmap level)
-    '''
+    """
 
     max_lod: float
-    '''
+    """
     Minimum level-of-detail parameter (Default ``1000.0``).
 
     This floating-point value limits the selection of the lowest resolution mipmap (highest mipmap level)
-    '''
+    """
 
     texture: Any
-    '''texture'''
+    """texture"""
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
-    ctx: 'Context'
-    '''The context this object belongs to'''
+    ctx: "Context"
+    """The context this object belongs to"""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     glo: int
-    '''
+    """
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
-    '''
+    """
 
     def use(self, location: int = 0) -> None:
-        '''
+        """
         Bind the sampler to a texture unit.
 
         Args:
             location (int): The texture unit
-        '''
+        """
     def clear(self, location: int = 0) -> None:
-        '''
+        """
         Clear the sampler binding on a texture unit.
 
         Args:
             location (int): The texture unit
-        '''
+        """
     def release(self) -> None:
-        '''Release/destroy the ModernGL object.'''
-    def assign(self, index: int) -> Tuple['Sampler', int]:
-        '''
+        """Release/destroy the ModernGL object."""
+    def assign(self, index: int) -> Tuple["Sampler", int]:
+        """
         Helper method for assigning samplers to scopes.
 
         Example::
@@ -2980,10 +2980,10 @@ class Sampler:
 
         Returns:
             (self, index) tuple
-        '''
+        """
 
 class Scope:
-    '''
+    """
     This class represents a Scope object.
 
     Responsibilities on enter:
@@ -2998,23 +2998,23 @@ class Scope:
 
     - Restore the enable flags.
     - Restore the framebuffer.
-    '''
+    """
 
     def __enter__(self): ...
     def __exit__(self, *args: Tuple[Any]): ...
     def release(self) -> None:
-        '''Destroy the Scope object.'''
+        """Destroy the Scope object."""
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
-    ctx: 'Context'
-    '''The context this object belongs to'''
+    ctx: "Context"
+    """The context this object belongs to"""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
 class Texture3D:
-    '''
+    """
     A Texture is an OpenGL object that contains one or more images that all have the same image format.
 
     A texture can be used in two ways. It can
@@ -3023,10 +3023,10 @@ class Texture3D:
 
     A Texture3D object cannot be instantiated directly, it requires a context.
     Use :py:meth:`Context.texture3d` to create one.
-    '''
+    """
 
     repeat_x: bool
-    '''
+    """
     bool: The x repeat flag for the texture (Default ``True``).
 
     Example::
@@ -3036,10 +3036,10 @@ class Texture3D:
 
         # Disable texture repeat (GL_CLAMP_TO_EDGE)
         texture.repeat_x = False
-    '''
+    """
 
     repeat_y: bool
-    '''
+    """
     bool: The y repeat flag for the texture (Default ``True``).
 
     Example::
@@ -3049,10 +3049,10 @@ class Texture3D:
 
         # Disable texture repeat (GL_CLAMP_TO_EDGE)
         texture.repeat_y = False
-    '''
+    """
 
     repeat_z: bool
-    '''
+    """
     bool: The z repeat flag for the texture (Default ``True``).
 
     Example::
@@ -3062,13 +3062,13 @@ class Texture3D:
 
         # Disable texture repeat (GL_CLAMP_TO_EDGE)
         texture.repeat_z = False
-    '''
+    """
 
     filter: Tuple[int, int]
-    '''The filter of the texture.'''
+    """The filter of the texture."""
 
     swizzle: str
-    '''
+    """
     str: The swizzle mask of the texture (Default ``'RGBA'``).
 
     The swizzle mask change/reorder the ``vec4`` value returned by the ``texture()`` function
@@ -3092,44 +3092,44 @@ class Texture3D:
 
         # Reverse the components
         texture.swizzle = 'ABGR'
-    '''
+    """
 
     width: int
-    '''The width of the texture.'''
+    """The width of the texture."""
 
     height: int
-    '''The height of the texture.'''
+    """The height of the texture."""
 
     depth: int
-    '''The depth of the texture.'''
+    """The depth of the texture."""
 
     size: tuple
-    '''The size of the texture.'''
+    """The size of the texture."""
 
     components: int
-    '''The number of components of the texture.'''
+    """The number of components of the texture."""
 
     dtype: str
-    '''Data type.'''
+    """Data type."""
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
-    ctx: 'Context'
-    '''The context this object belongs to'''
+    ctx: "Context"
+    """The context this object belongs to"""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     glo: int
-    '''
+    """
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
-    '''
+    """
 
     def read(self, alignment: int = 1) -> bytes:
-        '''
+        """
         Read the pixel data as bytes into system memory.
 
         Keyword Args:
@@ -3137,14 +3137,14 @@ class Texture3D:
 
         Returns:
             bytes
-        '''
+        """
     def read_into(
         self,
         buffer: Any,
         alignment: int = 1,
         write_offset: int = 0,
     ) -> None:
-        '''
+        """
         Read the content of the texture into a bytearray or :py:class:`~moderngl.Buffer`.
 
         The advantage of reading into a :py:class:`~moderngl.Buffer` is that pixel data
@@ -3166,14 +3166,14 @@ class Texture3D:
         Keyword Args:
             alignment (int): The byte alignment of the pixels.
             write_offset (int): The write offset.
-        '''
+        """
     def write(
         self,
         data: Any,
         viewport: Optional[Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int]]] = None,
         alignment: int = 1,
     ) -> None:
-        r'''
+        r"""
         Update the content of the texture from byte data or a moderngl :py:class:`~moderngl.Buffer`.
 
         Examples::
@@ -3194,9 +3194,9 @@ class Texture3D:
 
         Keyword Args:
             alignment (int): The byte alignment of the pixels.
-        '''
+        """
     def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
-        '''
+        """
         Generate mipmaps.
 
         This also changes the texture filter to ``LINEAR_MIPMAP_LINEAR, LINEAR``
@@ -3205,9 +3205,9 @@ class Texture3D:
         Keyword Args:
             base (int): The base level
             max_level (int): The maximum levels to generate
-        '''
+        """
     def use(self, location: int = 0) -> None:
-        '''
+        """
         Bind the texture to a texture unit.
 
         The location is the texture unit we want to bind the texture.
@@ -3224,7 +3224,7 @@ class Texture3D:
 
         Args:
             location (int): The texture location/unit.
-        '''
+        """
     def bind_to_image(
         self,
         unit: int,
@@ -3233,7 +3233,7 @@ class Texture3D:
         level: int = 0,
         format: int = 0,
     ) -> None:
-        '''
+        """
         Bind a texture to an image unit (OpenGL 4.2 required).
 
         This is used to bind textures to image units for shaders.
@@ -3274,9 +3274,9 @@ class Texture3D:
             write (bool): Allows the shader to write to the image (default: ``True``)
             level (int): Level of the texture to bind (default: ``0``).
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
-        '''
+        """
     def get_handle(self, resident: bool = True) -> int:
-        '''
+        """
         Handle for Bindless Textures.
 
         Once a handle is created its parameters cannot be changed.
@@ -3304,12 +3304,12 @@ class Texture3D:
 
         Keyword Args:
             resident (bool): Make the texture resident.
-        '''
+        """
     def release(self) -> None:
-        '''Release the ModernGL object.'''
+        """Release the ModernGL object."""
 
 class TextureArray:
-    '''
+    """
     An Array Texture is a Texture where each mipmap level contains an array of images of the same size.
 
     Array textures may have Mipmaps, but each mipmap
@@ -3317,10 +3317,10 @@ class TextureArray:
 
     A TextureArray object cannot be instantiated directly, it requires a context.
     Use :py:meth:`Context.texture_array` to create one.
-    '''
+    """
 
     repeat_x: bool
-    '''
+    """
     bool: The x repeat flag for the texture (Default ``True``).
 
     Example::
@@ -3330,10 +3330,10 @@ class TextureArray:
 
         # Disable texture repeat (GL_CLAMP_TO_EDGE)
         texture.repeat_x = False
-    '''
+    """
 
     repeat_y: bool
-    '''
+    """
     bool: The y repeat flag for the texture (Default ``True``).
 
     Example::
@@ -3343,10 +3343,10 @@ class TextureArray:
 
         # Disable texture repeat (GL_CLAMP_TO_EDGE)
         texture.repeat_y = False
-    '''
+    """
 
     filter: Tuple[int, int]
-    '''
+    """
     tuple: The minification and magnification filter for the texture.
 
     (Default ``(moderngl.LINEAR. moderngl.LINEAR)``)
@@ -3357,10 +3357,10 @@ class TextureArray:
         texture.filter == (moderngl.LINEAR_MIPMAP_LINEAR, moderngl.LINEAR)
         texture.filter == (moderngl.NEAREST_MIPMAP_LINEAR, moderngl.NEAREST)
         texture.filter == (moderngl.LINEAR_MIPMAP_NEAREST, moderngl.NEAREST)
-    '''
+    """
 
     swizzle: str
-    '''
+    """
     str: The swizzle mask of the texture (Default ``'RGBA'``).
 
     The swizzle mask change/reorder the ``vec4`` value returned by the ``texture()`` function
@@ -3384,10 +3384,10 @@ class TextureArray:
 
         # Reverse the components
         texture.swizzle = 'ABGR'
-    '''
+    """
 
     anisotropy: float
-    '''
+    """
     Number of samples for anisotropic filtering (Default ``1.0``).
 
     The value will be clamped in range ``1.0`` and ``ctx.max_anisotropy``.
@@ -3399,44 +3399,44 @@ class TextureArray:
 
         # Enable anisotropic filtering suggesting 16 samples as a maximum
         texture.anisotropy = 16.0
-    '''
+    """
 
     width: int
-    '''The width of the texture array.'''
+    """The width of the texture array."""
 
     height: int
-    '''The height of the texture array.'''
+    """The height of the texture array."""
 
     layers: int
-    '''The number of layers of the texture array.'''
+    """The number of layers of the texture array."""
 
     size: tuple
-    '''The size of the texture array.'''
+    """The size of the texture array."""
 
     components: int
-    '''The number of components of the texture array.'''
+    """The number of components of the texture array."""
 
     dtype: str
-    '''Data type.'''
+    """Data type."""
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
-    ctx: 'Context'
-    '''The context this object belongs to'''
+    ctx: "Context"
+    """The context this object belongs to"""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     glo: int
-    '''
+    """
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
-    '''
+    """
 
     def read(self, alignment: int = 1) -> bytes:
-        '''
+        """
         Read the pixel data as bytes into system memory.
 
         Keyword Args:
@@ -3444,14 +3444,14 @@ class TextureArray:
 
         Returns:
             bytes
-        '''
+        """
     def read_into(
         self,
         buffer: Any,
         alignment: int = 1,
         write_offset: int = 0,
     ) -> None:
-        '''
+        """
         Read the content of the texture array into a bytearray or :py:class:`~moderngl.Buffer`.
 
         The advantage of reading into a :py:class:`~moderngl.Buffer` is that pixel data
@@ -3473,14 +3473,14 @@ class TextureArray:
         Keyword Args:
             alignment (int): The byte alignment of the pixels.
             write_offset (int): The write offset.
-        '''
+        """
     def write(
         self,
         data: Any,
         viewport: Optional[Union[Tuple[int, int, int], Tuple[int, int, int, int, int, int]]] = None,
         alignment: int = 1,
     ) -> None:
-        r'''
+        r"""
         Update the content of the texture array from byte data or a moderngl :py:class:`~moderngl.Buffer`.
 
         The ``viewport`` can be used for finer control of where the
@@ -3511,9 +3511,9 @@ class TextureArray:
 
         Keyword Args:
             alignment (int): The byte alignment of the pixels.
-        '''
+        """
     def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
-        '''
+        """
         Generate mipmaps.
 
         This also changes the texture filter to ``LINEAR_MIPMAP_LINEAR, LINEAR``
@@ -3522,9 +3522,9 @@ class TextureArray:
         Keyword Args:
             base (int): The base level
             max_level (int): The maximum levels to generate
-        '''
+        """
     def use(self, location: int = 0) -> None:
-        '''
+        """
         Bind the texture to a texture unit.
 
         The location is the texture unit we want to bind the texture.
@@ -3541,7 +3541,7 @@ class TextureArray:
 
         Args:
             location (int): The texture location/unit.
-        '''
+        """
     def bind_to_image(
         self,
         unit: int,
@@ -3550,7 +3550,7 @@ class TextureArray:
         level: int = 0,
         format: int = 0,
     ) -> None:
-        '''
+        """
         Bind a texture to an image unit (OpenGL 4.2 required).
 
         This is used to bind textures to image units for shaders.
@@ -3591,9 +3591,9 @@ class TextureArray:
             write (bool): Allows the shader to write to the image (default: ``True``)
             level (int): Level of the texture to bind (default: ``0``).
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
-        '''
+        """
     def get_handle(self, resident: bool = True) -> int:
-        '''
+        """
         Handle for Bindless Textures.
 
         Once a handle is created its parameters cannot be changed.
@@ -3621,12 +3621,12 @@ class TextureArray:
 
         Keyword Args:
             resident (bool): Make the texture resident.
-        '''
+        """
     def release(self) -> None:
-        '''Release the ModernGL object.'''
+        """Release the ModernGL object."""
 
 class TextureCube:
-    '''
+    """
     Cubemaps are a texture using the type GL_TEXTURE_CUBE_MAP.
 
     They are similar to 2D textures in that they have two dimensions.
@@ -3641,19 +3641,19 @@ class TextureCube:
 
     A Texture3D object cannot be instantiated directly, it requires a context.
     Use :py:meth:`Context.texture_cube` to create one.
-    '''
+    """
 
     size: Tuple[int, int]
-    '''The size of the texture cube (single face).'''
+    """The size of the texture cube (single face)."""
 
     components: int
-    '''The number of components of the texture.'''
+    """The number of components of the texture."""
 
     dtype: str
-    '''Data type.'''
+    """Data type."""
 
     filter: Tuple[int, int]
-    '''
+    """
     tuple: The minification and magnification filter for the texture.
 
     (Default ``(moderngl.LINEAR. moderngl.LINEAR)``)
@@ -3664,10 +3664,10 @@ class TextureCube:
         texture.filter == (moderngl.LINEAR_MIPMAP_LINEAR, moderngl.LINEAR)
         texture.filter == (moderngl.NEAREST_MIPMAP_LINEAR, moderngl.NEAREST)
         texture.filter == (moderngl.LINEAR_MIPMAP_NEAREST, moderngl.NEAREST)
-    '''
+    """
 
     swizzle: str
-    '''
+    """
     str: The swizzle mask of the texture (Default ``'RGBA'``).
 
     The swizzle mask change/reorder the ``vec4`` value returned by the ``texture()`` function
@@ -3691,10 +3691,10 @@ class TextureCube:
 
         # Reverse the components
         texture.swizzle = 'ABGR'
-    '''
+    """
 
     compare_func: str
-    '''
+    """
     tuple: The compare function of the depth texture (Default ``'<='``).
 
     By default depth textures have ``GL_TEXTURE_COMPARE_MODE`` set to
@@ -3725,10 +3725,10 @@ class TextureCube:
         texture.compare_func = '!='  # GL_NOTEQUAL
         texture.compare_func = '0'   # GL_NEVER
         texture.compare_func = '1'   # GL_ALWAYS
-    '''
+    """
 
     anisotropy: float
-    '''
+    """
     Number of samples for anisotropic filtering (Default ``1.0``).
 
     The value will be clamped in range ``1.0`` and ``ctx.max_anisotropy``.
@@ -3740,29 +3740,29 @@ class TextureCube:
 
         # Enable anisotropic filtering suggesting 16 samples as a maximum
         texture.anisotropy = 16.0
-    '''
+    """
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
-    ctx: 'Context'
-    '''The context this object belongs to'''
+    ctx: "Context"
+    """The context this object belongs to"""
 
     depth: bool
-    '''Is the texture a depth texture?.'''
+    """Is the texture a depth texture?."""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     glo: int
-    '''
+    """
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
-    '''
+    """
 
     def read(self, face: int, alignment: int = 1) -> bytes:
-        '''
+        """
         Read a face from the cubemap as bytes into system memory.
 
         Face values are::
@@ -3779,7 +3779,7 @@ class TextureCube:
 
         Keyword Args:
             alignment (int): The byte alignment of the pixels.
-        '''
+        """
     def read_into(
         self,
         buffer: Any,
@@ -3787,7 +3787,7 @@ class TextureCube:
         alignment: int = 1,
         write_offset: int = 0,
     ) -> None:
-        '''
+        """
         Read a face from the cubemap texture.
 
         Read a face of the cubemap into a bytearray or :py:class:`~moderngl.Buffer`.
@@ -3811,7 +3811,7 @@ class TextureCube:
         Keyword Args:
             alignment (int): The byte alignment of the pixels.
             write_offset (int): The write offset.
-        '''
+        """
     def write(
         self,
         face: int,
@@ -3819,7 +3819,7 @@ class TextureCube:
         viewport: Optional[Union[Tuple[int, int], Tuple[int, int, int, int]]] = None,
         alignment: int = 1,
     ) -> None:
-        r'''
+        r"""
         Update the content of the texture.
 
         Update the content of a face in the cubemap from byte data
@@ -3842,9 +3842,9 @@ class TextureCube:
 
         Keyword Args:
             alignment (int): The byte alignment of the pixels.
-        '''
+        """
     def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
-        '''
+        """
         Generate mipmaps.
 
         This also changes the texture filter to ``LINEAR_MIPMAP_LINEAR, LINEAR``
@@ -3853,9 +3853,9 @@ class TextureCube:
         Keyword Args:
             base (int): The base level
             max_level (int): The maximum levels to generate
-        '''
+        """
     def use(self, location: int = 0) -> None:
-        '''
+        """
         Bind the texture to a texture unit.
 
         The location is the texture unit we want to bind the texture.
@@ -3872,7 +3872,7 @@ class TextureCube:
 
         Args:
             location (int): The texture location/unit.
-        '''
+        """
     def bind_to_image(
         self,
         unit: int,
@@ -3881,7 +3881,7 @@ class TextureCube:
         level: int = 0,
         format: int = 0,
     ) -> None:
-        '''
+        """
         Bind a texture to an image unit (OpenGL 4.2 required).
 
         This is used to bind textures to image units for shaders.
@@ -3923,9 +3923,9 @@ class TextureCube:
             write (bool): Allows the shader to write to the image (default: ``True``)
             level (int): Level of the texture to bind (default: ``0``).
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
-        '''
+        """
     def get_handle(self, resident: bool = True) -> int:
-        '''
+        """
         Handle for Bindless Textures.
 
         Once a handle is created its parameters cannot be changed.
@@ -3953,12 +3953,12 @@ class TextureCube:
 
         Keyword Args:
             resident (bool): Make the texture resident.
-        '''
+        """
     def release(self) -> None:
-        '''Release the ModernGL object.'''
+        """Release the ModernGL object."""
 
 class Texture:
-    '''
+    """
     A Texture is an OpenGL object that contains one or more images that all have the same image format.
 
     A texture can be used in two ways. It can
@@ -3968,10 +3968,10 @@ class Texture:
     A Texture object cannot be instantiated directly, it requires a context.
     Use :py:meth:`Context.texture` or :py:meth:`Context.depth_texture`
     to create one.
-    '''
+    """
 
     repeat_x: bool
-    '''
+    """
     bool: The x repeat flag for the texture (Default ``True``).
 
     Example::
@@ -3981,10 +3981,10 @@ class Texture:
 
         # Disable texture repeat (GL_CLAMP_TO_EDGE)
         texture.repeat_x = False
-    '''
+    """
 
     repeat_y: bool
-    '''
+    """
     bool: The y repeat flag for the texture (Default ``True``).
 
     Example::
@@ -3994,10 +3994,10 @@ class Texture:
 
         # Disable texture repeat (GL_CLAMP_TO_EDGE)
         texture.repeat_y = False
-    '''
+    """
 
     filter: Tuple[int, int]
-    '''
+    """
     tuple: The minification and magnification filter for the texture.
 
     (Default ``(moderngl.LINEAR. moderngl.LINEAR)``)
@@ -4008,10 +4008,10 @@ class Texture:
         texture.filter == (moderngl.LINEAR_MIPMAP_LINEAR, moderngl.LINEAR)
         texture.filter == (moderngl.NEAREST_MIPMAP_LINEAR, moderngl.NEAREST)
         texture.filter == (moderngl.LINEAR_MIPMAP_NEAREST, moderngl.NEAREST)
-    '''
+    """
 
     anisotropy: float
-    '''
+    """
     Number of samples for anisotropic filtering (Default ``1.0``).
 
     The value will be clamped in range ``1.0`` and ``ctx.max_anisotropy``.
@@ -4023,10 +4023,10 @@ class Texture:
 
         # Enable anisotropic filtering suggesting 16 samples as a maximum
         texture.anisotropy = 16.0
-    '''
+    """
 
     swizzle: str
-    '''
+    """
     str: The swizzle mask of the texture (Default ``'RGBA'``).
 
     The swizzle mask change/reorder the ``vec4`` value returned by the ``texture()`` function
@@ -4050,10 +4050,10 @@ class Texture:
 
         # Reverse the components
         texture.swizzle = 'ABGR'
-    '''
+    """
 
     compare_func: str
-    '''
+    """
     tuple: The compare function of the depth texture (Default ``'<='``).
 
     By default depth textures have ``GL_TEXTURE_COMPARE_MODE`` set to
@@ -4084,47 +4084,47 @@ class Texture:
         texture.compare_func = '!='  # GL_NOTEQUAL
         texture.compare_func = '0'   # GL_NEVER
         texture.compare_func = '1'   # GL_ALWAYS
-    '''
+    """
 
     width: int
-    '''The width of the texture.'''
+    """The width of the texture."""
 
     height: int
-    '''The height of the texture.'''
+    """The height of the texture."""
 
     size: tuple
-    '''The size of the texture.'''
+    """The size of the texture."""
 
     components: int
-    '''The number of components of the texture.'''
+    """The number of components of the texture."""
 
     samples: int
-    '''The number of samples set for the texture used in multisampling.'''
+    """The number of samples set for the texture used in multisampling."""
 
     dtype: str
-    '''Data type.'''
+    """Data type."""
 
     depth: bool
-    '''Is the texture a depth texture?.'''
+    """Is the texture a depth texture?."""
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
-    ctx: 'Context'
-    '''The context this object belongs to'''
+    ctx: "Context"
+    """The context this object belongs to"""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     glo: int
-    '''
+    """
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
-    '''
+    """
 
     def read(self, level: int = 0, alignment: int = 1) -> bytes:
-        '''
+        """
         Read the pixel data as bytes into system memory.
 
         The texture can also be attached to a :py:class:`Framebuffer`
@@ -4138,7 +4138,7 @@ class Texture:
 
         Returns:
             bytes
-        '''
+        """
     def read_into(
         self,
         buffer: Any,
@@ -4146,7 +4146,7 @@ class Texture:
         alignment: int = 1,
         write_offset: int = 0,
     ) -> None:
-        '''
+        """
         Read the content of the texture into a bytearray or :py:class:`~moderngl.Buffer`.
 
         The advantage of reading into a :py:class:`~moderngl.Buffer` is that pixel data
@@ -4169,7 +4169,7 @@ class Texture:
             level (int): The mipmap level.
             alignment (int): The byte alignment of the pixels.
             write_offset (int): The write offset.
-        '''
+        """
     def write(
         self,
         data: Any,
@@ -4177,7 +4177,7 @@ class Texture:
         level: int = 0,
         alignment: int = 1,
     ) -> None:
-        r'''
+        r"""
         Update the content of the texture from byte data or a moderngl :py:class:`~moderngl.Buffer`.
 
         Examples::
@@ -4206,9 +4206,9 @@ class Texture:
         Keyword Args:
             level (int): The mipmap level.
             alignment (int): The byte alignment of the pixels.
-        '''
+        """
     def build_mipmaps(self, base: int = 0, max_level: int = 1000) -> None:
-        '''
+        """
         Generate mipmaps.
 
         This also changes the texture filter to ``LINEAR_MIPMAP_LINEAR, LINEAR``
@@ -4217,9 +4217,9 @@ class Texture:
         Keyword Args:
             base (int): The base level
             max_level (int): The maximum levels to generate
-        '''
+        """
     def use(self, location: int = 0) -> None:
-        '''
+        """
         Bind the texture to a texture unit.
 
         The location is the texture unit we want to bind the texture.
@@ -4236,7 +4236,7 @@ class Texture:
 
         Args:
             location (int): The texture location/unit.
-        '''
+        """
     def bind_to_image(
         self,
         unit: int,
@@ -4245,7 +4245,7 @@ class Texture:
         level: int = 0,
         format: int = 0,
     ) -> None:
-        '''
+        """
         Bind a texture to an image unit (OpenGL 4.2 required).
 
         This is used to bind textures to image units for shaders.
@@ -4282,9 +4282,9 @@ class Texture:
             write (bool): Allows the shader to write to the image (default: ``True``)
             level (int): Level of the texture to bind (default: ``0``).
             format (int): (optional) The OpenGL enum value representing the format (defaults to the texture's format)
-        '''
+        """
     def get_handle(self, resident: bool = True) -> int:
-        '''
+        """
         Handle for Bindless Textures.
 
         Once a handle is created its parameters cannot be changed.
@@ -4312,12 +4312,12 @@ class Texture:
 
         Keyword Args:
             resident (bool): Make the texture resident.
-        '''
+        """
     def release(self) -> None:
-        '''Release the ModernGL object.'''
+        """Release the ModernGL object."""
 
 class VertexArray:
-    '''
+    """
     A VertexArray object is an OpenGL object that stores all of the state needed to supply vertex data.
 
     It stores the format of the vertex data
@@ -4329,13 +4329,13 @@ class VertexArray:
     A VertexArray object cannot be instantiated directly, it requires a context.
     Use :py:meth:`Context.vertex_array` or :py:meth:`Context.simple_vertex_array`
     to create one.
-    '''
+    """
 
-    scope: Optional['Scope']
-    '''The scope to use while rendering.'''
+    scope: Optional["Scope"]
+    """The scope to use while rendering."""
 
     mode: int
-    '''
+    """
     Get or set the default rendering mode.
 
     This value is used when ``mode`` is not passed in rendering calls.
@@ -4343,48 +4343,48 @@ class VertexArray:
     Examples::
 
         vao.mode = moderngl.TRIANGLE_STRIPS
-    '''
+    """
 
     program: Program
-    '''
+    """
     Program: The program assigned to the VertexArray.
 
     The program used when rendering or transforming primitives.
-    '''
+    """
 
     index_buffer: Buffer
-    '''Index buffer'''
+    """Index buffer"""
 
     index_element_size: int
-    '''The size of an index in bytes'''
+    """The size of an index in bytes"""
 
     vertices: int
-    '''
+    """
     The number of vertices detected.
 
     This is the minimum of the number of vertices possible per Buffer.
     The size of the index_buffer determines the number of vertices.
     Per instance vertex attributes does not affect this number.
-    '''
+    """
 
     instances: int
-    '''Get or set the number of instances to render.'''
+    """Get or set the number of instances to render."""
 
     mglo: Any
-    '''Internal representation for debug purposes only.'''
+    """Internal representation for debug purposes only."""
 
-    ctx: 'Context'
-    '''The context this object belongs to'''
+    ctx: "Context"
+    """The context this object belongs to"""
 
     extra: Any
-    '''Attribute for storing user defined objects'''
+    """Attribute for storing user defined objects"""
 
     glo: int
-    '''
+    """
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
-    '''
+    """
 
     def render(
         self,
@@ -4393,7 +4393,7 @@ class VertexArray:
         first: int = 0,
         instances: int = -1,
     ) -> None:
-        '''
+        """
         The render primitive (mode) must be the same as the input primitive of the GeometryShader.
 
         Args:
@@ -4403,7 +4403,7 @@ class VertexArray:
         Keyword Args:
             first (int): The index of the first vertex to start with.
             instances (int): The number of instances.
-        '''
+        """
     def render_indirect(
         self,
         buffer: Buffer,
@@ -4411,7 +4411,7 @@ class VertexArray:
         count: int = -1,
         first: int = 0,
     ) -> None:
-        '''
+        """
         The render primitive (mode) must be the same as the input primitive of the GeometryShader.
 
         The draw commands are 5 integers: (count, instanceCount, firstIndex, baseVertex, baseInstance).
@@ -4423,7 +4423,7 @@ class VertexArray:
 
         Keyword Args:
             first (int): The index of the first indirect draw command.
-        '''
+        """
     def transform(
         self,
         buffer: Union[Buffer, List[Buffer]],
@@ -4433,7 +4433,7 @@ class VertexArray:
         instances: int = -1,
         buffer_offset: int = 0,
     ) -> None:
-        '''
+        """
         Transform vertices.
 
         Stores the output in a single buffer.
@@ -4449,7 +4449,7 @@ class VertexArray:
             first (int): The index of the first vertex to start with.
             instances (int): The number of instances.
             buffer_offset (int): Byte offset for the output buffer
-        '''
+        """
     def bind(
         self,
         attribute: int,
@@ -4461,7 +4461,7 @@ class VertexArray:
         divisor: int = 0,
         normalize: bool = False,
     ) -> None:
-        '''
+        """
         Bind individual attributes to buffers.
 
         Args:
@@ -4475,6 +4475,6 @@ class VertexArray:
             stride (int): The stride.
             divisor (int): The divisor.
             normalize (bool): The normalize parameter, if applicable.
-        '''
+        """
     def release(self) -> None:
-        '''Release the ModernGL object.'''
+        """Release the ModernGL object."""
