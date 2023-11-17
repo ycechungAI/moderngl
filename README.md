@@ -1,8 +1,8 @@
-<p align="center">
+<div align="center">
 
 [![preview](https://github.com/moderngl/moderngl/raw/master/.github/preview.png)](#readme)
 
-</p>
+</div>
 
 # ModernGL
 
