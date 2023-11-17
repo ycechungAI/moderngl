@@ -1,8 +1,8 @@
-<div align="center">
+<center>
 
 [![preview](https://github.com/moderngl/moderngl/raw/master/.github/preview.png)](#readme)
 
-</div>
+<center>
 
 # ModernGL
 
@@ -20,14 +20,8 @@ pip install moderngl
 - [ModernGL on Github](https://github.com/moderngl/moderngl/)
 - [ModernGL on PyPI](https://pypi.org/project/ModernGL/)
 - [ModernGL Discord Server](https://discord.gg/UEMtW8D)
-- [glcontext]
-- [moderngl-window] (Window creation, resource loading, ..)
-
-> **NOTE: From moderngl 5.6 context creation is delegated to the [glcontext] package.
-  This makes us able to expand and improve context creation without releasing new
-  versions of moderngl. It also makes it possible for users to customize their own
-  context creation and the bar for contributing should be lower. New backends
-  can be created using ctypes or C++.**
+- [glcontext](https://github.com/moderngl/glcontext)
+- [moderngl-window](https://github.com/moderngl/moderngl-window) (Window creation, resource loading, ...)
 
 ## Features
 
@@ -77,8 +71,7 @@ GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo2)
 GL.glBufferData(GL.GL_ARRAY_BUFFER, None, GL.GL_DYNAMIC_DRAW)
 ```
 
-With ModernGL you need just one simple line per VBO to achieve the same
-results:
+With ModernGL you need just one simple line per VBO to achieve the same results:
 
 ```py
 vbo1 = ctx.buffer(b'Hello World!')
@@ -90,31 +83,27 @@ vbo2 = ctx.buffer(reserve=1024, dynamic=True)
 [![build](https://github.com/moderngl/moderngl/actions/workflows/build.yml/badge.svg)](https://github.com/moderngl/moderngl/actions/workflows/build.yml) [![test](https://github.com/moderngl/moderngl/actions/workflows/test.yml/badge.svg)](https://github.com/moderngl/moderngl/actions/workflows/test.yml)
 
 ```sh
-python setup.py build_ext --inplace
+python -m build .
 ```
 
 ## FAQ
 
 ### Is ModernGL faster than PyOpenGL?
 
-In many cases **yes**, the core functions of ModernGL are written in C++,
-OpenGL functions are called in quick succession so these calls together
-count as a single python function call.
+In many cases **yes**, the core functions of ModernGL are written in C++.
+We do not call every OpenGL function from Python, we batch them in a single C++ function instead.
 
 ### What version of OpenGL is used?
 
-Most of the calls only require **OpenGL 3.3** but Subroutines and Compute
-Shaders require **OpenGL 4.0** and **OpenGL 4.3**
+Most of the calls only require **OpenGL 3.3**.
+Compute Shaders require **OpenGL 4.3**.
+Some functionality relies on their specific extension.
 
 ### Is my old PC supported?
 
 OpenGL 3.3 came out in February 2010. With **up to date drivers** you will
-be able to use the most of the ModernGL functions, even on integrated 
-graphics cards. _(Compute Shaders will likely not work
-depending on how old your PC is.)_
-
-You can still try [using Mesa](https://moderngl.readthedocs.io/en/latest/installation.html#using-with-mesa-3d-on-windows) 
-but performance would be limited.
+be able to use the most of the ModernGL functions, even on integrated
+graphics cards.
 
 ### Where can I use ModernGL?
 
@@ -126,15 +115,14 @@ a valid OpenGL context.
 
 ### Can ModernGL create a Window?
 
-**NO**, but we provide a utility library [moderngl-window] making window
-creation and resource loading very simple.
+**NO**, ModernGL is responsible for calling the OpenGL API and providing a Pythonic user-friendly API instead.
+We also provide a utility library [moderngl-window](https://github.com/moderngl/moderngl-window)
+making window creation and resource loading very simple.
 
 ### Limitations using ModernGL over PyOpenGL?
 
-All the necessary calls are (or can be) implemented in ModernGL. However
-you can interact with the ModernGL objects from PyOpenGL. If something is
-missing write an [issue](https://github.com/moderngl/moderngl/issues)
-or raise a [PR](https://github.com/moderngl/moderngl/pulls).
+All the necessary calls are (or can be) implemented in ModernGL. However you can interact with the ModernGL objects from PyOpenGL.
+If something is missing write an [issue](https://github.com/moderngl/moderngl/issues) or raise a [PR](https://github.com/moderngl/moderngl/pulls).
 
 ## Supported platforms
 
@@ -148,7 +136,7 @@ or raise a [PR](https://github.com/moderngl/moderngl/pulls).
 
 ```sh
 apt-get install python3-dev libgl1-mesa-dev libx11-dev
-python3 setup.py install
+python3 -m pip install -e .
 ```
 
 ### Building the sphinx documentation
@@ -175,24 +163,10 @@ alias xpy='xvfb-run -s "-screen 0 1x1x24" python3'
 xpy -m moderngl
 ```
 
-## Code quality
-
-Code is tested with [pep8], [flake8], [prospector] and [pylint]
-
-[pep8]: https://www.python.org/dev/peps/pep-0008/
-[flake8]: http://flake8.pycqa.org/en/latest/
-[prospector]: https://prospector.readthedocs.io/en/master/
-[pylint]: https://www.pylint.org/
-[moderngl-window]: https://github.com/moderngl/moderngl-window
-[glcontext]: https://github.com/moderngl/glcontext
-
-## Community
-
-- [Code of conduct](https://github.com/moderngl/moderngl/blob/master/.github/CODE_OF_CONDUCT.md)
-
 ## Citation
 
 If you need to cite this repository in academic research:
+
 ```txt
 @Online{Dombi2020,
   author = {Szabolcs Dombi},
@@ -208,25 +182,8 @@ If you need to cite this repository in academic research:
 If commit hash is required this can be found per release here:
 https://github.com/moderngl/moderngl/releases
 
+## Community
 
-## Contributors
-
-- [Szabolcs Dombi](https://github.com/cprogrammer1994)
-- [SimLeek](https://github.com/SimLeek)
-- [Aljenci](https://github.com/Aljenci)
-- [MinchinWeb](https://github.com/MinchinWeb)
-- [Silexstudio](https://github.com/Silexstudio)
-- [stuaxo](https://github.com/stuaxo)
-- [Tomi Aarnio](https://github.com/toaarnio)
-- [Joshua Reibert](https://github.com/joshua-r)
-- [Einar Forselv](https://github.com/einarf)
-- [Jonathan Hartley](https://github.com/tartley)
-- [yoyonel](https://github.com/yoyonel)
-- [Naveen M K](https://github.com/naveen521kk)
-- [compik710](https://github.com/compik710)
-
-and [many others](https://github.com/moderngl/moderngl/graphs/contributors)
-
-Thank You!
-
-Contributions are welcome. _(Please add yourself to the list)_
+- [Contributors](https://github.com/moderngl/moderngl/graphs/contributors)
+- [ModernGL Discord Server](https://discord.gg/UEMtW8D)
+- [Code of conduct](https://github.com/moderngl/moderngl/blob/master/.github/CODE_OF_CONDUCT.md)
