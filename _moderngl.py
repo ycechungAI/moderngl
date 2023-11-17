@@ -20,7 +20,7 @@ class Attribute:
         self.extra = None
 
     def __repr__(self):
-        return f'<Attribute: {self.location}>'
+        return f"<Attribute: {self.location}>"
 
     @property
     def mglo(self):
@@ -42,7 +42,7 @@ class Uniform:
         self.extra = None
 
     def __repr__(self):
-        return f'<Uniform: {self.location}>'
+        return f"<Uniform: {self.location}>"
 
     @property
     def mglo(self):
@@ -71,9 +71,9 @@ class Uniform:
     def value(self, value):
         if self.array_length > 1:
             if self.dimension > 1:
-                data = b''.join(struct.pack(self.fmt, *row) for row in value)
+                data = b"".join(struct.pack(self.fmt, *row) for row in value)
             else:
-                data = b''.join(struct.pack(self.fmt, item) for item in value)
+                data = b"".join(struct.pack(self.fmt, item) for item in value)
         elif self.dimension > 1:
             data = struct.pack(self.fmt, *value)
         else:
@@ -107,7 +107,7 @@ class UniformBlock:
         self.extra = None
 
     def __repr__(self):
-        return f'<UniformBlock: {self.index}>'
+        return f"<UniformBlock: {self.index}>"
 
     @property
     def mglo(self):
@@ -139,7 +139,7 @@ class StorageBlock:
         self.extra = None
 
     def __repr__(self):
-        return f'<StorageBlock: {self.index}>'
+        return f"<StorageBlock: {self.index}>"
 
     @property
     def mglo(self):
@@ -169,7 +169,7 @@ class Subroutine:
         self.extra = None
 
     def __repr__(self):
-        return f'<Subroutine: {self.index}>'
+        return f"<Subroutine: {self.index}>"
 
     @property
     def mglo(self):
@@ -185,7 +185,7 @@ class Varying:
         self.extra = None
 
     def __repr__(self):
-        return f'<Varying: {self.number}>'
+        return f"<Varying: {self.number}>"
 
     @property
     def mglo(self):
@@ -197,110 +197,110 @@ class Error(Exception):
 
 
 ATTRIBUTE_LOOKUP_TABLE = {
-    0x1404: (1, 0x1404, 1, 1, False, 'i'),
-    0x8B53: (2, 0x1404, 1, 2, False, 'i'),
-    0x8B54: (3, 0x1404, 1, 3, False, 'i'),
-    0x8B55: (4, 0x1404, 1, 4, False, 'i'),
-    0x1405: (1, 0x1405, 1, 1, False, 'i'),
-    0x8DC6: (2, 0x1405, 1, 2, False, 'i'),
-    0x8DC7: (3, 0x1405, 1, 3, False, 'i'),
-    0x8DC8: (4, 0x1405, 1, 4, False, 'i'),
-    0x1406: (1, 0x1406, 1, 1, True, 'f'),
-    0x8B50: (2, 0x1406, 1, 2, True, 'f'),
-    0x8B51: (3, 0x1406, 1, 3, True, 'f'),
-    0x8B52: (4, 0x1406, 1, 4, True, 'f'),
-    0x140A: (1, 0x140A, 1, 1, False, 'd'),
-    0x8FFC: (2, 0x140A, 1, 2, False, 'd'),
-    0x8FFD: (3, 0x140A, 1, 3, False, 'd'),
-    0x8FFE: (4, 0x140A, 1, 4, False, 'd'),
-    0x8B5A: (4, 0x1406, 2, 2, True, 'f'),
-    0x8B65: (6, 0x1406, 2, 3, True, 'f'),
-    0x8B66: (8, 0x1406, 2, 4, True, 'f'),
-    0x8B67: (6, 0x1406, 3, 2, True, 'f'),
-    0x8B5B: (9, 0x1406, 3, 3, True, 'f'),
-    0x8B68: (12, 0x1406, 3, 4, True, 'f'),
-    0x8B69: (8, 0x1406, 4, 2, True, 'f'),
-    0x8B6A: (12, 0x1406, 4, 3, True, 'f'),
-    0x8B5C: (16, 0x1406, 4, 4, True, 'f'),
-    0x8F46: (4, 0x140A, 2, 2, False, 'd'),
-    0x8F49: (6, 0x140A, 2, 3, False, 'd'),
-    0x8F4A: (8, 0x140A, 2, 4, False, 'd'),
-    0x8F4B: (6, 0x140A, 3, 2, False, 'd'),
-    0x8F47: (9, 0x140A, 3, 3, False, 'd'),
-    0x8F4C: (12, 0x140A, 3, 4, False, 'd'),
-    0x8F4D: (8, 0x140A, 4, 2, False, 'd'),
-    0x8F4E: (12, 0x140A, 4, 3, False, 'd'),
-    0x8F48: (16, 0x140A, 4, 4, False, 'd'),
+    0x1404: (1, 0x1404, 1, 1, False, "i"),
+    0x8B53: (2, 0x1404, 1, 2, False, "i"),
+    0x8B54: (3, 0x1404, 1, 3, False, "i"),
+    0x8B55: (4, 0x1404, 1, 4, False, "i"),
+    0x1405: (1, 0x1405, 1, 1, False, "i"),
+    0x8DC6: (2, 0x1405, 1, 2, False, "i"),
+    0x8DC7: (3, 0x1405, 1, 3, False, "i"),
+    0x8DC8: (4, 0x1405, 1, 4, False, "i"),
+    0x1406: (1, 0x1406, 1, 1, True, "f"),
+    0x8B50: (2, 0x1406, 1, 2, True, "f"),
+    0x8B51: (3, 0x1406, 1, 3, True, "f"),
+    0x8B52: (4, 0x1406, 1, 4, True, "f"),
+    0x140A: (1, 0x140A, 1, 1, False, "d"),
+    0x8FFC: (2, 0x140A, 1, 2, False, "d"),
+    0x8FFD: (3, 0x140A, 1, 3, False, "d"),
+    0x8FFE: (4, 0x140A, 1, 4, False, "d"),
+    0x8B5A: (4, 0x1406, 2, 2, True, "f"),
+    0x8B65: (6, 0x1406, 2, 3, True, "f"),
+    0x8B66: (8, 0x1406, 2, 4, True, "f"),
+    0x8B67: (6, 0x1406, 3, 2, True, "f"),
+    0x8B5B: (9, 0x1406, 3, 3, True, "f"),
+    0x8B68: (12, 0x1406, 3, 4, True, "f"),
+    0x8B69: (8, 0x1406, 4, 2, True, "f"),
+    0x8B6A: (12, 0x1406, 4, 3, True, "f"),
+    0x8B5C: (16, 0x1406, 4, 4, True, "f"),
+    0x8F46: (4, 0x140A, 2, 2, False, "d"),
+    0x8F49: (6, 0x140A, 2, 3, False, "d"),
+    0x8F4A: (8, 0x140A, 2, 4, False, "d"),
+    0x8F4B: (6, 0x140A, 3, 2, False, "d"),
+    0x8F47: (9, 0x140A, 3, 3, False, "d"),
+    0x8F4C: (12, 0x140A, 3, 4, False, "d"),
+    0x8F4D: (8, 0x140A, 4, 2, False, "d"),
+    0x8F4E: (12, 0x140A, 4, 3, False, "d"),
+    0x8F48: (16, 0x140A, 4, 4, False, "d"),
 }
 
 UNIFORM_LOOKUP_TABLE = {
-    0x8B56: (False, 1, 4, '1i'),
-    0x8B57: (False, 2, 8, '2i'),
-    0x8B58: (False, 3, 12, '3i'),
-    0x8B59: (False, 4, 16, '4i'),
-    0x1404: (False, 1, 4, '1i'),
-    0x8B53: (False, 2, 8, '2i'),
-    0x8B54: (False, 3, 12, '3i'),
-    0x8B55: (False, 4, 16, '4i'),
-    0x1405: (False, 1, 4, '1I'),
-    0x8DC6: (False, 2, 8, '2I'),
-    0x8DC7: (False, 3, 12, '3I'),
-    0x8DC8: (False, 4, 16, '4I'),
-    0x1406: (False, 1, 4, '1f'),
-    0x8B50: (False, 2, 8, '2f'),
-    0x8B51: (False, 3, 12, '3f'),
-    0x8B52: (False, 4, 16, '4f'),
-    0x140A: (False, 1, 8, '1d'),
-    0x8FFC: (False, 2, 16, '2d'),
-    0x8FFD: (False, 3, 24, '3d'),
-    0x8FFE: (False, 4, 32, '4d'),
-    0x8B5D: (False, 1, 4, '1i'),
-    0x8DC0: (False, 1, 4, '1i'),
-    0x8DC9: (False, 1, 4, '1i'),
-    0x8DCE: (False, 1, 4, '1i'),
-    0x8B5E: (False, 1, 4, '1i'),
-    0x8DCA: (False, 1, 4, '1i'),
-    0x8DD2: (False, 1, 4, '1i'),
-    0x8DC1: (False, 1, 4, '1i'),
-    0x8DCF: (False, 1, 4, '1i'),
-    0x8DD7: (False, 1, 4, '1i'),
-    0x8B5F: (False, 1, 4, '1i'),
-    0x8DCB: (False, 1, 4, '1i'),
-    0x8DD3: (False, 1, 4, '1i'),
-    0x8B62: (False, 1, 4, '1i'),
-    0x9108: (False, 1, 4, '1i'),
-    0x9109: (False, 1, 4, '1i'),
-    0x910A: (False, 1, 4, '1i'),
-    0x910B: (False, 1, 4, '1i'),
-    0x910C: (False, 1, 4, '1i'),
-    0x910D: (False, 1, 4, '1i'),
-    0x8B60: (False, 1, 4, '1i'),
-    0x8DCC: (False, 1, 4, '1i'),
-    0x8DD4: (False, 1, 4, '1i'),
-    0x904D: (False, 1, 4, '1i'),
-    0x8B5A: (True, 4, 16, '4f'),
-    0x8B65: (True, 6, 24, '6f'),
-    0x8B66: (True, 8, 32, '8f'),
-    0x8B67: (True, 6, 24, '6f'),
-    0x8B5B: (True, 9, 36, '9f'),
-    0x8B68: (True, 12, 48, '12f'),
-    0x8B69: (True, 8, 32, '8f'),
-    0x8B6A: (True, 12, 48, '12f'),
-    0x8B5C: (True, 16, 64, '16f'),
-    0x8F46: (True, 4, 32, '4d'),
-    0x8F49: (True, 6, 48, '6d'),
-    0x8F4A: (True, 8, 64, '8d'),
-    0x8F4B: (True, 6, 48, '6d'),
-    0x8F47: (True, 9, 72, '9d'),
-    0x8F4C: (True, 12, 96, '12d'),
-    0x8F4D: (True, 8, 64, '8d'),
-    0x8F4E: (True, 12, 96, '12d'),
-    0x8F48: (True, 16, 128, '16d'),
+    0x8B56: (False, 1, 4, "1i"),
+    0x8B57: (False, 2, 8, "2i"),
+    0x8B58: (False, 3, 12, "3i"),
+    0x8B59: (False, 4, 16, "4i"),
+    0x1404: (False, 1, 4, "1i"),
+    0x8B53: (False, 2, 8, "2i"),
+    0x8B54: (False, 3, 12, "3i"),
+    0x8B55: (False, 4, 16, "4i"),
+    0x1405: (False, 1, 4, "1I"),
+    0x8DC6: (False, 2, 8, "2I"),
+    0x8DC7: (False, 3, 12, "3I"),
+    0x8DC8: (False, 4, 16, "4I"),
+    0x1406: (False, 1, 4, "1f"),
+    0x8B50: (False, 2, 8, "2f"),
+    0x8B51: (False, 3, 12, "3f"),
+    0x8B52: (False, 4, 16, "4f"),
+    0x140A: (False, 1, 8, "1d"),
+    0x8FFC: (False, 2, 16, "2d"),
+    0x8FFD: (False, 3, 24, "3d"),
+    0x8FFE: (False, 4, 32, "4d"),
+    0x8B5D: (False, 1, 4, "1i"),
+    0x8DC0: (False, 1, 4, "1i"),
+    0x8DC9: (False, 1, 4, "1i"),
+    0x8DCE: (False, 1, 4, "1i"),
+    0x8B5E: (False, 1, 4, "1i"),
+    0x8DCA: (False, 1, 4, "1i"),
+    0x8DD2: (False, 1, 4, "1i"),
+    0x8DC1: (False, 1, 4, "1i"),
+    0x8DCF: (False, 1, 4, "1i"),
+    0x8DD7: (False, 1, 4, "1i"),
+    0x8B5F: (False, 1, 4, "1i"),
+    0x8DCB: (False, 1, 4, "1i"),
+    0x8DD3: (False, 1, 4, "1i"),
+    0x8B62: (False, 1, 4, "1i"),
+    0x9108: (False, 1, 4, "1i"),
+    0x9109: (False, 1, 4, "1i"),
+    0x910A: (False, 1, 4, "1i"),
+    0x910B: (False, 1, 4, "1i"),
+    0x910C: (False, 1, 4, "1i"),
+    0x910D: (False, 1, 4, "1i"),
+    0x8B60: (False, 1, 4, "1i"),
+    0x8DCC: (False, 1, 4, "1i"),
+    0x8DD4: (False, 1, 4, "1i"),
+    0x904D: (False, 1, 4, "1i"),
+    0x8B5A: (True, 4, 16, "4f"),
+    0x8B65: (True, 6, 24, "6f"),
+    0x8B66: (True, 8, 32, "8f"),
+    0x8B67: (True, 6, 24, "6f"),
+    0x8B5B: (True, 9, 36, "9f"),
+    0x8B68: (True, 12, 48, "12f"),
+    0x8B69: (True, 8, 32, "8f"),
+    0x8B6A: (True, 12, 48, "12f"),
+    0x8B5C: (True, 16, 64, "16f"),
+    0x8F46: (True, 4, 32, "4d"),
+    0x8F49: (True, 6, 48, "6d"),
+    0x8F4A: (True, 8, 64, "8d"),
+    0x8F4B: (True, 6, 48, "6d"),
+    0x8F47: (True, 9, 72, "9d"),
+    0x8F4C: (True, 12, 96, "12d"),
+    0x8F4D: (True, 8, 64, "8d"),
+    0x8F4E: (True, 12, 96, "12d"),
+    0x8F48: (True, 16, 128, "16d"),
 }
 
 
 def make_attribute(name, gl_type, program_obj, location, array_length):
-    tmp = ATTRIBUTE_LOOKUP_TABLE.get(gl_type, (1, 0, 1, 1, False, '?'))
+    tmp = ATTRIBUTE_LOOKUP_TABLE.get(gl_type, (1, 0, 1, 1, False, "?"))
     dimension, scalar_type, rows_length, row_length, normalizable, shape = tmp
     rows_length *= array_length
     res = Attribute()
@@ -319,7 +319,7 @@ def make_attribute(name, gl_type, program_obj, location, array_length):
 
 
 def make_uniform(name, gl_type, program_obj, location, array_length, ctx):
-    tmp = UNIFORM_LOOKUP_TABLE.get(gl_type, (False, 1, 4, '1i'))
+    tmp = UNIFORM_LOOKUP_TABLE.get(gl_type, (False, 1, 4, "1i"))
     matrix, dimension, element_size, fmt = tmp
     res = Uniform()
     res.name = name
@@ -429,12 +429,12 @@ TRANSLATION_TABLE_SPIRV_GLSL = {
 
 
 def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
-    ui32 = struct.Struct('I')
+    ui32 = struct.Struct("I")
     token = lambda i: ui32.unpack(spv[i * 4 : i * 4 + 4])[0]
     num_tokens = len(spv) // 4
 
     if token(0) != 0x07230203 or len(spv) % 4 != 0:
-        raise ValueError('invalid spv')
+        raise ValueError("invalid spv")
 
     idx = 5
 
@@ -453,7 +453,7 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
         if opcode == 5:  # OpName
             # We can extract the name of some ids
             name_start, name_end = (idx + 2) * 4, (idx + args) * 4
-            extracted_names[token(idx + 1)] = spv[name_start:name_end].rstrip(b'\x00').decode()
+            extracted_names[token(idx + 1)] = spv[name_start:name_end].rstrip(b"\x00").decode()
 
         if opcode == 59:  # OpVariable
             # We can extract if it is a vertex shader input or not
@@ -536,17 +536,17 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
         type_id, content = extracted_constants[const_id]
         typ, _ = assembly(type_id)
         if typ == Spv.INT32:
-            return struct.unpack('i', content[:4])[0]
+            return struct.unpack("i", content[:4])[0]
         elif typ == Spv.INT64:
-            return struct.unpack('q', content[:8])[0]
+            return struct.unpack("q", content[:8])[0]
         elif typ == Spv.UINT32:
-            return struct.unpack('I', content[:4])[0]
+            return struct.unpack("I", content[:4])[0]
         elif typ == Spv.UINT64:
-            return struct.unpack('Q', content[:8])[0]
+            return struct.unpack("Q", content[:8])[0]
         elif typ == Spv.FLOAT32:
-            return struct.unpack('f', content[:4])[0]
+            return struct.unpack("f", content[:4])[0]
         elif typ == Spv.FLOAT64:
-            return struct.unpack('d', content[:8])[0]
+            return struct.unpack("d", content[:8])[0]
         else:
             return 0
 
@@ -586,7 +586,7 @@ def parse_spv_inputs(program: int, spv: bytes) -> Dict[int, Attribute]:
     extracted_collected: Dict[int, Tuple[str, int, int, int, int]] = {}  # id : variable_info
     for ids in exrtacted_general_ids:
         # to_add: Tuple[str, int, int, int] = ()  # name, class, type, location, arr_length
-        name, cls, typ, location, arr_length = '', -1, -1, -1, -1
+        name, cls, typ, location, arr_length = "", -1, -1, -1, -1
         if ids in extracted_names:
             name = extracted_names[ids]
         if ids in extracted_storage_class_id:
