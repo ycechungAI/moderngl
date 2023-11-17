@@ -2,7 +2,7 @@
 
 [![preview](https://github.com/moderngl/moderngl/raw/master/.github/preview.png)](#readme)
 
-<center>
+</center>
 
 # ModernGL
 
