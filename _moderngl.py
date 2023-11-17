@@ -1,5 +1,3 @@
-# mypy: ignore-errors
-
 import struct
 from typing import Any, Dict, List, Tuple
 
