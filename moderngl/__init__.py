@@ -5,7 +5,7 @@ from _moderngl import Attribute, Error, InvalidObject, StorageBlock, Subroutine,
 from _moderngl import parse_spv_inputs as _parse_spv
 
 try:
-    from moderngl import mgl  # type: ignore
+    from moderngl import mgl
 except ImportError:
     pass
 
@@ -277,7 +277,7 @@ class Framebuffer:
             red, green, blue, alpha, *_ = tuple(color) + (0.0, 0.0, 0.0, 0.0)
 
         if viewport is not None:
-            viewport = tuple(viewport)  # type: ignore
+            viewport = tuple(viewport)
 
         self.mglo.clear(red, green, blue, alpha, depth, viewport)
 
@@ -546,7 +546,6 @@ class Scope:
     def __init__(self):
         self.mglo = None
         self.ctx = None
-        # Keep references to keep this objects alive
         self._framebuffer = None
         self._textures = None
         self._uniform_buffers = None
@@ -1688,7 +1687,7 @@ class Context:
             raise ValueError("varyings_capture_mode must be interleaved or separate")
 
         if type(varyings) is str:
-            varyings = (varyings,)  # type: ignore
+            varyings = (varyings,)
 
         varyings = tuple(varyings)
 
@@ -1924,8 +1923,6 @@ def create_context(require=None, standalone=False, share=False, **settings):
     if share is True:
         mode = "share"
 
-    from moderngl import mgl  # type: ignore
-
     ctx = Context.__new__(Context)
     ctx.mglo, ctx.version_code = mgl.create_context(glversion=require, mode=mode, **settings)
     ctx._info = None
@@ -1941,8 +1938,10 @@ def create_context(require=None, standalone=False, share=False, **settings):
         ctx._screen = None
         ctx.fbo = None
     else:
-        ctx._screen = ctx.detect_framebuffer(0)  # Default framebuffer
-        ctx.fbo = ctx.detect_framebuffer()  # Currently bound framebuffer
+        # Default framebuffer
+        ctx._screen = ctx.detect_framebuffer(0)
+        # Currently bound framebuffer
+        ctx.fbo = ctx.detect_framebuffer()
         ctx.mglo.fbo = ctx.fbo.mglo
 
     _store.default_context = ctx
