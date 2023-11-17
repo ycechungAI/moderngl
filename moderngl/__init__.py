@@ -9,7 +9,7 @@ try:
 except ImportError:
     pass
 
-__version__ = '5.9.0.dev0'
+__version__ = "5.9.0.dev0"
 
 
 class _store:
@@ -27,12 +27,12 @@ class Buffer:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, 'ctx'):
+        if not hasattr(self, "ctx"):
             return
 
-        if self.ctx.gc_mode == 'auto':
+        if self.ctx.gc_mode == "auto":
             self.release()
-        elif self.ctx.gc_mode == 'context_gc':
+        elif self.ctx.gc_mode == "context_gc":
             self.ctx.objects.append(self.mglo)
 
     @property
@@ -140,12 +140,12 @@ class ComputeShader:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, 'ctx'):
+        if not hasattr(self, "ctx"):
             return
 
-        if self.ctx.gc_mode == 'auto':
+        if self.ctx.gc_mode == "auto":
             self.release()
-        elif self.ctx.gc_mode == 'context_gc':
+        elif self.ctx.gc_mode == "context_gc":
             self.ctx.objects.append(self.mglo)
 
     def __getitem__(self, key):
@@ -190,7 +190,7 @@ class Framebuffer:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, 'ctx'):
+        if not hasattr(self, "ctx"):
             return
 
         # Don't delete default framebuffer or a reference
@@ -198,9 +198,9 @@ class Framebuffer:
             return
 
         # If object was initialized properly (ctx present) and gc_mode is auto
-        if self.ctx.gc_mode == 'auto':
+        if self.ctx.gc_mode == "auto":
             self.release()
-        elif self.ctx.gc_mode == 'context_gc':
+        elif self.ctx.gc_mode == "context_gc":
             self.ctx.objects.append(self.mglo)
 
     @property
@@ -285,7 +285,7 @@ class Framebuffer:
         self.ctx.fbo = self
         self.mglo.use()
 
-    def read(self, viewport=None, components=3, attachment=0, alignment=1, dtype='f1', clamp=False):
+    def read(self, viewport=None, components=3, attachment=0, alignment=1, dtype="f1", clamp=False):
         if viewport is None:
             viewport = (0, 0, self.width, self.height)
         if len(viewport) == 2:
@@ -294,7 +294,9 @@ class Framebuffer:
         self.mglo.read_into(mem, viewport, components, attachment, alignment, clamp, dtype, 0)
         return res
 
-    def read_into(self, buffer, viewport=None, components=3, attachment=0, alignment=1, dtype='f1', clamp=False, write_offset=0):
+    def read_into(
+        self, buffer, viewport=None, components=3, attachment=0, alignment=1, dtype="f1", clamp=False, write_offset=0
+    ):
         if type(buffer) is Buffer:
             buffer = buffer.mglo
 
@@ -323,12 +325,12 @@ class Program:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, 'ctx'):
+        if not hasattr(self, "ctx"):
             return
 
-        if self.ctx.gc_mode == 'auto':
+        if self.ctx.gc_mode == "auto":
             self.release()
-        elif self.ctx.gc_mode == 'context_gc':
+        elif self.ctx.gc_mode == "context_gc":
             self.ctx.objects.append(self.mglo)
 
     def __getitem__(self, key):
@@ -387,12 +389,12 @@ class Renderbuffer:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, 'ctx'):
+        if not hasattr(self, "ctx"):
             return
 
-        if self.ctx.gc_mode == 'auto':
+        if self.ctx.gc_mode == "auto":
             self.release()
-        elif self.ctx.gc_mode == 'context_gc':
+        elif self.ctx.gc_mode == "context_gc":
             self.ctx.objects.append(self.mglo)
 
     @property
@@ -443,12 +445,12 @@ class Sampler:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, 'ctx'):
+        if not hasattr(self, "ctx"):
             return
 
-        if self.ctx.gc_mode == 'auto':
+        if self.ctx.gc_mode == "auto":
             self.release()
-        elif self.ctx.gc_mode == 'context_gc':
+        elif self.ctx.gc_mode == "context_gc":
             self.ctx.objects.append(self.mglo)
 
     def use(self, location=0):
@@ -561,12 +563,12 @@ class Scope:
         self.mglo.end()
 
     def __del__(self):
-        if not hasattr(self, 'ctx'):
+        if not hasattr(self, "ctx"):
             return
 
-        if self.ctx.gc_mode == 'auto':
+        if self.ctx.gc_mode == "auto":
             self.release()
-        elif self.ctx.gc_mode == 'context_gc':
+        elif self.ctx.gc_mode == "context_gc":
             self.ctx.objects.append(self.mglo)
 
     def release(self):
@@ -594,12 +596,12 @@ class Texture:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, 'ctx'):
+        if not hasattr(self, "ctx"):
             return
 
-        if self.ctx.gc_mode == 'auto':
+        if self.ctx.gc_mode == "auto":
             self.release()
-        elif self.ctx.gc_mode == 'context_gc':
+        elif self.ctx.gc_mode == "context_gc":
             self.ctx.objects.append(self.mglo)
 
     @property
@@ -728,12 +730,12 @@ class Texture3D:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, 'ctx'):
+        if not hasattr(self, "ctx"):
             return
 
-        if self.ctx.gc_mode == 'auto':
+        if self.ctx.gc_mode == "auto":
             self.release()
-        elif self.ctx.gc_mode == 'context_gc':
+        elif self.ctx.gc_mode == "context_gc":
             self.ctx.objects.append(self.mglo)
 
     @property
@@ -850,12 +852,12 @@ class TextureCube:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, 'ctx'):
+        if not hasattr(self, "ctx"):
             return
 
-        if self.ctx.gc_mode == 'auto':
+        if self.ctx.gc_mode == "auto":
             self.release()
-        elif self.ctx.gc_mode == 'context_gc':
+        elif self.ctx.gc_mode == "context_gc":
             self.ctx.objects.append(self.mglo)
 
     @property
@@ -957,12 +959,12 @@ class TextureArray:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, 'ctx'):
+        if not hasattr(self, "ctx"):
             return
 
-        if self.ctx.gc_mode == 'auto':
+        if self.ctx.gc_mode == "auto":
             self.release()
-        elif self.ctx.gc_mode == 'context_gc':
+        elif self.ctx.gc_mode == "context_gc":
             self.ctx.objects.append(self.mglo)
 
     @property
@@ -1081,12 +1083,12 @@ class VertexArray:
         raise TypeError()
 
     def __del__(self):
-        if not hasattr(self, 'ctx'):
+        if not hasattr(self, "ctx"):
             return
 
-        if self.ctx.gc_mode == 'auto':
+        if self.ctx.gc_mode == "auto":
             self.release()
-        elif self.ctx.gc_mode == 'context_gc':
+        elif self.ctx.gc_mode == "context_gc":
             self.ctx.objects.append(self.mglo)
 
     @property
@@ -1185,7 +1187,7 @@ class VertexArray:
 
 
 class Context:
-    _valid_gc_modes = [None, 'context_gc', 'auto']
+    _valid_gc_modes = [None, "context_gc", "auto"]
 
     # Context Flags
 
@@ -1280,7 +1282,7 @@ class Context:
         raise TypeError()
 
     def __del__(self):
-        if hasattr(self, '_gc_mode') and self._gc_mode == 'auto':
+        if hasattr(self, "_gc_mode") and self._gc_mode == "auto":
             self.release()
 
     @property
@@ -1290,7 +1292,7 @@ class Context:
     @gc_mode.setter
     def gc_mode(self, value):
         if value not in self._valid_gc_modes:
-            raise ValueError('Valid  gc modes:', self._valid_gc_modes)
+            raise ValueError("Valid  gc modes:", self._valid_gc_modes)
 
         self._gc_mode = value
 
@@ -1559,7 +1561,7 @@ class Context:
         data=None,
         samples=0,
         alignment=1,
-        dtype='f1',
+        dtype="f1",
         internal_format=None,
         renderbuffer=False,
     ):
@@ -1576,7 +1578,7 @@ class Context:
         res.extra = None
         return res
 
-    def texture_array(self, size, components, data=None, alignment=1, dtype='f1'):
+    def texture_array(self, size, components, data=None, alignment=1, dtype="f1"):
         res = TextureArray.__new__(TextureArray)
         res.mglo, res._glo = self.mglo.texture_array(size, components, data, alignment, dtype)
         res._size = size
@@ -1586,7 +1588,7 @@ class Context:
         res.extra = None
         return res
 
-    def texture3d(self, size, components, data=None, alignment=1, dtype='f1'):
+    def texture3d(self, size, components, data=None, alignment=1, dtype="f1"):
         res = Texture3D.__new__(Texture3D)
         res._size = size
         res._components = components
@@ -1596,7 +1598,7 @@ class Context:
         res.extra = None
         return res
 
-    def texture_cube(self, size, components, data=None, alignment=1, dtype='f1', internal_format=None):
+    def texture_cube(self, size, components, data=None, alignment=1, dtype="f1", internal_format=None):
         res = TextureCube.__new__(TextureCube)
         res.mglo, res._glo = self.mglo.texture_cube(size, components, data, alignment, dtype, internal_format or 0)
         res._size = size
@@ -1612,7 +1614,7 @@ class Context:
         res._size = size
         res._components = 1
         res._samples = samples
-        res._dtype = 'f4'
+        res._dtype = "f4"
         res._depth = True
         res.ctx = self
         res.extra = None
@@ -1623,7 +1625,7 @@ class Context:
         res.mglo, res._glo = self.mglo.depth_texture_cube(size, data, alignment)
         res._size = size
         res._components = 1
-        res._dtype = 'f4'
+        res._dtype = "f4"
         res._depth = True
         res.ctx = self
         res.extra = None
@@ -1665,7 +1667,7 @@ class Context:
 
     def simple_vertex_array(self, program, buffer, *attributes, index_buffer=None, index_element_size=4, mode=None):
         if type(buffer) is list:
-            raise SyntaxError('Change simple_vertex_array to vertex_array')
+            raise SyntaxError("Change simple_vertex_array to vertex_array")
 
         content = [(buffer, detect_format(program, attributes)) + attributes]
         return self._vertex_array(program, content, index_buffer, index_element_size, mode=mode)
@@ -1680,10 +1682,10 @@ class Context:
         varyings=(),
         fragment_outputs=None,
         attributes=None,
-        varyings_capture_mode='interleaved',
+        varyings_capture_mode="interleaved",
     ):
-        if varyings_capture_mode not in ('interleaved', 'separate'):
-            raise ValueError('varyings_capture_mode must be interleaved or separate')
+        if varyings_capture_mode not in ("interleaved", "separate"):
+            raise ValueError("varyings_capture_mode must be interleaved or separate")
 
         if type(varyings) is str:
             varyings = (varyings,)  # type: ignore
@@ -1703,11 +1705,11 @@ class Context:
             None,
             varyings,
             fragment_outputs,
-            varyings_capture_mode == 'interleaved',
+            varyings_capture_mode == "interleaved",
         )
         res._members, res._attribute_locations, res._attribute_types = _members
 
-        if isinstance(vertex_shader, bytes) and int.from_bytes(vertex_shader[:4], 'little') == 0x07230203:
+        if isinstance(vertex_shader, bytes) and int.from_bytes(vertex_shader[:4], "little") == 0x07230203:
             res._attribute_types = _parse_spv(res._glo, vertex_shader)
             for info in res._attribute_types.values():
                 res._attribute_locations[info.name] = info.location
@@ -1751,7 +1753,7 @@ class Context:
         if framebuffer is None:
             framebuffer = self.screen
             if framebuffer is None:
-                raise RuntimeError('A framebuffer must be specified')
+                raise RuntimeError("A framebuffer must be specified")
 
         mgl_textures = tuple((tex.mglo, idx) for tex, idx in textures)
         mgl_uniform_buffers = tuple((buf.mglo, idx) for buf, idx in uniform_buffers)
@@ -1775,7 +1777,7 @@ class Context:
         res.extra = None
         return res
 
-    def simple_framebuffer(self, size, components=4, samples=0, dtype='f1'):
+    def simple_framebuffer(self, size, components=4, samples=0, dtype="f1"):
         return self.framebuffer(
             self.renderbuffer(size, components, samples=samples, dtype=dtype),
             self.depth_renderbuffer(size, samples=samples),
@@ -1807,7 +1809,7 @@ class Context:
         res.extra = None
         return res
 
-    def renderbuffer(self, size, components=4, samples=0, dtype='f1'):
+    def renderbuffer(self, size, components=4, samples=0, dtype="f1"):
         res = Renderbuffer.__new__(Renderbuffer)
         res.mglo, res._glo = self.mglo.texture(size, components, None, samples, 1, dtype, 0, True)
         res._size = size
@@ -1825,7 +1827,7 @@ class Context:
         res._size = size
         res._components = 1
         res._samples = samples
-        res._dtype = 'f4'
+        res._dtype = "f4"
         res._depth = True
         res.ctx = self
         res.extra = None
@@ -1857,7 +1859,7 @@ class Context:
         repeat_z=True,
         filter=None,
         anisotropy=1.0,
-        compare_func='?',
+        compare_func="?",
         border_color=None,
         min_lod=-1000.0,
         max_lod=1000.0,
@@ -1887,17 +1889,17 @@ class Context:
         self.mglo.clear_samplers(start, end)
 
     def core_profile_check(self):
-        profile_mask = self.info['GL_CONTEXT_PROFILE_MASK']
+        profile_mask = self.info["GL_CONTEXT_PROFILE_MASK"]
         if profile_mask != 1:
-            warnings.warn('The window should request a CORE OpenGL profile')
+            warnings.warn("The window should request a CORE OpenGL profile")
 
         version_code = self.version_code
         if not version_code:
-            major, minor = map(int, self.info['GL_VERSION'].split('.', 2)[:2])
+            major, minor = map(int, self.info["GL_VERSION"].split(".", 2)[:2])
             version_code = major * 100 + minor * 10
 
         if version_code < 330:
-            warnings.warn('The window should support OpenGL 3.3+ (version_code=%d)' % version_code)
+            warnings.warn("The window should support OpenGL 3.3+ (version_code=%d)" % version_code)
 
     def __enter__(self):
         self.mglo.__enter__()
@@ -1918,9 +1920,9 @@ def create_context(require=None, standalone=False, share=False, **settings):
     if require is None:
         require = 330
 
-    mode = 'standalone' if standalone is True else 'detect'
+    mode = "standalone" if standalone is True else "detect"
     if share is True:
-        mode = 'share'
+        mode = "share"
 
     from moderngl import mgl  # type: ignore
 
@@ -1933,7 +1935,7 @@ def create_context(require=None, standalone=False, share=False, **settings):
     ctx._objects = deque()
 
     if ctx.version_code < require:
-        raise ValueError('Requested OpenGL version {0}, got version {1}'.format(require, ctx.version_code))
+        raise ValueError("Requested OpenGL version {0}, got version {1}".format(require, ctx.version_code))
 
     if standalone:
         ctx._screen = None
@@ -1955,87 +1957,87 @@ def create_standalone_context(**kwargs):
     return create_context(standalone=True, **kwargs)
 
 
-def detect_format(program, attributes, mode='mgl'):
+def detect_format(program, attributes, mode="mgl"):
     def fmt(attr):
         # Translate shape format into attribute format
-        mgl_fmt = {'d': 'f8', 'I': 'u'}
+        mgl_fmt = {"d": "f8", "I": "u"}
         # moderngl attribute format uses f, i and u
-        if mode == 'mgl':
+        if mode == "mgl":
             return (
                 attr.array_length * attr.dimension,
                 mgl_fmt.get(attr.shape) or attr.shape,
             )
         # struct attribute format uses f, d, i and I
-        elif mode == 'struct':
+        elif mode == "struct":
             return attr.array_length * attr.dimension, attr.shape
         else:
-            raise ValueError('invalid format mode: {0}'.format(mode))
+            raise ValueError("invalid format mode: {0}".format(mode))
 
     locations = program._attribute_locations
     types = program._attribute_types
-    return ' '.join('%d%s' % fmt(types[x] if type(x) is int else types[locations[x]]) for x in attributes)
+    return " ".join("%d%s" % fmt(types[x] if type(x) is int else types[locations[x]]) for x in attributes)
 
 
 def _resolve_module_constants(scope):
     _constants = [
-        'NOTHING',
-        'BLEND',
-        'DEPTH_TEST',
-        'CULL_FACE',
-        'RASTERIZER_DISCARD',
-        'PROGRAM_POINT_SIZE',
-        'POINTS',
-        'LINES',
-        'LINE_LOOP',
-        'LINE_STRIP',
-        'TRIANGLES',
-        'TRIANGLE_STRIP',
-        'TRIANGLE_FAN',
-        'LINES_ADJACENCY',
-        'LINE_STRIP_ADJACENCY',
-        'TRIANGLES_ADJACENCY',
-        'TRIANGLE_STRIP_ADJACENCY',
-        'PATCHES',
-        'NEAREST',
-        'LINEAR',
-        'NEAREST_MIPMAP_NEAREST',
-        'LINEAR_MIPMAP_NEAREST',
-        'NEAREST_MIPMAP_LINEAR',
-        'LINEAR_MIPMAP_LINEAR',
-        'ZERO',
-        'ONE',
-        'SRC_COLOR',
-        'ONE_MINUS_SRC_COLOR',
-        'SRC_ALPHA',
-        'ONE_MINUS_SRC_ALPHA',
-        'DST_ALPHA',
-        'ONE_MINUS_DST_ALPHA',
-        'DST_COLOR',
-        'ONE_MINUS_DST_COLOR',
-        'DEFAULT_BLENDING',
-        'ADDITIVE_BLENDING',
-        'PREMULTIPLIED_ALPHA',
-        'FUNC_ADD',
-        'FUNC_SUBTRACT',
-        'FUNC_REVERSE_SUBTRACT',
-        'MIN',
-        'MAX',
-        'FIRST_VERTEX_CONVENTION',
-        'LAST_VERTEX_CONVENTION',
-        'VERTEX_ATTRIB_ARRAY_BARRIER_BIT',
-        'ELEMENT_ARRAY_BARRIER_BIT',
-        'UNIFORM_BARRIER_BIT',
-        'TEXTURE_FETCH_BARRIER_BIT',
-        'SHADER_IMAGE_ACCESS_BARRIER_BIT',
-        'COMMAND_BARRIER_BIT',
-        'PIXEL_BUFFER_BARRIER_BIT',
-        'TEXTURE_UPDATE_BARRIER_BIT',
-        'BUFFER_UPDATE_BARRIER_BIT',
-        'FRAMEBUFFER_BARRIER_BIT',
-        'TRANSFORM_FEEDBACK_BARRIER_BIT',
-        'ATOMIC_COUNTER_BARRIER_BIT',
-        'SHADER_STORAGE_BARRIER_BIT',
-        'ALL_BARRIER_BITS',
+        "NOTHING",
+        "BLEND",
+        "DEPTH_TEST",
+        "CULL_FACE",
+        "RASTERIZER_DISCARD",
+        "PROGRAM_POINT_SIZE",
+        "POINTS",
+        "LINES",
+        "LINE_LOOP",
+        "LINE_STRIP",
+        "TRIANGLES",
+        "TRIANGLE_STRIP",
+        "TRIANGLE_FAN",
+        "LINES_ADJACENCY",
+        "LINE_STRIP_ADJACENCY",
+        "TRIANGLES_ADJACENCY",
+        "TRIANGLE_STRIP_ADJACENCY",
+        "PATCHES",
+        "NEAREST",
+        "LINEAR",
+        "NEAREST_MIPMAP_NEAREST",
+        "LINEAR_MIPMAP_NEAREST",
+        "NEAREST_MIPMAP_LINEAR",
+        "LINEAR_MIPMAP_LINEAR",
+        "ZERO",
+        "ONE",
+        "SRC_COLOR",
+        "ONE_MINUS_SRC_COLOR",
+        "SRC_ALPHA",
+        "ONE_MINUS_SRC_ALPHA",
+        "DST_ALPHA",
+        "ONE_MINUS_DST_ALPHA",
+        "DST_COLOR",
+        "ONE_MINUS_DST_COLOR",
+        "DEFAULT_BLENDING",
+        "ADDITIVE_BLENDING",
+        "PREMULTIPLIED_ALPHA",
+        "FUNC_ADD",
+        "FUNC_SUBTRACT",
+        "FUNC_REVERSE_SUBTRACT",
+        "MIN",
+        "MAX",
+        "FIRST_VERTEX_CONVENTION",
+        "LAST_VERTEX_CONVENTION",
+        "VERTEX_ATTRIB_ARRAY_BARRIER_BIT",
+        "ELEMENT_ARRAY_BARRIER_BIT",
+        "UNIFORM_BARRIER_BIT",
+        "TEXTURE_FETCH_BARRIER_BIT",
+        "SHADER_IMAGE_ACCESS_BARRIER_BIT",
+        "COMMAND_BARRIER_BIT",
+        "PIXEL_BUFFER_BARRIER_BIT",
+        "TEXTURE_UPDATE_BARRIER_BIT",
+        "BUFFER_UPDATE_BARRIER_BIT",
+        "FRAMEBUFFER_BARRIER_BIT",
+        "TRANSFORM_FEEDBACK_BARRIER_BIT",
+        "ATOMIC_COUNTER_BARRIER_BIT",
+        "SHADER_STORAGE_BARRIER_BIT",
+        "ALL_BARRIER_BITS",
     ]
 
     for c in _constants:
