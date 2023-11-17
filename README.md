@@ -74,7 +74,7 @@ GL.glBufferData(GL.GL_ARRAY_BUFFER, b'Hello World!', GL.GL_STATIC_DRAW)
 
 vbo2 = GL.glGenBuffers(1)
 GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo2)
-GL.glBufferData(GL.GL_ARRAY_BUFFER, b'\x00' * 1024, GL.GL_DYNAMIC_DRAW)
+GL.glBufferData(GL.GL_ARRAY_BUFFER, None, GL.GL_DYNAMIC_DRAW)
 ```
 
 With ModernGL you need just one simple line per VBO to achieve the same
