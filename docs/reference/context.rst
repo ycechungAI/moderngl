@@ -1433,21 +1433,3 @@ Standalone ModernGL Context
     import moderngl
     ctx = moderngl.create_standalone_context()
     print(ctx.version_code)
-
-ContextManager
-~~~~~~~~~~~~~~
-
-.. rubric:: context_manager.py
-
-.. literalinclude:: ../../examples/context_manager.py
-    :linenos:
-
-.. rubric:: example.py
-
-.. code-block:: python
-    :linenos:
-
-    from context_manager import ContextManager
-
-    ctx = ContextManager.get_default_context()
-    print(ctx.version_code)
