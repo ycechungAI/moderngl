@@ -1,17 +1,30 @@
-from context_manager import ContextManager
+import moderngl
+from basic_colors_and_texture import ColorsAndTexture
 
 
-class RenderToTexture:
-    def __init__(self, size=(256, 256), components=4, samples=4):
-        self.ctx = ContextManager.get_default_context()
-        self.texture = self.ctx.texture(size, components=4)
-        self.fbo1 = self.ctx.simple_framebuffer(size, samples=samples)
-        self.fbo2 = self.ctx.framebuffer(self.texture)
-        self.scope = self.ctx.scope(self.fbo1)
+class RenderToTexture(ColorsAndTexture):
+    title = "Render to Texture"
+    gl_version = (3, 3)
 
-    def __enter__(self):
-        self.scope.__enter__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
-    def __exit__(self, *args):
-        self.scope.__exit__()
-        self.ctx.copy_framebuffer(self.fbo2, self.fbo1)
+        self.texture1 = self.texture
+        self.texture2 = self.ctx.texture(self.wnd.size, 3)
+        depth_attachment = self.ctx.depth_renderbuffer(self.wnd.size)
+        self.fbo = self.ctx.framebuffer(self.texture2, depth_attachment)
+
+    def render(self, time, frame_time):
+        for mode in ['render_to_texture', 'render_to_window']:
+            if mode == 'render_to_texture':
+                self.texture = self.texture1
+                self.fbo.clear(1.0, 1.0, 1.0)
+                self.fbo.use()
+            else:
+                self.texture = self.texture2
+                self.ctx.screen.use()
+            super().render(time, frame_time)
+
+
+if __name__ == '__main__':
+    RenderToTexture.run()
