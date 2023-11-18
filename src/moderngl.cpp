@@ -1616,11 +1616,11 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 
     framebuffer->depth_mask = (depth_attachment != Py_None);
 
-    framebuffer->viewport = {0, 0, width, height};
+    framebuffer->viewport = Rect{0, 0, width, height};
     framebuffer->dynamic = false;
 
     framebuffer->scissor_enabled = false;
-    framebuffer->scissor = {0, 0, width, height};
+    framebuffer->scissor = Rect{0, 0, width, height};
 
     framebuffer->width = width;
     framebuffer->height = height;
@@ -1721,11 +1721,11 @@ PyObject * MGLContext_empty_framebuffer(MGLContext * self, PyObject * args) {
     framebuffer->color_mask = new bool[5];
     framebuffer->depth_mask = false;
 
-    framebuffer->viewport = {0, 0, width, height};
+    framebuffer->viewport = Rect{0, 0, width, height};
     framebuffer->dynamic = false;
 
     framebuffer->scissor_enabled = false;
-    framebuffer->scissor = {0, 0, width, height};
+    framebuffer->scissor = Rect{0, 0, width, height};
 
     framebuffer->width = width;
     framebuffer->height = height;
@@ -1762,7 +1762,7 @@ PyObject * MGLFramebuffer_clear(MGLFramebuffer * self, PyObject * args) {
         return 0;
     }
 
-    Rect viewport_rect = {0, 0, self->width, self->height};
+    Rect viewport_rect = Rect{0, 0, self->width, self->height};
     if (viewport_arg != Py_None) {
         if (!parse_rect(viewport_arg, &viewport_rect)) {
             MGLError_Set("wrong values in the viewport");
@@ -1912,7 +1912,7 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
         return 0;
     }
 
-    Rect viewport_rect = {0, 0, self->width, self->height};
+    Rect viewport_rect = Rect{0, 0, self->width, self->height};
     if (viewport_arg != Py_None) {
         if (!parse_rect(viewport_arg, &viewport_rect)) {
             MGLError_Set("wrong values in the viewport");
@@ -2026,7 +2026,7 @@ PyObject * MGLFramebuffer_get_scissor(MGLFramebuffer * self, void * closure) {
 
 int MGLFramebuffer_set_scissor(MGLFramebuffer * self, PyObject * value, void * closure) {
     if (value == Py_None) {
-        self->scissor = {0, 0, self->width, self->height};
+        self->scissor = Rect{0, 0, self->width, self->height};
         self->scissor_enabled = false;
     } else {
         Rect scissor_rect = {};
@@ -4332,7 +4332,7 @@ PyObject * MGLTexture_write(MGLTexture * self, PyObject * args) {
     int default_width = self->width / (1 << level);
     int default_height = self->height / (1 << level);
 
-    Rect viewport_rect = {0, 0, default_width > 1 ? default_width : 1, default_height > 1 ? default_height : 1};
+    Rect viewport_rect = Rect{0, 0, default_width > 1 ? default_width : 1, default_height > 1 ? default_height : 1};
     if (viewport_arg != Py_None) {
         if (!parse_rect(viewport_arg, &viewport_rect)) {
             MGLError_Set("wrong values in the viewport");
@@ -7983,10 +7983,10 @@ PyObject * MGLContext_detect_framebuffer(MGLContext * self, PyObject * args) {
 
     framebuffer->context = self;
 
-    framebuffer->viewport = {0, 0, width, height};
+    framebuffer->viewport = Rect{0, 0, width, height};
 
     framebuffer->scissor_enabled = false;
-    framebuffer->scissor = {0, 0, width, height};
+    framebuffer->scissor = Rect{0, 0, width, height};
 
     framebuffer->width = width;
     framebuffer->height = height;
