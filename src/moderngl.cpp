@@ -155,6 +155,54 @@ int parse_rect(PyObject * arg, Rect * rect) {
     return 1;
 }
 
+struct Cube {
+    int x, y, z, width, height, depth;
+};
+
+Cube cube(int x, int y, int z, int width, int height, int depth) {
+    Cube cube;
+    cube.x = x;
+    cube.y = y;
+    cube.z = z;
+    cube.width = width;
+    cube.height = height;
+    cube.depth = depth;
+    return cube;
+}
+
+int parse_cube(PyObject * arg, Cube * cube) {
+    PyObject * seq = PySequence_Fast(arg, "");
+    if (!seq) {
+        PyErr_Clear();
+        return 0;
+    }
+    int size = (int)PySequence_Fast_GET_SIZE(seq);
+    if (size == 6) {
+        cube->x = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 0));
+        cube->y = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 1));
+        cube->z = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 2));
+        cube->width = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 3));
+        cube->height = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 4));
+        cube->depth = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 5));
+        if (PyErr_Occurred()) {
+            PyErr_Clear();
+            return 0;
+        }
+    } else if (size == 3) {
+        cube->width = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 0));
+        cube->height = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 1));
+        cube->depth = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 2));
+        if (PyErr_Occurred()) {
+            PyErr_Clear();
+            return 0;
+        }
+    } else {
+        return 0;
+    }
+    Py_DECREF(seq);
+    return 1;
+}
+
 struct MGLFramebuffer {
     PyObject_HEAD
     MGLContext * context;
@@ -4617,14 +4665,14 @@ PyObject * MGLTexture3D_read_into(MGLTexture3D * self, PyObject * args) {
 
 PyObject * MGLTexture3D_write(MGLTexture3D * self, PyObject * args) {
     PyObject * data;
-    PyObject * viewport;
+    PyObject * viewport_arg;
     int alignment;
 
     int args_ok = PyArg_ParseTuple(
         args,
         "OOI",
         &data,
-        &viewport,
+        &viewport_arg,
         &alignment
     );
 
@@ -4637,53 +4685,19 @@ PyObject * MGLTexture3D_write(MGLTexture3D * self, PyObject * args) {
         return 0;
     }
 
-    int x = 0;
-    int y = 0;
-    int z = 0;
-    int width = self->width;
-    int height = self->height;
-    int depth = self->depth;
-
     Py_buffer buffer_view;
 
-    if (viewport != Py_None) {
-        if (Py_TYPE(viewport) != &PyTuple_Type) {
-            MGLError_Set("the viewport must be a tuple not %s", Py_TYPE(viewport)->tp_name);
-            return 0;
-        }
-
-        if (PyTuple_GET_SIZE(viewport) == 6) {
-
-            x = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 0));
-            y = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 1));
-            z = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 2));
-            width = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 3));
-            height = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 4));
-            depth = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 5));
-
-        } else if (PyTuple_GET_SIZE(viewport) == 3) {
-
-            width = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 0));
-            height = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 1));
-            depth = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 2));
-
-        } else {
-
-            MGLError_Set("the viewport size %d is invalid", PyTuple_GET_SIZE(viewport));
-            return 0;
-
-        }
-
-        if (PyErr_Occurred()) {
+    Cube viewport_cube = cube(0, 0, 0, self->width, self->height, self->depth);
+    if (viewport_arg != Py_None) {
+        if (!parse_cube(viewport_arg, &viewport_cube)) {
             MGLError_Set("wrong values in the viewport");
-            return 0;
+            return NULL;
         }
-
     }
 
-    int expected_size = width * self->components * self->data_type->size;
+    int expected_size = viewport_cube.width * self->components * self->data_type->size;
     expected_size = (expected_size + alignment - 1) / alignment * alignment;
-    expected_size = expected_size * height * depth;
+    expected_size = expected_size * viewport_cube.height * viewport_cube.depth;
 
     int pixel_type = self->data_type->gl_type;
     int format = self->data_type->base_format[self->components];
@@ -4699,7 +4713,7 @@ PyObject * MGLTexture3D_write(MGLTexture3D * self, PyObject * args) {
         gl.BindTexture(GL_TEXTURE_3D, self->texture_obj);
         gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
         gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-        gl.TexSubImage3D(GL_TEXTURE_3D, 0, x, y, z, width, height, depth, format, pixel_type, 0);
+        gl.TexSubImage3D(GL_TEXTURE_3D, 0, viewport_cube.x, viewport_cube.y, viewport_cube.z, viewport_cube.width, viewport_cube.height, viewport_cube.depth, format, pixel_type, 0);
         gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
     } else {
@@ -4725,10 +4739,9 @@ PyObject * MGLTexture3D_write(MGLTexture3D * self, PyObject * args) {
 
         gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
         gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-        gl.TexSubImage3D(GL_TEXTURE_3D, 0, x, y, z, width, height, depth, format, pixel_type, buffer_view.buf);
+        gl.TexSubImage3D(GL_TEXTURE_3D, 0, viewport_cube.x, viewport_cube.y, viewport_cube.z, viewport_cube.width, viewport_cube.height, viewport_cube.depth, format, pixel_type, buffer_view.buf);
 
         PyBuffer_Release(&buffer_view);
-
     }
 
     Py_RETURN_NONE;
@@ -5302,14 +5315,14 @@ PyObject * MGLTextureArray_read_into(MGLTextureArray * self, PyObject * args) {
 
 PyObject * MGLTextureArray_write(MGLTextureArray * self, PyObject * args) {
     PyObject * data;
-    PyObject * viewport;
+    PyObject * viewport_arg;
     int alignment;
 
     int args_ok = PyArg_ParseTuple(
         args,
         "OOI",
         &data,
-        &viewport,
+        &viewport_arg,
         &alignment
     );
 
@@ -5322,53 +5335,19 @@ PyObject * MGLTextureArray_write(MGLTextureArray * self, PyObject * args) {
         return 0;
     }
 
-    int x = 0;
-    int y = 0;
-    int z = 0;
-    int width = self->width;
-    int height = self->height;
-    int layers = self->layers;
-
     Py_buffer buffer_view;
 
-    if (viewport != Py_None) {
-        if (Py_TYPE(viewport) != &PyTuple_Type) {
-            MGLError_Set("the viewport must be a tuple not %s", Py_TYPE(viewport)->tp_name);
-            return 0;
-        }
-
-        if (PyTuple_GET_SIZE(viewport) == 6) {
-
-            x = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 0));
-            y = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 1));
-            z = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 2));
-            width = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 3));
-            height = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 4));
-            layers = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 5));
-
-        } else if (PyTuple_GET_SIZE(viewport) == 3) {
-
-            width = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 0));
-            height = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 1));
-            layers = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 2));
-
-        } else {
-
-            MGLError_Set("the viewport size %d is invalid", PyTuple_GET_SIZE(viewport));
-            return 0;
-
-        }
-
-        if (PyErr_Occurred()) {
+    Cube viewport_cube = cube(0, 0, 0, self->width, self->height, self->layers);
+    if (viewport_arg != Py_None) {
+        if (!parse_cube(viewport_arg, &viewport_cube)) {
             MGLError_Set("wrong values in the viewport");
-            return 0;
+            return NULL;
         }
-
     }
 
-    int expected_size = width * self->components * self->data_type->size;
+    int expected_size = viewport_cube.width * self->components * self->data_type->size;
     expected_size = (expected_size + alignment - 1) / alignment * alignment;
-    expected_size = expected_size * height * layers;
+    expected_size = expected_size * viewport_cube.height * viewport_cube.depth;
 
     int pixel_type = self->data_type->gl_type;
     int format = self->data_type->base_format[self->components];
@@ -5384,7 +5363,7 @@ PyObject * MGLTextureArray_write(MGLTextureArray * self, PyObject * args) {
         gl.BindTexture(GL_TEXTURE_2D_ARRAY, self->texture_obj);
         gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
         gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-        gl.TexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, x, y, z, width, height, layers, format, pixel_type, 0);
+        gl.TexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, viewport_cube.x, viewport_cube.y, viewport_cube.z, viewport_cube.width, viewport_cube.height, viewport_cube.depth, format, pixel_type, 0);
         gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
     } else {
@@ -5409,7 +5388,7 @@ PyObject * MGLTextureArray_write(MGLTextureArray * self, PyObject * args) {
         gl.BindTexture(GL_TEXTURE_2D_ARRAY, self->texture_obj);
         gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
         gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-        gl.TexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, x, y, z, width, height, layers, format, pixel_type, buffer_view.buf);
+        gl.TexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, viewport_cube.x, viewport_cube.y, viewport_cube.z, viewport_cube.width, viewport_cube.height, viewport_cube.depth, format, pixel_type, buffer_view.buf);
 
         PyBuffer_Release(&buffer_view);
 
@@ -6108,7 +6087,7 @@ PyObject * MGLTextureCube_read_into(MGLTextureCube * self, PyObject * args) {
 PyObject * MGLTextureCube_write(MGLTextureCube * self, PyObject * args) {
     int face;
     PyObject * data;
-    PyObject * viewport;
+    PyObject * viewport_arg;
     int alignment;
 
     int args_ok = PyArg_ParseTuple(
@@ -6116,7 +6095,7 @@ PyObject * MGLTextureCube_write(MGLTextureCube * self, PyObject * args) {
         "iOOI",
         &face,
         &data,
-        &viewport,
+        &viewport_arg,
         &alignment
     );
 
@@ -6134,48 +6113,19 @@ PyObject * MGLTextureCube_write(MGLTextureCube * self, PyObject * args) {
         return 0;
     }
 
-    int x = 0;
-    int y = 0;
-    int width = self->width;
-    int height = self->height;
-
     Py_buffer buffer_view;
 
-    if (viewport != Py_None) {
-        if (Py_TYPE(viewport) != &PyTuple_Type) {
-            MGLError_Set("the viewport must be a tuple not %s", Py_TYPE(viewport)->tp_name);
-            return 0;
-        }
-
-        if (PyTuple_GET_SIZE(viewport) == 4) {
-
-            x = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 0));
-            y = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 1));
-            width = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 2));
-            height = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 3));
-
-        } else if (PyTuple_GET_SIZE(viewport) == 2) {
-
-            width = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 0));
-            height = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 1));
-
-        } else {
-
-            MGLError_Set("the viewport size %d is invalid", PyTuple_GET_SIZE(viewport));
-            return 0;
-
-        }
-
-        if (PyErr_Occurred()) {
+    Rect viewport_rect = rect(0, 0, self->width, self->height);
+    if (viewport_arg != Py_None) {
+        if (!parse_rect(viewport_arg, &viewport_rect)) {
             MGLError_Set("wrong values in the viewport");
-            return 0;
+            return NULL;
         }
-
     }
 
-    int expected_size = width * self->components * self->data_type->size;
+    int expected_size = viewport_rect.width * self->components * self->data_type->size;
     expected_size = (expected_size + alignment - 1) / alignment * alignment;
-    expected_size = expected_size * height;
+    expected_size = expected_size * viewport_rect.height;
 
     // GL_TEXTURE_CUBE_MAP_POSITIVE_X = GL_TEXTURE_CUBE_MAP_POSITIVE_X + 0
     // GL_TEXTURE_CUBE_MAP_NEGATIVE_X = GL_TEXTURE_CUBE_MAP_POSITIVE_X + 1
@@ -6198,14 +6148,14 @@ PyObject * MGLTextureCube_write(MGLTextureCube * self, PyObject * args) {
         gl.BindTexture(GL_TEXTURE_CUBE_MAP, self->texture_obj);
         gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
         gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-        gl.TexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, x, y, width, height, format, pixel_type, 0);
+        gl.TexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, viewport_rect.x, viewport_rect.y, viewport_rect.width, viewport_rect.height, format, pixel_type, 0);
         gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
     } else {
 
         int get_buffer = PyObject_GetBuffer(data, &buffer_view, PyBUF_SIMPLE);
         if (get_buffer < 0) {
-        // Propagate the default error
+            // Propagate the default error
             return 0;
         }
 
@@ -6222,7 +6172,7 @@ PyObject * MGLTextureCube_write(MGLTextureCube * self, PyObject * args) {
 
         gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
         gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-        gl.TexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, x, y, width, height, format, pixel_type, buffer_view.buf);
+        gl.TexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, viewport_rect.x, viewport_rect.y, viewport_rect.width, viewport_rect.height, format, pixel_type, buffer_view.buf);
 
         PyBuffer_Release(&buffer_view);
     }
