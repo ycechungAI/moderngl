@@ -52,7 +52,6 @@ mgl = Extension(
     libraries=libraries[target],
     extra_compile_args=extra_compile_args[target],
     extra_link_args=extra_linker_args[target],
-    define_macros=[('PY_SSIZE_T_CLEAN', None)],
     sources=["src/moderngl.cpp"],
 )
 

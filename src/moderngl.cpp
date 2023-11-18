@@ -351,147 +351,56 @@ inline void clean_glsl_name(char * name, int & name_len) {
 
 inline int swizzle_from_char(char c) {
     switch (c) {
-        case 'R':
-        case 'r':
-            return GL_RED;
-
-        case 'G':
-        case 'g':
-            return GL_GREEN;
-
-        case 'B':
-        case 'b':
-            return GL_BLUE;
-
-        case 'A':
-        case 'a':
-            return GL_ALPHA;
-
-        case '0':
-            return GL_ZERO;
-
-        case '1':
-            return GL_ONE;
+        case 'R': return GL_RED;
+        case 'r': return GL_RED;
+        case 'G': return GL_GREEN;
+        case 'g': return GL_GREEN;
+        case 'B': return GL_BLUE;
+        case 'b': return GL_BLUE;
+        case 'A': return GL_ALPHA;
+        case 'a': return GL_ALPHA;
+        case '0': return GL_ZERO;
+        case '1': return GL_ONE;
     }
-
     return -1;
 }
 
 inline char char_from_swizzle(int c) {
     switch (c) {
-        case GL_RED:
-            return 'R';
-
-        case GL_GREEN:
-            return 'G';
-
-        case GL_BLUE:
-            return 'B';
-
-        case GL_ALPHA:
-            return 'A';
-
-        case GL_ZERO:
-            return '0';
-
-        case GL_ONE:
-            return '1';
+        case GL_RED: return 'R';
+        case GL_GREEN: return 'G';
+        case GL_BLUE: return 'B';
+        case GL_ALPHA: return 'A';
+        case GL_ZERO: return '0';
+        case GL_ONE: return '1';
     }
-
     return '?';
 }
 
 inline int compare_func_from_string(const char * str) {
-    if (!str[0] || (str[1] && str[2])) {
-        return 0;
-    }
-
-    switch (str[0] * 256 + str[1]) {
-        case ('<' * 256 + '='):
-            return GL_LEQUAL;
-
-        case ('<' * 256):
-            return GL_LESS;
-
-        case ('>' * 256 + '='):
-            return GL_GEQUAL;
-
-        case ('>' * 256):
-            return GL_GREATER;
-
-        case ('=' * 256 + '='):
-            return GL_EQUAL;
-
-        case ('!' * 256 + '='):
-            return GL_NOTEQUAL;
-
-        case ('0' * 256):
-            return GL_NEVER;
-
-        case ('1' * 256):
-            return GL_ALWAYS;
-
-        default:
-            return 0;
-    }
+    if (!strcmp(str, "<=")) return GL_LEQUAL;
+    if (!strcmp(str, "<")) return GL_LESS;
+    if (!strcmp(str, ">=")) return GL_GEQUAL;
+    if (!strcmp(str, ">")) return GL_GREATER;
+    if (!strcmp(str, "==")) return GL_EQUAL;
+    if (!strcmp(str, "!=")) return GL_NOTEQUAL;
+    if (!strcmp(str, "0")) return GL_NEVER;
+    if (!strcmp(str, "1")) return GL_ALWAYS;
+    return 0;
 }
 
 inline PyObject * compare_func_to_string(int func) {
     switch (func) {
-        case GL_LEQUAL: {
-            static PyObject * res_lequal = PyUnicode_FromString("<=");
-            Py_INCREF(res_lequal);
-            return res_lequal;
-        }
-
-        case GL_LESS: {
-            static PyObject * res_less = PyUnicode_FromString("<");
-            Py_INCREF(res_less);
-            return res_less;
-        }
-
-        case GL_GEQUAL: {
-            static PyObject * res_gequal = PyUnicode_FromString(">=");
-            Py_INCREF(res_gequal);
-            return res_gequal;
-        }
-
-        case GL_GREATER: {
-            static PyObject * res_greater = PyUnicode_FromString(">");
-            Py_INCREF(res_greater);
-            return res_greater;
-        }
-
-        case GL_EQUAL: {
-            static PyObject * res_equal = PyUnicode_FromString("==");
-            Py_INCREF(res_equal);
-            return res_equal;
-        }
-
-        case GL_NOTEQUAL: {
-            static PyObject * res_notequal = PyUnicode_FromString("!=");
-            Py_INCREF(res_notequal);
-            return res_notequal;
-        }
-
-        case GL_NEVER: {
-            static PyObject * res_never = PyUnicode_FromString("0");
-            Py_INCREF(res_never);
-            return res_never;
-        }
-
-        case GL_ALWAYS: {
-            static PyObject * res_always = PyUnicode_FromString("1");
-            Py_INCREF(res_always);
-            return res_always;
-        }
-
-        default: {
-            static PyObject * res_unk = PyUnicode_FromString("?");
-            Py_INCREF(res_unk);
-            return res_unk;
-        }
+        case GL_LEQUAL: return PyUnicode_FromString("<=");
+        case GL_LESS: return PyUnicode_FromString("<");
+        case GL_GEQUAL: return PyUnicode_FromString(">=");
+        case GL_GREATER: return PyUnicode_FromString(">");
+        case GL_EQUAL: return PyUnicode_FromString("==");
+        case GL_NOTEQUAL: return PyUnicode_FromString("!=");
+        case GL_NEVER: return PyUnicode_FromString("0");
+        case GL_ALWAYS: return PyUnicode_FromString("1");
     }
+    return PyUnicode_FromString("?");
 }
 
 struct FormatNode {
@@ -812,67 +721,21 @@ static MGLDataType nu2 = {float_base_format, n2_internal_format, GL_UNSIGNED_SHO
 static MGLDataType ni1 = {float_base_format, n1_internal_format, GL_BYTE, 1, false};
 static MGLDataType ni2 = {float_base_format, n2_internal_format, GL_SHORT, 2, false};
 
-MGLDataType * from_dtype(const char * dtype, Py_ssize_t size) {
-    if (size < 2 || size > 3) return 0;
-
-    // if (!dtype[0] || (dtype[1] && dtype[2])) {
-    // 	return 0;
-    // }
-
-    if (size == 2) {
-        switch (dtype[0] * 256 + dtype[1]) {
-            case ('f' * 256 + '1'):
-                return &f1;
-
-            case ('f' * 256 + '2'):
-                return &f2;
-
-            case ('f' * 256 + '4'):
-                return &f4;
-
-            case ('u' * 256 + '1'):
-                return &u1;
-
-            case ('u' * 256 + '2'):
-                return &u2;
-
-            case ('u' * 256 + '4'):
-                return &u4;
-
-            case ('i' * 256 + '1'):
-                return &i1;
-
-            case ('i' * 256 + '2'):
-                return &i2;
-
-            case ('i' * 256 + '4'):
-                return &i4;
-
-            default:
-                return 0;
-        }
-    }
-    else if (size == 3)
-    {
-        switch (dtype[0] * 65536 + dtype[1] * 256 + dtype[2])
-        {
-            case ('n' * 65536 + 'i' * 256 + '1'):
-                return &ni1;
-
-            case ('n' * 65536 + 'i' * 256 + '2'):
-                return &ni2;
-
-            case ('n' * 65536 + 'u' * 256 + '1'):
-                return &nu1;
-
-            case ('n' * 65536 + 'u' * 256 + '2'):
-                return &nu2;
-
-            default:
-                return 0;
-        }
-    }
-    return 0;
+MGLDataType * from_dtype(const char * dtype) {
+    if (!strcmp(dtype, "f1")) return &f1;
+    if (!strcmp(dtype, "f2")) return &f2;
+    if (!strcmp(dtype, "f4")) return &f4;
+    if (!strcmp(dtype, "u1")) return &u1;
+    if (!strcmp(dtype, "u2")) return &u2;
+    if (!strcmp(dtype, "u4")) return &u4;
+    if (!strcmp(dtype, "i1")) return &i1;
+    if (!strcmp(dtype, "i2")) return &i2;
+    if (!strcmp(dtype, "i4")) return &i4;
+    if (!strcmp(dtype, "ni1")) return &ni1;
+    if (!strcmp(dtype, "ni2")) return &ni2;
+    if (!strcmp(dtype, "nu1")) return &nu1;
+    if (!strcmp(dtype, "nu2")) return &nu2;
+    return NULL;
 }
 
 PyObject * MGLContext_buffer(MGLContext * self, PyObject * args) {
@@ -2018,12 +1881,11 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
     int clamp;
 
     const char * dtype;
-    Py_ssize_t dtype_size;
     Py_ssize_t write_offset;
 
     int args_ok = PyArg_ParseTuple(
         args,
-        "OOIIIps#n",
+        "OOIIIpsn",
         &data,
         &viewport_arg,
         &components,
@@ -2031,7 +1893,6 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
         &alignment,
         &clamp,
         &dtype,
-        &dtype_size,
         &write_offset
     );
 
@@ -2044,7 +1905,7 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
         return 0;
     }
 
-    MGLDataType * data_type = from_dtype(dtype, dtype_size);
+    MGLDataType * data_type = from_dtype(dtype);
 
     if (!data_type) {
         MGLError_Set("invalid dtype");
@@ -3858,13 +3719,12 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
     int alignment;
 
     const char * dtype;
-    Py_ssize_t dtype_size;
     int internal_format_override;
     int use_renderbuffer;
 
     int args_ok = PyArg_ParseTuple(
         args,
-        "(II)IOIIs#Ip",
+        "(II)IOIIsIp",
         &width,
         &height,
         &components,
@@ -3872,7 +3732,6 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
         &samples,
         &alignment,
         &dtype,
-        &dtype_size,
         &internal_format_override,
         &use_renderbuffer
     );
@@ -3906,7 +3765,7 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
         return 0;
     }
 
-    MGLDataType * data_type = from_dtype(dtype, dtype_size);
+    MGLDataType * data_type = from_dtype(dtype);
 
     if (!data_type) {
         MGLError_Set("invalid dtype");
@@ -4109,7 +3968,7 @@ PyObject * MGLContext_depth_texture(MGLContext * self, PyObject * args) {
         renderbuffer->height = height;
         renderbuffer->components = 1;
         renderbuffer->samples = samples;
-        renderbuffer->data_type = from_dtype("f4", 2);
+        renderbuffer->data_type = from_dtype("f4");
         renderbuffer->depth = true;
 
         Py_INCREF(self);
@@ -4185,7 +4044,7 @@ PyObject * MGLContext_depth_texture(MGLContext * self, PyObject * args) {
     texture->height = height;
     texture->components = 1;
     texture->samples = samples;
-    texture->data_type = from_dtype("f4", 2);
+    texture->data_type = from_dtype("f4");
 
     texture->compare_func = GL_LEQUAL;
     texture->depth = true;
@@ -4210,25 +4069,23 @@ PyObject * MGLContext_external_texture(MGLContext * self, PyObject * args) {
     int components;
     int samples;
     const char * dtype;
-    Py_ssize_t dtype_size;
 
     int args_ok = PyArg_ParseTuple(
         args,
-        "I(II)IIs#",
+        "I(II)IIs",
         &glo,
         &width,
         &height,
         &components,
         &samples,
-        &dtype,
-        &dtype_size
+        &dtype
     );
 
     if (!args_ok) {
         return NULL;
     }
 
-    MGLDataType * data_type = from_dtype(dtype, dtype_size);
+    MGLDataType * data_type = from_dtype(dtype);
 
     if (!data_type) {
         MGLError_Set("invalid dtype");
@@ -4897,19 +4754,17 @@ PyObject * MGLContext_texture3d(MGLContext * self, PyObject * args) {
     int alignment;
 
     const char * dtype;
-    Py_ssize_t dtype_size;
 
     int args_ok = PyArg_ParseTuple(
         args,
-        "(III)IOIs#",
+        "(III)IOIs",
         &width,
         &height,
         &depth,
         &components,
         &data,
         &alignment,
-        &dtype,
-        &dtype_size
+        &dtype
     );
 
     if (!args_ok) {
@@ -4926,7 +4781,7 @@ PyObject * MGLContext_texture3d(MGLContext * self, PyObject * args) {
         return 0;
     }
 
-    MGLDataType * data_type = from_dtype(dtype, dtype_size);
+    MGLDataType * data_type = from_dtype(dtype);
 
     if (!data_type) {
         MGLError_Set("invalid dtype");
@@ -5561,19 +5416,17 @@ PyObject * MGLContext_texture_array(MGLContext * self, PyObject * args) {
     int alignment;
 
     const char * dtype;
-    Py_ssize_t dtype_size;
 
     int args_ok = PyArg_ParseTuple(
         args,
-        "(III)IOIs#",
+        "(III)IOIs",
         &width,
         &height,
         &layers,
         &components,
         &data,
         &alignment,
-        &dtype,
-        &dtype_size
+        &dtype
     );
 
     if (!args_ok) {
@@ -5590,7 +5443,7 @@ PyObject * MGLContext_texture_array(MGLContext * self, PyObject * args) {
         return 0;
     }
 
-    MGLDataType * data_type = from_dtype(dtype, dtype_size);
+    MGLDataType * data_type = from_dtype(dtype);
 
     if (!data_type) {
         MGLError_Set("invalid dtype");
@@ -6240,19 +6093,17 @@ PyObject * MGLContext_texture_cube(MGLContext * self, PyObject * args) {
     int alignment;
 
     const char * dtype;
-    Py_ssize_t dtype_size;
     int internal_format_override;
 
     int args_ok = PyArg_ParseTuple(
         args,
-        "(II)IOIs#I",
+        "(II)IOIsI",
         &width,
         &height,
         &components,
         &data,
         &alignment,
         &dtype,
-        &dtype_size,
         &internal_format_override
     );
 
@@ -6270,7 +6121,7 @@ PyObject * MGLContext_texture_cube(MGLContext * self, PyObject * args) {
         return 0;
     }
 
-    MGLDataType * data_type = from_dtype(dtype, dtype_size);
+    MGLDataType * data_type = from_dtype(dtype);
 
     if (!data_type) {
         MGLError_Set("invalid dtype");
@@ -6479,7 +6330,7 @@ PyObject * MGLContext_depth_texture_cube(MGLContext * self, PyObject * args) {
     texture->width = width;
     texture->height = height;
     texture->components = 1;
-    texture->data_type = from_dtype("f4", 2);
+    texture->data_type = from_dtype("f4");
 
 
     texture->compare_func = GL_LEQUAL;
@@ -9074,13 +8925,12 @@ PyObject * expected_size(PyObject * self, PyObject * args) {
     int components;
     int alignment;
     const char * dtype;
-    Py_ssize_t dtype_size;
 
-    if (!PyArg_ParseTuple(args, "IIIIIs#", &width, &height, &depth, &components, &alignment, &dtype, &dtype_size)) {
+    if (!PyArg_ParseTuple(args, "IIIIIs", &width, &height, &depth, &components, &alignment, &dtype)) {
         return NULL;
     }
 
-    MGLDataType * data_type = from_dtype(dtype, dtype_size);
+    MGLDataType * data_type = from_dtype(dtype);
 
     if (!data_type) {
         MGLError_Set("invalid dtype");
