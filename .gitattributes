@@ -3,3 +3,4 @@ examples/** linguist-documentation=false
 **/Dockerfile linguist-detectable=false
 src/glcorearb.h linguist-detectable=false
 src/khrplatform.h linguist-detectable=false
+examples/data/** linguist-detectable=false
