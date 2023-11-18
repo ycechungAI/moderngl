@@ -1982,6 +1982,7 @@ int MGLFramebuffer_set_color_mask(MGLFramebuffer * self, PyObject * value, void 
     } else {
         value = PySequence_Tuple(value);
         if (!value) {
+            PyErr_Clear();
             MGLError_Set("invalid color mask");
             return -1;
         }
@@ -2080,7 +2081,7 @@ PyObject * MGLFramebuffer_get_bits(MGLFramebuffer * self, void * closure) {
 
 PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
     PyObject * shaders[6];
-    PyObject * outputs;
+    PyObject * varyings_arg;
     PyObject * fragment_outputs;
     int interleaved;
 
@@ -2093,7 +2094,7 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
         &shaders[3],
         &shaders[4],
         &shaders[5],
-        &outputs,
+        &varyings_arg,
         &fragment_outputs,
         &interleaved
     );
@@ -2102,15 +2103,14 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
         return 0;
     }
 
-    int num_outputs = (int)PyTuple_GET_SIZE(outputs);
-
-    for (int i = 0; i < num_outputs; ++i) {
-        PyObject * item = PyTuple_GET_ITEM(outputs, i);
-        if (Py_TYPE(item) != &PyUnicode_Type) {
-            MGLError_Set("varyings[%d] must be a string not %s", i, Py_TYPE(item)->tp_name);
-            return 0;
-        }
+    varyings_arg = PySequence_Tuple(varyings_arg);
+    if (!varyings_arg) {
+        PyErr_Clear();
+        MGLError_Set("invalid varyings");
+        return NULL;
     }
+
+    int varyings_count = (int)PyTuple_Size(varyings_arg);
 
     MGLProgram * program = PyObject_New(MGLProgram, MGLProgram_type);
     program->released = false;
@@ -2219,18 +2219,19 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
         gl.AttachShader(program_obj, shader_obj);
     }
 
-    if (num_outputs) {
-        const char ** varyings_array = new const char * [num_outputs];
-
-        for (int i = 0; i < num_outputs; ++i) {
-            varyings_array[i] = PyUnicode_AsUTF8(PyTuple_GET_ITEM(outputs, i));
+    if (varyings_count) {
+        const char * varyings_array[64];
+        for (int i = 0; i < varyings_count; ++i) {
+            PyObject * item = PyTuple_GetItem(varyings_arg, i);
+            if (!PyUnicode_Check(item)) {
+                MGLError_Set("invalid varyings");
+                return NULL;
+            }
+            varyings_array[i] = PyUnicode_AsUTF8(item);
         }
 
         int capture_mode = interleaved ? GL_INTERLEAVED_ATTRIBS : GL_SEPARATE_ATTRIBS;
-
-        gl.TransformFeedbackVaryings(program_obj, num_outputs, varyings_array, capture_mode);
-
-        delete[] varyings_array;
+        gl.TransformFeedbackVaryings(program_obj, varyings_count, varyings_array, capture_mode);
     }
 
     {
