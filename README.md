@@ -1,6 +1,6 @@
 <div align="center">
 
-[![preview](https://github.com/moderngl/moderngl/raw/master/.github/preview.png)](#readme)
+[![preview](https://github.com/moderngl/moderngl/assets/11232402/b314f7af-0c0a-4b7d-b4f5-857f426454ca)](#readme)
 
 </div>
 
