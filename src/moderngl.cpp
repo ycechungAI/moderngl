@@ -112,6 +112,40 @@ struct MGLContext {
     bool released;
 };
 
+struct Rect {
+    int x, y, width, height;
+};
+
+int parse_rect(PyObject * arg, Rect * rect) {
+    PyObject * seq = PySequence_Fast(arg, "");
+    if (!seq) {
+        PyErr_Clear();
+        return 0;
+    }
+    int size = (int)PySequence_Fast_GET_SIZE(seq);
+    if (size == 4) {
+        rect->x = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 0));
+        rect->y = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 1));
+        rect->width = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 2));
+        rect->height = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 3));
+        if (PyErr_Occurred()) {
+            PyErr_Clear();
+            return 0;
+        }
+    } else if (size == 2) {
+        rect->width = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 0));
+        rect->height = PyLong_AsLong(PySequence_Fast_GET_ITEM(seq, 1));
+        if (PyErr_Occurred()) {
+            PyErr_Clear();
+            return 0;
+        }
+    } else {
+        return 0;
+    }
+    Py_DECREF(seq);
+    return 1;
+}
+
 struct MGLFramebuffer {
     PyObject_HEAD
     MGLContext * context;
@@ -119,15 +153,9 @@ struct MGLFramebuffer {
     unsigned * draw_buffers;
     int draw_buffers_len;
     int framebuffer_obj;
-    int viewport_x;
-    int viewport_y;
-    int viewport_width;
-    int viewport_height;
+    Rect viewport;
+    Rect scissor;
     bool scissor_enabled;
-    int scissor_x;
-    int scissor_y;
-    int scissor_width;
-    int scissor_height;
 
     // Flags this as a detected framebuffer we don't control the size of
     bool dynamic;
@@ -1725,17 +1753,11 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
 
     framebuffer->depth_mask = (depth_attachment != Py_None);
 
-    framebuffer->viewport_x = 0;
-    framebuffer->viewport_y = 0;
-    framebuffer->viewport_width = width;
-    framebuffer->viewport_height = height;
+    framebuffer->viewport = {0, 0, width, height};
     framebuffer->dynamic = false;
 
     framebuffer->scissor_enabled = false;
-    framebuffer->scissor_x = 0;
-    framebuffer->scissor_y = 0;
-    framebuffer->scissor_width = width;
-    framebuffer->scissor_height = height;
+    framebuffer->scissor = {0, 0, width, height};
 
     framebuffer->width = width;
     framebuffer->height = height;
@@ -1836,17 +1858,11 @@ PyObject * MGLContext_empty_framebuffer(MGLContext * self, PyObject * args) {
     framebuffer->color_mask = new bool[5];
     framebuffer->depth_mask = false;
 
-    framebuffer->viewport_x = 0;
-    framebuffer->viewport_y = 0;
-    framebuffer->viewport_width = width;
-    framebuffer->viewport_height = height;
+    framebuffer->viewport = {0, 0, width, height};
     framebuffer->dynamic = false;
 
     framebuffer->scissor_enabled = false;
-    framebuffer->scissor_x = 0;
-    framebuffer->scissor_y = 0;
-    framebuffer->scissor_width = width;
-    framebuffer->scissor_height = height;
+    framebuffer->scissor = {0, 0, width, height};
 
     framebuffer->width = width;
     framebuffer->height = height;
@@ -1877,58 +1893,18 @@ PyObject * MGLFramebuffer_release(MGLFramebuffer * self, PyObject * args) {
 
 PyObject * MGLFramebuffer_clear(MGLFramebuffer * self, PyObject * args) {
     float r, g, b, a, depth;
-    PyObject * viewport;
+    PyObject * viewport_arg;
 
-    int args_ok = PyArg_ParseTuple(
-        args,
-        "fffffO",
-        &r,
-        &g,
-        &b,
-        &a,
-        &depth,
-        &viewport
-    );
-
-    if (!args_ok) {
+    if (!PyArg_ParseTuple(args, "fffffO", &r, &g, &b, &a, &depth, &viewport_arg)) {
         return 0;
     }
 
-    int x = 0;
-    int y = 0;
-    int width = self->width;
-    int height = self->height;
-
-    if (viewport != Py_None) {
-        if (Py_TYPE(viewport) != &PyTuple_Type) {
-            MGLError_Set("the viewport must be a tuple not %s", Py_TYPE(viewport)->tp_name);
-            return 0;
-        }
-
-        if (PyTuple_GET_SIZE(viewport) == 4) {
-
-            x = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 0));
-            y = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 1));
-            width = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 2));
-            height = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 3));
-
-        } else if (PyTuple_GET_SIZE(viewport) == 2) {
-
-            width = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 0));
-            height = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 1));
-
-        } else {
-
-            MGLError_Set("the viewport size %d is invalid", PyTuple_GET_SIZE(viewport));
-            return 0;
-
-        }
-
-        if (PyErr_Occurred()) {
+    Rect viewport_rect = {0, 0, self->width, self->height};
+    if (viewport_arg != Py_None) {
+        if (!parse_rect(viewport_arg, &viewport_rect)) {
             MGLError_Set("wrong values in the viewport");
-            return 0;
+            return NULL;
         }
-
     }
 
     const GLMethods & gl = self->context->gl;
@@ -1955,16 +1931,16 @@ PyObject * MGLFramebuffer_clear(MGLFramebuffer * self, PyObject * args) {
     gl.DepthMask(self->depth_mask);
 
     // Respect the passed in viewport even with scissor enabled
-    if (viewport != Py_None) {
+    if (viewport_arg != Py_None) {
         gl.Enable(GL_SCISSOR_TEST);
-        gl.Scissor(x, y, width, height);
+        gl.Scissor(viewport_rect.x, viewport_rect.y, viewport_rect.width, viewport_rect.height);
         gl.Clear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         // restore scissor if enabled
         if (self->scissor_enabled) {
             gl.Scissor(
-                self->scissor_x, self->scissor_y,
-                self->scissor_width, self->scissor_height
+                self->scissor.x, self->scissor.y,
+                self->scissor.width, self->scissor.height
             );
         } else {
             gl.Disable(GL_SCISSOR_TEST);
@@ -1974,8 +1950,8 @@ PyObject * MGLFramebuffer_clear(MGLFramebuffer * self, PyObject * args) {
         if (self->scissor_enabled) {
             gl.Enable(GL_SCISSOR_TEST);
             gl.Scissor(
-                self->scissor_x, self->scissor_y,
-                self->scissor_width, self->scissor_height
+                self->scissor.x, self->scissor.y,
+                self->scissor.width, self->scissor.height
             );
         }
         gl.Clear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -1995,20 +1971,20 @@ PyObject * MGLFramebuffer_use(MGLFramebuffer * self, PyObject * args) {
         gl.DrawBuffers(self->draw_buffers_len, self->draw_buffers);
     }
 
-    if (self->viewport_width && self->viewport_height) {
+    if (self->viewport.width && self->viewport.height) {
         gl.Viewport(
-            self->viewport_x,
-            self->viewport_y,
-            self->viewport_width,
-            self->viewport_height
+            self->viewport.x,
+            self->viewport.y,
+            self->viewport.width,
+            self->viewport.height
         );
     }
 
     if (self->scissor_enabled) {
         gl.Enable(GL_SCISSOR_TEST);
         gl.Scissor(
-            self->scissor_x, self->scissor_y,
-            self->scissor_width, self->scissor_height
+            self->scissor.x, self->scissor.y,
+            self->scissor.width, self->scissor.height
         );
     } else {
         gl.Disable(GL_SCISSOR_TEST);
@@ -2035,7 +2011,7 @@ PyObject * MGLFramebuffer_use(MGLFramebuffer * self, PyObject * args) {
 
 PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
     PyObject * data;
-    PyObject * viewport;
+    PyObject * viewport_arg;
     int components;
     int alignment;
     int attachment;
@@ -2049,7 +2025,7 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
         args,
         "OOIIIps#n",
         &data,
-        &viewport,
+        &viewport_arg,
         &components,
         &attachment,
         &alignment,
@@ -2075,41 +2051,12 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
         return 0;
     }
 
-    int x = 0;
-    int y = 0;
-    int width = self->width;
-    int height = self->height;
-
-    if (viewport != Py_None) {
-        if (Py_TYPE(viewport) != &PyTuple_Type) {
-            MGLError_Set("the viewport must be a tuple not %s", Py_TYPE(viewport)->tp_name);
-            return 0;
-        }
-
-        if (PyTuple_GET_SIZE(viewport) == 4) {
-
-            x = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 0));
-            y = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 1));
-            width = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 2));
-            height = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 3));
-
-        } else if (PyTuple_GET_SIZE(viewport) == 2) {
-
-            width = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 0));
-            height = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 1));
-
-        } else {
-
-            MGLError_Set("the viewport size %d is invalid", PyTuple_GET_SIZE(viewport));
-            return 0;
-
-        }
-
-        if (PyErr_Occurred()) {
+    Rect viewport_rect = {0, 0, self->width, self->height};
+    if (viewport_arg != Py_None) {
+        if (!parse_rect(viewport_arg, &viewport_rect)) {
             MGLError_Set("wrong values in the viewport");
-            return 0;
+            return NULL;
         }
-
     }
 
     bool read_depth = false;
@@ -2119,9 +2066,9 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
         read_depth = true;
     }
 
-    int expected_size = width * components * data_type->size;
+    int expected_size = viewport_rect.width * components * data_type->size;
     expected_size = (expected_size + alignment - 1) / alignment * alignment;
-    expected_size = expected_size * height;
+    expected_size = expected_size * viewport_rect.height;
 
     int pixel_type = data_type->gl_type;
     int base_format = read_depth ? GL_DEPTH_COMPONENT : data_type->base_format[components];
@@ -2143,7 +2090,7 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
         gl.ReadBuffer(read_depth ? GL_NONE : (GL_COLOR_ATTACHMENT0 + attachment));
         gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
         gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-        gl.ReadPixels(x, y, width, height, base_format, pixel_type, (void *)write_offset);
+        gl.ReadPixels(viewport_rect.x, viewport_rect.y, viewport_rect.width, viewport_rect.height, base_format, pixel_type, (void *)write_offset);
         gl.BindFramebuffer(GL_FRAMEBUFFER, self->context->bound_framebuffer->framebuffer_obj);
         gl.BindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 
@@ -2177,7 +2124,7 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
         gl.ReadBuffer(read_depth ? GL_NONE : (GL_COLOR_ATTACHMENT0 + attachment));
         gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
         gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-        gl.ReadPixels(x, y, width, height, base_format, pixel_type, ptr);
+        gl.ReadPixels(viewport_rect.x, viewport_rect.y, viewport_rect.width, viewport_rect.height, base_format, pixel_type, ptr);
         gl.BindFramebuffer(GL_FRAMEBUFFER, self->context->bound_framebuffer->framebuffer_obj);
 
         PyBuffer_Release(&buffer_view);
@@ -2187,38 +2134,25 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
 }
 
 PyObject * MGLFramebuffer_get_viewport(MGLFramebuffer * self, void * closure) {
-    return Py_BuildValue("(iiii)", self->viewport_x, self->viewport_y, self->viewport_width, self->viewport_height);
+    return Py_BuildValue("(iiii)", self->viewport.x, self->viewport.y, self->viewport.width, self->viewport.height);
 }
 
 int MGLFramebuffer_set_viewport(MGLFramebuffer * self, PyObject * value, void * closure) {
-    if (PyTuple_GET_SIZE(value) != 4) {
-        MGLError_Set("the viewport must be a 4-tuple not %d-tuple", PyTuple_GET_SIZE(value));
+    Rect viewport_rect = {};
+    if (!parse_rect(value, &viewport_rect)) {
+        MGLError_Set("wrong values in the viewport");
         return -1;
     }
-
-    int viewport_x = PyLong_AsLong(PyTuple_GET_ITEM(value, 0));
-    int viewport_y = PyLong_AsLong(PyTuple_GET_ITEM(value, 1));
-    int viewport_width = PyLong_AsLong(PyTuple_GET_ITEM(value, 2));
-    int viewport_height = PyLong_AsLong(PyTuple_GET_ITEM(value, 3));
-
-    if (PyErr_Occurred()) {
-        MGLError_Set("the viewport is invalid");
-        return -1;
-    }
-
-    self->viewport_x = viewport_x;
-    self->viewport_y = viewport_y;
-    self->viewport_width = viewport_width;
-    self->viewport_height = viewport_height;
+    self->viewport = viewport_rect;
 
     if (self->framebuffer_obj == self->context->bound_framebuffer->framebuffer_obj) {
         const GLMethods & gl = self->context->gl;
 
         gl.Viewport(
-            self->viewport_x,
-            self->viewport_y,
-            self->viewport_width,
-            self->viewport_height
+            self->viewport.x,
+            self->viewport.y,
+            self->viewport.width,
+            self->viewport.height
         );
     }
 
@@ -2226,37 +2160,20 @@ int MGLFramebuffer_set_viewport(MGLFramebuffer * self, PyObject * value, void * 
 }
 
 PyObject * MGLFramebuffer_get_scissor(MGLFramebuffer * self, void * closure) {
-    return Py_BuildValue("(iiii)", self->scissor_x, self->scissor_y, self->scissor_width, self->scissor_height);
+    return Py_BuildValue("(iiii)", self->scissor.x, self->scissor.y, self->scissor.width, self->scissor.height);
 }
 
 int MGLFramebuffer_set_scissor(MGLFramebuffer * self, PyObject * value, void * closure) {
-
     if (value == Py_None) {
-        self->scissor_x = 0;
-        self->scissor_y = 0;
-        self->scissor_width = self->width;
-        self->scissor_height = self->height;
+        self->scissor = {0, 0, self->width, self->height};
         self->scissor_enabled = false;
     } else {
-        if (PyTuple_GET_SIZE(value) != 4) {
-            MGLError_Set("scissor must be None or a 4-tuple not %d-tuple", PyTuple_GET_SIZE(value));
+        Rect scissor_rect = {};
+        if (!parse_rect(value, &scissor_rect)) {
+            MGLError_Set("wrong values in the scissor");
             return -1;
         }
-
-        int scissor_x = PyLong_AsLong(PyTuple_GET_ITEM(value, 0));
-        int scissor_y = PyLong_AsLong(PyTuple_GET_ITEM(value, 1));
-        int scissor_width = PyLong_AsLong(PyTuple_GET_ITEM(value, 2));
-        int scissor_height = PyLong_AsLong(PyTuple_GET_ITEM(value, 3));
-
-        if (PyErr_Occurred()) {
-            MGLError_Set("the scissor is invalid");
-            return -1;
-        }
-
-        self->scissor_x = scissor_x;
-        self->scissor_y = scissor_y;
-        self->scissor_width = scissor_width;
-        self->scissor_height = scissor_height;
+        self->scissor = scissor_rect;
         self->scissor_enabled = true;
     }
 
@@ -2270,10 +2187,10 @@ int MGLFramebuffer_set_scissor(MGLFramebuffer * self, PyObject * value, void * c
         }
 
         gl.Scissor(
-            self->scissor_x,
-            self->scissor_y,
-            self->scissor_width,
-            self->scissor_height
+            self->scissor.x,
+            self->scissor.y,
+            self->scissor.width,
+            self->scissor.height
         );
     }
 
@@ -4521,7 +4438,7 @@ PyObject * MGLTexture_read_into(MGLTexture * self, PyObject * args) {
 
 PyObject * MGLTexture_write(MGLTexture * self, PyObject * args) {
     PyObject * data;
-    PyObject * viewport;
+    PyObject * viewport_arg;
     int level;
     int alignment;
 
@@ -4529,7 +4446,7 @@ PyObject * MGLTexture_write(MGLTexture * self, PyObject * args) {
         args,
         "OOII",
         &data,
-        &viewport,
+        &viewport_arg,
         &level,
         &alignment
     );
@@ -4553,51 +4470,22 @@ PyObject * MGLTexture_write(MGLTexture * self, PyObject * args) {
         return 0;
     }
 
-    int x = 0;
-    int y = 0;
-    int width = self->width / (1 << level);
-    int height = self->height / (1 << level);
-
-    width = width > 1 ? width : 1;
-    height = height > 1 ? height : 1;
-
     Py_buffer buffer_view;
 
-    if (viewport != Py_None) {
-        if (Py_TYPE(viewport) != &PyTuple_Type) {
-            MGLError_Set("the viewport must be a tuple not %s", Py_TYPE(viewport)->tp_name);
-            return 0;
-        }
+    int default_width = self->width / (1 << level);
+    int default_height = self->height / (1 << level);
 
-        if (PyTuple_GET_SIZE(viewport) == 4) {
-
-            x = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 0));
-            y = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 1));
-            width = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 2));
-            height = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 3));
-
-        } else if (PyTuple_GET_SIZE(viewport) == 2) {
-
-            width = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 0));
-            height = PyLong_AsLong(PyTuple_GET_ITEM(viewport, 1));
-
-        } else {
-
-            MGLError_Set("the viewport size %d is invalid", PyTuple_GET_SIZE(viewport));
-            return 0;
-
-        }
-
-        if (PyErr_Occurred()) {
+    Rect viewport_rect = {0, 0, default_width > 1 ? default_width : 1, default_height > 1 ? default_height : 1};
+    if (viewport_arg != Py_None) {
+        if (!parse_rect(viewport_arg, &viewport_rect)) {
             MGLError_Set("wrong values in the viewport");
-            return 0;
+            return NULL;
         }
-
     }
 
-    int expected_size = width * self->components * self->data_type->size;
+    int expected_size = viewport_rect.width * self->components * self->data_type->size;
     expected_size = (expected_size + alignment - 1) / alignment * alignment;
-    expected_size = expected_size * height;
+    expected_size = expected_size * viewport_rect.height;
 
     int pixel_type = self->data_type->gl_type;
     int format = self->depth ? GL_DEPTH_COMPONENT : self->data_type->base_format[self->components];
@@ -4613,7 +4501,7 @@ PyObject * MGLTexture_write(MGLTexture * self, PyObject * args) {
         gl.BindTexture(GL_TEXTURE_2D, self->texture_obj);
         gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
         gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-        gl.TexSubImage2D(GL_TEXTURE_2D, level, x, y, width, height, format, pixel_type, 0);
+        gl.TexSubImage2D(GL_TEXTURE_2D, level, viewport_rect.x, viewport_rect.y, viewport_rect.width, viewport_rect.height, format, pixel_type, 0);
         gl.BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
     } else {
@@ -4638,7 +4526,7 @@ PyObject * MGLTexture_write(MGLTexture * self, PyObject * args) {
         gl.BindTexture(GL_TEXTURE_2D, self->texture_obj);
         gl.PixelStorei(GL_PACK_ALIGNMENT, alignment);
         gl.PixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-        gl.TexSubImage2D(GL_TEXTURE_2D, level, x, y, width, height, format, pixel_type, buffer_view.buf);
+        gl.TexSubImage2D(GL_TEXTURE_2D, level, viewport_rect.x, viewport_rect.y, viewport_rect.width, viewport_rect.height, format, pixel_type, buffer_view.buf);
 
         PyBuffer_Release(&buffer_view);
 
@@ -8253,16 +8141,10 @@ PyObject * MGLContext_detect_framebuffer(MGLContext * self, PyObject * args) {
 
     framebuffer->context = self;
 
-    framebuffer->viewport_x = 0;
-    framebuffer->viewport_y = 0;
-    framebuffer->viewport_width = width;
-    framebuffer->viewport_height = height;
+    framebuffer->viewport = {0, 0, width, height};
 
     framebuffer->scissor_enabled = false;
-    framebuffer->scissor_x = 0;
-    framebuffer->scissor_y = 0;
-    framebuffer->scissor_width = width;
-    framebuffer->scissor_height = height;
+    framebuffer->scissor = {0, 0, width, height};
 
     framebuffer->width = width;
     framebuffer->height = height;
@@ -9379,22 +9261,16 @@ PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
 
         framebuffer->context = ctx;
 
-        int scissor_box[4] = {};
-        gl.GetIntegerv(GL_SCISSOR_BOX, scissor_box);
+        Rect scissor_box = {};
+        gl.GetIntegerv(GL_SCISSOR_BOX, (int *)&scissor_box);
 
-        framebuffer->viewport_x = scissor_box[0];
-        framebuffer->viewport_y = scissor_box[1];
-        framebuffer->viewport_width = scissor_box[2];
-        framebuffer->viewport_height = scissor_box[3];
+        framebuffer->viewport = scissor_box;
 
         framebuffer->scissor_enabled = false;
-        framebuffer->scissor_x = scissor_box[0];
-        framebuffer->scissor_y = scissor_box[1];
-        framebuffer->scissor_width = scissor_box[2];
-        framebuffer->scissor_height = scissor_box[3];
+        framebuffer->scissor = scissor_box;
 
-        framebuffer->width = scissor_box[2];
-        framebuffer->height = scissor_box[3];
+        framebuffer->width = scissor_box.width;
+        framebuffer->height = scissor_box.height;
         framebuffer->dynamic = true;
 
         Py_INCREF(framebuffer);
