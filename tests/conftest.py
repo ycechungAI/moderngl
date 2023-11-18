@@ -13,6 +13,7 @@ Context creation can be refined in _create_context if issues arise
 import pytest
 import numpy as np
 import moderngl
+from glcontext import egl
 
 VERSION_CODES = 430, 410, 330
 _ctx = None
@@ -69,32 +70,8 @@ def _create_context():
 
     This is the only place context creation should happen.
     For now we just brute force context creation.
-    """
-    # Attempt standard standalone context
-    try:
-        for VERSION_CODE in VERSION_CODES:
-            try:
-                return moderngl.create_context(
-                    require=VERSION_CODE,
-                    standalone=True,
-                )
-            except Exception:
-                pass
-    except Exception:
-        pass
-
-    # Attempt EGL standalone context
-    try:
-        for VERSION_CODE in VERSION_CODES:
-            return moderngl.create_context(
-                require=VERSION_CODE,
-                standalone=True,
-                backend="egl",
-            )
-    except Exception:
-        pass
-
-    raise RuntimeError("Unable to create a context")
+"""
+    return moderngl.create_context(standalone=True, context=egl.create_context(glversion=330, mode="standalone"))
 
 def _clean_ctx(ctx):
     """Clean the context"""
