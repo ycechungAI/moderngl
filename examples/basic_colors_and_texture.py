@@ -1,11 +1,12 @@
 '''
     Renders a floating, oscillating, 3d islans with lights
 '''
+
 import numpy as np
 from pyrr import Matrix44
 
 import moderngl
-from ported._example import Example
+from _example import Example
 
 
 class ColorsAndTexture(Example):

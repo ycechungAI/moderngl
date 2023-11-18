@@ -13,7 +13,7 @@ from array import array
 
 import cairo
 import moderngl
-from ported._example import Example
+from _example import Example
 
 
 class CairoExample(Example):

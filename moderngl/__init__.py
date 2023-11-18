@@ -1639,14 +1639,18 @@ class Context:
         locations = program._attribute_locations
         types = program._attribute_types
         index_buffer_mglo = None if index_buffer is None else index_buffer.mglo
-        mgl_content = tuple(
-            (a.mglo, b) + tuple(types[x] if type(x) is int else types[locations[x]] for x in c) for a, b, *c in content
-        )
+        mgl_content = []
+
+        for buffer, layout, *attribs in content:
+            if layout is None:
+                layout = detect_format(program, attribs)
+            attribs = [types[x] if type(x) is int else types[locations[x]] for x in attribs]
+            mgl_content.append((buffer.mglo, layout, *attribs))
 
         res = VertexArray.__new__(VertexArray)
         res.mglo, res._glo = self.mglo.vertex_array(
             program.mglo,
-            mgl_content,
+            tuple(mgl_content),
             index_buffer_mglo,
             index_element_size,
             skip_errors,

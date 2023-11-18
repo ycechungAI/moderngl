@@ -13,7 +13,7 @@ from pyrr import Vector3
 
 import moderngl
 #
-from ported._example import Example
+from _example import Example
 
 SHADOW_SIZE: Final[int] = 2 << 7  # 512²
 

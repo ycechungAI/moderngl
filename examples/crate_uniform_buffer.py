@@ -4,7 +4,7 @@ import moderngl
 import numpy as np
 from pyrr import Matrix44
 
-from ported._example import Example
+from _example import Example
 
 
 class CrateExample(Example):

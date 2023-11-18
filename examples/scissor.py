@@ -9,7 +9,7 @@
 import numpy as np
 
 import moderngl
-from ported._example import Example
+from _example import Example
 
 
 class Scissor(Example):

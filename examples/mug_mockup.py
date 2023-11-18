@@ -5,7 +5,7 @@ import moderngl
 from moderngl_window.geometry.attributes import AttributeNames
 from moderngl_window import geometry
 
-from ported._example import Example
+from _example import Example
 
 
 class MugExample(Example):

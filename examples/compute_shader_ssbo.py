@@ -17,7 +17,7 @@ modified by: einarf
 import math
 import random
 import numpy as np
-from ported._example import Example
+from _example import Example
 
 
 items_vertex_shader_code = """
@@ -201,10 +201,10 @@ class ComputeShaderSSBO(Example):
         # Prepare vertex arrays to drawing balls using the compute shader buffers are input
         # We use 4x4 (padding format) to skip the velocity data (not needed for drawing the balls)
         self.balls_a = self.ctx.vertex_array(
-            self.program, [(self.compute_buffer_a, '4f 4x4 4f', 'in_vert', 'in_col')],
+            self.program, [self.compute_buffer_a.bind('in_vert', 'in_col', layout='4f 4x4 4f')],
         )
         self.balls_b = self.ctx.vertex_array(
-            self.program, [(self.compute_buffer_b, '4f 4x4 4f', 'in_vert', 'in_col')],
+            self.program, [self.compute_buffer_b.bind('in_vert', 'in_col', layout='4f 4x4 4f')],
         )
 
     def gen_initial_data(self):

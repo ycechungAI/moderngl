@@ -3,7 +3,7 @@ import pymunk
 from pymunk import Vec2d
 
 import moderngl
-from ported._example import Example
+from _example import Example
 
 
 class PymunkExample(Example):

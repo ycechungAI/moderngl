@@ -4,7 +4,7 @@
 
 import numpy as np
 
-from ported._example import Example
+from _example import Example
 
 
 class IndexBuffer(Example):
@@ -54,7 +54,7 @@ class IndexBuffer(Example):
 
         vao_content = [
             # 2 floats are assigned to the 'in' variable named 'in_vert' in the shader code
-            (self.vbo, '2f', 'in_vert')
+            self.vbo.bind('in_vert', layout='2f'),
         ]
 
         self.vao = self.ctx.vertex_array(self.prog, vao_content, self.ibo)

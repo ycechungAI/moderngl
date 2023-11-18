@@ -3,9 +3,10 @@ Render using empty Vertexbuffer.
 Renders 100 triangels emitted by a geometry shaders.
 In addition we test if instancing is working passing gl_InstanceID from the vertex shader.
 """
+
 import moderngl
 
-from ported._example import Example
+from _example import Example
 
 
 class HelloWorld(Example):

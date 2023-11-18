@@ -5,7 +5,7 @@ doing offsets with gl_InstanceID in vertex shader.
 import numpy as np
 
 import moderngl
-from ported._example import Example
+from _example import Example
 
 
 class InstancedRendering(Example):

@@ -5,7 +5,7 @@ We use an empty VertexArray running it vertices times outputting data to the buf
 More fancy calculations can of course be done. This example just shows the concept.
 """
 import struct
-from ported._example import Example
+from _example import Example
 
 
 class GenerateData(Example):

@@ -6,7 +6,7 @@ We have a list of points and emit triangle data to a buffer
 It creates a quads per point using two triangles.
 """
 import struct
-from ported._example import Example
+from _example import Example
 import moderngl
 
 

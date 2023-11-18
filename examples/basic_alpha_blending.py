@@ -5,7 +5,7 @@
 import numpy as np
 
 import moderngl
-from ported._example import Example
+from _example import Example
 
 
 class AlphaBlending(Example):
@@ -61,7 +61,9 @@ class AlphaBlending(Example):
         ], dtype='f4')
 
         self.vbo = self.ctx.buffer(vertices)
-        self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert', 'vert_color')
+        self.vao = self.ctx.vertex_array(self.prog, [
+            self.vbo.bind('vert', 'vert_color'),
+        ])
 
     def render(self, time: float, frame_time: float):
         self.ctx.clear(1.0, 1.0, 1.0)

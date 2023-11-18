@@ -6,7 +6,7 @@ import numpy as np
 from OpenGL import GL
 from pyrr import Matrix44
 
-from ported._example import Example
+from _example import Example
 
 
 class CrateExample(Example):
@@ -63,14 +63,13 @@ class CrateExample(Example):
 
         width, height = 16, 16
         pixels = os.urandom(width * height * 4)
-        texture = ctypes.c_uint32()
-        GL.glGenTextures(1, ctypes.byref(texture))
+        texture = GL.glGenTextures(1)
         # GL.glActiveTexture(GL.GL_TEXTURE0)
         GL.glBindTexture(GL.GL_TEXTURE_2D, texture)
         GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA8, width, height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixels)
         GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
         GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST)
-        self.texture = self.ctx.external_texture(texture.value, (width, height), 4, 0, 'f1')
+        self.texture = self.ctx.external_texture(texture, (width, height), 4, 0, 'f1')
 
     def render(self, time, frame_time):
         angle = time

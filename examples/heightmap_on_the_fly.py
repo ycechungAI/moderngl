@@ -7,7 +7,7 @@ import numpy as np
 from pyrr import Matrix44, Matrix33
 
 import moderngl
-from ported._example import Example
+from _example import Example
 
 
 class HeightmapOnTheFly(Example):

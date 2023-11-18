@@ -4,7 +4,7 @@
 
 import numpy as np
 
-from ported._example import Example
+from _example import Example
 
 
 class UniformsAndAttributes(Example):
@@ -52,7 +52,7 @@ class UniformsAndAttributes(Example):
         ], dtype='f4')
 
         self.vbo = self.ctx.buffer(vertices)
-        self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 'vert')
+        self.vao = self.ctx.vertex_array(self.prog, [self.vbo.bind('vert')])
 
     def render(self, time: float, frame_time: float):
         sin_scale = np.sin(np.deg2rad(time * 60))

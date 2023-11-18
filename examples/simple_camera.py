@@ -30,7 +30,7 @@ import numpy as np
 from pyrr import Matrix44, Quaternion, Vector3, vector
 
 import moderngl
-from ported._example import Example
+from _example import Example
 
 
 class Camera():

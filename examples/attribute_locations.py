@@ -4,7 +4,7 @@
 
 import numpy as np
 
-from ported._example import Example
+from _example import Example
 
 
 class HelloWorld(Example):
@@ -47,7 +47,9 @@ class HelloWorld(Example):
         ], dtype='f4')
 
         self.vbo = self.ctx.buffer(vertices)
-        self.vao = self.ctx.simple_vertex_array(self.prog, self.vbo, 3, 7)
+        self.vao = self.ctx.vertex_array(self.prog, [
+            self.vbo.bind(3, 7),
+        ])
 
     def render(self, time, frame_time):
         self.ctx.clear(1.0, 1.0, 1.0)

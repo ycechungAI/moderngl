@@ -13,7 +13,7 @@ Another way to do this is simply rendering to Framebuffers.
 import numpy as np
 
 import moderngl
-from ported._example import Example
+from _example import Example
 
 
 class Conway(Example):
@@ -124,7 +124,7 @@ class Conway(Example):
             1.0,  -1.0,  1, 0,  # lower right
             1.0,   1.0,  1, 1,  # upper right
         ], dtype="f4"))
-        self.vao = self.ctx.simple_vertex_array(self.display_prog, self.vbo, 'in_vert', 'in_texcoord')
+        self.vao = self.ctx.vertex_array(self.display_prog, [self.vbo.bind('in_vert', 'in_texcoord')])
 
         # Transform vertex array to generate new map state
         self.tao = self.ctx.vertex_array(self.transform_prog, [])

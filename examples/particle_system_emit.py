@@ -43,7 +43,7 @@ import numpy as np
 
 import moderngl
 from moderngl_window import screenshot
-from ported._example import Example
+from _example import Example
 from pyrr import matrix44
 
 

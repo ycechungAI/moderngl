@@ -2,9 +2,7 @@
     Renders a blue triangle
 '''
 
-import numpy as np
-
-from ported._example import Example
+from _example import Example
 
 
 class HelloWorld(Example):

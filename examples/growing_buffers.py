@@ -10,7 +10,7 @@ import struct
 import random
 import moderngl
 from pyrr import matrix44
-from ported._example import Example
+from _example import Example
 
 
 class Points:

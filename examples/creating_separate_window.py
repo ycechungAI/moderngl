@@ -22,11 +22,11 @@ prog = ctx.program(
     #version 330
     in vec3 in_vert;
     in vec4 in_color;
-    
+
     uniform mat4 prj;
-    
+
     out vec4 o_color;
-    
+
     void main() {
         gl_Position = prj*vec4(in_vert.xyz, 1.0);
         o_color = in_color;
@@ -34,11 +34,11 @@ prog = ctx.program(
     ''',
     fragment_shader='''
     #version 330
-    
+
     in vec4 o_color;
-    
+
     out vec4 f_color;
-    
+
     void main() {
         f_color = o_color;
     }

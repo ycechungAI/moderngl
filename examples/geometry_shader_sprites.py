@@ -14,7 +14,7 @@ Other optimizations that can be done:
 import math
 
 import moderngl
-from ported._example import Example
+from _example import Example
 
 from pyrr import Matrix44
 from array import array

@@ -2,7 +2,7 @@
 Compute shader renders a 32 x 32 grid to a 512, 512 texture
 """
 import moderngl as mgl
-from ported._example import Example
+from _example import Example
 from moderngl_window import geometry
 
 

@@ -1,7 +1,7 @@
 import math
 import random
 
-from ported._example import Example
+from _example import Example
 
 
 class EmptyWindow(Example):

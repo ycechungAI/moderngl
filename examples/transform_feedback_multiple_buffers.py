@@ -6,7 +6,7 @@ More fancy calculations can of course be done. This example just shows the conce
 """
 import struct
 import numpy as np
-from ported._example import Example
+from _example import Example
 
 
 class GenerateData(Example):

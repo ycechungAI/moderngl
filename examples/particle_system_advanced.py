@@ -3,7 +3,7 @@ from typing import Optional, Tuple, Final
 import moderngl
 import numpy as np
 
-from ported._example import Example
+from _example import Example
 
 NB_PARTICLES: Final[int] = 2 << 10  # 1024
 POINT_SIZE: Final[int] = 2 << 3  # 16

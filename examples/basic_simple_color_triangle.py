@@ -4,7 +4,7 @@
 
 import numpy as np
 
-from ported._example import Example
+from _example import Example
 
 
 class SimpleColorTriangle(Example):
@@ -38,6 +38,7 @@ class SimpleColorTriangle(Example):
                 void main() {
                     // We're not interested in changing the alpha value
                     f_color = vec4(v_color, 1.0);
+                    f_color.rgb = pow(f_color.rgb, vec3(1.0 / 2.2));
                 }
             ''',
         )
@@ -58,7 +59,7 @@ class SimpleColorTriangle(Example):
             [
                 # Map in_vert to the first 2 floats
                 # Map in_color to the next 3 floats
-                (self.vbo, '2f 3f', 'in_vert', 'in_color')
+                self.vbo.bind('in_vert', 'in_color', layout='2f 3f'),
             ],
         )
 
