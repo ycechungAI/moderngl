@@ -466,21 +466,6 @@ inline PyObject * compare_func_to_string(int func) {
     }
 }
 
-inline PyObject * tuple2(PyObject * a, PyObject * b) {
-    PyObject * res = PyTuple_New(2);
-    PyTuple_SET_ITEM(res, 0, a);
-    PyTuple_SET_ITEM(res, 1, b);
-    return res;
-}
-
-inline PyObject * tuple3(PyObject * a, PyObject * b, PyObject * c) {
-    PyObject * res = PyTuple_New(3);
-    PyTuple_SET_ITEM(res, 0, a);
-    PyTuple_SET_ITEM(res, 1, b);
-    PyTuple_SET_ITEM(res, 2, c);
-    return res;
-}
-
 struct FormatNode {
     int size;
     int count;
@@ -937,13 +922,7 @@ PyObject * MGLContext_buffer(MGLContext * self, PyObject * args) {
         PyBuffer_Release(&buffer_view);
     }
 
-    Py_INCREF(buffer);
-
-    PyObject * result = PyTuple_New(3);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)buffer);
-    PyTuple_SET_ITEM(result, 1, PyLong_FromSsize_t(buffer->size));
-    PyTuple_SET_ITEM(result, 2, PyLong_FromLong(buffer->buffer_obj));
-    return result;
+    return Py_BuildValue("(Oni)", buffer, buffer->size, buffer->buffer_obj);
 }
 
 PyObject * MGLBuffer_write(MGLBuffer * self, PyObject * args) {
@@ -1765,19 +1744,7 @@ PyObject * MGLContext_framebuffer(MGLContext * self, PyObject * args) {
     Py_INCREF(self);
     framebuffer->context = self;
 
-    Py_INCREF(framebuffer);
-
-    PyObject * size = PyTuple_New(2);
-    PyTuple_SET_ITEM(size, 0, PyLong_FromLong(framebuffer->width));
-    PyTuple_SET_ITEM(size, 1, PyLong_FromLong(framebuffer->height));
-
-    Py_INCREF(framebuffer);
-    PyObject * result = PyTuple_New(4);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)framebuffer);
-    PyTuple_SET_ITEM(result, 1, size);
-    PyTuple_SET_ITEM(result, 2, PyLong_FromLong(framebuffer->samples));
-    PyTuple_SET_ITEM(result, 3, PyLong_FromLong(framebuffer->framebuffer_obj));
-    return result;
+    return Py_BuildValue("(O(ii)ii)", framebuffer, framebuffer->width, framebuffer->height, framebuffer->samples, framebuffer->framebuffer_obj);
 }
 
 PyObject * MGLContext_empty_framebuffer(MGLContext * self, PyObject * args) {
@@ -1888,19 +1855,7 @@ PyObject * MGLContext_empty_framebuffer(MGLContext * self, PyObject * args) {
     Py_INCREF(self);
     framebuffer->context = self;
 
-    Py_INCREF(framebuffer);
-
-    PyObject * size = PyTuple_New(2);
-    PyTuple_SET_ITEM(size, 0, PyLong_FromLong(framebuffer->width));
-    PyTuple_SET_ITEM(size, 1, PyLong_FromLong(framebuffer->height));
-
-    Py_INCREF(framebuffer);
-    PyObject * result = PyTuple_New(4);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)framebuffer);
-    PyTuple_SET_ITEM(result, 1, size);
-    PyTuple_SET_ITEM(result, 2, PyLong_FromLong(framebuffer->samples));
-    PyTuple_SET_ITEM(result, 3, PyLong_FromLong(framebuffer->framebuffer_obj));
-    return result;
+    return Py_BuildValue("(O(ii)ii)", framebuffer, framebuffer->width, framebuffer->height, framebuffer->samples, framebuffer->framebuffer_obj);
 }
 
 PyObject * MGLFramebuffer_release(MGLFramebuffer * self, PyObject * args) {
@@ -2232,11 +2187,7 @@ PyObject * MGLFramebuffer_read_into(MGLFramebuffer * self, PyObject * args) {
 }
 
 PyObject * MGLFramebuffer_get_viewport(MGLFramebuffer * self, void * closure) {
-    PyObject * x = PyLong_FromLong(self->viewport_x);
-    PyObject * y = PyLong_FromLong(self->viewport_y);
-    PyObject * width = PyLong_FromLong(self->viewport_width);
-    PyObject * height = PyLong_FromLong(self->viewport_height);
-    return PyTuple_Pack(4, x, y, width, height);
+    return Py_BuildValue("(iiii)", self->viewport_x, self->viewport_y, self->viewport_width, self->viewport_height);
 }
 
 int MGLFramebuffer_set_viewport(MGLFramebuffer * self, PyObject * value, void * closure) {
@@ -2275,11 +2226,7 @@ int MGLFramebuffer_set_viewport(MGLFramebuffer * self, PyObject * value, void * 
 }
 
 PyObject * MGLFramebuffer_get_scissor(MGLFramebuffer * self, void * closure) {
-    PyObject * x = PyLong_FromLong(self->scissor_x);
-    PyObject * y = PyLong_FromLong(self->scissor_y);
-    PyObject * width = PyLong_FromLong(self->scissor_width);
-    PyObject * height = PyLong_FromLong(self->scissor_height);
-    return PyTuple_Pack(4, x, y, width, height);
+    return Py_BuildValue("(iiii)", self->scissor_x, self->scissor_y, self->scissor_width, self->scissor_height);
 }
 
 int MGLFramebuffer_set_scissor(MGLFramebuffer * self, PyObject * value, void * closure) {
@@ -3155,30 +3102,14 @@ PyObject * MGLContext_program(MGLContext * self, PyObject * args) {
         }
     }
 
-    PyObject * geom_info = PyTuple_New(3);
-    if (program->geometry_input != -1) {
-        PyTuple_SET_ITEM(geom_info, 0, PyLong_FromLong(program->geometry_input));
+    PyObject * geom_info;
+    if (program->geometry_vertices) {
+        geom_info = Py_BuildValue("(iii)", program->geometry_input, program->geometry_output, program->geometry_vertices);
     } else {
-        Py_INCREF(Py_None);
-        PyTuple_SET_ITEM(geom_info, 0, Py_None);
+        geom_info = Py_BuildValue("(OOi)", Py_None, Py_None, 0);
     }
-    if (program->geometry_output != -1) {
-        PyTuple_SET_ITEM(geom_info, 1, PyLong_FromLong(program->geometry_output));
-    } else {
-        Py_INCREF(Py_None);
-        PyTuple_SET_ITEM(geom_info, 1, Py_None);
-    }
-    PyTuple_SET_ITEM(geom_info, 2, PyLong_FromLong(program->geometry_vertices));
-
     PyObject * members_and_attributes = Py_BuildValue("(NNN)", members_dict, attribute_locations, attribute_types);
-
-    PyObject * result = PyTuple_New(5);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)program);
-    PyTuple_SET_ITEM(result, 1, members_and_attributes);
-    PyTuple_SET_ITEM(result, 2, subroutine_uniforms_lst);
-    PyTuple_SET_ITEM(result, 3, geom_info);
-    PyTuple_SET_ITEM(result, 4, PyLong_FromLong(program->program_obj));
-    return result;
+    return Py_BuildValue("(ONNNi)", program, members_and_attributes, subroutine_uniforms_lst, geom_info, program->program_obj);
 }
 
 PyObject * MGLProgram_run(MGLProgram * self, PyObject * args) {
@@ -3484,12 +3415,7 @@ PyObject * MGLContext_sampler(MGLContext * self, PyObject * args) {
     Py_INCREF(self);
     sampler->context = self;
 
-    Py_INCREF(sampler);
-
-    PyObject * result = PyTuple_New(2);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)sampler);
-    PyTuple_SET_ITEM(result, 1, PyLong_FromLong(sampler->sampler_obj));
-    return result;
+    return Py_BuildValue("(Oi)", sampler, sampler->sampler_obj);
 }
 
 PyObject * MGLContext_memory_barrier(MGLContext * self, PyObject * args) {
@@ -3629,10 +3555,7 @@ int MGLSampler_set_repeat_z(MGLSampler * self, PyObject * value) {
 }
 
 PyObject * MGLSampler_get_filter(MGLSampler * self) {
-    PyObject * res = PyTuple_New(2);
-    PyTuple_SET_ITEM(res, 0, PyLong_FromLong(self->min_filter));
-    PyTuple_SET_ITEM(res, 1, PyLong_FromLong(self->mag_filter));
-    return res;
+    return Py_BuildValue("(ii)", self->min_filter, self->mag_filter);
 }
 
 int MGLSampler_set_filter(MGLSampler * self, PyObject * value) {
@@ -3686,11 +3609,7 @@ int MGLSampler_set_anisotropy(MGLSampler * self, PyObject * value) {
 }
 
 PyObject * MGLSampler_get_border_color(MGLSampler * self) {
-    PyObject * r = PyFloat_FromDouble(self->border_color[0]);
-    PyObject * g = PyFloat_FromDouble(self->border_color[1]);
-    PyObject * b = PyFloat_FromDouble(self->border_color[2]);
-    PyObject * a = PyFloat_FromDouble(self->border_color[3]);
-    return PyTuple_Pack(4, r, g, b, a);
+    return Py_BuildValue("(ffff)", self->border_color[0], self->border_color[1], self->border_color[2], self->border_color[3]);
 }
 
 int MGLSampler_set_border_color(MGLSampler * self, PyObject * value) {
@@ -4112,12 +4031,7 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
         Py_INCREF(self);
         renderbuffer->context = self;
 
-        Py_INCREF(renderbuffer);
-
-        PyObject * result = PyTuple_New(2);
-        PyTuple_SET_ITEM(result, 0, (PyObject *)renderbuffer);
-        PyTuple_SET_ITEM(result, 1, PyLong_FromLong(renderbuffer->renderbuffer_obj));
-        return result;
+        return Py_BuildValue("(Oi)", renderbuffer, renderbuffer->renderbuffer_obj);
     }
 
     int expected_size = width * components * data_type->size;
@@ -4208,12 +4122,7 @@ PyObject * MGLContext_texture(MGLContext * self, PyObject * args) {
     Py_INCREF(self);
     texture->context = self;
 
-    Py_INCREF(texture);
-
-    PyObject * result = PyTuple_New(2);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)texture);
-    PyTuple_SET_ITEM(result, 1, PyLong_FromLong(texture->texture_obj));
-    return result;
+    return Py_BuildValue("(Oi)", texture, texture->texture_obj);
 }
 
 PyObject * MGLContext_depth_texture(MGLContext * self, PyObject * args) {
@@ -4289,12 +4198,7 @@ PyObject * MGLContext_depth_texture(MGLContext * self, PyObject * args) {
         Py_INCREF(self);
         renderbuffer->context = self;
 
-        Py_INCREF(renderbuffer);
-
-        PyObject * result = PyTuple_New(2);
-        PyTuple_SET_ITEM(result, 0, (PyObject *)renderbuffer);
-        PyTuple_SET_ITEM(result, 1, PyLong_FromLong(renderbuffer->renderbuffer_obj));
-        return result;
+        return Py_BuildValue("(Oi)", renderbuffer, renderbuffer->renderbuffer_obj);
     }
 
     int expected_size = width * 4;
@@ -4379,12 +4283,7 @@ PyObject * MGLContext_depth_texture(MGLContext * self, PyObject * args) {
     Py_INCREF(self);
     texture->context = self;
 
-    Py_INCREF(texture);
-
-    PyObject * result = PyTuple_New(2);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)texture);
-    PyTuple_SET_ITEM(result, 1, PyLong_FromLong(texture->texture_obj));
-    return result;
+    return Py_BuildValue("(Oi)", texture, texture->texture_obj);
 }
 
 PyObject * MGLContext_external_texture(MGLContext * self, PyObject * args) {
@@ -4444,12 +4343,7 @@ PyObject * MGLContext_external_texture(MGLContext * self, PyObject * args) {
     Py_INCREF(self);
     texture->context = self;
 
-    Py_INCREF(texture);
-
-    PyObject * result = PyTuple_New(2);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)texture);
-    PyTuple_SET_ITEM(result, 1, PyLong_FromLong(texture->texture_obj));
-    return result;
+    return Py_BuildValue("(Oi)", texture, texture->texture_obj);
 }
 
 PyObject * MGLTexture_read(MGLTexture * self, PyObject * args) {
@@ -4939,10 +4833,7 @@ int MGLTexture_set_repeat_y(MGLTexture * self, PyObject * value) {
 }
 
 PyObject * MGLTexture_get_filter(MGLTexture * self) {
-    PyObject * res = PyTuple_New(2);
-    PyTuple_SET_ITEM(res, 0, PyLong_FromLong(self->min_filter));
-    PyTuple_SET_ITEM(res, 1, PyLong_FromLong(self->mag_filter));
-    return res;
+    return Py_BuildValue("(ii)", self->min_filter, self->mag_filter);
 }
 
 int MGLTexture_set_filter(MGLTexture * self, PyObject * value) {
@@ -5232,12 +5123,7 @@ PyObject * MGLContext_texture3d(MGLContext * self, PyObject * args) {
     Py_INCREF(self);
     texture->context = self;
 
-    Py_INCREF(texture);
-
-    PyObject * result = PyTuple_New(2);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)texture);
-    PyTuple_SET_ITEM(result, 1, PyLong_FromLong(texture->texture_obj));
-    return result;
+    return Py_BuildValue("(Oi)", texture, texture->texture_obj);
 }
 
 PyObject * MGLTexture3D_read(MGLTexture3D * self, PyObject * args) {
@@ -5681,10 +5567,7 @@ int MGLTexture3D_set_repeat_z(MGLTexture3D * self, PyObject * value) {
 }
 
 PyObject * MGLTexture3D_get_filter(MGLTexture3D * self) {
-    PyObject * res = PyTuple_New(2);
-    PyTuple_SET_ITEM(res, 0, PyLong_FromLong(self->min_filter));
-    PyTuple_SET_ITEM(res, 1, PyLong_FromLong(self->mag_filter));
-    return res;
+    return Py_BuildValue("(ii)", self->min_filter, self->mag_filter);
 }
 
 int MGLTexture3D_set_filter(MGLTexture3D * self, PyObject * value) {
@@ -5905,12 +5788,7 @@ PyObject * MGLContext_texture_array(MGLContext * self, PyObject * args) {
     Py_INCREF(self);
     texture->context = self;
 
-    Py_INCREF(texture);
-
-    PyObject * result = PyTuple_New(2);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)texture);
-    PyTuple_SET_ITEM(result, 1, PyLong_FromLong(texture->texture_obj));
-    return result;
+    return Py_BuildValue("(Oi)", texture, texture->texture_obj);
 }
 
 PyObject * MGLTextureArray_read(MGLTextureArray * self, PyObject * args) {
@@ -6351,10 +6229,7 @@ int MGLTextureArray_set_repeat_y(MGLTextureArray * self, PyObject * value) {
 }
 
 PyObject * MGLTextureArray_get_filter(MGLTextureArray * self) {
-    PyObject * res = PyTuple_New(2);
-    PyTuple_SET_ITEM(res, 0, PyLong_FromLong(self->min_filter));
-    PyTuple_SET_ITEM(res, 1, PyLong_FromLong(self->mag_filter));
-    return res;
+    return Py_BuildValue("(ii)", self->min_filter, self->mag_filter);
 }
 
 int MGLTextureArray_set_filter(MGLTextureArray * self, PyObject * value) {
@@ -6608,12 +6483,7 @@ PyObject * MGLContext_texture_cube(MGLContext * self, PyObject * args) {
     Py_INCREF(self);
     texture->context = self;
 
-    Py_INCREF(texture);
-
-    PyObject * result = PyTuple_New(2);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)texture);
-    PyTuple_SET_ITEM(result, 1, PyLong_FromLong(texture->texture_obj));
-    return result;
+    return Py_BuildValue("(Oi)", texture, texture->texture_obj);
 }
 
 PyObject * MGLContext_depth_texture_cube(MGLContext * self, PyObject * args) {
@@ -6733,12 +6603,7 @@ PyObject * MGLContext_depth_texture_cube(MGLContext * self, PyObject * args) {
     Py_INCREF(self);
     texture->context = self;
 
-    Py_INCREF(texture);
-
-    PyObject * result = PyTuple_New(2);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)texture);
-    PyTuple_SET_ITEM(result, 1, PyLong_FromLong(texture->texture_obj));
-    return result;
+    return Py_BuildValue("(Oi)", texture, texture->texture_obj);
 }
 
 PyObject * MGLTextureCube_read(MGLTextureCube * self, PyObject * args) {
@@ -7128,10 +6993,7 @@ PyObject * MGLTextureCube_release(MGLTextureCube * self, PyObject * args) {
 }
 
 PyObject * MGLTextureCube_get_filter(MGLTextureCube * self) {
-    PyObject * res = PyTuple_New(2);
-    PyTuple_SET_ITEM(res, 0, PyLong_FromLong(self->min_filter));
-    PyTuple_SET_ITEM(res, 1, PyLong_FromLong(self->mag_filter));
-    return res;
+    return Py_BuildValue("(ii)", self->min_filter, self->mag_filter);
 }
 
 int MGLTextureCube_set_filter(MGLTextureCube * self, PyObject * value) {
@@ -7497,12 +7359,7 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
         array->subroutines = 0;
     }
 
-    Py_INCREF(array);
-
-    PyObject * result = PyTuple_New(2);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)array);
-    PyTuple_SET_ITEM(result, 1, PyLong_FromLong(array->vertex_array_obj));
-    return result;
+    return Py_BuildValue("(Oi)", array, array->vertex_array_obj);
 }
 
 inline void MGLVertexArray_SET_SUBROUTINES(MGLVertexArray * self, const GLMethods & gl);
@@ -8413,19 +8270,7 @@ PyObject * MGLContext_detect_framebuffer(MGLContext * self, PyObject * args) {
 
     gl.BindFramebuffer(GL_FRAMEBUFFER, bound_framebuffer);
 
-    Py_INCREF(framebuffer);
-
-    PyObject * size = PyTuple_New(2);
-    PyTuple_SET_ITEM(size, 0, PyLong_FromLong(framebuffer->width));
-    PyTuple_SET_ITEM(size, 1, PyLong_FromLong(framebuffer->height));
-
-    Py_INCREF(framebuffer);
-    PyObject * result = PyTuple_New(4);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)framebuffer);
-    PyTuple_SET_ITEM(result, 1, size);
-    PyTuple_SET_ITEM(result, 2, PyLong_FromLong(framebuffer->samples));
-    PyTuple_SET_ITEM(result, 3, PyLong_FromLong(framebuffer->framebuffer_obj));
-    return result;
+    return Py_BuildValue("(O(ii)ii)", framebuffer, framebuffer->width, framebuffer->height, framebuffer->samples, framebuffer->framebuffer_obj);
 }
 
 PyObject * MGLContext_clear_samplers(MGLContext * self, PyObject * args) {
@@ -8756,10 +8601,7 @@ int MGLContext_set_point_size(MGLContext * self, PyObject * value) {
 
 // NOTE: currently never called from python
 PyObject * MGLContext_get_blend_func(MGLContext * self) {
-    PyObject * res = PyTuple_New(2);
-    PyTuple_SET_ITEM(res, 0, PyLong_FromLong(self->blend_func_src));
-    PyTuple_SET_ITEM(res, 1, PyLong_FromLong(self->blend_func_dst));
-    return res;
+    return Py_BuildValue("(ii)", self->blend_func_src, self->blend_func_dst);
 }
 
 int MGLContext_set_blend_func(MGLContext * self, PyObject * value) {
@@ -8791,10 +8633,7 @@ int MGLContext_set_blend_func(MGLContext * self, PyObject * value) {
 
 // NOTE: currently never called from python
 PyObject * MGLContext_get_blend_equation(MGLContext * self) {
-    PyObject * res = PyTuple_New(2);
-    PyTuple_SET_ITEM(res, 0, PyLong_FromLong(GL_FUNC_ADD));
-    PyTuple_SET_ITEM(res, 1, PyLong_FromLong(GL_FUNC_ADD));
-    return res;
+    return Py_BuildValue("(ii)", GL_FUNC_ADD, GL_FUNC_ADD);
 }
 
 int MGLContext_set_blend_equation(MGLContext * self, PyObject * value) {
@@ -9629,12 +9468,7 @@ PyObject * create_context(PyObject * self, PyObject * args, PyObject * kwargs) {
         return 0;
     }
 
-    Py_INCREF(ctx);
-
-    PyObject * result = PyTuple_New(2);
-    PyTuple_SET_ITEM(result, 0, (PyObject *)ctx);
-    PyTuple_SET_ITEM(result, 1, PyLong_FromLong(ctx->version_code));
-    return result;
+    return Py_BuildValue("(Oi)", ctx, ctx->version_code);
 }
 
 void default_dealloc(PyObject * self) {
