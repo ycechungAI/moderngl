@@ -6,5 +6,5 @@ WORKDIR /app
 COPY . .
 RUN python3 -m build --no-isolation
 ENV MODERNGL_COVERAGE=yes LIBGL_ALWAYS_SOFTWARE=1
-RUN python setup.py build_ext --inplace && cp build/temp.*/src/moderngl.gcno .
-CMD python -X dev -m pytest -s -vvv tests && gcovr
+RUN python3 setup.py build_ext --inplace && cp build/temp.*/src/moderngl.gcno .
+CMD python3 -X dev -m pytest -s -vvv tests && gcovr
