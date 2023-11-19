@@ -3028,19 +3028,34 @@ PyObject * MGLSampler_get_filter(MGLSampler * self) {
     return Py_BuildValue("(ii)", self->min_filter, self->mag_filter);
 }
 
+int parse_filter(PyObject * arg, int * min_filter_value, int * mag_filter_value) {
+    arg = PySequence_Tuple(arg);
+    if (!arg || PyTuple_Size(arg) != 2) {
+        PyErr_Clear();
+        return 0;
+    }
+    int min_filter = PyLong_AsLong(PyTuple_GetItem(arg, 0));
+    int mag_filter = PyLong_AsLong(PyTuple_GetItem(arg, 1));
+    if (PyErr_Occurred()) {
+        PyErr_Clear();
+        return 0;
+    }
+
+    *min_filter_value = min_filter;
+    *mag_filter_value = mag_filter;
+    Py_DECREF(arg);
+    return 1;
+}
+
 int MGLSampler_set_filter(MGLSampler * self, PyObject * value) {
-    if (PyTuple_GET_SIZE(value) != 2) {
+    if (!parse_filter(value, &self->min_filter, &self->mag_filter)) {
         MGLError_Set("invalid filter");
         return -1;
     }
 
-    self->min_filter = PyLong_AsLong(PyTuple_GET_ITEM(value, 0));
-    self->mag_filter = PyLong_AsLong(PyTuple_GET_ITEM(value, 1));
-
     const GLMethods & gl = self->context->gl;
     gl.SamplerParameteri(self->sampler_obj, GL_TEXTURE_MIN_FILTER, self->min_filter);
     gl.SamplerParameteri(self->sampler_obj, GL_TEXTURE_MAG_FILTER, self->mag_filter);
-
     return 0;
 }
 
@@ -3050,6 +3065,10 @@ PyObject * MGLSampler_get_compare_func(MGLSampler * self) {
 
 int MGLSampler_set_compare_func(MGLSampler * self, PyObject * value) {
     const char * func = PyUnicode_AsUTF8(value);
+    if (!func) {
+        MGLError_Set("invalid compare function");
+        return -1;
+    }
     self->compare_func = compare_func_from_string(func);
 
     const GLMethods & gl = self->context->gl;
@@ -3082,26 +3101,34 @@ PyObject * MGLSampler_get_border_color(MGLSampler * self) {
     return Py_BuildValue("(ffff)", self->border_color[0], self->border_color[1], self->border_color[2], self->border_color[3]);
 }
 
-int MGLSampler_set_border_color(MGLSampler * self, PyObject * value) {
-    if (PyTuple_GET_SIZE(value) != 4) {
-        MGLError_Set("border_color must be a 4-tuple not %d-tuple", PyTuple_GET_SIZE(value));
-        return -1;
+int parse_color(PyObject * arg, float * value) {
+    arg = PySequence_Tuple(arg);
+    if (!arg || PyTuple_Size(arg) != 4) {
+        PyErr_Clear();
+        return 0;
     }
-
-    float r = (float)PyFloat_AsDouble(PyTuple_GET_ITEM(value, 0));
-    float g = (float)PyFloat_AsDouble(PyTuple_GET_ITEM(value, 1));
-    float b = (float)PyFloat_AsDouble(PyTuple_GET_ITEM(value, 2));
-    float a = (float)PyFloat_AsDouble(PyTuple_GET_ITEM(value, 3));
-
+    float r = (float)PyFloat_AsDouble(PyTuple_GetItem(arg, 0));
+    float g = (float)PyFloat_AsDouble(PyTuple_GetItem(arg, 1));
+    float b = (float)PyFloat_AsDouble(PyTuple_GetItem(arg, 2));
+    float a = (float)PyFloat_AsDouble(PyTuple_GetItem(arg, 3));
     if (PyErr_Occurred()) {
-        MGLError_Set("the border_color is invalid");
-        return -1;
+        PyErr_Clear();
+        return 0;
     }
 
-    self->border_color[0] = r;
-    self->border_color[1] = g;
-    self->border_color[2] = b;
-    self->border_color[3] = a;
+    value[0] = r;
+    value[1] = g;
+    value[2] = b;
+    value[3] = a;
+    Py_DECREF(arg);
+    return 1;
+}
+
+int MGLSampler_set_border_color(MGLSampler * self, PyObject * value) {
+    if (!parse_color(value, self->border_color)) {
+        MGLError_Set("invalid border color");
+        return -1;
+    }
 
     const GLMethods & gl = self->context->gl;
     gl.SamplerParameteri(self->sampler_obj, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -4362,13 +4389,10 @@ PyObject * MGLTexture_get_filter(MGLTexture * self) {
 }
 
 int MGLTexture_set_filter(MGLTexture * self, PyObject * value) {
-    if (PyTuple_GET_SIZE(value) != 2) {
+    if (!parse_filter(value, &self->min_filter, &self->mag_filter)) {
         MGLError_Set("invalid filter");
         return -1;
     }
-
-    self->min_filter = PyLong_AsLong(PyTuple_GET_ITEM(value, 0));
-    self->mag_filter = PyLong_AsLong(PyTuple_GET_ITEM(value, 1));
 
     int texture_target = self->samples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 
@@ -5059,13 +5083,10 @@ PyObject * MGLTexture3D_get_filter(MGLTexture3D * self) {
 }
 
 int MGLTexture3D_set_filter(MGLTexture3D * self, PyObject * value) {
-    if (PyTuple_GET_SIZE(value) != 2) {
+    if (!parse_filter(value, &self->min_filter, &self->mag_filter)) {
         MGLError_Set("invalid filter");
         return -1;
     }
-
-    self->min_filter = PyLong_AsLong(PyTuple_GET_ITEM(value, 0));
-    self->mag_filter = PyLong_AsLong(PyTuple_GET_ITEM(value, 1));
 
     const GLMethods & gl = self->context->gl;
 
@@ -5685,14 +5706,10 @@ PyObject * MGLTextureArray_get_filter(MGLTextureArray * self) {
 }
 
 int MGLTextureArray_set_filter(MGLTextureArray * self, PyObject * value) {
-    if (PyTuple_GET_SIZE(value) != 2) {
+    if (!parse_filter(value, &self->min_filter, &self->mag_filter)) {
         MGLError_Set("invalid filter");
         return -1;
     }
-
-    self->min_filter = PyLong_AsLong(PyTuple_GET_ITEM(value, 0));
-    self->mag_filter = PyLong_AsLong(PyTuple_GET_ITEM(value, 1));
-
 
     const GLMethods & gl = self->context->gl;
 
@@ -6418,13 +6435,10 @@ PyObject * MGLTextureCube_get_filter(MGLTextureCube * self) {
 }
 
 int MGLTextureCube_set_filter(MGLTextureCube * self, PyObject * value) {
-    if (PyTuple_GET_SIZE(value) != 2) {
+    if (!parse_filter(value, &self->min_filter, &self->mag_filter)) {
         MGLError_Set("invalid filter");
         return -1;
     }
-
-    self->min_filter = PyLong_AsLong(PyTuple_GET_ITEM(value, 0));
-    self->mag_filter = PyLong_AsLong(PyTuple_GET_ITEM(value, 1));
 
     const GLMethods & gl = self->context->gl;
 
