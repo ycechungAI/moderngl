@@ -198,7 +198,7 @@ class TestBlend:
             self.ctx.blend_func = moderngl.ONE,
 
         # TypeError: "Test" is not an integer
-        with pytest.raises(TypeError):
+        with pytest.raises(moderngl.Error):
             self.ctx.blend_func = moderngl.ONE, "Test"
 
         # Incorrect tuple size=3
@@ -223,7 +223,7 @@ class TestBlend:
         )
 
     def test_invalid_blend_equation(self):
-        with pytest.raises(TypeError):
+        with pytest.raises(moderngl.Error):
             self.ctx.blend_equation = None
 
         with pytest.raises(moderngl.Error):
