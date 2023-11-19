@@ -7914,36 +7914,89 @@ int MGLContext_set_point_size(MGLContext * self, PyObject * value) {
     return 0;
 }
 
+int parse_blend_func(PyObject * arg, int * value) {
+    arg = PySequence_Tuple(arg);
+    if (!arg) {
+        PyErr_Clear();
+        return 0;
+    }
+    int size = (int)PyTuple_Size(arg);
+    if (size == 4) {
+        value[0] = PyLong_AsLong(PyTuple_GetItem(arg, 0));
+        value[1] = PyLong_AsLong(PyTuple_GetItem(arg, 1));
+        value[2] = PyLong_AsLong(PyTuple_GetItem(arg, 2));
+        value[3] = PyLong_AsLong(PyTuple_GetItem(arg, 3));
+        if (PyErr_Occurred()) {
+            PyErr_Clear();
+            return 0;
+        }
+    } else if (size == 2) {
+        value[0] = PyLong_AsLong(PyTuple_GetItem(arg, 0));
+        value[1] = PyLong_AsLong(PyTuple_GetItem(arg, 1));
+        value[2] = value[0];
+        value[3] = value[1];
+        if (PyErr_Occurred()) {
+            PyErr_Clear();
+            return 0;
+        }
+    } else {
+        return 0;
+    }
+    Py_DECREF(arg);
+    return 1;
+}
+
 // NOTE: currently never called from python
 PyObject * MGLContext_get_blend_func(MGLContext * self) {
     return Py_BuildValue("(ii)", self->blend_func_src, self->blend_func_dst);
 }
 
 int MGLContext_set_blend_func(MGLContext * self, PyObject * value) {
-    Py_ssize_t num_values = PyTuple_GET_SIZE(value);
-
-    if (!(num_values == 2 || num_values == 4)) {
-        MGLError_Set("Invalid number of values. Must be 2 or 4.");
+    int func[4] = {};
+    if (!parse_blend_func(value, func)) {
+        MGLError_Set("invalid blend func");
         return -1;
     }
 
-    int src_rgb = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 0));
-    int dst_rgb = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 1));
-    int src_alpha = src_rgb;
-    int dst_alpha = dst_rgb;
-
-    if (num_values == 4) {
-        src_alpha = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 2));
-        dst_alpha = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 3));
-    }
-
-    if (PyErr_Occurred()) {
-        return -1;
-    }
-
-    self->gl.BlendFuncSeparate(src_rgb, dst_rgb, src_alpha, dst_alpha);
-
+    self->gl.BlendFuncSeparate(func[0], func[1], func[2], func[3]);
     return 0;
+}
+
+int parse_blend_equation(PyObject * arg, int * value) {
+    if (PyLong_Check(arg)) {
+        value[0] = PyLong_AsLong(arg);
+        value[1] = value[0];
+        if (PyErr_Occurred()) {
+            PyErr_Clear();
+            return 0;
+        }
+        return 1;
+    }
+    arg = PySequence_Tuple(arg);
+    if (!arg) {
+        PyErr_Clear();
+        return 0;
+    }
+    int size = (int)PyTuple_Size(arg);
+    if (size == 2) {
+        value[0] = PyLong_AsLong(PyTuple_GetItem(arg, 0));
+        value[1] = PyLong_AsLong(PyTuple_GetItem(arg, 1));
+        if (PyErr_Occurred()) {
+            PyErr_Clear();
+            return 0;
+        }
+    } else if (size == 1) {
+        value[0] = PyLong_AsLong(PyTuple_GetItem(arg, 0));
+        value[1] = value[0];
+        if (PyErr_Occurred()) {
+            PyErr_Clear();
+            return 0;
+        }
+    } else {
+        return 0;
+    }
+    Py_DECREF(arg);
+    return 1;
 }
 
 // NOTE: currently never called from python
@@ -7952,25 +8005,13 @@ PyObject * MGLContext_get_blend_equation(MGLContext * self) {
 }
 
 int MGLContext_set_blend_equation(MGLContext * self, PyObject * value) {
-    Py_ssize_t num_values = PyTuple_GET_SIZE(value);
-
-    if (!(num_values == 1 || num_values == 2)) {
-        MGLError_Set("Invalid number of values. Must be 1 or 2.");
+    int equation[2] = {};
+    if (!parse_blend_equation(value, equation)) {
+        MGLError_Set("invalid blend equation");
         return -1;
     }
 
-    int mode_rgb = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 0));
-    int mode_alpha = mode_rgb;
-    if (num_values == 2) {
-        mode_alpha = (int)PyLong_AsLong(PyTuple_GET_ITEM(value, 1));
-    }
-
-    if (PyErr_Occurred()) {
-        return -1;
-    }
-
-    self->gl.BlendEquationSeparate(mode_rgb, mode_alpha);
-
+    self->gl.BlendEquationSeparate(equation[0], equation[1]);
     return 0;
 }
 
@@ -7999,10 +8040,9 @@ int MGLContext_set_depth_func(MGLContext * self, PyObject * value) {
 
 PyObject * MGLContext_get_depth_clamp_range(MGLContext * self) {
     if (self->depth_clamp) {
-        return Py_BuildValue("dd", self->depth_range[0],
-                             self->depth_range[1]);
+        return Py_BuildValue("dd", self->depth_range[0], self->depth_range[1]);
     }
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 int MGLContext_set_depth_clamp_range(MGLContext * self, PyObject * value) {
