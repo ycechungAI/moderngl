@@ -3241,7 +3241,8 @@ int parse_sampler_binding(PyObject * arg, SamplerBinding * value) {
 
     value->location = location;
     // value->sampler = sampler;
-    value->sampler = Py_NewRef(item); // currently this must be a python layer Sampler instance
+    Py_INCREF(item);
+    value->sampler = item; // currently this must be a python layer Sampler instance
     Py_DECREF(arg);
     return 1;
 }
