@@ -288,7 +288,7 @@ far = 10  # Camera projection far
 near = 0.001  # Camera projection near
 perpective = 1  # Select perpective/orthographic projection
 position = [0., 0.1, -0.4]  # Camera position
-rotate = [-15, 0, 0]  # Camera angle
+rotate = [-20, 0, 0]  # Camera angle
 
 light_far = 10  # Light projection far
 light_near = 0.001  # Light projection near
