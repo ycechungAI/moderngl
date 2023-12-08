@@ -43,4 +43,4 @@ The program will also process a color information.
     :dedent: 8
     :lines: 21-28
 
-Proceed to the :doc:`next step <vertex_array>`.
+Proceed to the :doc:`next step <buffer>`.
