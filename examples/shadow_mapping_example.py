@@ -12,17 +12,20 @@ import math
 # Create window
 window_cls = glw.get_local_window_cls('pyglet')
 window = window_cls(
-    size=(1024, 512), fullscreen=False, title='Shadow rendering example',
+    size=(1024, 512), fullscreen=False,
+    title='Shadow rendering (shadow mapping) example',
     resizable=False, vsync=True, gl_version=(3, 3)
 )
 ctx = window.ctx
 glw.activate_context(window, ctx=ctx)
 window.clear()
+window.swap_buffers()
 
 # Window program
 window_program = ctx.program(
     vertex_shader='''
     #version 330
+
     in vec3 in_vert;
     in vec4 in_color;
 
@@ -78,14 +81,16 @@ window_program = ctx.program(
         pixel_coords = camera_revers_rotation_matrix*
               pixel_coords;
         pixel_coords += camera_position;
-        vec3 pxc = pixel_coords;
+        vec3 pixel_world_coords = pixel_coords;  // Pixel world coordinates
         pixel_coords -= light_position;
         pixel_coords = light_rotation_matrix*
               pixel_coords;
         /////////////////
 
         // Convert .xy to 2D coords //
-        mediump float dist = length(pixel_coords);
+        float distance = length(pixel_coords);
+        // ^^ From light to pixel 3D distance ^^
+
         pixel_coords.y*=light_aspect_ratio;
         pixel_coords.xy = vec2(pixel_coords.xy/
                 (pixel_coords.z+(1.0-pixel_coords.z)*(1.0-light_perspective))+1.0)/2.0;
@@ -95,7 +100,6 @@ window_program = ctx.program(
         // Get depth
         float depth = texture(light_depthI, pixel_coords.xy).x;
         depth = 2.0 * depth - 1.0;
-
 
         vec2 lcs = light_clip_space;
 
@@ -123,6 +127,7 @@ window_program = ctx.program(
 light_program = ctx.program(
     vertex_shader='''
     #version 330
+
     in vec3 in_vert;
     in vec4 in_color;
 
