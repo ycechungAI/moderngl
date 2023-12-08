@@ -5,7 +5,7 @@ Standalone rendering
 
 Standalone (offline) rendering allows you to render without using a window, and is included in ModernGL by default.
 
-To display the rendering result, we use the `Pillow (PIL)`_ library that comes with Python. Let's return the texture from the video card to RAM and call the ``PIL.Image.show()`` method to show it.
+To display the rendering result, we use the `Pillow (PIL)`_ library that comes with Python. Let's return the texture from the GPU memory to RAM and call the ``PIL.Image.show()`` method to show it.
 
 .. rubric:: Entire source
 
