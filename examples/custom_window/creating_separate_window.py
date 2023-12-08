@@ -1,4 +1,5 @@
-# Example of creating a window without enclosing code in modengl_window.WindowConfig class
+# Example of creating a window without
+# enclosing code in modengl_window.WindowConfig class
 # Description: This example shows how to create a window as a separate object.
 # Note: Only one window can be used.
 
@@ -15,11 +16,13 @@ window = window_cls(
 ctx = window.ctx
 glw.activate_context(window, ctx=ctx)
 window.clear()
+window.swap_buffers()
 
 # Window prog
 prog = ctx.program(
     vertex_shader='''
     #version 330
+
     in vec3 in_vert;
     in vec4 in_color;
 
