@@ -3,8 +3,8 @@
 Creating a Context
 ------------------
 
-Before we can do anything with ModernGL we need a :py:class:`~moderngl.Context`.
-The :py:class:`~moderngl.Context` object makes us able to create OpenGL resources.
+Before we can do anything with ModernGL we need a :py:class:`Context`.
+The :py:class:`Context` object makes us able to create OpenGL resources.
 ModernGL can only create headless contexts (no window), but it can also detect
 and use contexts from a large range of window libraries. The `moderngl-window`_
 library is a good start or reference for rendering to a window.
