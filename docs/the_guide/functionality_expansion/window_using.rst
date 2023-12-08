@@ -7,7 +7,7 @@ By default, ModernGL does not have a window, but the `moderngl-window`_ module a
 
     pip install moderngl-window
 
-By default, `moderngl-window`_ uses `pyglet`_ as its backend. It is installed automatically along with `moderngl-window`_. However, its use is limited by the ``moderngl_window.WindowConfig`` standard.
+`moderngl-window`_ uses `pyglet`_ as its default backend. It is installed automatically along with `moderngl-window`_. However, its use is limited to the supported functionality in ``moderngl_window.WindowConfig``.
 
 .. rubric:: Entire source
 
