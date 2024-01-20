@@ -1,6 +1,6 @@
 import moderngl
 
-ctx = moderngl.create_standalone_context()
+ctx = moderngl.create_context(standalone=True)
 
 prog = ctx.program(
     vertex_shader="""
