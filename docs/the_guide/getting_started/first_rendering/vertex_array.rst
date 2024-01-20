@@ -28,7 +28,7 @@ In our example we use a simple implementation of this method.
 
 .. rubric:: Entire source
 
-.. literalinclude:: first.4.py
+.. literalinclude:: first.3.py
     :emphasize-lines: 42
     :linenos:
 

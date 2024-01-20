@@ -39,3 +39,4 @@ b = np.zeros(50)
 vertices = np.dstack([x, y, r, g, b])
 
 vbo = ctx.buffer(vertices.astype("f4").tobytes())
+vao = ctx.vertex_array(prog, vbo, "in_vert", "in_color")

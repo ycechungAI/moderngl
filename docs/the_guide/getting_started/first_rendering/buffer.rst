@@ -73,7 +73,7 @@ We called it `VBO`_ (Vertex Buffer Object) because we will store vertex data in 
 
 .. rubric:: Entire source
 
-.. literalinclude:: first.3.py
+.. literalinclude:: first.2.py
     :emphasize-lines: 2,33-
     :linenos:
 
