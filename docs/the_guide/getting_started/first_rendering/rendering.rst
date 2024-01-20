@@ -13,7 +13,7 @@ To display the rendering result, we use the `Pillow (PIL)`_ library that comes w
 
 .. rubric:: Entire source
 
-.. literalinclude:: first.5.py
+.. literalinclude:: first.4.py
     :emphasize-lines: 4,46-
     :linenos:
 

@@ -1,6 +1,7 @@
 import moderngl
+import numpy as np
 
-ctx = moderngl.create_standalone_context()
+ctx = moderngl.create_context(standalone=True)
 
 prog = ctx.program(
     vertex_shader="""
@@ -28,3 +29,13 @@ prog = ctx.program(
         }
     """,
 )
+
+x = np.linspace(-1.0, 1.0, 50)
+y = np.random.rand(50) - 0.5
+r = np.zeros(50)
+g = np.ones(50)
+b = np.zeros(50)
+
+vertices = np.dstack([x, y, r, g, b])
+
+vbo = ctx.buffer(vertices.astype("f4").tobytes())

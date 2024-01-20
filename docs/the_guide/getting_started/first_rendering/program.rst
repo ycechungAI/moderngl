@@ -27,20 +27,20 @@ The program will also process a color information.
 
 .. rubric:: Entire source
 
-.. literalinclude:: first.2.py
+.. literalinclude:: first.1.py
     :emphasize-lines: 5-
     :linenos:
 
 .. rubric:: Vertex Shader
 
-.. literalinclude:: first.2.py
+.. literalinclude:: first.1.py
     :language: glsl
     :dedent: 8
     :lines: 7-17
 
 .. rubric:: Fragment Shader
 
-.. literalinclude:: first.2.py
+.. literalinclude:: first.1.py
     :language: glsl
     :dedent: 8
     :lines: 20-28

@@ -1,7 +1,9 @@
 import moderngl
 import numpy as np
 
-ctx = moderngl.create_standalone_context()
+from PIL import Image
+
+ctx = moderngl.create_context(standalone=True)
 
 prog = ctx.program(
     vertex_shader="""
@@ -40,3 +42,15 @@ vertices = np.dstack([x, y, r, g, b])
 
 vbo = ctx.buffer(vertices.astype("f4").tobytes())
 vao = ctx.vertex_array(prog, vbo, "in_vert", "in_color")
+
+fbo = ctx.framebuffer(
+    color_attachments=[ctx.texture((512, 512), 3)]
+)
+fbo.use()
+fbo.clear(0.0, 0.0, 0.0, 1.0)
+vao.render(moderngl.LINE_STRIP)
+
+Image.frombytes(
+    "RGB", fbo.size, fbo.color_attachments[0].read(),
+    "raw", "RGB", 0, -1
+).show()
