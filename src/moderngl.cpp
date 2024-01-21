@@ -6589,17 +6589,15 @@ PyObject * MGLContext_vertex_array(MGLContext * self, PyObject * args) {
     PyObject * content;
     MGLBuffer * index_buffer;
     int index_element_size;
-    int skip_errors;
 
     int args_ok = PyArg_ParseTuple(
         args,
-        "O!OOIp",
+        "O!OOI",
         MGLProgram_type,
         &program,
         &content,
         &index_buffer,
-        &index_element_size,
-        &skip_errors
+        &index_element_size
     );
 
     if (!args_ok) {

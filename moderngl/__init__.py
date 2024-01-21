@@ -1644,7 +1644,13 @@ class Context:
         for buffer, layout, *attribs in content:
             if layout is None:
                 layout = detect_format(program, attribs)
-            attribs = [types[x] if type(x) is int else types[locations[x]] for x in attribs]
+            if skip_errors:
+                attribs = [
+                    types.get(x, None) if type(x) is int else types.get(locations.get(x, -1), None)
+                    for x in attribs
+                ]
+            else:
+                attribs = [types[x] if type(x) is int else types[locations[x]] for x in attribs]
             mgl_content.append((buffer.mglo, layout, *attribs))
 
         res = VertexArray.__new__(VertexArray)
@@ -1653,7 +1659,6 @@ class Context:
             tuple(mgl_content),
             index_buffer_mglo,
             index_element_size,
-            skip_errors,
         )
         res._program = program
         res._index_buffer = index_buffer
