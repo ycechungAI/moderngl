@@ -7779,9 +7779,15 @@ PyObject * MGLContext_write_uniform(MGLContext * self, PyObject * args) {
     int location;
     int gl_type;
     int array_length;
+    int element_size;
     Py_buffer view = {};
 
-    if (!PyArg_ParseTuple(args, "IIIIy*", &program_obj, &location, &gl_type, &array_length, &view)) {
+    if (!PyArg_ParseTuple(args, "IIIIIy*", &program_obj, &location, &gl_type, &array_length, &element_size, &view)) {
+        return NULL;
+    }
+
+    if ((int)view.len != array_length * element_size) {
+        MGLError_Set("invalid uniform size");
         return NULL;
     }
 

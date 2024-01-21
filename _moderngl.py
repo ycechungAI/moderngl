@@ -92,7 +92,9 @@ class Uniform:
         )
 
     def write(self, data: Any):
-        self.ctx._write_uniform(self.program_obj, self.location, self.gl_type, self.array_length, data)
+        self.ctx._write_uniform(
+            self.program_obj, self.location, self.gl_type, self.array_length, self.element_size, data,
+        )
 
 
 class UniformBlock:
