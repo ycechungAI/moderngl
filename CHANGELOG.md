@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [5.8.0](https://github.com/moderngl/moderngl/compare/5.7.4...master)
+## [main](https://github.com/moderngl/moderngl/compare/5.9.0...main)
+
+## [5.9.0](https://github.com/moderngl/moderngl/compare/5.8.0...5.9.0)
+
+...
+
+## [5.8.0](https://github.com/moderngl/moderngl/compare/5.7.4...5.8.0)
 
 This version includes the following structural changes in moderngl:
 
