@@ -5,7 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [main](https://github.com/moderngl/moderngl/compare/5.9.0...main)
+## [main](https://github.com/moderngl/moderngl/compare/5.10.0...main)
+
+## [5.10.0](https://github.com/moderngl/moderngl/compare/5.9.0...5.10.0)
+
+...
 
 ## [5.9.0](https://github.com/moderngl/moderngl/compare/5.8.0...5.9.0)
 
