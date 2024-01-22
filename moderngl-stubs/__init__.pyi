@@ -2322,6 +2322,16 @@ def create_standalone_context(
         :py:class:`Context` object
     """
 
+def init_context(loader=None) -> None:
+    """
+        Initialize the default moderngl context
+    """
+
+def get_context() -> Context:
+    """
+        Return the previously created context
+    """
+
 class Framebuffer:
     """
     A :py:class:`Framebuffer` is a collection of buffers that can be used as the destination for rendering.

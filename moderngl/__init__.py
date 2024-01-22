@@ -1957,7 +1957,28 @@ def create_context(require=None, standalone=False, share=False, **settings):
     return ctx
 
 
+def init_context(loader=None):
+    if loader is None:
+        from _moderngl import DefaultLoader
+        loader = DefaultLoader()
+
+    ctx = Context.__new__(Context)
+    ctx.mglo, ctx.version_code = mgl.create_context(context=loader)
+    ctx._info = None
+    ctx._extensions = None
+    ctx.extra = None
+    ctx._gc_mode = None
+    ctx._objects = deque()
+
+    ctx._screen = ctx.detect_framebuffer(0)
+    ctx.fbo = ctx.detect_framebuffer()
+    ctx.mglo.fbo = ctx.fbo.mglo
+    _store.default_context = ctx
+
+
 def get_context():
+    if _store.default_context is None:
+        init_context()
     return _store.default_context
 
 
