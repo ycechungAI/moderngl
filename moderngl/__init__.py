@@ -1703,6 +1703,12 @@ class Context:
         if fragment_outputs is None:
             fragment_outputs = {}
 
+        if isinstance(vertex_shader, str):
+            vertex_shader = vertex_shader.strip()
+
+        if isinstance(fragment_shader, str):
+            fragment_shader = fragment_shader.strip()
+
         res = Program.__new__(Program)
         res.mglo, _members, res._subroutines, res._geom, res._glo = self.mglo.program(
             vertex_shader,
