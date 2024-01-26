@@ -1934,8 +1934,16 @@ def create_context(require=None, standalone=False, share=False, **settings):
     if require is None:
         require = 330
 
-    mode = "standalone" if standalone is True else "detect"
-    if share is True:
+    if not standalone and not share and not settings and _store.default_context is None:
+        ctx = get_context()
+
+        if ctx.version_code < require:
+            raise ValueError("Requested OpenGL version {0}, got version {1}".format(require, ctx.version_code))
+
+        return ctx
+
+    mode = "standalone" if standalone else "detect"
+    if share:
         mode = "share"
 
     ctx = Context.__new__(Context)
