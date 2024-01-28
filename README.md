@@ -99,35 +99,21 @@ cd moderngl
 python -m pip install -e .
 ```
 
-## FAQ
+## Notes
 
-### Is ModernGL faster than PyOpenGL?
+ModernGL may be faster than other libraries providing direct OpenGL access.
+ModernGL is implemented in C++ and a single render call involving multiple OpenGL functions count as a single Python function call.
 
-In many cases **yes**, the core functions of ModernGL are written in C++.
-We do not call every OpenGL function from Python, we batch them in a single C++ function instead.
+ModernGL require **OpenGL 3.3**. Compute Shaders require **OpenGL 4.3**.
+Some functionality relies on specific extensions.
 
-### What version of OpenGL is used?
+ModernGL can be used **anywhere where OpenGL is supported.** ModernGL is also working in a [headless](examples/headless) environment.
 
-Most of the calls only require **OpenGL 3.3**.
-Compute Shaders require **OpenGL 4.3**.
-Some functionality relies on their specific extension.
+ModernGL is responsible for calling the OpenGL API and providing a Pythonic user-friendly API instead.
+It is possible to integrate moderngl into any window libraries that support OpenGL.
+Consider [moderngl-window](https://github.com/moderngl/moderngl-window) which implements many of them, plus it also helps with resource loading.
 
-### Where can I use ModernGL?
-
-**Anywhere where OpenGL is supported.** ModernGL is also working [headlessly](examples/headless).
-
-### Can ModernGL create a Window?
-
-**NO**, ModernGL is responsible for calling the OpenGL API and providing a Pythonic user-friendly API instead.
-We also provide a utility library [moderngl-window](https://github.com/moderngl/moderngl-window)
-making window creation and resource loading very simple.
-It is possible to integrate moderngl into any other window libraries that support OpenGL.
-[moderngl-window](https://github.com/moderngl/moderngl-window) implements many of them.
-
-### Limitations using ModernGL over PyOpenGL?
-
-All the necessary calls are (or can be) implemented in ModernGL.
-However you can interact with the ModernGL objects from PyOpenGL.
+ModernGL does not implement the full OpenGL feature set or extensions. You can interact with the ModernGL objects from OpenGL.
 
 ## Citation
 
