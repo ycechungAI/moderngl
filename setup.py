@@ -111,6 +111,8 @@ setup(
     py_modules=["_moderngl"],
     ext_modules=[mgl],
     platforms=["any"],
-    install_requires=["glcontext>=2.5.0,<3"],
+    extras_require={
+        "headless": ["glcontext>=2.5.0"],
+    },
     python_requires=">=3.7",
 )
