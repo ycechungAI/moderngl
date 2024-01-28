@@ -6,8 +6,9 @@
 
 # ModernGL
 
-ModernGL is a python wrapper over OpenGL 3.3+ core that simplifies the creation of simple graphics applications like scientific simulations, games or user interfaces. Usually, acquiring in-depth knowledge of OpenGL requires a steep learning curve. In contrast, ModernGL is easy to learn and use, moreover it is capable of rendering with high performance and quality, with less code written. The majority of the moderngl
-code base is written in C++ for high performance.
+ModernGL is a Python wrapper over OpenGL Core. ModernGL simplifies the creation of graphics applications like scientific simulations, games or user interfaces.
+Usually, acquiring in-depth knowledge of OpenGL requires a steep learning curve. In contrast, ModernGL is easy to learn and use.
+ModernGL is capable of rendering with high performance and quality, with less code written.
 
 ```
 pip install moderngl
