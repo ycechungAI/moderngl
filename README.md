@@ -131,8 +131,7 @@ If you need to cite this repository in academic research:
 }
 ```
 
-If commit hash is required this can be found per release here:
-https://github.com/moderngl/moderngl/releases
+The commit hash can be found in the [Releases](https://github.com/moderngl/moderngl/releases).
 
 ## Community
 
