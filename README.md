@@ -137,4 +137,3 @@ The commit hash can be found in the [Releases](https://github.com/moderngl/moder
 
 - [ModernGL Discord Server](https://discord.gg/UEMtW8D)
 - [Contributors](https://github.com/moderngl/moderngl/graphs/contributors)
-- [Code of Conduct](https://github.com/moderngl/moderngl/blob/master/.github/CODE_OF_CONDUCT.md)
