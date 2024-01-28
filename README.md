@@ -53,13 +53,15 @@ b'Hello World!'
 
 For complete examples please visit the [Examples](https://github.com/moderngl/moderngl/tree/master/examples/#readme).
 
-## Easy to use with Pillow and Numpy
+## Easy to use with Pillow
 
 ```py
 >>> img = Image.open("texture.jpg").convert("RGB")
 >>> ctx.texture(img.size, 3, img.tobytes())
 <Texture: 1>
 ```
+
+## Easy to use with Numpy
 
 ```py
 >>> ctx.buffer(np.array([0.0, 0.0, 1.0, 1.0], dtype="f4"))
