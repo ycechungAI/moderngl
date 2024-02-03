@@ -248,6 +248,12 @@ class DefaultLoader:
 
         self.load_opengl_function = loader
 
+    def __enter__(self):
+        pass
+
+    def __exit__(self, *args):
+        pass
+
 
 class Error(Exception):
     pass
