@@ -10,7 +10,7 @@ COPY moderngl /moderngl/moderngl
 COPY moderngl-stubs /moderngl/moderngl-stubs
 COPY setup.py MANIFEST.in LICENSE README.md _moderngl.py /moderngl/
 RUN cd /moderngl/ && /opt/python-wasm-sdk/python3-wasm setup.py bdist_wheel
-RUN unzip /moderngl/dist/moderngl-5.10.0-cp311-cp311-wasm32_bi_emscripten.whl -d /web/
+RUN unzip /moderngl/dist/moderngl-6.0.0-cp311-cp311-wasm32_bi_emscripten.whl -d /web/
 
 COPY examples/pygame-web/main.py /web/
 RUN sed -i 's/args.bind/"0.0.0.0"/g' /usr/local/lib/python3.10/dist-packages/pygbag/testserver.py
