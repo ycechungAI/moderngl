@@ -107,7 +107,7 @@ setup(
     keywords=keywords,
     include_package_data=True,
     package_data={"moderngl-stubs": ["__init__.pyi"]},
-    packages=["moderngl", "moderngl-stubs", "moderngl.__pyinstaller"],
+    packages=["moderngl", "moderngl-stubs"],
     py_modules=["_moderngl"],
     ext_modules=[mgl],
     platforms=["any"],
