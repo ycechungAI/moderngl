@@ -12,6 +12,12 @@ except ImportError:
 __version__ = "6.0.0"
 
 
+def packager_imports():
+    """some additional imports that code freezers (Pyinstaller,etc) should see."""
+
+    import glcontext
+
+
 class _store:
     default_context = None
 
