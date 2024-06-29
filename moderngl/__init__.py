@@ -1547,6 +1547,14 @@ class Context:
         res.extra = None
         return res
 
+    def external_buffer(self, glo, size):
+        res = Buffer.__new__(Buffer)
+        res.mglo, res._size, res._glo = self.mglo.external_buffer(glo, size)
+        res._dynamic = False
+        res.ctx = self
+        res.extra = None
+        return res
+
     def external_texture(self, glo, size, components, samples, dtype):
         res = Texture.__new__(Texture)
         res.mglo, res._glo = self.mglo.external_texture(glo, size, components, samples, dtype)

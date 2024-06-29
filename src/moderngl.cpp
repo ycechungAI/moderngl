@@ -79,6 +79,7 @@ struct MGLBuffer {
     Py_ssize_t size;
     bool dynamic;
     bool released;
+    bool external;
 };
 
 struct MGLContext {
@@ -858,6 +859,7 @@ static PyObject * MGLContext_buffer(MGLContext * self, PyObject * args) {
 
     MGLBuffer * buffer = PyObject_New(MGLBuffer, MGLBuffer_type);
     buffer->released = false;
+    buffer->external = false;
 
     buffer->size = (int)buffer_view.len;
     buffer->dynamic = dynamic ? true : false;
@@ -882,6 +884,29 @@ static PyObject * MGLContext_buffer(MGLContext * self, PyObject * args) {
     if (data != Py_None) {
         PyBuffer_Release(&buffer_view);
     }
+
+    return Py_BuildValue("(Oni)", buffer, buffer->size, buffer->buffer_obj);
+}
+
+static PyObject * MGLContext_external_buffer(MGLContext * self, PyObject * args) {
+    int glo;
+    int size;
+
+    int args_ok = PyArg_ParseTuple(args, "II", &glo, &size);
+    if (!args_ok) {
+        return NULL;
+    }
+
+    MGLBuffer * buffer = PyObject_New(MGLBuffer, MGLBuffer_type);
+    buffer->released = false;
+    buffer->external = false;
+
+    buffer->size = size;
+    buffer->dynamic = false;
+    buffer->buffer_obj = glo;
+
+    Py_INCREF(self);
+    buffer->context = self;
 
     return Py_BuildValue("(Oni)", buffer, buffer->size, buffer->buffer_obj);
 }
@@ -1346,7 +1371,7 @@ static PyObject * MGLBuffer_bind_to_storage_buffer(MGLBuffer * self, PyObject * 
 }
 
 static PyObject * MGLBuffer_release(MGLBuffer * self, PyObject * args) {
-    if (self->released) {
+    if (self->released || self->external) {
         Py_RETURN_NONE;
     }
     self->released = true;
@@ -4323,7 +4348,7 @@ static PyObject * MGLTexture_get_handle(MGLTexture * self, PyObject * args) {
 }
 
 static PyObject * MGLTexture_release(MGLTexture * self, PyObject * args) {
-    if (self->released) {
+    if (self->released || self->external) {
         Py_RETURN_NONE;
     }
     self->released = true;
@@ -8819,6 +8844,7 @@ static PyMethodDef MGLContext_methods[] = {
     {(char *)"clear_samplers", (PyCFunction)MGLContext_clear_samplers, METH_VARARGS},
 
     {(char *)"buffer", (PyCFunction)MGLContext_buffer, METH_VARARGS},
+    {(char *)"external_buffer", (PyCFunction)MGLContext_external_buffer, METH_VARARGS},
     {(char *)"texture", (PyCFunction)MGLContext_texture, METH_VARARGS},
     {(char *)"texture3d", (PyCFunction)MGLContext_texture3d, METH_VARARGS},
     {(char *)"texture_array", (PyCFunction)MGLContext_texture_array, METH_VARARGS},
