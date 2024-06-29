@@ -1732,6 +1732,10 @@ class Context:
         Returns:
             :py:class:`Buffer` object
         """
+    def external_buffer(self, glo: int, size: int) -> Buffer:
+        """
+        Create a :py:class:`Buffer` object.
+        """
     def external_texture(
         self,
         glo: int,

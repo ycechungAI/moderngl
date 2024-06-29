@@ -57,18 +57,22 @@ class CrateExample(Example):
         self.mvp = self.prog['Mvp']
         self.light = self.prog['Light']
 
-        self.scene = self.load_scene('crate.obj')
-        self.vao = self.scene.root_nodes[0].mesh.vao.instance(self.prog)
+        data = np.array([
+            -1.0, -1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+            1.0, -1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0,
+            1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+            -1.0, -1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+            -1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0,
+        ], dtype='f4').tobytes()
 
-        width, height = 16, 16
-        pixels = os.urandom(width * height * 4)
-        texture = GL.glGenTextures(1)
-        # GL.glActiveTexture(GL.GL_TEXTURE0)
-        GL.glBindTexture(GL.GL_TEXTURE_2D, texture)
-        GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA8, width, height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixels)
-        GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
-        GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST)
-        self.texture = self.ctx.external_texture(texture, (width, height), 4, 0, 'f1')
+        buffer = GL.glGenBuffers(1)
+        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer)
+        GL.glBufferData(GL.GL_ARRAY_BUFFER, data, GL.GL_STATIC_DRAW)
+        self.vbo = self.ctx.external_buffer(buffer, len(data))
+
+        self.vao = self.ctx.vertex_array(self.prog, [(self.vbo, '3f 3f 2f', 'in_position', 'in_normal', 'in_texcoord_0')])
+        self.texture = self.load_texture_2d('crate.png')
 
     def render(self, time, frame_time):
         angle = time
