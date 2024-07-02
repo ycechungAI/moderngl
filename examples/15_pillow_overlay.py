@@ -140,7 +140,7 @@ class Overlay:
         self.ctx = moderngl.get_context()
         self.img = Image.new('RGBA', size)
         self.draw = ImageDraw.Draw(self.img)
-        self.draw.font = ImageFont.truetype('examples/data/OpenSans-Medium.ttf', 20)
+        self.draw.font = ImageFont.truetype('examples/data/fonts/OpenSans/OpenSans-Medium.ttf', 20)
         self.texture = self.ctx.texture(size, 4)
         self.program = self.ctx.program(
             vertex_shader='''
@@ -385,15 +385,15 @@ class Scene:
         )
 
         self.uniform_buffer = UniformBuffer()
-        self.texture = ImageTexture('examples/data/crate.png')
+        self.texture = ImageTexture('examples/data/textures/crate.png')
 
         self.color_material = ColorMaterial()
         self.texture_material = TextureMaterial(self.texture)
 
-        self.car_geometry = ModelGeometry('examples/data/lowpoly_toy_car.obj')
+        self.car_geometry = ModelGeometry('examples/data/models/lowpoly_toy_car.obj')
         self.car = Mesh(self.color_material, self.car_geometry)
 
-        self.crate_geometry = ModelGeometry('examples/data/crate.obj')
+        self.crate_geometry = ModelGeometry('examples/data/models/crate.obj')
         self.crate = Mesh(self.texture_material, self.crate_geometry)
 
         self.film_grain = FilmGrain(self.screen)

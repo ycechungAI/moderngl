@@ -261,15 +261,15 @@ class Scene:
         self.ctx = moderngl.get_context()
 
         self.uniform_buffer = UniformBuffer()
-        self.texture = ImageTexture('examples/data/crate.png')
+        self.texture = ImageTexture('examples/data/textures/crate.png')
 
         self.color_material = ColorMaterial()
         self.texture_material = TextureMaterial(self.texture)
 
-        self.car_geometry = ModelGeometry('examples/data/lowpoly_toy_car.obj')
+        self.car_geometry = ModelGeometry('examples/data/models/lowpoly_toy_car.obj')
         self.car = Mesh(self.color_material, self.car_geometry)
 
-        self.crate_geometry = ModelGeometry('examples/data/crate.obj')
+        self.crate_geometry = ModelGeometry('examples/data/models/crate.obj')
         self.crate = Mesh(self.texture_material, self.crate_geometry)
 
     def render(self):

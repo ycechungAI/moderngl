@@ -67,7 +67,7 @@ class Example(mglw.WindowConfig):
             ''',
         )
 
-        self.texture = self.load_texture_2d('pal.png')
+        self.texture = self.load_texture_2d('colormaps/fractal.png')
         self.sampler = self.ctx.sampler(texture=self.texture)
         self.vao = self.ctx.vertex_array(self.program, [])
         self.vao.vertices = 3

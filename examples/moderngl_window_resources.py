@@ -16,8 +16,8 @@ class Example(mglw.WindowConfig):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.obj = self.load_scene('sitting_dummy.obj')
-        self.texture = self.load_texture_2d('wood.jpg')
+        self.obj = self.load_scene('models/sitting_dummy.obj')
+        self.texture = self.load_texture_2d('textures/wood.jpg')
 
         self.program = self.ctx.program(
             vertex_shader='''
