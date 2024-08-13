@@ -9,7 +9,7 @@ try:
 except ImportError:
     pass
 
-__version__ = "5.11.0"
+__version__ = "5.11.1"
 
 
 def packager_imports():
