@@ -308,7 +308,7 @@ class Renderer():
     def update_caustics(self, matrices: Matrices, water: Water):
         self.caustic_texture.draw_to(self.ctx)
         self.ctx.clear()
-        water.texture_a.use()
+        water.texture_a.use(0)
         self.caustics_shader.draw_mesh(self.water_mesh, matrices, unifroms={
             "light": self.light_dir,
             "water": 0,
@@ -339,7 +339,7 @@ class Renderer():
         self.ctx.disable(moderngl.CULL_FACE)
 
     def render_sphere(self, matrices: Matrices, water: Water):
-        water.texture_a.use()
+        water.texture_a.use(0)
         self.caustic_texture.use(1)
         self.sphere_shader.draw_mesh(self.sphere_mesh, matrices, unifroms={
             "light": self.light_dir,
