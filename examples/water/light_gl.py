@@ -80,7 +80,8 @@ class Mesh:
         }
         self.lines_ibo = ctx.buffer(data.lines.astype("i4").tobytes())
         if data.triangles is not None:
-            self.triangles_ibo = ctx.buffer(data.triangles.astype("i4").tobytes())
+            self.triangles_ibo = ctx.buffer(
+                data.triangles.astype("i4").tobytes())
         self.vaos: dict[int, tuple[moderngl.VertexArray, int]] = {}
 
     def layout(ctx: moderngl.Context, array: np.ndarray, t: str) -> bytes:
@@ -279,9 +280,10 @@ class Shader:
             return gl_ModelViewProjectionMatrix * gl_Vertex;
         }
     """
-    vert_header = header + _vert_header
+    vert_header = "#version 130\n" + header + _vert_header
 
     frag_header = """
+        #version 130
         precision highp float;
     """ + header
 
