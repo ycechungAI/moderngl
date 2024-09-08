@@ -130,9 +130,7 @@ Attributes
 .. py:attribute:: Program.geometry_vertices
     :type: int
 
-    The maximum number of vertices that.
-
-    the geometry shader will output.
+    The maximum number of vertices that the geometry shader will output.
     (from ``layout(output_primitive, max_vertices = vert_count) out;``)
 
 .. py:attribute:: Program.is_transform
