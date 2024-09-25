@@ -8334,6 +8334,8 @@ static PyObject * MGLContext_get_error(MGLContext * self, void * closure) {
             return PyUnicode_FromFormat("GL_STACK_UNDERFLOW");
         case GL_STACK_OVERFLOW:
             return PyUnicode_FromFormat("GL_STACK_OVERFLOW");
+        case GL_CONTEXT_LOST:
+            return PyUnicode_FromFormat("GL_CONTEXT_LOST");
     }
     return PyUnicode_FromFormat("GL_UNKNOWN_ERROR");
 }
