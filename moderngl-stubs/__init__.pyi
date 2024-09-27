@@ -2268,6 +2268,46 @@ class Context:
         Standalone contexts can normally be released.
         """
 
+    def clear_errors(self) -> None:
+        """
+        Clears all outstanding OpenGL errors,
+        such that calling :py:meth:`Context.error` immediately afterward
+        will return ``"GL_NO_ERROR"``.
+
+        This method is intended for applications
+        that use additional OpenGL libraries to access this context.
+        It should be used immediately before calling any such libraries,
+        so as not to impact their own error-reporting.
+
+        Because the same error flag is shared by all OpenGL functions,
+        an error originating in ``moderngl``
+        may inadvertently be reported by another library when it calls ``glGetError``.
+        This complicates debugging.
+
+        .. code-block:: python
+
+            from OpenGL import GL
+
+            ctx = moderngl.create_context()
+
+            # 1 is not a valid value for glEnable, so this will set GL_INVALID_ENUM.
+            ctx.enable_direct(1)
+
+            # But if not for this method...
+            ctx.clear_errors()
+
+            # ...then this unrelated PyOpenGL call will raise an exception
+            # for the error that was actually set by moderngl.
+            # It will look like this method caused the error, despite being used correctly!
+            GL.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST)
+
+        :: tip ..
+
+            If your application only uses OpenGL through moderngl,
+            then you most likely won't need this method.
+        """
+
+
 def create_context(
     require: Optional[int] = None,
     standalone: bool = False,

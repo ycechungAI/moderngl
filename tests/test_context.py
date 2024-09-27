@@ -1,5 +1,7 @@
 import pytest
-
+import OpenGL
+OpenGL.ERROR_CHECKING = False # Don't want PyOpenGL to raise any exceptions
+from OpenGL import GL
 
 def test_create_destroy(ctx_new):
     """Create and destroy a context"""
@@ -24,6 +26,37 @@ def test_extensions(ctx_new):
     ctx = ctx_new
     assert isinstance(ctx.extensions, set)
     assert len(ctx.extensions) > 0
+
+
+def test_clear_errors(ctx_new):
+    ctx = ctx_new
+    # Reading the error state should reset it, as with glGetError
+    ctx.enable_direct(1) # Not a valid glEnable value
+    assert ctx.error == "GL_INVALID_ENUM"
+    assert ctx.error == "GL_NO_ERROR" # calling glGetError resets the error state
+
+    # Clearing the error state should reset it
+    ctx.enable_direct(1)
+    ctx.clear_errors()
+    assert ctx.error == "GL_NO_ERROR"
+
+    # Ensure PyOpenGL can see errors originating from moderngl
+    ctx.enable_direct(1)
+    assert GL.glGetError() == GL.GL_INVALID_ENUM
+
+    # Ensure moderngl can see errors originating from PyOpenGL
+    GL.glEnable(1)
+    assert ctx.error == "GL_INVALID_ENUM"
+
+    # Clearing errors originating from moderngl so PyOpenGL doesn't break
+    ctx.enable_direct(1)
+    ctx.clear_errors()
+    assert GL.glGetError() == GL.GL_NO_ERROR
+
+    # Clearing errors originating from PyOpenGL so moderngl doesn't break
+    GL.glEnable(1)
+    ctx.clear_errors()
+    assert ctx.error == "GL_NO_ERROR"
 
 
 def test_attributes(ctx_new):

@@ -1943,6 +1943,10 @@ class Context:
             self.mglo.release()
             self.mglo = InvalidObject()
 
+    def clear_errors(self):
+        if not isinstance(self.mglo, InvalidObject):
+            self.mglo.clear_errors()
+
 
 def create_context(require=None, standalone=False, share=False, **settings):
     if require is None:
