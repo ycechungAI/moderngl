@@ -7673,6 +7673,19 @@ static PyObject * MGLContext_release(MGLContext * self, PyObject * args) {
     Py_RETURN_NONE;
 }
 
+static PyObject * MGLContext_clear_errors(MGLContext * self, PyObject * args) {
+    // According to the OpenGL wiki, OpenGL can hold multiple error flags.
+    // (Contrast with something like the C stdlib's errno, which is a single global variable.)
+    // Calling glGetError returns one of these error codes and clears it,
+    // but there may still be others.
+    // Therefore, they recommend calling glGetError in a loop until it returns GL_NO_ERROR.
+    // See https://www.khronos.org/opengl/wiki/OpenGL_Error#Catching_errors_(the_hard_way)
+    // See the Python API docs for this method for info about its use case.
+    while (self->gl.GetError() != GL_NO_ERROR);
+
+    Py_RETURN_NONE;
+}
+
 static PyObject * MGLContext_get_ubo_binding(MGLContext * self, PyObject * args) {
     int program_obj;
     int index;
@@ -8334,6 +8347,8 @@ static PyObject * MGLContext_get_error(MGLContext * self, void * closure) {
             return PyUnicode_FromFormat("GL_STACK_UNDERFLOW");
         case GL_STACK_OVERFLOW:
             return PyUnicode_FromFormat("GL_STACK_OVERFLOW");
+        case GL_CONTEXT_LOST:
+            return PyUnicode_FromFormat("GL_CONTEXT_LOST");
     }
     return PyUnicode_FromFormat("GL_UNKNOWN_ERROR");
 }
@@ -8864,6 +8879,7 @@ static PyMethodDef MGLContext_methods[] = {
     {(char *)"__enter__", (PyCFunction)MGLContext_enter, METH_NOARGS},
     {(char *)"__exit__", (PyCFunction)MGLContext_exit, METH_VARARGS},
     {(char *)"release", (PyCFunction)MGLContext_release, METH_NOARGS},
+    {(char *)"clear_errors", (PyCFunction)MGLContext_clear_errors, METH_NOARGS},
 
     {(char *)"_get_ubo_binding", (PyCFunction)MGLContext_get_ubo_binding, METH_VARARGS},
     {(char *)"_set_ubo_binding", (PyCFunction)MGLContext_set_ubo_binding, METH_VARARGS},
