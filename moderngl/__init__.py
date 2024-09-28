@@ -1486,6 +1486,19 @@ class Context:
         return self._extensions
 
     @property
+    def supports_labels(self):
+        if self.version_code >= 430:
+            return True
+
+        if "GL_KHR_debug" in self.extensions:
+            return True
+
+        if "EXT_debug_label" in self.extensions:
+            return True
+
+        return False
+
+    @property
     def info(self):
         if self._info is None:
             self._info = self.mglo.info

@@ -1522,6 +1522,9 @@ class Context:
     fbo: Framebuffer
     """The active framebuffer. Set every time :py:meth:`Framebuffer.use()` is called."""
 
+    supports_labels: bool
+    """True if this context supports object labels via OpenGL 4.3, KHR_debug, or EXT_debug_label."""
+
     def clear(
         self,
         red: float = 0.0,
