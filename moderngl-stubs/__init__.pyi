@@ -436,6 +436,14 @@ class Buffer:
     This values is provided for debug purposes only.
     """
 
+    label: str | None
+    """
+    A human-readable name for this object,
+    intended for debugging tools.
+    Will be set or fetched with OpenGL label calls if available,
+    or kept within the Python object if not.
+    """
+
     def write(self, data: Any, offset: int = 0) -> None:
         """
         Write the content.
@@ -651,6 +659,14 @@ class ComputeShader:
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
+    """
+
+    label: str | None
+    """
+    A human-readable name for this object,
+    intended for debugging tools.
+    Will be set or fetched with OpenGL label calls if available,
+    or kept within the Python object if not.
     """
 
     def __getitem__(self, key: str) -> Union[Uniform, UniformBlock, StorageBlock]:
@@ -2497,6 +2513,14 @@ class Framebuffer:
     This values is provided for debug purposes only.
     """
 
+    label: str | None
+    """
+    A human-readable name for this object,
+    intended for debugging tools.
+    Will be set or fetched with OpenGL label calls if available,
+    or kept within the Python object if not.
+    """
+
     def clear(
         self,
         red: float = 0.0,
@@ -2737,6 +2761,15 @@ class Program:
     This values is provided for debug purposes only.
     """
 
+    label: str | None
+    """
+    A human-readable name for this object,
+    intended for debugging tools.
+    Will be set or fetched with OpenGL label calls if available,
+    or kept within the Python object if not.
+    """
+
+
     def get(self, key: str, default: Any) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         """
         Returns a Uniform, UniformBlock, Attribute or Varying.
@@ -2792,6 +2825,14 @@ class Query:
     extra: Any
     """Attribute for storing user defined objects"""
 
+    label: str | None
+    """
+    A human-readable name for this object,
+    intended for debugging tools.
+    Will be set or fetched with OpenGL label calls if available,
+    or kept within the Python object if not.
+    """
+
     def __enter__(self): ...
     def __exit__(self, *args: Tuple[Any]): ...
 
@@ -2845,6 +2886,14 @@ class Renderbuffer:
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
+    """
+
+    label: str | None
+    """
+    A human-readable name for this object,
+    intended for debugging tools.
+    Will be set or fetched with OpenGL label calls if available,
+    or kept within the Python object if not.
     """
 
     def release(self) -> None:
@@ -3007,6 +3056,14 @@ class Sampler:
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
+    """
+
+    label: str | None
+    """
+    A human-readable name for this object,
+    intended for debugging tools.
+    Will be set or fetched with OpenGL label calls if available,
+    or kept within the Python object if not.
     """
 
     def use(self, location: int = 0) -> None:
@@ -3183,6 +3240,14 @@ class Texture3D:
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
+    """
+
+    label: str | None
+    """
+    A human-readable name for this object,
+    intended for debugging tools.
+    Will be set or fetched with OpenGL label calls if available,
+    or kept within the Python object if not.
     """
 
     def read(self, alignment: int = 1) -> bytes:
@@ -3490,6 +3555,14 @@ class TextureArray:
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
+    """
+
+    label: str | None
+    """
+    A human-readable name for this object,
+    intended for debugging tools.
+    Will be set or fetched with OpenGL label calls if available,
+    or kept within the Python object if not.
     """
 
     def read(self, alignment: int = 1) -> bytes:
@@ -3816,6 +3889,14 @@ class TextureCube:
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
+    """
+
+    label: str | None
+    """
+    A human-readable name for this object,
+    intended for debugging tools.
+    Will be set or fetched with OpenGL label calls if available,
+    or kept within the Python object if not.
     """
 
     def read(self, face: int, alignment: int = 1) -> bytes:
@@ -4180,6 +4261,14 @@ class Texture:
     This values is provided for debug purposes only.
     """
 
+    label: str | None
+    """
+    A human-readable name for this object,
+    intended for debugging tools.
+    Will be set or fetched with OpenGL label calls if available,
+    or kept within the Python object if not.
+    """
+
     def read(self, level: int = 0, alignment: int = 1) -> bytes:
         """
         Read the pixel data as bytes into system memory.
@@ -4441,6 +4530,14 @@ class VertexArray:
     The internal OpenGL object.
 
     This values is provided for debug purposes only.
+    """
+
+    label: str | None
+    """
+    A human-readable name for this object,
+    intended for debugging tools.
+    Will be set or fetched with OpenGL label calls if available,
+    or kept within the Python object if not.
     """
 
     def render(
