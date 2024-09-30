@@ -28,12 +28,15 @@ def test_program(ctx):
             }
         ''',
     )
+
+    program.label = "my favorite program"
     assert program.glo > 0
 
     assert 'vert' in program
     assert 'pos' in program
     assert 'scale' in program
     assert program.is_transform is False
+    assert program.label == "my favorite program"
 
     assert isinstance(program['vert'], moderngl.Attribute)
     assert isinstance(program['pos'], moderngl.Uniform)

@@ -25,3 +25,10 @@ def test_init_from_texture_and_params(ctx):
     assert ext.mglo != tex.mglo
     assert ext.ctx == ctx
     assert ext.extra == None
+
+    if ctx.supports_labels:
+        tex.label = "two objects, one texture"
+        assert tex.label == ext.label
+
+    # If the current context doesn't support labels,
+    # then labels will fall back to plain Python objects

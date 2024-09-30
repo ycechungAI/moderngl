@@ -46,3 +46,9 @@ def test_renderbuffer_invalid_samples(ctx):
 
     with pytest.raises(Exception, match='samples is invalid'):
         ctx.renderbuffer((4, 4), samples=3)
+
+
+def test_renderbuffer_labels(ctx):
+    rbo = ctx.renderbuffer((4, 8))
+    rbo.label = "best renderbuffer ever"
+    assert rbo.label == "best renderbuffer ever"

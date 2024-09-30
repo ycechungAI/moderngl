@@ -45,6 +45,9 @@ def test_texture_properties(ctx):
     assert tex.dtype == 'f1'
     assert tex.anisotropy == 0.0
 
+    tex.label = "wonderful texture"
+    assert tex.label == "wonderful texture"
+
     tex.anisotropy = ctx.max_anisotropy
     assert tex.anisotropy == ctx.max_anisotropy
     tex.build_mipmaps()
