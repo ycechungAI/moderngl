@@ -161,30 +161,6 @@ class Query:
     def elapsed(self):
         return self.mglo.elapsed
 
-    @property
-    def label(self):
-        if self.ctx.supports_labels:
-            return self.mglo.label
-        else:
-            return self._label
-
-    @label.setter
-    def label(self, value):
-        if not isinstance(value, str):
-            raise TypeError(f"Expected value to be a str, got {type(value).__name__}")
-
-        if self.ctx.supports_labels:
-            self.mglo.label = value
-        else:
-            self._label = value
-
-    @label.deleter
-    def label(self):
-        if self.ctx.supports_labels:
-            self.mglo.label = None
-        else:
-            self._label = None
-
 
 class ComputeShader:
     def __init__(self):

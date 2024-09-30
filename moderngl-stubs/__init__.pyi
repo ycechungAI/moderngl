@@ -2825,14 +2825,6 @@ class Query:
     extra: Any
     """Attribute for storing user defined objects"""
 
-    label: str | None
-    """
-    A human-readable name for this object,
-    intended for debugging tools.
-    Will be set or fetched with OpenGL label calls if available,
-    or kept within the Python object if not.
-    """
-
     def __enter__(self): ...
     def __exit__(self, *args: Tuple[Any]): ...
 
