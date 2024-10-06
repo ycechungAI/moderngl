@@ -1,3 +1,4 @@
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
 #include "gl_methods.hpp"
@@ -7198,7 +7199,7 @@ static PyObject * MGLContext_set_label(MGLContext * self, PyObject * args) {
     const char* label = NULL;
     Py_ssize_t label_length = 0;
 
-    int args_ok = PyArg_ParseTuple(args, "(IIz#)", &type, &object, &label, &label_length);
+    int args_ok = PyArg_ParseTuple(args, "IIz#", &type, &object, &label, &label_length);
     if (!args_ok) {
         return NULL;
     }
@@ -7259,7 +7260,7 @@ static PyObject * MGLContext_get_label(MGLContext * ctx, PyObject * args) {
     GLenum type = 0;
     GLuint object = 0;
 
-    int args_ok = PyArg_ParseTuple(args, "(II)", &type, &object);
+    int args_ok = PyArg_ParseTuple(args, "II", &type, &object);
     if (!args_ok) {
         return NULL;
     }
