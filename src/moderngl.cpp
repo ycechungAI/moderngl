@@ -111,7 +111,6 @@ struct MGLContext {
     float polygon_offset_units;
     GLMethods gl;
     bool released;
-    bool has_khr_debug;
 };
 
 struct Rect {
@@ -8698,11 +8697,7 @@ static PyObject * MGLContext_get_info(MGLContext * self, void * closure) {
         set_info_int64(self, info, "GL_MAX_SHADER_STORAGE_BLOCK_SIZE", GL_MAX_SHADER_STORAGE_BLOCK_SIZE);
     }
 
-    if (self->has_khr_debug) {
-        // set_info_int(self, info, "GL_MAX_LABEL_LENGTH_KHR", GL_MAX_LABEL_LENGTH_KHR);
-    }
-
-    // EXT_debug_label has no equivalent
+    // GL_EXT_debug_label doesn't define a MAX_LABEL_LENGTH constant
 
     return info;
 }
@@ -8858,16 +8853,11 @@ static PyObject * create_context(PyObject * self, PyObject * args, PyObject * kw
 
     // Load extensions
     int num_extensions = 0;
-    ctx->has_khr_debug = false;
     gl.GetIntegerv(GL_NUM_EXTENSIONS, &num_extensions);
     ctx->extensions = PySet_New(NULL);
 
     for(int i = 0; i < num_extensions; i++) {
         const char * ext = (const char *)gl.GetStringi(GL_EXTENSIONS, i);
-        if (!ctx->has_khr_debug && (strcmp(ext, "GL_KHR_debug") == 0)) {
-            // If we haven't found GL_KHR_debug yet, see if this is the one...
-            ctx->has_khr_debug = true;
-        }
         PyObject * ext_name = PyUnicode_FromString(ext);
         PySet_Add(ctx->extensions, ext_name);
     }
