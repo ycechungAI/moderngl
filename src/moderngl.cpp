@@ -762,85 +762,6 @@ FormatNode * FormatIterator::next() {
     }
 }
 
-static int set_label(MGLContext * ctx, GLenum type, GLuint object, PyObject * value) {
-    const GLMethods & gl = ctx->gl;
-    const char * label = PyUnicode_AsUTF8(value);
-    if (!label) {
-        MGLError_Set("label must be a string");
-        return -1;
-    }
-
-    if (gl.ObjectLabel) {
-        // OpenGL core 4.3
-        gl.ObjectLabel(type, object, -1, label);
-        GLenum error = gl.GetError();
-        if (error != GL_NO_ERROR) {
-            MGLError_Set("glObjectLabel failed with 0x%x", error);
-            return -1;
-        }
-
-        return 0;
-    }
-
-    if (gl.LabelObjectEXT) {
-        // GL_EXT_debug_label
-        gl.LabelObjectEXT(type, object, -1, label);
-        GLenum error = gl.GetError();
-        if (error != GL_NO_ERROR) {
-            MGLError_Set("glLabelObjectEXT failed with 0x%x", error);
-            return -1;
-        }
-
-        return 0;
-    }
-
-    // Are there any environments that support GL_KHR_debug
-    // but not standard glObjectLabel or GL_EXT_debug_label?
-    // If so, we should fall back to it
-
-    MGLError_Set("no label support available");
-    return -1;
-}
-
-static PyObject * get_label(MGLContext * ctx, GLenum type, GLuint object) {
-    const GLMethods & gl = ctx->gl;
-
-    char label[1024];
-    GLsizei labelLength = 0;
-    if (gl.GetObjectLabel) {
-        // OpenGL core 4.3
-
-        gl.GetObjectLabel(type, object, sizeof(label), &labelLength, label);
-        GLenum error = gl.GetError();
-        if (error != GL_NO_ERROR) {
-            MGLError_Set("glGetObjectLabel failed with 0x%x", error);
-            return NULL;
-        }
-
-        return PyUnicode_FromStringAndSize(label, labelLength);
-    }
-
-    if (gl.GetObjectLabelEXT) {
-        // EXT_debug_label
-
-        gl.GetObjectLabelEXT(type, object, sizeof(label), &labelLength, label);
-        GLenum error = gl.GetError();
-        if (error != GL_NO_ERROR) {
-            MGLError_Set("glGetObjectLabelEXT failed with 0x%x", error);
-            return NULL;
-        }
-
-        return PyUnicode_FromStringAndSize(label, labelLength);
-    }
-
-    // Are there any environments that support GL_KHR_debug
-    // but not standard glObjectLabel or GL_EXT_debug_label?
-    // If so, we should fall back to it
-
-    MGLError_Set("no label support available");
-    return NULL;
-}
-
 static int float_base_format[5] = {0, GL_RED, GL_RG, GL_RGB, GL_RGBA};
 static int int_base_format[5] = {0, GL_RED_INTEGER, GL_RG_INTEGER, GL_RGB_INTEGER, GL_RGBA_INTEGER};
 
@@ -7349,6 +7270,85 @@ static int MGLVertexArray_set_label(MGLVertexArray * self, PyObject * value, voi
     return set_label(self->context, GL_VERTEX_ARRAY, self->vertex_array_obj, value);
 }
 
+static int set_label(MGLContext * ctx, GLenum type, GLuint object, PyObject * value) {
+    const GLMethods & gl = ctx->gl;
+    const char * label = PyUnicode_AsUTF8(value);
+    if (!label) {
+        MGLError_Set("label must be a string");
+        return -1;
+    }
+
+    if (gl.ObjectLabel) {
+        // OpenGL core 4.3
+        gl.ObjectLabel(type, object, -1, label);
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glObjectLabel failed with 0x%x", error);
+            return -1;
+        }
+
+        return 0;
+    }
+
+    if (gl.LabelObjectEXT) {
+        // GL_EXT_debug_label
+        gl.LabelObjectEXT(type, object, -1, label);
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glLabelObjectEXT failed with 0x%x", error);
+            return -1;
+        }
+
+        return 0;
+    }
+
+    // Are there any environments that support GL_KHR_debug
+    // but not standard glObjectLabel or GL_EXT_debug_label?
+    // If so, we should fall back to it
+
+    MGLError_Set("no label support available");
+    return -1;
+}
+
+static PyObject * get_label(MGLContext * ctx, GLenum type, GLuint object) {
+    const GLMethods & gl = ctx->gl;
+
+    char label[1024];
+    GLsizei labelLength = 0;
+    if (gl.GetObjectLabel) {
+        // OpenGL core 4.3
+
+        gl.GetObjectLabel(type, object, sizeof(label), &labelLength, label);
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glGetObjectLabel failed with 0x%x", error);
+            return NULL;
+        }
+
+        return PyUnicode_FromStringAndSize(label, labelLength);
+    }
+
+    if (gl.GetObjectLabelEXT) {
+        // EXT_debug_label
+
+        gl.GetObjectLabelEXT(type, object, sizeof(label), &labelLength, label);
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glGetObjectLabelEXT failed with 0x%x", error);
+            return NULL;
+        }
+
+        return PyUnicode_FromStringAndSize(label, labelLength);
+    }
+
+    // Are there any environments that support GL_KHR_debug
+    // but not standard glObjectLabel or GL_EXT_debug_label?
+    // If so, we should fall back to it
+
+    MGLError_Set("no label support available");
+    return NULL;
+}
+
 static PyObject * MGLContext_enable_only(MGLContext * self, PyObject * args) {
     int flags;
 
@@ -9054,6 +9054,8 @@ static PyMethodDef MGLContext_methods[] = {
     {(char *)"scope", (PyCFunction)MGLContext_scope, METH_VARARGS},
     {(char *)"sampler", (PyCFunction)MGLContext_sampler, METH_VARARGS},
     {(char *)"memory_barrier", (PyCFunction)MGLContext_memory_barrier, METH_VARARGS},
+    {(char *)"get_label", (PyCFunction)MGLContext_get_label, METH_VARARGS},
+    {(char *)"set_label", (PyCFunction)MGLContext_set_label, METH_VARARGS},
 
     {(char *)"__enter__", (PyCFunction)MGLContext_enter, METH_NOARGS},
     {(char *)"__exit__", (PyCFunction)MGLContext_exit, METH_VARARGS},
