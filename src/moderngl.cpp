@@ -94,6 +94,7 @@ struct MGLContext {
     int max_integer_samples;
     int max_color_attachments;
     int max_texture_units;
+    int max_label_length;
     int default_texture_unit;
     float max_anisotropy;
     int enable_flags;
@@ -8372,6 +8373,10 @@ static PyObject * MGLContext_get_max_anisotropy(MGLContext * self, void * closur
     return PyFloat_FromDouble(self->max_anisotropy);
 }
 
+static PyObject * MGLContext_get_max_label_length(MGLContext * self, void * closure) {
+    return PyLong_FromLong(self->max_label_length);
+}
+
 static MGLFramebuffer * MGLContext_get_fbo(MGLContext * self, void * closure) {
     Py_INCREF(self->bound_framebuffer);
     return self->bound_framebuffer;
@@ -8886,6 +8891,9 @@ static PyObject * create_context(PyObject * self, PyObject * args, PyObject * kw
     gl.GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, (GLint *)&ctx->max_texture_units);
     ctx->default_texture_unit = ctx->max_texture_units - 1;
 
+    ctx->max_label_length = 0;
+    gl.GetIntegerv(GL_MAX_LABEL_LENGTH, (GLint *)&ctx->max_label_length);
+
     ctx->max_anisotropy = 0.0;
     gl.GetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, (GLfloat *)&ctx->max_anisotropy);
 
@@ -9080,6 +9088,7 @@ static PyGetSetDef MGLContext_getset[] = {
     {(char *)"max_integer_samples", (getter)MGLContext_get_max_integer_samples, NULL},
     {(char *)"max_texture_units", (getter)MGLContext_get_max_texture_units, NULL},
     {(char *)"max_anisotropy", (getter)MGLContext_get_max_anisotropy, NULL},
+    {(char *)"max_label_length", (getter)MGLContext_get_max_label_length, NULL},
 
     {(char *)"fbo", (getter)MGLContext_get_fbo, (setter)MGLContext_set_fbo},
 
