@@ -1339,6 +1339,9 @@ class Context:
     max_texture_units: int
     """The max texture units."""
 
+    max_label_length: int | None
+    """The max label length. May be None if not supported."""
+
     max_anisotropy: float
     """The maximum value supported for anisotropic filtering."""
 
