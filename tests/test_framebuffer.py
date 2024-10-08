@@ -1,6 +1,7 @@
 
 def test_properties(ctx):
     fbo = ctx.simple_framebuffer((4, 4))
+    fbo.label = "my favorite fbo"
     assert fbo.size == (4, 4)
     assert fbo == fbo
     assert fbo.depth_mask is True
@@ -9,6 +10,7 @@ def test_properties(ctx):
     assert fbo.size == (4, 4)
     assert fbo.samples == 0
     assert fbo.glo > 0
+    assert fbo.label == "my favorite fbo"
 
     fbo.depth_mask = False
     assert fbo.depth_mask is False

@@ -90,3 +90,9 @@ def test_buffer_orphan_resize(ctx):
     buf.orphan(-100)
     assert buf.size == 100
     assert len(buf.read()) == 100
+
+
+def test_buffer_labels(ctx):
+    buf = ctx.buffer(reserve=1024)
+    buf.label = "test buffer"
+    assert buf.label == "test buffer"

@@ -234,3 +234,20 @@ def test_4(ctx):
     vao.transform(vbo2, moderngl.POINTS, vertices=1)
     res = np.frombuffer(vbo2.read(), dtype='f4')
     npt.assert_almost_equal(res, [4.0, 0.0, 2.0, 0.0])
+
+
+def test_vao_labels(ctx):
+    prog = ctx.program(
+        vertex_shader="""
+        #version 330
+        in vec2 pos;
+        in vec2 velocity;
+        out vec2 out_pos;
+        void main() {
+            out_pos = pos + velocity;
+        }
+        """,
+    )
+    vao = ctx.vertex_array(prog, [])
+    vao.label = "My VAO"
+    assert vao.label == "My VAO"

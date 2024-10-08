@@ -39,6 +39,9 @@ def test_create(ctx):
     texture.build_mipmaps()
     assert texture.filter == (moderngl.LINEAR_MIPMAP_LINEAR, moderngl.LINEAR)
 
+    texture.label = "best texture array"
+    assert texture.label == "best texture array"
+
 
 def test_texture_default_filter(ctx):
     """Ensure default filter is correct"""

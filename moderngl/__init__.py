@@ -22,6 +22,16 @@ class _store:
     default_context = None
 
 
+# OpenGL Object type constants
+_BUFFER = 0x82E0
+_PROGRAM = 0x82E2
+_QUERY = 0x82E3
+_SAMPLER = 0x82E6
+_TEXTURE = 0x1702
+_VERTEX_ARRAY = 0x8074
+_FRAMEBUFFER = 0x8D40
+_RENDERBUFFER = 0x8D41
+
 class Buffer:
     def __init__(self):
         self.mglo = None
@@ -30,6 +40,7 @@ class Buffer:
         self._glo = None
         self.ctx = None
         self.extra = None
+        self._label = None # Used only if no OpenGL label functions are available
         raise TypeError()
 
     def __del__(self):
@@ -52,6 +63,23 @@ class Buffer:
     @property
     def glo(self):
         return self._glo
+
+    @property
+    def label(self):
+        if self.ctx.supports_labels:
+            return self.ctx.mglo.get_label(_BUFFER, self._glo)
+        else:
+            return self._label
+
+    @label.setter
+    def label(self, value):
+        if not (isinstance(value, str) or value is None):
+            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+
+        if self.ctx.supports_labels:
+            self.ctx.mglo.set_label(_BUFFER, self._glo, value)
+        else:
+            self._label = value
 
     def write(self, data, offset=0):
         self.mglo.write(data, offset)
@@ -114,6 +142,7 @@ class Query:
         self.crender = None
         self.ctx = None
         self.extra = None
+        self._label = None
         raise TypeError()
 
     def __enter__(self):
@@ -143,6 +172,7 @@ class ComputeShader:
         self._glo = None
         self.ctx = None
         self.extra = None
+        self._label = None
         raise TypeError()
 
     def __del__(self):
@@ -181,6 +211,23 @@ class ComputeShader:
             self.mglo.release()
             self.mglo = InvalidObject()
 
+    @property
+    def label(self):
+        if self.ctx.supports_labels:
+            return self.ctx.mglo.get_label(_PROGRAM, self._glo)
+        else:
+            return self._label
+
+    @label.setter
+    def label(self, value):
+        if not (isinstance(value, str) or value is None):
+            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+
+        if self.ctx.supports_labels:
+            self.ctx.mglo.set_label(_PROGRAM, self._glo, value)
+        else:
+            self._label = value
+
 
 class Framebuffer:
     def __init__(self):
@@ -193,6 +240,7 @@ class Framebuffer:
         self.ctx = None
         self._is_reference = None
         self.extra = None
+        self._label = None
         raise TypeError()
 
     def __del__(self):
@@ -278,6 +326,23 @@ class Framebuffer:
     def glo(self):
         return self._glo
 
+    @property
+    def label(self):
+        if self.ctx.supports_labels:
+            return self.ctx.mglo.get_label(_FRAMEBUFFER, self._glo)
+        else:
+            return self._label
+
+    @label.setter
+    def label(self, value):
+        if not (isinstance(value, str) or value is None):
+            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+
+        if self.ctx.supports_labels:
+            self.ctx.mglo.set_label(_FRAMEBUFFER, self._glo, value)
+        else:
+            self._label = value
+
     def clear(self, red=0.0, green=0.0, blue=0.0, alpha=0.0, depth=1.0, viewport=None, color=None):
         if color is not None:
             red, green, blue, alpha, *_ = tuple(color) + (0.0, 0.0, 0.0, 0.0)
@@ -328,6 +393,7 @@ class Program:
         self._attribute_types = None
         self.ctx = None
         self.extra = None
+        self._label = None
         raise TypeError()
 
     def __del__(self):
@@ -372,6 +438,23 @@ class Program:
     def glo(self):
         return self._glo
 
+    @property
+    def label(self):
+        if self.ctx.supports_labels:
+            return self.ctx.mglo.get_label(_PROGRAM, self._glo)
+        else:
+            return self._label
+
+    @label.setter
+    def label(self, value):
+        if not (isinstance(value, str) or value is None):
+            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+
+        if self.ctx.supports_labels:
+            self.ctx.mglo.set_label(_PROGRAM, self._glo, value)
+        else:
+            self._label = value
+
     def get(self, key, default):
         return self._members.get(key, default)
 
@@ -392,6 +475,7 @@ class Renderbuffer:
         self._glo = None
         self.ctx = None
         self.extra = None
+        self._label = None
         raise TypeError()
 
     def __del__(self):
@@ -435,6 +519,23 @@ class Renderbuffer:
     def glo(self):
         return self._glo
 
+    @property
+    def label(self):
+        if self.ctx.supports_labels:
+            return self.ctx.mglo.get_label(_RENDERBUFFER, self._glo)
+        else:
+            return self._label
+
+    @label.setter
+    def label(self, value):
+        if not (isinstance(value, str) or value is None):
+            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+
+        if self.ctx.supports_labels:
+            self.ctx.mglo.set_label(_RENDERBUFFER, self._glo, value)
+        else:
+            self._label = value
+
     def release(self):
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.release()
@@ -448,6 +549,7 @@ class Sampler:
         self.ctx = None
         self.extra = None
         self.texture = None
+        self._label = None
         raise TypeError()
 
     def __del__(self):
@@ -544,6 +646,24 @@ class Sampler:
     def max_lod(self, value):
         self.mglo.max_lod = value
 
+
+    @property
+    def label(self):
+        if self.ctx.supports_labels:
+            return self.ctx.mglo.get_label(_SAMPLER, self._glo)
+        else:
+            return self._label
+
+    @label.setter
+    def label(self, value):
+        if not (isinstance(value, str) or value is None):
+            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+
+        if self.ctx.supports_labels:
+            self.ctx.mglo.set_label(_SAMPLER, self._glo, value)
+        else:
+            self._label = value
+
     def assign(self, index):
         return (self, index)
 
@@ -598,6 +718,7 @@ class Texture:
         self._glo = None
         self.ctx = None
         self.extra = None
+        self._label = None
         raise TypeError()
 
     def __del__(self):
@@ -689,6 +810,23 @@ class Texture:
     def glo(self):
         return self._glo
 
+    @property
+    def label(self):
+        if self.ctx.supports_labels:
+            return self.ctx.mglo.get_label(_TEXTURE, self._glo)
+        else:
+            return self._label
+
+    @label.setter
+    def label(self, value):
+        if not (isinstance(value, str) or value is None):
+            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+
+        if self.ctx.supports_labels:
+            self.ctx.mglo.set_label(_TEXTURE, self._glo, value)
+        else:
+            self._label = value
+
     def read(self, level=0, alignment=1):
         return self.mglo.read(level, alignment)
 
@@ -732,6 +870,7 @@ class Texture3D:
         self._glo = None
         self.ctx = None
         self.extra = None
+        self._label = None
         raise TypeError()
 
     def __del__(self):
@@ -811,6 +950,23 @@ class Texture3D:
     def glo(self):
         return self._glo
 
+    @property
+    def label(self):
+        if self.ctx.supports_labels:
+            return self.ctx.mglo.get_label(_TEXTURE, self._glo)
+        else:
+            return self._label
+
+    @label.setter
+    def label(self, value):
+        if not (isinstance(value, str) or value is None):
+            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+
+        if self.ctx.supports_labels:
+            self.ctx.mglo.set_label(_TEXTURE, self._glo, value)
+        else:
+            self._label = value
+
     def read(self, alignment=1):
         return self.mglo.read(alignment)
 
@@ -854,6 +1010,7 @@ class TextureCube:
         self._glo = None
         self.ctx = None
         self.extra = None
+        self._label = None
         raise TypeError()
 
     def __del__(self):
@@ -917,6 +1074,23 @@ class TextureCube:
     def glo(self):
         return self._glo
 
+    @property
+    def label(self):
+        if self.ctx.supports_labels:
+            return self.ctx.mglo.get_label(_TEXTURE, self._glo)
+        else:
+            return self._label
+
+    @label.setter
+    def label(self, value):
+        if not (isinstance(value, str) or value is None):
+            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+
+        if self.ctx.supports_labels:
+            self.ctx.mglo.set_label(_TEXTURE, self._glo, value)
+        else:
+            self._label = value
+
     def read(self, face, alignment=1):
         return self.mglo.read(face, alignment)
 
@@ -961,6 +1135,7 @@ class TextureArray:
         self._glo = None
         self.ctx = None
         self.extra = None
+        self._label = None
         raise TypeError()
 
     def __del__(self):
@@ -1040,6 +1215,23 @@ class TextureArray:
     def glo(self):
         return self._glo
 
+    @property
+    def label(self):
+        if self.ctx.supports_labels:
+            return self.ctx.mglo.get_label(_TEXTURE, self._glo)
+        else:
+            return self._label
+
+    @label.setter
+    def label(self, value):
+        if not (isinstance(value, str) or value is None):
+            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+
+        if self.ctx.supports_labels:
+            self.ctx.mglo.set_label(_TEXTURE, self._glo, value)
+        else:
+            self._label = value
+
     def read(self, alignment=1):
         return self.mglo.read(alignment)
 
@@ -1085,6 +1277,7 @@ class VertexArray:
         self.ctx = None
         self.extra = None
         self.scope = None
+        self._label = None
         raise TypeError()
 
     def __del__(self):
@@ -1143,6 +1336,23 @@ class VertexArray:
     @property
     def glo(self):
         return self._glo
+
+    @property
+    def label(self):
+        if self.ctx.supports_labels:
+            return self.ctx.mglo.get_label(_VERTEX_ARRAY, self._glo)
+        else:
+            return self._label
+
+    @label.setter
+    def label(self, value):
+        if not (isinstance(value, str) or value is None):
+            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+
+        if self.ctx.supports_labels:
+            self.ctx.mglo.set_label(_VERTEX_ARRAY, self._glo, value)
+        else:
+            self._label = value
 
     def render(self, mode=None, vertices=-1, first=0, instances=-1):
         if mode is None:
@@ -1427,6 +1637,10 @@ class Context:
         return self.mglo.max_texture_units
 
     @property
+    def max_label_length(self):
+        return self.mglo.max_label_length
+
+    @property
     def default_texture_unit(self):
         return self.mglo.default_texture_unit
 
@@ -1484,6 +1698,19 @@ class Context:
             self._extensions = self.mglo.extensions
 
         return self._extensions
+
+    @property
+    def supports_labels(self):
+        if self.version_code >= 430:
+            return True
+
+        if "GL_KHR_debug" in self.extensions:
+            return True
+
+        if "EXT_debug_label" in self.extensions:
+            return True
+
+        return False
 
     @property
     def info(self):

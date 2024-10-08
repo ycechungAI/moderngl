@@ -1,3 +1,4 @@
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
 #include "gl_methods.hpp"
@@ -94,6 +95,7 @@ struct MGLContext {
     int max_integer_samples;
     int max_color_attachments;
     int max_texture_units;
+    int max_label_length;
     int default_texture_unit;
     float max_anisotropy;
     int enable_flags;
@@ -2873,6 +2875,8 @@ static PyObject * MGLQuery_get_elapsed(MGLQuery * self, void * closure) {
 
     return PyLong_FromUnsignedLong(elapsed);
 }
+
+// TODO: Add label support for MGLQuery (it contains multiple OpenGL query objects)
 
 static PyObject * MGLRenderbuffer_release(MGLRenderbuffer * self, PyObject * args) {
     if (self->released) {
@@ -7187,6 +7191,123 @@ static int MGLVertexArray_set_instances(MGLVertexArray * self, PyObject * value,
     return 0;
 }
 
+static PyObject * MGLContext_set_label(MGLContext * self, PyObject * args) {
+    const GLMethods & gl = self->gl;
+
+    GLenum type = 0;
+    GLuint object = 0;
+    const char* label = NULL;
+    Py_ssize_t label_length = 0;
+
+    int args_ok = PyArg_ParseTuple(args, "IIz#", &type, &object, &label, &label_length);
+    if (!args_ok) {
+        return NULL;
+    }
+
+    if (gl.ObjectLabel) {
+        // OpenGL core 4.3
+
+        if (label_length > self->max_label_length) {
+            MGLError_Set("Context's max label length is %d, got one of length %d", self->max_label_length, label_length);
+            return NULL;
+        }
+
+        gl.ObjectLabel(type, object, label_length, label);
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glObjectLabel failed with 0x%x", error);
+            return NULL;
+        }
+    }
+    else if (gl.LabelObjectEXT) {
+        // GL_EXT_debug_label
+        switch (type) {
+            // GL_EXT_debug_label defines its own type constants for some (not all!) OpenGL types,
+            // and these values are not equal to the standard ones
+            case GL_BUFFER:
+                type = GL_BUFFER_OBJECT_EXT;
+                break;
+            case GL_PROGRAM:
+                type = GL_PROGRAM_OBJECT_EXT;
+                break;
+            case GL_VERTEX_ARRAY:
+                type = GL_VERTEX_ARRAY_OBJECT_EXT;
+                break;
+            case GL_QUERY:
+                type = GL_QUERY_OBJECT_EXT;
+                break;
+        }
+
+        // GL_EXT_debug_label doesn't define a max label length
+        gl.LabelObjectEXT(type, object, label_length, label);
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glLabelObjectEXT failed with 0x%x", error);
+            return NULL;
+        }
+    }
+
+    // Are there any environments that support GL_KHR_debug
+    // but not standard glObjectLabel or GL_EXT_debug_label?
+    // If so, we should fall back to it
+
+    Py_RETURN_NONE;
+}
+
+static PyObject * MGLContext_get_label(MGLContext * ctx, PyObject * args) {
+    const GLMethods & gl = ctx->gl;
+
+    GLenum type = 0;
+    GLuint object = 0;
+
+    int args_ok = PyArg_ParseTuple(args, "II", &type, &object);
+    if (!args_ok) {
+        return NULL;
+    }
+
+    int label_buffer_length = ctx->max_label_length + 1;
+    char * label = new char[label_buffer_length];
+    GLsizei label_length = 0;
+    if (gl.GetObjectLabel) {
+        // OpenGL core 4.3
+
+        gl.GetObjectLabel(type, object, label_buffer_length, &label_length, label);
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            delete[] label;
+            MGLError_Set("glGetObjectLabel failed with 0x%x", error);
+            return NULL;
+        }
+    }
+    else if (gl.GetObjectLabelEXT) {
+        // EXT_debug_label
+
+        gl.GetObjectLabelEXT(type, object, label_buffer_length, &label_length, label);
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            delete[] label;
+            MGLError_Set("glGetObjectLabelEXT failed with 0x%x", error);
+            return NULL;
+        }
+    }
+
+    // Are there any environments that support GL_KHR_debug
+    // but not standard glObjectLabel or GL_EXT_debug_label?
+    // If so, we should fall back to it
+
+    PyObject * result = label_length > 0 ? PyUnicode_FromStringAndSize(label, label_length) : NULL;
+    delete[] label;
+
+    if (result) {
+        return result;
+    } else {
+        Py_RETURN_NONE;
+    }
+    // If labels aren't supported, this method will return None;
+    // clients that want to know if labels are supported should
+    // use the version number or extension list
+}
+
 static PyObject * MGLContext_enable_only(MGLContext * self, PyObject * args) {
     int flags;
 
@@ -8211,6 +8332,15 @@ static PyObject * MGLContext_get_max_anisotropy(MGLContext * self, void * closur
     return PyFloat_FromDouble(self->max_anisotropy);
 }
 
+static PyObject * MGLContext_get_max_label_length(MGLContext * self, void * closure) {
+    if (self->max_label_length > 0) {
+        return PyLong_FromLong(self->max_label_length);
+    }
+    else {
+        Py_RETURN_NONE;
+    }
+}
+
 static MGLFramebuffer * MGLContext_get_fbo(MGLContext * self, void * closure) {
     Py_INCREF(self->bound_framebuffer);
     return self->bound_framebuffer;
@@ -8531,9 +8661,12 @@ static PyObject * MGLContext_get_info(MGLContext * self, void * closure) {
         set_info_int(self, info, "GL_MAX_FRAMEBUFFER_LAYERS", GL_MAX_FRAMEBUFFER_LAYERS);
         set_info_int(self, info, "GL_MAX_FRAMEBUFFER_SAMPLES", GL_MAX_FRAMEBUFFER_SAMPLES);
         set_info_int(self, info, "GL_MAX_UNIFORM_LOCATIONS", GL_MAX_UNIFORM_LOCATIONS);
+        set_info_int(self, info, "GL_MAX_LABEL_LENGTH", GL_MAX_LABEL_LENGTH);
         set_info_int64(self, info, "GL_MAX_ELEMENT_INDEX", GL_MAX_ELEMENT_INDEX);
         set_info_int64(self, info, "GL_MAX_SHADER_STORAGE_BLOCK_SIZE", GL_MAX_SHADER_STORAGE_BLOCK_SIZE);
     }
+
+    // GL_EXT_debug_label doesn't define a MAX_LABEL_LENGTH constant
 
     return info;
 }
@@ -8722,6 +8855,9 @@ static PyObject * create_context(PyObject * self, PyObject * args, PyObject * kw
     gl.GetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, (GLint *)&ctx->max_texture_units);
     ctx->default_texture_unit = ctx->max_texture_units - 1;
 
+    ctx->max_label_length = 0;
+    gl.GetIntegerv(GL_MAX_LABEL_LENGTH, (GLint *)&ctx->max_label_length);
+
     ctx->max_anisotropy = 0.0;
     gl.GetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, (GLfloat *)&ctx->max_anisotropy);
 
@@ -8830,6 +8966,10 @@ static PyMethodDef MGL_module_methods[] = {
     {},
 };
 
+static PyGetSetDef MGLBuffer_getset[] = {
+    {},
+};
+
 static PyMethodDef MGLBuffer_methods[] = {
     {(char *)"write", (PyCFunction)MGLBuffer_write, METH_VARARGS},
     {(char *)"read", (PyCFunction)MGLBuffer_read, METH_VARARGS},
@@ -8875,6 +9015,8 @@ static PyMethodDef MGLContext_methods[] = {
     {(char *)"scope", (PyCFunction)MGLContext_scope, METH_VARARGS},
     {(char *)"sampler", (PyCFunction)MGLContext_sampler, METH_VARARGS},
     {(char *)"memory_barrier", (PyCFunction)MGLContext_memory_barrier, METH_VARARGS},
+    {(char *)"get_label", (PyCFunction)MGLContext_get_label, METH_VARARGS},
+    {(char *)"set_label", (PyCFunction)MGLContext_set_label, METH_VARARGS},
 
     {(char *)"__enter__", (PyCFunction)MGLContext_enter, METH_NOARGS},
     {(char *)"__exit__", (PyCFunction)MGLContext_exit, METH_VARARGS},
@@ -8909,6 +9051,7 @@ static PyGetSetDef MGLContext_getset[] = {
     {(char *)"max_integer_samples", (getter)MGLContext_get_max_integer_samples, NULL},
     {(char *)"max_texture_units", (getter)MGLContext_get_max_texture_units, NULL},
     {(char *)"max_anisotropy", (getter)MGLContext_get_max_anisotropy, NULL},
+    {(char *)"max_label_length", (getter)MGLContext_get_max_label_length, NULL},
 
     {(char *)"fbo", (getter)MGLContext_get_fbo, (setter)MGLContext_set_fbo},
 
@@ -8945,6 +9088,10 @@ static PyMethodDef MGLFramebuffer_methods[] = {
     {},
 };
 
+static PyGetSetDef MGLProgram_getset[] = {
+    {},
+};
+
 static PyMethodDef MGLProgram_methods[] = {
     {(char *)"run", (PyCFunction)MGLProgram_run, METH_VARARGS},
     {(char *)"run_indirect", (PyCFunction)MGLProgram_run_indirect, METH_VARARGS},
@@ -8965,6 +9112,10 @@ static PyMethodDef MGLQuery_methods[] = {
     {(char *)"begin_render", (PyCFunction)MGLQuery_begin_render, METH_NOARGS},
     {(char *)"end_render", (PyCFunction)MGLQuery_end_render, METH_NOARGS},
     // {(char *)"release", (PyCFunction)MGLQuery_release, METH_NOARGS},
+    {},
+};
+
+static PyGetSetDef MGLRenderbuffer_getset[] = {
     {},
 };
 
@@ -9106,6 +9257,7 @@ static PyType_Slot MGLBuffer_slots[] = {
     {Py_bf_releasebuffer, (void *)MGLBuffer_tp_as_buffer_release_view},
     #endif
     {Py_tp_methods, MGLBuffer_methods},
+    {Py_tp_getset, MGLBuffer_getset},
     {Py_tp_dealloc, (void *)default_dealloc},
     {},
 };
@@ -9126,6 +9278,7 @@ static PyType_Slot MGLFramebuffer_slots[] = {
 
 static PyType_Slot MGLProgram_slots[] = {
     {Py_tp_methods, MGLProgram_methods},
+    {Py_tp_getset, MGLProgram_getset},
     {Py_tp_dealloc, (void *)default_dealloc},
     {},
 };
@@ -9139,6 +9292,7 @@ static PyType_Slot MGLQuery_slots[] = {
 
 static PyType_Slot MGLRenderbuffer_slots[] = {
     {Py_tp_methods, MGLRenderbuffer_methods},
+    {Py_tp_getset, MGLRenderbuffer_getset},
     {Py_tp_dealloc, (void *)default_dealloc},
     {},
 };

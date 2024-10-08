@@ -69,3 +69,9 @@ def test_clear_samplers(ctx):
     ctx.clear_samplers(start=0, end=5)
     ctx.clear_samplers(start=5, end=10)
     ctx.clear_samplers(start=10, end=100)
+
+
+def test_sampler_labels(ctx):
+    sampler = ctx.sampler()
+    sampler.label = "sampler of excellence"
+    assert sampler.label == "sampler of excellence"

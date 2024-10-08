@@ -25,6 +25,9 @@ def test_0(ctx):
     texture.anisotropy = ctx.max_anisotropy
     assert texture.anisotropy == ctx.max_anisotropy
 
+    texture.label = "six times the faces, six times the fun"
+    assert texture.label == "six times the faces, six times the fun"
+
 
 def test_1(ctx):
     faces = [

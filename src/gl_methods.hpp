@@ -780,8 +780,8 @@ struct GLMethods {
     // PFNGLGETPERFMONITORCOUNTERDATAAMDPROC GetPerfMonitorCounterDataAMD;
     // PFNGLEGLIMAGETARGETTEXSTORAGEEXTPROC EGLImageTargetTexStorageEXT;
     // PFNGLEGLIMAGETARGETTEXTURESTORAGEEXTPROC EGLImageTargetTextureStorageEXT;
-    // PFNGLLABELOBJECTEXTPROC LabelObjectEXT;
-    // PFNGLGETOBJECTLABELEXTPROC GetObjectLabelEXT;
+    PFNGLLABELOBJECTEXTPROC LabelObjectEXT;
+    PFNGLGETOBJECTLABELEXTPROC GetObjectLabelEXT;
     // PFNGLINSERTEVENTMARKEREXTPROC InsertEventMarkerEXT;
     // PFNGLPUSHGROUPMARKEREXTPROC PushGroupMarkerEXT;
     // PFNGLPOPGROUPMARKEREXTPROC PopGroupMarkerEXT;
@@ -2079,8 +2079,8 @@ GLMethods load_gl_methods(PyObject * loader) {
     // load(GetPerfMonitorCounterDataAMD);
     // load(EGLImageTargetTexStorageEXT);
     // load(EGLImageTargetTextureStorageEXT);
-    // load(LabelObjectEXT);
-    // load(GetObjectLabelEXT);
+    load(LabelObjectEXT);
+    load(GetObjectLabelEXT);
     // load(InsertEventMarkerEXT);
     // load(PushGroupMarkerEXT);
     // load(PopGroupMarkerEXT);
