@@ -96,6 +96,8 @@ struct MGLContext {
     int max_color_attachments;
     int max_texture_units;
     int max_label_length;
+    int max_debug_message_length;
+    int max_debug_group_stack_depth;
     int default_texture_unit;
     float max_anisotropy;
     int enable_flags;
@@ -8857,6 +8859,12 @@ static PyObject * create_context(PyObject * self, PyObject * args, PyObject * kw
 
     ctx->max_label_length = 0;
     gl.GetIntegerv(GL_MAX_LABEL_LENGTH, (GLint *)&ctx->max_label_length);
+
+    ctx->max_debug_message_length = 0;
+    gl.GetIntegerv(GL_MAX_DEBUG_MESSAGE_LENGTH, (GLint *)&ctx->max_debug_message_length);
+
+    ctx->max_debug_group_stack_depth = 0;
+    gl.GetIntegerv(GL_MAX_DEBUG_GROUP_STACK_DEPTH, (GLint *)&ctx->max_debug_group_stack_depth);
 
     ctx->max_anisotropy = 0.0;
     gl.GetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, (GLfloat *)&ctx->max_anisotropy);
