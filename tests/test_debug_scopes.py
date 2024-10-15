@@ -28,10 +28,10 @@ def test_debug_scope_error_when_stack_overflow(ctx_new):
 
 
 def test_debug_scope_error_when_stack_underflow(ctx_new):
-    with pytest.raises(moderngl.Error):
-        with ctx_new.debug_scope("test scope"):
-            GL.glPopDebugGroup()
-            GL.glPopDebugGroup()
+    if GL.glPopDebugGroup:
+        with pytest.raises(moderngl.Error):
+            with ctx_new.debug_scope("test scope"):
+                GL.glPopDebugGroup()
 
 
 def test_debug_scope_error_when_label_wrong_type(ctx):
