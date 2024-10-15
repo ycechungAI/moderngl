@@ -8343,6 +8343,15 @@ static PyObject * MGLContext_get_max_label_length(MGLContext * self, void * clos
     }
 }
 
+static PyObject * MGLContext_get_max_debug_group_stack_depth(MGLContext * self, void * closure) {
+    if (self->max_debug_group_stack_depth > 0) {
+        return PyLong_FromLong(self->max_debug_group_stack_depth);
+    }
+    else {
+        Py_RETURN_NONE;
+    }
+}
+
 static MGLFramebuffer * MGLContext_get_fbo(MGLContext * self, void * closure) {
     Py_INCREF(self->bound_framebuffer);
     return self->bound_framebuffer;
@@ -9060,6 +9069,7 @@ static PyGetSetDef MGLContext_getset[] = {
     {(char *)"max_texture_units", (getter)MGLContext_get_max_texture_units, NULL},
     {(char *)"max_anisotropy", (getter)MGLContext_get_max_anisotropy, NULL},
     {(char *)"max_label_length", (getter)MGLContext_get_max_label_length, NULL},
+    {(char *)"max_debug_group_stack_depth", (getter)MGLContext_get_max_debug_group_stack_depth, NULL},
 
     {(char *)"fbo", (getter)MGLContext_get_fbo, (setter)MGLContext_set_fbo},
 

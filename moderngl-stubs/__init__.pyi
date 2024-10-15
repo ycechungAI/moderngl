@@ -1342,6 +1342,9 @@ class Context:
     max_label_length: int | None
     """The max label length. May be None if not supported."""
 
+    max_debug_group_stack_depth: int | None
+    """The max debug group stack depth. May be None if not supported."""
+
     max_anisotropy: float
     """The maximum value supported for anisotropic filtering."""
 
@@ -1543,6 +1546,9 @@ class Context:
 
     supports_labels: bool
     """True if this context supports object labels via OpenGL 4.3, KHR_debug, or EXT_debug_label."""
+
+    supports_debug_scopes: bool
+    """True if this context supports debug scopes via OpenGL 4.3, KHR_debug, or EXT_debug_marker."""
 
     def clear(
         self,

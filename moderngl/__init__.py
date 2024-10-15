@@ -1641,6 +1641,10 @@ class Context:
         return self.mglo.max_label_length
 
     @property
+    def max_debug_group_stack_depth(self):
+        return self.mglo.max_debug_group_stack_depth
+
+    @property
     def default_texture_unit(self):
         return self.mglo.default_texture_unit
 
@@ -1708,6 +1712,19 @@ class Context:
             return True
 
         if "GL_EXT_debug_label" in self.extensions:
+            return True
+
+        return False
+
+    @property
+    def supports_debug_scopes(self):
+        if self.version_code >= 430:
+            return True
+
+        if "GL_KHR_debug" in self.extensions:
+            return True
+
+        if "GL_EXT_debug_marker" in self.extensions:
             return True
 
         return False
