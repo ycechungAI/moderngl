@@ -1707,7 +1707,7 @@ class Context:
         if "GL_KHR_debug" in self.extensions:
             return True
 
-        if "EXT_debug_label" in self.extensions:
+        if "GL_EXT_debug_label" in self.extensions:
             return True
 
         return False
