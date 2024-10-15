@@ -1342,6 +1342,9 @@ class Context:
     max_label_length: int | None
     """The max label length. May be None if not supported."""
 
+    max_debug_message_length: int | None
+    """The max debug message length. May be None if not supported."""
+
     max_debug_group_stack_depth: int | None
     """The max debug group stack depth. May be None if not supported."""
 

@@ -1641,6 +1641,10 @@ class Context:
         return self.mglo.max_label_length
 
     @property
+    def max_debug_message_length(self):
+        return self.mglo.max_debug_message_length
+
+    @property
     def max_debug_group_stack_depth(self):
         return self.mglo.max_debug_group_stack_depth
 
