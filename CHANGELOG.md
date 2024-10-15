@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [main](https://github.com/moderngl/moderngl/compare/5.10.0...main)
 
+- Add `Context.debug_scope`.
+
 ## [5.10.0](https://github.com/moderngl/moderngl/compare/5.9.0...5.10.0)
 
 - Adding pre-built wheels for MacOS ARM

@@ -1,5 +1,6 @@
 import warnings
 from collections import deque
+from contextlib import contextmanager
 
 from _moderngl import Attribute, Error, InvalidObject, StorageBlock, Subroutine, Uniform, UniformBlock, Varying
 from _moderngl import parse_spv_inputs as _parse_spv
@@ -11,6 +12,8 @@ except ImportError:
 
 __version__ = "5.11.1"
 
+_GL_DEBUG_SOURCE_THIRD_PARTY = 0x8249
+_GL_DEBUG_SOURCE_APPLICATION = 0x824A
 
 def packager_imports():
     """some additional imports that code freezers (Pyinstaller,etc) should see."""
@@ -2194,6 +2197,41 @@ class Context:
     def clear_errors(self):
         if not isinstance(self.mglo, InvalidObject):
             self.mglo.clear_errors()
+
+    @contextmanager
+    def debug_scope(self, label, group_id = None, source = "application"):
+        if not isinstance(label, str):
+            raise TypeError(f"Expected label to be a string, got {type(label).__name__}")
+
+        if not isinstance(group_id, (int, type(None))):
+            raise TypeError(f"Expected group_id to be an int or None, got {type(group_id).__name__}")
+
+        if source == "application":
+            source_id = _GL_DEBUG_SOURCE_APPLICATION
+        elif source == "external":
+            source_id = _GL_DEBUG_SOURCE_THIRD_PARTY
+        else:
+            raise ValueError(f"source must be 'application' or 'external', got '{source}'")
+
+        if not self.supports_debug_scopes:
+            # If we don't support debug scopes, silently do nothing
+            # so that client code doesn't have to check for support
+            yield
+            return
+
+        group_pushed = False
+        try:
+            group_id = hash(label) if group_id is None else group_id
+            self.mglo.push_debug_scope(source_id, group_id, label)
+            group_pushed = True
+            yield
+        finally:
+            if group_pushed:
+                # We raise an exception if glPushDebugGroup (or equivalent) fails,
+                # so we only want to pop the group if it was successfully pushed.
+                # Otherwise, could pop a scope that was pushed somewhere else
+                # and debugging that would be a pain in the ass.
+                self.mglo.pop_debug_scope()
 
 
 def create_context(require=None, standalone=False, share=False, **settings):

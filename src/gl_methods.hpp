@@ -783,8 +783,8 @@ struct GLMethods {
     PFNGLLABELOBJECTEXTPROC LabelObjectEXT;
     PFNGLGETOBJECTLABELEXTPROC GetObjectLabelEXT;
     // PFNGLINSERTEVENTMARKEREXTPROC InsertEventMarkerEXT;
-    // PFNGLPUSHGROUPMARKEREXTPROC PushGroupMarkerEXT;
-    // PFNGLPOPGROUPMARKEREXTPROC PopGroupMarkerEXT;
+    PFNGLPUSHGROUPMARKEREXTPROC PushGroupMarkerEXT;
+    PFNGLPOPGROUPMARKEREXTPROC PopGroupMarkerEXT;
     // PFNGLMATRIXLOADFEXTPROC MatrixLoadfEXT;
     // PFNGLMATRIXLOADDEXTPROC MatrixLoaddEXT;
     // PFNGLMATRIXMULTFEXTPROC MatrixMultfEXT;
@@ -2082,8 +2082,8 @@ GLMethods load_gl_methods(PyObject * loader) {
     load(LabelObjectEXT);
     load(GetObjectLabelEXT);
     // load(InsertEventMarkerEXT);
-    // load(PushGroupMarkerEXT);
-    // load(PopGroupMarkerEXT);
+    load(PushGroupMarkerEXT);
+    load(PopGroupMarkerEXT);
     // load(MatrixLoadfEXT);
     // load(MatrixLoaddEXT);
     // load(MatrixMultfEXT);

@@ -7310,6 +7310,81 @@ static PyObject * MGLContext_get_label(MGLContext * ctx, PyObject * args) {
     // use the version number or extension list
 }
 
+static PyObject * MGLContext_push_debug_scope(MGLContext * self, PyObject * args) {
+    const GLMethods& gl = self->gl;
+
+    GLenum source = 0;
+    GLuint id = 0;
+    const char * message = NULL;
+    Py_ssize_t message_length = 0;
+
+    int args_ok = PyArg_ParseTuple(args, "IIs#", &source, &id, &message, &message_length);
+    if (!args_ok) {
+        return NULL;
+    }
+
+    if (gl.PushDebugGroup) {
+        // OpenGL core 4.3
+
+        if (message_length >= self->max_debug_message_length) {
+            MGLError_Set("Context's max debug message length is %d, got one of length %d", self->max_debug_message_length, message_length);
+            return NULL;
+        }
+
+        int scope_stack_depth = 0;
+        gl.GetIntegerv(GL_DEBUG_GROUP_STACK_DEPTH, &scope_stack_depth);
+
+        if (scope_stack_depth >= self->max_debug_group_stack_depth) {
+            MGLError_Set("Context's max debug group stack depth is %d, cannot push more scopes", self->max_debug_group_stack_depth);
+            return NULL;
+        }
+
+        gl.PushDebugGroup(source, id, message_length, message);
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glPushDebugGroup failed with 0x%x", error);
+            return NULL;
+        }
+    }
+    else if (gl.PushGroupMarkerEXT) {
+        // GL_EXT_debug_marker
+
+        gl.PushGroupMarkerEXT(message_length, message);
+
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glPushGroupMarkerEXT failed with 0x%x", error);
+            return NULL;
+        }
+    }
+
+    Py_RETURN_NONE;
+}
+
+static PyObject * MGLContext_pop_debug_scope(MGLContext * self, PyObject * args) {
+
+    const GLMethods& gl = self->gl;
+
+    if (gl.PopDebugGroup) {
+        gl.PopDebugGroup();
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glPopDebugGroup failed with 0x%x", error);
+            return NULL;
+        }
+    }
+    else if (gl.PopGroupMarkerEXT) {
+        gl.PopGroupMarkerEXT();
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glPopGroupMarkerEXT failed with 0x%x", error);
+            return NULL;
+        }
+    }
+
+    Py_RETURN_NONE;
+}
+
 static PyObject * MGLContext_enable_only(MGLContext * self, PyObject * args) {
     int flags;
 
@@ -9044,6 +9119,8 @@ static PyMethodDef MGLContext_methods[] = {
     {(char *)"memory_barrier", (PyCFunction)MGLContext_memory_barrier, METH_VARARGS},
     {(char *)"get_label", (PyCFunction)MGLContext_get_label, METH_VARARGS},
     {(char *)"set_label", (PyCFunction)MGLContext_set_label, METH_VARARGS},
+    {(char *)"push_debug_scope", (PyCFunction)MGLContext_push_debug_scope, METH_VARARGS},
+    {(char *)"pop_debug_scope", (PyCFunction)MGLContext_pop_debug_scope, METH_NOARGS},
 
     {(char *)"__enter__", (PyCFunction)MGLContext_enter, METH_NOARGS},
     {(char *)"__exit__", (PyCFunction)MGLContext_exit, METH_VARARGS},
