@@ -44,5 +44,5 @@ jobs:
     steps:
       - uses: actions/upload-artifact/merge@v4
         with:
-          name: moderngl-5.11.1
+          name: moderngl-5.12.0
           delete-merged: true

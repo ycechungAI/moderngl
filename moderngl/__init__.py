@@ -10,7 +10,7 @@ try:
 except ImportError:
     pass
 
-__version__ = "5.11.1"
+__version__ = "5.12.0"
 
 _GL_DEBUG_SOURCE_THIRD_PARTY = 0x8249
 _GL_DEBUG_SOURCE_APPLICATION = 0x824A
