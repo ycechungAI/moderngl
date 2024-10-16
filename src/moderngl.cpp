@@ -96,6 +96,8 @@ struct MGLContext {
     int max_color_attachments;
     int max_texture_units;
     int max_label_length;
+    int max_debug_message_length;
+    int max_debug_group_stack_depth;
     int default_texture_unit;
     float max_anisotropy;
     int enable_flags;
@@ -7308,6 +7310,81 @@ static PyObject * MGLContext_get_label(MGLContext * ctx, PyObject * args) {
     // use the version number or extension list
 }
 
+static PyObject * MGLContext_push_debug_scope(MGLContext * self, PyObject * args) {
+    const GLMethods& gl = self->gl;
+
+    GLenum source = 0;
+    GLuint id = 0;
+    const char * message = NULL;
+    Py_ssize_t message_length = 0;
+
+    int args_ok = PyArg_ParseTuple(args, "IIs#", &source, &id, &message, &message_length);
+    if (!args_ok) {
+        return NULL;
+    }
+
+    if (gl.PushDebugGroup) {
+        // OpenGL core 4.3
+
+        if (message_length >= self->max_debug_message_length) {
+            MGLError_Set("Context's max debug message length is %d, got one of length %d", self->max_debug_message_length, message_length);
+            return NULL;
+        }
+
+        int scope_stack_depth = 0;
+        gl.GetIntegerv(GL_DEBUG_GROUP_STACK_DEPTH, &scope_stack_depth);
+
+        if (scope_stack_depth >= self->max_debug_group_stack_depth) {
+            MGLError_Set("Context's max debug group stack depth is %d, cannot push more scopes", self->max_debug_group_stack_depth);
+            return NULL;
+        }
+
+        gl.PushDebugGroup(source, id, message_length, message);
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glPushDebugGroup failed with 0x%x", error);
+            return NULL;
+        }
+    }
+    else if (gl.PushGroupMarkerEXT) {
+        // GL_EXT_debug_marker
+
+        gl.PushGroupMarkerEXT(message_length, message);
+
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glPushGroupMarkerEXT failed with 0x%x", error);
+            return NULL;
+        }
+    }
+
+    Py_RETURN_NONE;
+}
+
+static PyObject * MGLContext_pop_debug_scope(MGLContext * self, PyObject * args) {
+
+    const GLMethods& gl = self->gl;
+
+    if (gl.PopDebugGroup) {
+        gl.PopDebugGroup();
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glPopDebugGroup failed with 0x%x", error);
+            return NULL;
+        }
+    }
+    else if (gl.PopGroupMarkerEXT) {
+        gl.PopGroupMarkerEXT();
+        GLenum error = gl.GetError();
+        if (error != GL_NO_ERROR) {
+            MGLError_Set("glPopGroupMarkerEXT failed with 0x%x", error);
+            return NULL;
+        }
+    }
+
+    Py_RETURN_NONE;
+}
+
 static PyObject * MGLContext_enable_only(MGLContext * self, PyObject * args) {
     int flags;
 
@@ -8341,6 +8418,25 @@ static PyObject * MGLContext_get_max_label_length(MGLContext * self, void * clos
     }
 }
 
+static PyObject * MGLContext_get_max_debug_message_length(MGLContext * self, void * closure) {
+    if (self->max_debug_message_length > 0) {
+        return PyLong_FromLong(self->max_debug_message_length);
+    }
+    else {
+        Py_RETURN_NONE;
+    }
+}
+
+
+static PyObject * MGLContext_get_max_debug_group_stack_depth(MGLContext * self, void * closure) {
+    if (self->max_debug_group_stack_depth > 0) {
+        return PyLong_FromLong(self->max_debug_group_stack_depth);
+    }
+    else {
+        Py_RETURN_NONE;
+    }
+}
+
 static MGLFramebuffer * MGLContext_get_fbo(MGLContext * self, void * closure) {
     Py_INCREF(self->bound_framebuffer);
     return self->bound_framebuffer;
@@ -8858,6 +8954,12 @@ static PyObject * create_context(PyObject * self, PyObject * args, PyObject * kw
     ctx->max_label_length = 0;
     gl.GetIntegerv(GL_MAX_LABEL_LENGTH, (GLint *)&ctx->max_label_length);
 
+    ctx->max_debug_message_length = 0;
+    gl.GetIntegerv(GL_MAX_DEBUG_MESSAGE_LENGTH, (GLint *)&ctx->max_debug_message_length);
+
+    ctx->max_debug_group_stack_depth = 0;
+    gl.GetIntegerv(GL_MAX_DEBUG_GROUP_STACK_DEPTH, (GLint *)&ctx->max_debug_group_stack_depth);
+
     ctx->max_anisotropy = 0.0;
     gl.GetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, (GLfloat *)&ctx->max_anisotropy);
 
@@ -9017,6 +9119,8 @@ static PyMethodDef MGLContext_methods[] = {
     {(char *)"memory_barrier", (PyCFunction)MGLContext_memory_barrier, METH_VARARGS},
     {(char *)"get_label", (PyCFunction)MGLContext_get_label, METH_VARARGS},
     {(char *)"set_label", (PyCFunction)MGLContext_set_label, METH_VARARGS},
+    {(char *)"push_debug_scope", (PyCFunction)MGLContext_push_debug_scope, METH_VARARGS},
+    {(char *)"pop_debug_scope", (PyCFunction)MGLContext_pop_debug_scope, METH_NOARGS},
 
     {(char *)"__enter__", (PyCFunction)MGLContext_enter, METH_NOARGS},
     {(char *)"__exit__", (PyCFunction)MGLContext_exit, METH_VARARGS},
@@ -9052,6 +9156,8 @@ static PyGetSetDef MGLContext_getset[] = {
     {(char *)"max_texture_units", (getter)MGLContext_get_max_texture_units, NULL},
     {(char *)"max_anisotropy", (getter)MGLContext_get_max_anisotropy, NULL},
     {(char *)"max_label_length", (getter)MGLContext_get_max_label_length, NULL},
+    {(char *)"max_debug_message_length", (getter)MGLContext_get_max_debug_message_length, NULL},
+    {(char *)"max_debug_group_stack_depth", (getter)MGLContext_get_max_debug_group_stack_depth, NULL},
 
     {(char *)"fbo", (getter)MGLContext_get_fbo, (setter)MGLContext_set_fbo},
 
