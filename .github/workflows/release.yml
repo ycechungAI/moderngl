@@ -29,6 +29,7 @@ jobs:
         run: python -m cibuildwheel --output-dir package
         env:
           CIBW_PROJECT_REQUIRES_PYTHON: ">=3.8"
+          CIBW_SKIP: pp*
 
       - uses: actions/upload-artifact@v4
         with:
