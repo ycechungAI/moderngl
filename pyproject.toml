@@ -4,3 +4,9 @@ requires = [
     "wheel >= 0.30.0",
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel]
+# Skip builds for older versions of PyPy based on Python 3.8;
+# this version is EOL and has known issues with cibuildwheel.
+# See https://github.com/pypa/cibuildwheel/issues/2015
+skip = "pp38-*"
