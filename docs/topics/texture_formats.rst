@@ -21,7 +21,7 @@ Some quick example of texture creation::
     texture = ctx.texture((100, 100), 4)  # dtype f1 is default
 
     # R (1 component) f4 texture (32 bit float)
-    texture = ctx.texture((100, 100), 1, dype="f4")
+    texture = ctx.texture((100, 100), 1, dtype="f4")
 
     # RG (2 component) u2 texture (16 bit unsigned integer)
     texture = ctx.texture((100, 100), 2, dtype="u2")
