@@ -2,7 +2,16 @@ import warnings
 from collections import deque
 from contextlib import contextmanager
 
-from _moderngl import Attribute, Error, InvalidObject, StorageBlock, Subroutine, Uniform, UniformBlock, Varying
+from _moderngl import (
+    Attribute,
+    Error,
+    InvalidObject,
+    StorageBlock,
+    Subroutine,
+    Uniform,
+    UniformBlock,
+    Varying,
+)
 from _moderngl import parse_spv_inputs as _parse_spv
 
 try:
@@ -14,6 +23,7 @@ __version__ = "5.12.0"
 
 _GL_DEBUG_SOURCE_THIRD_PARTY = 0x8249
 _GL_DEBUG_SOURCE_APPLICATION = 0x824A
+
 
 def packager_imports():
     """some additional imports that code freezers (Pyinstaller,etc) should see."""
@@ -35,6 +45,7 @@ _VERTEX_ARRAY = 0x8074
 _FRAMEBUFFER = 0x8D40
 _RENDERBUFFER = 0x8D41
 
+
 class Buffer:
     def __init__(self):
         self.mglo = None
@@ -43,7 +54,7 @@ class Buffer:
         self._glo = None
         self.ctx = None
         self.extra = None
-        self._label = None # Used only if no OpenGL label functions are available
+        self._label = None  # Used only if no OpenGL label functions are available
         raise TypeError()
 
     def __del__(self):
@@ -77,7 +88,9 @@ class Buffer:
     @label.setter
     def label(self, value):
         if not (isinstance(value, str) or value is None):
-            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+            raise TypeError(
+                f"Expected value to be a str or None, got {type(value).__name__}"
+            )
 
         if self.ctx.supports_labels:
             self.ctx.mglo.set_label(_BUFFER, self._glo, value)
@@ -224,7 +237,9 @@ class ComputeShader:
     @label.setter
     def label(self, value):
         if not (isinstance(value, str) or value is None):
-            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+            raise TypeError(
+                f"Expected value to be a str or None, got {type(value).__name__}"
+            )
 
         if self.ctx.supports_labels:
             self.ctx.mglo.set_label(_PROGRAM, self._glo, value)
@@ -339,14 +354,25 @@ class Framebuffer:
     @label.setter
     def label(self, value):
         if not (isinstance(value, str) or value is None):
-            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+            raise TypeError(
+                f"Expected value to be a str or None, got {type(value).__name__}"
+            )
 
         if self.ctx.supports_labels:
             self.ctx.mglo.set_label(_FRAMEBUFFER, self._glo, value)
         else:
             self._label = value
 
-    def clear(self, red=0.0, green=0.0, blue=0.0, alpha=0.0, depth=1.0, viewport=None, color=None):
+    def clear(
+        self,
+        red=0.0,
+        green=0.0,
+        blue=0.0,
+        alpha=0.0,
+        depth=1.0,
+        viewport=None,
+        color=None,
+    ):
         if color is not None:
             red, green, blue, alpha, *_ = tuple(color) + (0.0, 0.0, 0.0, 0.0)
 
@@ -359,22 +385,51 @@ class Framebuffer:
         self.ctx.fbo = self
         self.mglo.use()
 
-    def read(self, viewport=None, components=3, attachment=0, alignment=1, dtype="f1", clamp=False):
+    def read(
+        self,
+        viewport=None,
+        components=3,
+        attachment=0,
+        alignment=1,
+        dtype="f1",
+        clamp=False,
+    ):
         if viewport is None:
             viewport = (0, 0, self.width, self.height)
         if len(viewport) == 2:
             viewport = (0, 0, *viewport)
-        res, mem = mgl.writable_bytes(mgl.expected_size(viewport[2], viewport[3], 1, components, alignment, dtype))
-        self.mglo.read_into(mem, viewport, components, attachment, alignment, clamp, dtype, 0)
+        res, mem = mgl.writable_bytes(
+            mgl.expected_size(viewport[2], viewport[3], 1, components, alignment, dtype)
+        )
+        self.mglo.read_into(
+            mem, viewport, components, attachment, alignment, clamp, dtype, 0
+        )
         return res
 
     def read_into(
-        self, buffer, viewport=None, components=3, attachment=0, alignment=1, dtype="f1", clamp=False, write_offset=0
+        self,
+        buffer,
+        viewport=None,
+        components=3,
+        attachment=0,
+        alignment=1,
+        dtype="f1",
+        clamp=False,
+        write_offset=0,
     ):
         if type(buffer) is Buffer:
             buffer = buffer.mglo
 
-        return self.mglo.read_into(buffer, viewport, components, attachment, alignment, clamp, dtype, write_offset)
+        return self.mglo.read_into(
+            buffer,
+            viewport,
+            components,
+            attachment,
+            alignment,
+            clamp,
+            dtype,
+            write_offset,
+        )
 
     def release(self):
         if not isinstance(self.mglo, InvalidObject):
@@ -451,7 +506,9 @@ class Program:
     @label.setter
     def label(self, value):
         if not (isinstance(value, str) or value is None):
-            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+            raise TypeError(
+                f"Expected value to be a str or None, got {type(value).__name__}"
+            )
 
         if self.ctx.supports_labels:
             self.ctx.mglo.set_label(_PROGRAM, self._glo, value)
@@ -460,6 +517,12 @@ class Program:
 
     def get(self, key, default):
         return self._members.get(key, default)
+
+    def draw_mesh_tasks(self, first, count):
+        return self.mglo.draw_mesh_tasks(first, count)
+
+    def draw_mesh_tasks_indirect(self, buffer, offset=0):
+        return self.mglo.draw_mesh_tasks_indirect(buffer.mglo, offset)
 
     def release(self):
         if not isinstance(self.mglo, InvalidObject):
@@ -532,7 +595,9 @@ class Renderbuffer:
     @label.setter
     def label(self, value):
         if not (isinstance(value, str) or value is None):
-            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+            raise TypeError(
+                f"Expected value to be a str or None, got {type(value).__name__}"
+            )
 
         if self.ctx.supports_labels:
             self.ctx.mglo.set_label(_RENDERBUFFER, self._glo, value)
@@ -649,7 +714,6 @@ class Sampler:
     def max_lod(self, value):
         self.mglo.max_lod = value
 
-
     @property
     def label(self):
         if self.ctx.supports_labels:
@@ -660,7 +724,9 @@ class Sampler:
     @label.setter
     def label(self, value):
         if not (isinstance(value, str) or value is None):
-            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+            raise TypeError(
+                f"Expected value to be a str or None, got {type(value).__name__}"
+            )
 
         if self.ctx.supports_labels:
             self.ctx.mglo.set_label(_SAMPLER, self._glo, value)
@@ -823,7 +889,9 @@ class Texture:
     @label.setter
     def label(self, value):
         if not (isinstance(value, str) or value is None):
-            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+            raise TypeError(
+                f"Expected value to be a str or None, got {type(value).__name__}"
+            )
 
         if self.ctx.supports_labels:
             self.ctx.mglo.set_label(_TEXTURE, self._glo, value)
@@ -963,7 +1031,9 @@ class Texture3D:
     @label.setter
     def label(self, value):
         if not (isinstance(value, str) or value is None):
-            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+            raise TypeError(
+                f"Expected value to be a str or None, got {type(value).__name__}"
+            )
 
         if self.ctx.supports_labels:
             self.ctx.mglo.set_label(_TEXTURE, self._glo, value)
@@ -1087,7 +1157,9 @@ class TextureCube:
     @label.setter
     def label(self, value):
         if not (isinstance(value, str) or value is None):
-            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+            raise TypeError(
+                f"Expected value to be a str or None, got {type(value).__name__}"
+            )
 
         if self.ctx.supports_labels:
             self.ctx.mglo.set_label(_TEXTURE, self._glo, value)
@@ -1228,7 +1300,9 @@ class TextureArray:
     @label.setter
     def label(self, value):
         if not (isinstance(value, str) or value is None):
-            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+            raise TypeError(
+                f"Expected value to be a str or None, got {type(value).__name__}"
+            )
 
         if self.ctx.supports_labels:
             self.ctx.mglo.set_label(_TEXTURE, self._glo, value)
@@ -1350,7 +1424,9 @@ class VertexArray:
     @label.setter
     def label(self, value):
         if not (isinstance(value, str) or value is None):
-            raise TypeError(f"Expected value to be a str or None, got {type(value).__name__}")
+            raise TypeError(
+                f"Expected value to be a str or None, got {type(value).__name__}"
+            )
 
         if self.ctx.supports_labels:
             self.ctx.mglo.set_label(_VERTEX_ARRAY, self._glo, value)
@@ -1377,7 +1453,9 @@ class VertexArray:
         else:
             self.mglo.render_indirect(buffer.mglo, mode, count, first)
 
-    def transform(self, buffer, mode=None, vertices=-1, first=0, instances=-1, buffer_offset=0):
+    def transform(
+        self, buffer, mode=None, vertices=-1, first=0, instances=-1, buffer_offset=0
+    ):
         if mode is None:
             mode = self._mode
 
@@ -1388,12 +1466,28 @@ class VertexArray:
 
         if self.scope:
             with self.scope:
-                self.mglo.transform(outputs, mode, vertices, first, instances, buffer_offset)
+                self.mglo.transform(
+                    outputs, mode, vertices, first, instances, buffer_offset
+                )
         else:
-            self.mglo.transform(outputs, mode, vertices, first, instances, buffer_offset)
+            self.mglo.transform(
+                outputs, mode, vertices, first, instances, buffer_offset
+            )
 
-    def bind(self, attribute, cls, buffer, fmt, offset=0, stride=0, divisor=0, normalize=False):
-        self.mglo.bind(attribute, cls, buffer.mglo, fmt, offset, stride, divisor, normalize)
+    def bind(
+        self,
+        attribute,
+        cls,
+        buffer,
+        fmt,
+        offset=0,
+        stride=0,
+        divisor=0,
+        normalize=False,
+    ):
+        self.mglo.bind(
+            attribute, cls, buffer.mglo, fmt, offset, stride, divisor, normalize
+        )
 
     def release(self):
         if not isinstance(self.mglo, InvalidObject):
@@ -1747,7 +1841,16 @@ class Context:
     def includes(self):
         return self.mglo.includes
 
-    def clear(self, red=0.0, green=0.0, blue=0.0, alpha=0.0, depth=1.0, viewport=None, color=None):
+    def clear(
+        self,
+        red=0.0,
+        green=0.0,
+        blue=0.0,
+        alpha=0.0,
+        depth=1.0,
+        viewport=None,
+        color=None,
+    ):
         if color is not None:
             red, green, blue, alpha, *_ = tuple(color) + (0.0, 0.0, 0.0, 0.0)
 
@@ -1771,7 +1874,9 @@ class Context:
     def finish(self):
         self.mglo.finish()
 
-    def copy_buffer(self, dst: Buffer, src: Buffer, size=-1, read_offset=0, write_offset=0):
+    def copy_buffer(
+        self, dst: Buffer, src: Buffer, size=-1, read_offset=0, write_offset=0
+    ):
         self.mglo.copy_buffer(dst.mglo, src.mglo, size, read_offset, write_offset)
 
     def copy_framebuffer(self, dst, src):
@@ -1808,7 +1913,9 @@ class Context:
 
     def external_texture(self, glo, size, components, samples, dtype):
         res = Texture.__new__(Texture)
-        res.mglo, res._glo = self.mglo.external_texture(glo, size, components, samples, dtype)
+        res.mglo, res._glo = self.mglo.external_texture(
+            glo, size, components, samples, dtype
+        )
         res._size = size
         res._components = components
         res._samples = samples
@@ -1831,7 +1938,14 @@ class Context:
     ):
         res = Texture.__new__(Texture)
         res.mglo, res._glo = self.mglo.texture(
-            size, components, data, samples, alignment, dtype, internal_format or 0, renderbuffer
+            size,
+            components,
+            data,
+            samples,
+            alignment,
+            dtype,
+            internal_format or 0,
+            renderbuffer,
         )
         res._size = size
         res._components = components
@@ -1844,7 +1958,9 @@ class Context:
 
     def texture_array(self, size, components, data=None, alignment=1, dtype="f1"):
         res = TextureArray.__new__(TextureArray)
-        res.mglo, res._glo = self.mglo.texture_array(size, components, data, alignment, dtype)
+        res.mglo, res._glo = self.mglo.texture_array(
+            size, components, data, alignment, dtype
+        )
         res._size = size
         res._components = components
         res._dtype = dtype
@@ -1857,14 +1973,20 @@ class Context:
         res._size = size
         res._components = components
         res._dtype = dtype
-        res.mglo, res._glo = self.mglo.texture3d(size, components, data, alignment, dtype)
+        res.mglo, res._glo = self.mglo.texture3d(
+            size, components, data, alignment, dtype
+        )
         res.ctx = self
         res.extra = None
         return res
 
-    def texture_cube(self, size, components, data=None, alignment=1, dtype="f1", internal_format=None):
+    def texture_cube(
+        self, size, components, data=None, alignment=1, dtype="f1", internal_format=None
+    ):
         res = TextureCube.__new__(TextureCube)
-        res.mglo, res._glo = self.mglo.texture_cube(size, components, data, alignment, dtype, internal_format or 0)
+        res.mglo, res._glo = self.mglo.texture_cube(
+            size, components, data, alignment, dtype, internal_format or 0
+        )
         res._size = size
         res._components = components
         res._dtype = dtype
@@ -1872,9 +1994,13 @@ class Context:
         res.extra = None
         return res
 
-    def depth_texture(self, size, data=None, samples=0, alignment=4, renderbuffer=False):
+    def depth_texture(
+        self, size, data=None, samples=0, alignment=4, renderbuffer=False
+    ):
         res = Texture.__new__(Texture)
-        res.mglo, res._glo = self.mglo.depth_texture(size, data, samples, alignment, renderbuffer)
+        res.mglo, res._glo = self.mglo.depth_texture(
+            size, data, samples, alignment, renderbuffer
+        )
         res._size = size
         res._components = 1
         res._samples = samples
@@ -1900,7 +2026,15 @@ class Context:
             return self.simple_vertex_array(*args, **kwargs)
         return self._vertex_array(*args, **kwargs)
 
-    def _vertex_array(self, program, content, index_buffer=None, index_element_size=4, skip_errors=False, mode=None):
+    def _vertex_array(
+        self,
+        program,
+        content,
+        index_buffer=None,
+        index_element_size=4,
+        skip_errors=False,
+        mode=None,
+    ):
         locations = program._attribute_locations
         types = program._attribute_types
         index_buffer_mglo = None if index_buffer is None else index_buffer.mglo
@@ -1911,11 +2045,17 @@ class Context:
                 layout = detect_format(program, attribs)
             if skip_errors:
                 attribs = [
-                    types.get(x, None) if type(x) is int else types.get(locations.get(x, -1), None)
+                    (
+                        types.get(x, None)
+                        if type(x) is int
+                        else types.get(locations.get(x, -1), None)
+                    )
                     for x in attribs
                 ]
             else:
-                attribs = [types[x] if type(x) is int else types[locations[x]] for x in attribs]
+                attribs = [
+                    types[x] if type(x) is int else types[locations[x]] for x in attribs
+                ]
             mgl_content.append((buffer.mglo, layout, *attribs))
 
         res = VertexArray.__new__(VertexArray)
@@ -1938,12 +2078,22 @@ class Context:
         res.scope = None
         return res
 
-    def simple_vertex_array(self, program, buffer, *attributes, index_buffer=None, index_element_size=4, mode=None):
+    def simple_vertex_array(
+        self,
+        program,
+        buffer,
+        *attributes,
+        index_buffer=None,
+        index_element_size=4,
+        mode=None,
+    ):
         if type(buffer) is list:
             raise SyntaxError("Change simple_vertex_array to vertex_array")
 
         content = [(buffer, detect_format(program, attributes)) + attributes]
-        return self._vertex_array(program, content, index_buffer, index_element_size, mode=mode)
+        return self._vertex_array(
+            program, content, index_buffer, index_element_size, mode=mode
+        )
 
     def program(
         self,
@@ -1952,6 +2102,8 @@ class Context:
         geometry_shader=None,
         tess_control_shader=None,
         tess_evaluation_shader=None,
+        task_shader=None,
+        mesh_shader=None,
         varyings=(),
         fragment_outputs=None,
         attributes=None,
@@ -1982,13 +2134,18 @@ class Context:
             tess_control_shader,
             tess_evaluation_shader,
             None,
+            task_shader,
+            mesh_shader,
             varyings,
             fragment_outputs,
             varyings_capture_mode == "interleaved",
         )
         res._members, res._attribute_locations, res._attribute_types = _members
 
-        if isinstance(vertex_shader, bytes) and int.from_bytes(vertex_shader[:4], "little") == 0x07230203:
+        if (
+            isinstance(vertex_shader, bytes)
+            and int.from_bytes(vertex_shader[:4], "little") == 0x07230203
+        ):
             res._attribute_types = _parse_spv(res._glo, vertex_shader)
             for info in res._attribute_types.values():
                 res._attribute_locations[info.name] = info.location
@@ -2063,14 +2220,19 @@ class Context:
         )
 
     def framebuffer(self, color_attachments=(), depth_attachment=None):
-        if type(color_attachments) is Texture or type(color_attachments) is Renderbuffer:
+        if (
+            type(color_attachments) is Texture
+            or type(color_attachments) is Renderbuffer
+        ):
             color_attachments = (color_attachments,)
 
         ca_mglo = tuple(x.mglo for x in color_attachments)
         da_mglo = None if depth_attachment is None else depth_attachment.mglo
 
         res = Framebuffer.__new__(Framebuffer)
-        res.mglo, res._size, res._samples, res._glo = self.mglo.framebuffer(ca_mglo, da_mglo)
+        res.mglo, res._size, res._samples, res._glo = self.mglo.framebuffer(
+            ca_mglo, da_mglo
+        )
         res._color_attachments = tuple(color_attachments)
         res._depth_attachment = depth_attachment
         res.ctx = self
@@ -2080,7 +2242,9 @@ class Context:
 
     def empty_framebuffer(self, size, layers=0, samples=0):
         res = Framebuffer.__new__(Framebuffer)
-        res.mglo, res._size, res._samples, res._glo = self.mglo.empty_framebuffer(size, layers, samples)
+        res.mglo, res._size, res._samples, res._glo = self.mglo.empty_framebuffer(
+            size, layers, samples
+        )
         res._color_attachments = ()
         res._depth_attachment = None
         res.ctx = self
@@ -2090,7 +2254,9 @@ class Context:
 
     def renderbuffer(self, size, components=4, samples=0, dtype="f1"):
         res = Renderbuffer.__new__(Renderbuffer)
-        res.mglo, res._glo = self.mglo.texture(size, components, None, samples, 1, dtype, 0, True)
+        res.mglo, res._glo = self.mglo.texture(
+            size, components, None, samples, 1, dtype, 0, True
+        )
         res._size = size
         res._components = components
         res._samples = samples
@@ -2121,6 +2287,8 @@ class Context:
             None,
             None,
             source,
+            None,
+            None,
             (),
             {},
             False,
@@ -2178,7 +2346,9 @@ class Context:
             version_code = major * 100 + minor * 10
 
         if version_code < 330:
-            warnings.warn("The window should support OpenGL 3.3+ (version_code=%d)" % version_code)
+            warnings.warn(
+                "The window should support OpenGL 3.3+ (version_code=%d)" % version_code
+            )
 
     def __enter__(self):
         self.mglo.__enter__()
@@ -2199,19 +2369,25 @@ class Context:
             self.mglo.clear_errors()
 
     @contextmanager
-    def debug_scope(self, label, group_id = None, source = "application"):
+    def debug_scope(self, label, group_id=None, source="application"):
         if not isinstance(label, str):
-            raise TypeError(f"Expected label to be a string, got {type(label).__name__}")
+            raise TypeError(
+                f"Expected label to be a string, got {type(label).__name__}"
+            )
 
         if not isinstance(group_id, (int, type(None))):
-            raise TypeError(f"Expected group_id to be an int or None, got {type(group_id).__name__}")
+            raise TypeError(
+                f"Expected group_id to be an int or None, got {type(group_id).__name__}"
+            )
 
         if source == "application":
             source_id = _GL_DEBUG_SOURCE_APPLICATION
         elif source == "external":
             source_id = _GL_DEBUG_SOURCE_THIRD_PARTY
         else:
-            raise ValueError(f"source must be 'application' or 'external', got '{source}'")
+            raise ValueError(
+                f"source must be 'application' or 'external', got '{source}'"
+            )
 
         if not self.supports_debug_scopes:
             # If we don't support debug scopes, silently do nothing
@@ -2242,7 +2418,11 @@ def create_context(require=None, standalone=False, share=False, **settings):
         ctx = get_context()
 
         if ctx.version_code < require:
-            raise ValueError("Requested OpenGL version {0}, got version {1}".format(require, ctx.version_code))
+            raise ValueError(
+                "Requested OpenGL version {0}, got version {1}".format(
+                    require, ctx.version_code
+                )
+            )
 
         return ctx
 
@@ -2251,7 +2431,9 @@ def create_context(require=None, standalone=False, share=False, **settings):
         mode = "share"
 
     ctx = Context.__new__(Context)
-    ctx.mglo, ctx.version_code = mgl.create_context(glversion=require, mode=mode, **settings)
+    ctx.mglo, ctx.version_code = mgl.create_context(
+        glversion=require, mode=mode, **settings
+    )
     ctx._info = None
     ctx._extensions = None
     ctx.extra = None
@@ -2259,7 +2441,11 @@ def create_context(require=None, standalone=False, share=False, **settings):
     ctx._objects = deque()
 
     if ctx.version_code < require:
-        raise ValueError("Requested OpenGL version {0}, got version {1}".format(require, ctx.version_code))
+        raise ValueError(
+            "Requested OpenGL version {0}, got version {1}".format(
+                require, ctx.version_code
+            )
+        )
 
     if standalone:
         ctx._screen = None
@@ -2278,6 +2464,7 @@ def create_context(require=None, standalone=False, share=False, **settings):
 def init_context(loader=None):
     if loader is None:
         from _moderngl import DefaultLoader
+
         loader = DefaultLoader()
 
     ctx = Context.__new__(Context)
@@ -2322,7 +2509,10 @@ def detect_format(program, attributes, mode="mgl"):
 
     locations = program._attribute_locations
     types = program._attribute_types
-    return " ".join("%d%s" % fmt(types[x] if type(x) is int else types[locations[x]]) for x in attributes)
+    return " ".join(
+        "%d%s" % fmt(types[x] if type(x) is int else types[locations[x]])
+        for x in attributes
+    )
 
 
 def _resolve_module_constants(scope):
