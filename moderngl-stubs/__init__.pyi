@@ -733,7 +733,11 @@ class ComputeShader:
         """
     def run_indirect(self, buffer: Buffer, offset: int = 0) -> None:
         """
-        Run the compute shader.
+        Run the compute shader indirectly.
+
+        Args:
+            buffer (Buffer): Buffer with packed args (4 bytes (uint32) x & 4 bytes (uint32) y & 4 bytes (uint32) z).
+            offset: Offset in bytes to look for args inside the buffer.
         """
     def get(self, key: str, default: Any) -> Union[Uniform, UniformBlock, Attribute, Varying]:
         """
@@ -2821,6 +2825,35 @@ class Program:
 
         Returns:
             :py:class:`Uniform`, :py:class:`UniformBlock`, :py:class:`Attribute` or :py:class:`Varying`
+        """
+    def draw_mesh_tasks(self, first: int, count: int) -> None:
+        """
+        Dispatch mesh tasks (requires mesh and optionally task shader).
+
+        Args:
+            first: Index of the first shader workgroup to dispatch.
+            count: Number of workgroups to dispatch.
+        """
+    def draw_mesh_tasks_indirect(self, buffer: Buffer, offset: int = 0, drawcount: int = 1, stride: int = 0) -> None:
+        """
+        Dispatch mesh tasks indirectly (requires mesh and optionally task shader).
+
+        Args:
+            buffer (Buffer): Buffer with packed args (4 bytes (uint32) count & 4 bytes (uint32) first). Note that order in args structure is intentional due to inconsistencies in underlying API.
+            offset: Offset in bytes to look for args inside the buffer.
+            drawcount: Number of drawcalls to dispatch from buffer.
+            stride: Stride in bytes between structures inside the buffer.
+        """
+    def draw_mesh_tasks_indirect_count(self, buffer: Buffer, offset: int, drawcount_offset: int, maxdrawcount: int, stride: int = 0) -> None:
+        """
+        Dispatch mesh tasks indirectly (requires mesh and optionally task shader).
+
+        Args:
+            buffer (Buffer): Buffer with packed args (4 bytes (uint32) count & 4 bytes (uint32) first) and drawcounts (4 bytes (uint32) drawcount). Note that order in args structure is intentional due to inconsistencies in underlying API.
+            offset: Offset in bytes to look for args inside the buffer.
+            drawcount_offset: Offset in bytes to look for number of drawcalls inside the buffer.
+            maxdrawcount: Maximum number of drawcalls to dispatch from buffer.
+            stride: Stride in bytes between structures inside the buffer.
         """
     def release(self) -> None:
         """Release the ModernGL object."""

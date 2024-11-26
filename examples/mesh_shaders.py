@@ -1,196 +1,198 @@
+import os
+import math
+
 import moderngl
 import glm
 import numpy as np
-from PIL import Image
+import moderngl_window as mglw
 
-ctx = moderngl.create_standalone_context()
 
-fbo = ctx.framebuffer([ctx.renderbuffer((800, 800), components=4, samples=16)])
-output = ctx.framebuffer([ctx.renderbuffer((800, 800), components=4)])
+class Example(mglw.WindowConfig):
+    title = "ModernGL Window"
+    resizable = False
+    gl_version = (4, 6)
+    window_size = (900, 900)
+    aspect_ratio = 1.0
 
-prog = ctx.program(
-    task_shader="""
-        #version 460
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.program = self.ctx.program(
+            task_shader="""
+                #version 460
 
-        #extension GL_NV_mesh_shader : require
-        #extension GL_NV_shader_thread_group : require
-        #extension GL_NV_gpu_shader5 : require
+                #extension GL_NV_mesh_shader : require
+                #extension GL_NV_shader_thread_group : require
+                #extension GL_NV_gpu_shader5 : require
 
-        layout(local_size_x = 6) in;
+                layout(local_size_x = 6) in;
 
-        layout(std430, binding = 0) buffer inputBlockData {
-            uint block_types[32 * 32 * 32];
-        };
+                layout(std430, binding = 0) buffer inputBlockData {
+                    uint block_types[32 * 32 * 32];
+                };
 
-        // faces:
-        // 0 = DOWN
-        // 1 = UP
-        // 2 = NORTH
-        // 3 = SOUTH
-        // 4 = WEST
-        // 5 = EAST
+                const int faceBlockArrayOffsets[] = {-1024, 1024, -32, 32, -1, 1};
+                const ivec3 faceBlockArrayDirections[] = {
+                    ivec3(0, 0, -1),
+                    ivec3(0, 0, 1),
+                    ivec3(0, -1, 0),
+                    ivec3(0, 1, 0),
+                    ivec3(-1, 0, 0),
+                    ivec3(1, 0, 0)
+                };
 
-        const int faceBlockArrayOffsets[] = {-32, 32, -1024, 1024, -1, 1};
-        const ivec3 faceBlockArrayDirections[] = {
-            ivec3(0, -1, 0),
-            ivec3(0, 1, 0),
-            ivec3(0, 0, -1),
-            ivec3(0, 0, 1),
-            ivec3(-1, 0, 0),
-            ivec3(1, 0, 0)
-        };
+                taskNV out Task {
+                    uint      block_position;
+                    uint8_t   faceIds[6];
+                } OUT;
 
-        taskNV out Task {
-            uint      block_position;
-            uint8_t   faceIds[6];
-        } OUT;
+                void main() {
+                    int position = int(gl_WorkGroupID.x);
+                    uint block_type = block_types[position];
+                    bool isNotEmpty = block_type != 0;
+                    uint vote = ballotThreadNV(isNotEmpty);
+                    uint faceCount = bitCount(vote);
+                    gl_TaskCountNV = faceCount;
+                    OUT.block_position = position;
+                    uint idxOffset = bitCount(vote & gl_ThreadLtMaskNV);
+                    if (isNotEmpty) {
+                        OUT.faceIds[idxOffset] = uint8_t(gl_LocalInvocationID.x);
+                    }
+                }
+            """,
+            mesh_shader="""
+                #version 460
 
-        bool checkCullFace(int position, uint face) {
-            int offset = faceBlockArrayOffsets[face];
-            int x = position % 32;
-            int y = (position / 32) % 32;
-            int z = position / 1024;
-            ivec3 vpos = ivec3(x, y, z);
-            ivec3 adjPos = vpos + faceBlockArrayDirections[face];
-            return any(lessThan(adjPos, ivec3(0)))
-                || any(greaterThanEqual(adjPos, ivec3(16)))
-                || block_types[offset + position] == 0;
-        }
+                #extension GL_NV_mesh_shader : require
+                #extension GL_NV_shader_thread_group : require
+                #extension GL_NV_gpu_shader5 : require
 
-        void main() {
-            int position = int(gl_WorkGroupID.x);
-            uint block_type = block_types[position];
-            bool isFaceVisible = block_type != 0 && checkCullFace(position, gl_LocalInvocationID.x);
-            uint vote = ballotThreadNV(isFaceVisible);
-            uint faceCount = bitCount(vote);
-            gl_TaskCountNV = faceCount;
-            OUT.block_position = position;
-            uint idxOffset = bitCount(vote & gl_ThreadLtMaskNV);
-            if (isFaceVisible) {
-                OUT.faceIds[idxOffset] = uint8_t(gl_LocalInvocationID.x);
+                layout(local_size_x = 6) in;
+                layout(triangles, max_vertices = 6, max_primitives = 2) out;
+
+                taskNV in Task {
+                    uint      block_position;
+                    uint8_t   faceIds[6];
+                } IN;
+
+                out PerVertexData {
+                    vec4 color;
+                } v_out[];
+
+                const vec3 cubeFaceVertices[6][6] = {
+                    {
+                        vec3(1.0, 0.0, 0.0),
+                        vec3(1.0, 0.0, 1.0),
+                        vec3(0.0, 0.0, 1.0),
+                        vec3(0.0, 0.0, 1.0),
+                        vec3(0.0, 0.0, 0.0),
+                        vec3(1.0, 0.0, 0.0)
+                    },
+                    {
+                        vec3(0.0, 1.0, 0.0),
+                        vec3(0.0, 1.0, 1.0),
+                        vec3(1.0, 1.0, 1.0),
+                        vec3(1.0, 1.0, 1.0),
+                        vec3(1.0, 1.0, 0.0),
+                        vec3(0.0, 1.0, 0.0)
+                    },
+                    {
+                        vec3(0.0, 1.0, 0.0),
+                        vec3(1.0, 1.0, 0.0),
+                        vec3(1.0, 0.0, 0.0),
+                        vec3(1.0, 0.0, 0.0),
+                        vec3(0.0, 0.0, 0.0),
+                        vec3(0.0, 1.0, 0.0)
+                    },
+                    {
+                        vec3(0.0, 0.0, 1.0),
+                        vec3(1.0, 0.0, 1.0),
+                        vec3(1.0, 1.0, 1.0),
+                        vec3(1.0, 1.0, 1.0),
+                        vec3(0.0, 1.0, 1.0),
+                        vec3(0.0, 0.0, 1.0)
+                    },
+                    {
+                        vec3(0.0, 0.0, 0.0),
+                        vec3(0.0, 0.0, 1.0),
+                        vec3(0.0, 1.0, 1.0),
+                        vec3(0.0, 1.0, 1.0),
+                        vec3(0.0, 1.0, 0.0),
+                        vec3(0.0, 0.0, 0.0)
+                    },
+                    {
+                        vec3(1.0, 1.0, 0.0),
+                        vec3(1.0, 1.0, 1.0),
+                        vec3(1.0, 0.0, 1.0),
+                        vec3(1.0, 0.0, 1.0),
+                        vec3(1.0, 0.0, 0.0),
+                        vec3(1.0, 1.0, 0.0)
+                    }
+                };
+
+                layout(location = 0) uniform mat4 modelViewProjection;
+                layout(location = 1) uniform float time;
+
+                #define PI 3.1415926
+
+                void main() {
+                    uint position = IN.block_position;
+                    uint8_t face = IN.faceIds[gl_WorkGroupID.x];
+                    uint vertexId = gl_LocalInvocationID.x;
+                    float x = float(position % 32);
+                    float y = float((position / 32) % 32);
+                    float z = float(position / 1024);
+                    vec3 blockPos = vec3(x, y, z);
+                    gl_MeshVerticesNV[vertexId].gl_Position = modelViewProjection * vec4(cubeFaceVertices[face][vertexId] * abs(sin(time + (x+y+z)/24*PI)) + blockPos, 1.0);
+                    v_out[vertexId].color = vec4(blockPos / 32.0, 1.0);
+                    // gl_MeshVerticesNV[vertexId].gl_Position = modelViewProjection * vec4(blockPos, 1.0);
+                    gl_PrimitiveIndicesNV[vertexId] = vertexId;
+                    gl_PrimitiveCountNV = 2;
+                    // gl_PrimitiveCountNV = 1;
+                }
+            """,
+            fragment_shader="""
+            #version 460
+
+            out vec4 fragColor;
+
+            in PerVertexData {
+                vec4 color;
+            } fragIn;
+
+            void main() {
+                fragColor = fragIn.color;
             }
-        }
-    """,
-    mesh_shader="""
-        #version 460
+        """,
+        )
+        self.voxel_buffer = self.ctx.buffer(np.ones(32**3, dtype=np.uint32))
+        self.voxel_buffer.bind_to_storage_buffer(0)
+        self.indirect_buffer = self.ctx.buffer(np.array([32 * 32 * 32, 0], dtype=np.uint32))
 
-        #extension GL_NV_mesh_shader : require
-        #extension GL_NV_shader_thread_group : require
-        #extension GL_NV_gpu_shader5 : require
+        self.ctx.enable(moderngl.DEPTH_TEST | moderngl.BLEND | moderngl.CULL_FACE)
 
-        layout(local_size_x = 6) in;
-        layout(triangles, max_vertices = 6, max_primitives = 2) out;
-        //layout(points, max_vertices = 1, max_primitives = 1) out;
+        self.camera = self.program["modelViewProjection"]
+        self.u_time = self.program["time"]
 
-        taskNV in Task {
-            uint      block_position;
-            uint8_t   faceIds[6];
-        } IN;
+    def render(self, time: float, frame_time: float):
+        self.ctx.clear(alpha=1)
 
-        out PerVertexData {
-            vec4 color;
-        } v_out[];
+        proj = glm.perspective((90.0) / 180.0 * math.pi, 1.0, 0.1, 1000.0)
+        look = glm.lookAt(
+            (
+                (48.0 - 16.0) * math.sin(time / 8) + 16.0,
+                (48.0 - 16.0) * math.cos(time / 8) + 16.0,
+                36.0,
+            ),
+            (16.0, 16.0, 16.0),
+            (0.0, 0.0, 1.0),
+        )
 
-        const vec3 cubeFaceVertices[6][6] = {
-            {
-                vec3(1.0, 0.0, 0.0),
-                vec3(1.0, 0.0, 1.0),
-                vec3(0.0, 0.0, 1.0),
-                vec3(0.0, 0.0, 1.0),
-                vec3(0.0, 0.0, 0.0),
-                vec3(1.0, 0.0, 0.0)
-            },
-            {
-                vec3(0.0, 1.0, 0.0),
-                vec3(0.0, 1.0, 1.0),
-                vec3(1.0, 1.0, 1.0),
-                vec3(1.0, 1.0, 1.0),
-                vec3(1.0, 1.0, 0.0),
-                vec3(0.0, 1.0, 0.0)
-            },
-            {
-                vec3(0.0, 1.0, 0.0),
-                vec3(1.0, 1.0, 0.0),
-                vec3(1.0, 0.0, 0.0),
-                vec3(1.0, 0.0, 0.0),
-                vec3(0.0, 0.0, 0.0),
-                vec3(0.0, 1.0, 0.0)
-            },
-            {
-                vec3(0.0, 0.0, 1.0),
-                vec3(1.0, 0.0, 1.0),
-                vec3(1.0, 1.0, 1.0),
-                vec3(1.0, 1.0, 1.0),
-                vec3(0.0, 1.0, 1.0),
-                vec3(0.0, 0.0, 1.0)
-            },
-            {
-                vec3(0.0, 0.0, 0.0),
-                vec3(0.0, 0.0, 1.0),
-                vec3(0.0, 1.0, 1.0),
-                vec3(0.0, 1.0, 1.0),
-                vec3(0.0, 1.0, 0.0),
-                vec3(0.0, 0.0, 0.0)
-            },
-            {
-                vec3(1.0, 1.0, 0.0),
-                vec3(1.0, 1.0, 1.0),
-                vec3(1.0, 0.0, 1.0),
-                vec3(1.0, 0.0, 1.0),
-                vec3(1.0, 0.0, 0.0),
-                vec3(1.0, 1.0, 0.0)
-            }
-        };
+        self.u_time.value = time
+        self.camera.write(proj * look)
+        self.program.draw_mesh_tasks_indirect(self.indirect_buffer) 
+        # Optional, without indirect:
+        # self.program.draw_mesh_tasks(0, 32 * 32 * 32)
 
-        layout(location = 0) uniform mat4 modelViewProjection;
 
-        void main() {
-            uint position = IN.block_position;
-            uint8_t face = IN.faceIds[gl_WorkGroupID.x];
-            uint vertexId = gl_LocalInvocationID.x;
-            float x = float(position % 32);
-            float y = float((position / 32) % 32);
-            float z = float(position / 1024);
-            vec3 blockPos = vec3(x, y, z);
-            gl_MeshVerticesNV[vertexId].gl_Position = modelViewProjection * vec4(cubeFaceVertices[face][vertexId] + blockPos, 1.0);
-            v_out[vertexId].color = vec4(blockPos / 32.0, 1.0);
-            // gl_MeshVerticesNV[vertexId].gl_Position = modelViewProjection * vec4(blockPos, 1.0);
-            gl_PrimitiveIndicesNV[vertexId] = vertexId;
-            gl_PrimitiveCountNV = 2;
-            // gl_PrimitiveCountNV = 1;
-        }
-    """,
-    fragment_shader="""
-        #version 460
-
-        out vec4 fragColor;
-
-        in PerVertexData {
-            vec4 color;
-        } fragIn;
-
-        void main() {
-            fragColor = fragIn.color;
-        }
-    """,
-)
-
-voxel_buffer = ctx.buffer(np.random.randint(0, 2, 32 * 32 * 32))
-voxel_buffer.bind_to_storage_buffer(0)
-
-proj = glm.perspective(45.0, 1.0, 0.1, 1000.0)
-look = glm.lookAt((48.0, 48.0, 48.0), (0.0, 0.0, 0.0), (0.0, 0.0, 1.0))
-camera = proj * look
-
-prog["modelViewProjection"].write(camera)
-
-fbo.use()
-ctx.clear()
-prog.draw_mesh_tasks(0, 32 * 32 * 32)
-
-ctx.copy_framebuffer(output, fbo)
-
-img = Image.frombuffer("RGBA", output.size, output.read(components=4)).transpose(
-    Image.Transpose.FLIP_TOP_BOTTOM
-)
-img.save("out.png")
+if __name__ == "__main__":
+    Example.run()
