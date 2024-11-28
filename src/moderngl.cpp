@@ -2682,8 +2682,10 @@ static PyObject * MGLProgram_draw_mesh_tasks(MGLProgram * self, PyObject * args)
 static PyObject * MGLProgram_draw_mesh_tasks_indirect(MGLProgram * self, PyObject * args) {
     MGLBuffer * buffer;
     Py_ssize_t offset = 0;
+    Py_ssize_t drawcount = 1;
+    Py_ssize_t stride = 0;
 
-    if (!PyArg_ParseTuple(args, "O!|n", MGLBuffer_type, &buffer, &offset)) {
+    if (!PyArg_ParseTuple(args, "O!|nnn", MGLBuffer_type, &buffer, &offset, &drawcount, &stride)) {
         return 0;
     }
 
@@ -2691,7 +2693,26 @@ static PyObject * MGLProgram_draw_mesh_tasks_indirect(MGLProgram * self, PyObjec
 
     gl.UseProgram(self->program_obj);
     gl.BindBuffer(GL_DRAW_INDIRECT_BUFFER, buffer->buffer_obj);
-    gl.DrawMeshTasksIndirectNV((GLintptr)offset);
+    gl.MultiDrawMeshTasksIndirectNV((GLintptr)offset, (GLsizei)drawcount, (GLsizei)stride);
+    Py_RETURN_NONE;
+}
+
+static PyObject * MGLProgram_draw_mesh_tasks_indirect_count(MGLProgram * self, PyObject * args) {
+    MGLBuffer * buffer;
+    Py_ssize_t offset = 0;
+    Py_ssize_t drawcount_offset = 0;
+    Py_ssize_t maxdrawcount = 1;
+    Py_ssize_t stride = 0;
+
+    if (!PyArg_ParseTuple(args, "O!nnn|n", MGLBuffer_type, &buffer, &offset, &drawcount_offset, &maxdrawcount, &stride)) {
+        return 0;
+    }
+
+    const GLMethods & gl = self->context->gl;
+
+    gl.UseProgram(self->program_obj);
+    gl.BindBuffer(GL_DRAW_INDIRECT_BUFFER, buffer->buffer_obj);
+    gl.MultiDrawMeshTasksIndirectCountNV((GLintptr)offset, (GLintptr)drawcount_offset, (GLsizei)maxdrawcount, (GLsizei)stride);
     Py_RETURN_NONE;
 }
 
@@ -9244,6 +9265,7 @@ static PyMethodDef MGLProgram_methods[] = {
     {(char *)"run_indirect", (PyCFunction)MGLProgram_run_indirect, METH_VARARGS},
     {(char *)"draw_mesh_tasks", (PyCFunction)MGLProgram_draw_mesh_tasks, METH_VARARGS},
     {(char *)"draw_mesh_tasks_indirect", (PyCFunction)MGLProgram_draw_mesh_tasks_indirect, METH_VARARGS},
+    {(char *)"draw_mesh_tasks_indirect_count", (PyCFunction)MGLProgram_draw_mesh_tasks_indirect_count, METH_VARARGS},
     {(char *)"release", (PyCFunction)MGLProgram_release, METH_NOARGS},
     {},
 };
