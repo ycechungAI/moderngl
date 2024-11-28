@@ -299,6 +299,11 @@ class UniformBlock:
     binding: int
     """
     The binding of the uniform block.
+    The binding point can be set by assigning a value to this object retrieved by a program
+    
+    Example
+    prog["camera_ubo"] = 1 # sets the binding point to 1
+    buffer.bind_to_uniform_block(1) # binds a buffer to the same binding point
     """
 
     value: int
