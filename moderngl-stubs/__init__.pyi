@@ -2046,11 +2046,13 @@ class Context:
         """
     def program(
         self,
-        vertex_shader: str | bytes | ConvertibleToShaderSource,
+        vertex_shader: str | bytes | ConvertibleToShaderSource | None = None,
         fragment_shader: str | bytes | ConvertibleToShaderSource | None = None,
         geometry_shader: str | bytes | ConvertibleToShaderSource | None = None,
         tess_control_shader: str | bytes | ConvertibleToShaderSource | None = None,
         tess_evaluation_shader: str | bytes | ConvertibleToShaderSource | None = None,
+        task_shader: str | bytes | ConvertibleToShaderSource | None = None,
+        mesh_shader: str | bytes | ConvertibleToShaderSource | None = None,
         varyings: Tuple[str, ...] = (),
         fragment_outputs: Optional[Dict[str, int]] = None,
         varyings_capture_mode: str = "interleaved",
@@ -2071,6 +2073,8 @@ class Context:
             geometry_shader (str): The geometry shader source.
             tess_control_shader (str): The tessellation control shader source.
             tess_evaluation_shader (str): The tessellation evaluation shader source.
+            task_shader (str): The task shader source.
+            mesh_shader (str): The mesh shader source.
             varyings (list): A list of varyings.
             fragment_outputs (dict): A dictionary of fragment outputs.
         Returns:
